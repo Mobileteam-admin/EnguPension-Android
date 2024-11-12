@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dp_12">
+
+    <ImageView
+        android:id="@+id/img_bank_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_dummybank_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_bankname"
+        style="@style/Style_text_title_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_12"
+        android:text="Zenith Bank"
+        app:layout_constraintStart_toEndOf="@+id/img_bank_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_accounttype"/>
+
+    <TextView
+        android:id="@+id/tv_banktype"
+        style="@style/Style_text_title_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Saving Account"
+        app:layout_constraintStart_toStartOf="@+id/tv_bankname"
+        app:layout_constraintEnd_toEndOf="@+id/tv_bankname"
+        app:layout_constraintTop_toBottomOf="@+id/tv_bankname" />
+
+    <TextView
+        android:id="@+id/tv_accounttype"
+        style="@style/Style_text_title_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_12"
+        android:drawableStart="@drawable/ic_tick_green"
+        android:drawablePadding="@dimen/dp_6"
+        android:fontFamily="@font/nunito_sans_semibold"
+        android:text="Primary"
+        android:textColor="@color/green_theme"
+        android:textSize="@dimen/dp_14"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

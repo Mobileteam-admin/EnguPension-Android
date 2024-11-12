@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:layout_marginHorizontal="@dimen/dp_14"
+    android:layout_marginVertical="@dimen/dp_16"
+    app:cardCornerRadius="@dimen/dp_8"
+    app:cardElevation="@dimen/dp_10">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_16">
+
+        <TextView
+            android:id="@+id/txt_date"
+            style="@style/Style_text_title_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="01/07/2023"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/txt_topupnote"
+            style="@style/Style_text_title_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:text="UPI/255415454545154/@chidi/Wallet Top up"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_date"
+            app:layout_constraintEnd_toStartOf="@+id/txt_topup_status"/>
+
+        <TextView
+            android:id="@+id/txt_topup_amount"
+            android:fontFamily="@font/nunito_sans_regular"
+            android:textColor="@color/green_theme"
+            android:textSize="@dimen/dp_16"
+            android:text="100"
+            android:drawableStart="@drawable/ic_nira_green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_8"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/txt_topup_status"/>
+        <TextView
+            android:id="@+id/txt_topup_status"
+            style="@style/Style_text_title_2"
+            android:text="Credit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_8"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_topup_amount"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,722 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.fragment.Dashboard.DashboardFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ui.fragment.Dashboard.DashboardFragment">
+
+        <ImageView
+            android:id="@+id/bottom_dashboard_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitEnd"
+            android:src="@drawable/ic_newclip_bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/ll_main_dash"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/dp_150"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:id="@+id/rl_dashboard_header"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/ic_new_main_bg" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_dashboard_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginHorizontal="@dimen/dp_20"
+                    android:layout_marginTop="@dimen/dp_6"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/img_profile"
+                        android:layout_width="@dimen/dp_50"
+                        android:layout_height="@dimen/dp_50"
+                        android:layout_margin="@dimen/dp_6"
+                        android:src="@drawable/dummy_person"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_person_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:fontFamily="@font/nunito_sans_semibold"
+                        android:text=""
+                        android:textAllCaps="true"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/dp_16"
+                        app:layout_constraintEnd_toStartOf="@+id/img_bell"
+                        app:layout_constraintStart_toEndOf="@+id/img_profile"
+                        app:layout_constraintTop_toTopOf="@+id/img_profile" />
+
+                    <TextView
+                        android:id="@+id/tv_profile_"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_sans_semibold"
+                        android:text="@string/view_profile"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/dp_14"
+                        app:layout_constraintBottom_toBottomOf="@+id/img_profile"
+                        app:layout_constraintEnd_toStartOf="@+id/img_bell"
+                        app:layout_constraintStart_toStartOf="@+id/tv_person_name"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_person_name" />
+
+                    <ImageView
+                        android:id="@+id/img_bell"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dp_12"
+                        android:src="@drawable/ic_bell_icon"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/cl_dashboard_header"
+                    android:layout_marginHorizontal="@dimen/dp_30"
+                    android:layout_marginTop="@dimen/dp_40"
+                    android:background="@drawable/curve_whitebox"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingVertical="@dimen/dp_4">
+
+                    <ImageView
+                        android:id="@+id/img_wallet_icon"
+                        android:layout_width="@dimen/dp_50"
+                        android:layout_height="@dimen/dp_50"
+                        android:layout_margin="@dimen/dp_6"
+                        android:src="@drawable/ic_wallet_circle"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_wallet_symbol_sign"
+                        style="@style/Style_text_title_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:text="$"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/img_wallet_icon"
+                        app:layout_constraintTop_toTopOf="@+id/img_wallet_icon" />
+
+                    <TextView
+                        android:id="@+id/tv_wallet_amount_digits"
+                        style="@style/Style_text_title_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/dp_2"
+                        android:text="0"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/tv_wallet_"
+                        app:layout_constraintEnd_toStartOf="@+id/img_add_amount"
+                        app:layout_constraintStart_toEndOf="@+id/tv_wallet_symbol_sign"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+
+
+                    <TextView
+                        android:id="@+id/tv_wallet_"
+                        style="@style/Style_text_title_2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Wallet"
+                        app:layout_constraintBottom_toBottomOf="@+id/img_wallet_icon"
+                        app:layout_constraintEnd_toStartOf="@+id/img_add_amount"
+                        app:layout_constraintStart_toStartOf="@+id/tv_wallet_symbol_sign"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_wallet_symbol_sign" />
+
+                    <ImageView
+                        android:id="@+id/img_refresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:padding="@dimen/dp_12"
+                        android:src="@drawable/ic_refresh"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/img_add_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/dp_10"
+                        android:padding="@dimen/dp_12"
+                        android:src="@drawable/ic_add"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/img_refresh"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </RelativeLayout>
+            <!--Dashboard Layout-->
+            <LinearLayout
+                android:id="@+id/ll_dashboard_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_applicationForm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_30"
+                    android:layout_marginVertical="@dimen/dp_12"
+                    app:cardCornerRadius="@dimen/dp_8"
+                    app:cardElevation="@dimen/dp_10">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_12"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                style="@style/Style_text_title_1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bank Accounts" />
+
+                            <TextView
+                                android:id="@+id/no_bank_msg"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="@dimen/dp_4"
+                                android:layout_weight="1"
+                                android:drawableStart="@drawable/ic_verify_black"
+                                android:drawablePadding="@dimen/dp_4"
+                                android:fontFamily="@font/nunito_sans_regular"
+                                android:text="No banks accounts added."
+                                android:textColor="@color/grey_500"
+                                android:textSize="@dimen/dp_12"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+
+                            android:visibility="visible"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/cl_dashboard_bank"
+                                android:visibility="gone"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/dimen_60"
+                                android:layout_margin="@dimen/dp_12">
+
+                                <ImageView
+                                    android:id="@+id/img_bank_icon"
+                                    android:layout_width="@dimen/dimen_60"
+                                    android:layout_height="@dimen/dimen_60"
+                                    android:scaleType="centerCrop"
+                                    android:padding="@dimen/dp_2"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                                <TextView
+                                    android:id="@+id/tv_bankname"
+                                    style="@style/Style_text_title_1"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/dp_12"
+                                    android:text="dfgdfg"
+                                    app:layout_constraintStart_toEndOf="@+id/img_bank_icon"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/tv_accounttype"
+                                    app:layout_constraintBottom_toTopOf="@id/tv_banktype"/>
+
+                                <TextView
+                                    android:id="@+id/tv_banktype"
+                                    style="@style/Style_text_title_2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="dsfgdfg"
+                                    android:layout_marginStart="@dimen/dp_12"
+                                    app:layout_constraintStart_toEndOf="@+id/img_bank_icon"
+                                    app:layout_constraintEnd_toStartOf="@id/tv_accounttype"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_bankname"
+                                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+
+
+                                <TextView
+                                    android:id="@+id/tv_accounttype"
+                                    style="@style/Style_text_title_2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/dp_12"
+                                    android:drawableStart="@drawable/ic_tick_green"
+                                    android:drawablePadding="@dimen/dp_6"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:text="Primary"
+                                    android:textColor="@color/green_theme"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/ll_dashboard_banklist"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/grey_60" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_dashboard_banklist"
+                                android:layout_width="match_parent"
+                                android:layout_height="150dp"
+                                tools:listitem="@layout/card_bank" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/grey_60" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_add_bank"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_bank_card" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/dp_10"
+                                android:fontFamily="@font/nunito_sans_semibold"
+                                android:text="Add Bank Account"
+                                android:textColor="@color/grey_500"
+                                android:textSize="@dimen/dp_14" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_book_appointment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_30"
+                    android:layout_marginVertical="@dimen/dp_12"
+                    app:cardCornerRadius="@dimen/dp_8"
+                    app:cardElevation="@dimen/dp_10">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/ll_verification_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_12"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/txt_status"
+                                style="@style/Style_text_title_1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="start"
+                                android:text="Verification Status"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/txt_status_verified"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableStart="@drawable/ic_tick_green"
+                                android:drawablePadding="@dimen/dp_6"
+                                android:fontFamily="@font/nunito_sans_semibold"
+                                android:text="Verified"
+                                android:textColor="@color/green_theme"
+                                android:textSize="@dimen/dp_14"
+                                android:visibility="gone"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/txt_status_notverified"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableStart="@drawable/ic_verify_red"
+                                android:drawablePadding="@dimen/dp_6"
+                                android:fontFamily="@font/nunito_sans_semibold"
+                                android:text="Not Verified"
+                                android:textColor="@color/red"
+                                android:textSize="@dimen/dp_14"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/grey_60"
+                            app:layout_constraintTop_toBottomOf="@+id/ll_verification_status" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_appoinment"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:visibility="visible">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_schedule" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/dp_10"
+                                android:fontFamily="@font/nunito_sans_semibold"
+                                android:text="Book Appointment"
+                                android:textColor="@color/grey_500"
+                                android:textSize="@dimen/dp_14" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_validity_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_verify_red" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/dp_10"
+                                android:fontFamily="@font/nunito_sans_semibold"
+                                android:text="Valid till 20/12/2023"
+                                android:textColor="@color/red"
+                                android:textSize="@dimen/dp_14" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_30"
+                    android:layout_marginVertical="@dimen/dp_20"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/ll_account"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/dp_12"
+                        android:layout_weight="1"
+                        android:background="@drawable/curve_squarebox"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/txt_account"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:fontFamily="@font/nunito_sans_regular"
+                            android:padding="@dimen/dp_12"
+                            android:text="Account"
+                            android:textColor="@color/black_text"
+                            android:textSize="@dimen/dp_14" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_12"
+                        android:layout_weight="1"
+                        android:background="@drawable/curve_squarebox"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/txt_logout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:drawableStart="@drawable/ic_logout"
+                            android:drawablePadding="@dimen/dp_6"
+                            android:fontFamily="@font/nunito_sans_regular"
+                            android:padding="@dimen/dp_12"
+                            android:text="Logout"
+                            android:textColor="@color/black_text"
+                            android:textSize="@dimen/dp_14" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </LinearLayout>
+            <!--Booking Layout-->
+            <LinearLayout
+                android:id="@+id/ll_dashboard_booking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_20"
+                    android:layout_marginVertical="@dimen/dp_20"
+                    app:cardCornerRadius="@dimen/dp_8"
+                    app:cardElevation="@dimen/dp_10"
+                    app:cardUseCompatPadding="true">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="@dimen/dp_10"
+                        android:orientation="vertical"
+                        android:paddingVertical="@dimen/dp_16">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/dp_16"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="@string/book_appointment"
+                            android:textColor="@color/grey_900"
+                            android:textSize="@dimen/dp_18" />
+
+
+                        <TextView
+                            style="@style/Style_text_title_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/dp_8"
+                            android:paddingTop="@dimen/dp_12"
+                            android:text="Select a Date" />
+
+                        <TextView
+                            android:id="@+id/txt_booking_date"
+                            style="@style/Style_text_title_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/custom_squarebox"
+                            android:drawableStart="@drawable/ic_calander"
+                            android:drawablePadding="@dimen/dp_16"
+                            android:hint="@string/dd_mm_yyyy"
+                            android:inputType="text"
+                            android:padding="@dimen/dp_12" />
+
+                        <TextView
+                            style="@style/Style_text_title_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/dp_8"
+                            android:paddingTop="@dimen/dp_6"
+                            android:text="Select Time" />
+
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/custom_squarebox"
+                            android:padding="@dimen/dp_6">
+
+                            <ImageView
+                                android:id="@+id/img_booking_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/dp_4"
+                                android:src="@drawable/ic_time"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <Spinner
+                                android:id="@+id/sp_booking_time"
+                                style="@style/edit_text"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:dropDownVerticalOffset="38dp"
+                                android:spinnerMode="dropdown"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/img_booking_time"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+
+                            <ImageView
+                                android:id="@+id/img_bank_down"
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:padding="@dimen/dp_10"
+                                android:src="@drawable/ic_dropdown"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="@dimen/dp_20"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/ll_bookappoinment_back"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="@dimen/dp_12"
+                                android:layout_weight="1"
+                                android:background="@drawable/button_light_green"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:padding="@dimen/dp_8"
+                                    android:text="@string/back"
+                                    android:textColor="@color/green_middle"
+                                    android:textSize="@dimen/dp_14" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll_bookappoinment_pay"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/dp_12"
+                                android:layout_weight="1"
+                                android:background="@drawable/button_green"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:text="@string/pay_now"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/dp_14" />
+                                <ImageView
+                                    android:id="@+id/img_activebank_next"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="@dimen/dp_4"
+                                    android:src="@drawable/ic_arrowright"
+                                    />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

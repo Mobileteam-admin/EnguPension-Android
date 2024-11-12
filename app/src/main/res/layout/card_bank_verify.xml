@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/dp_30"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/dp_12"
+        android:paddingBottom="@dimen/dp_20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_sans_semibold"
+            android:textSize="@dimen/dp_24"
+            android:textColor="@color/grey_900"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/dp_20"
+            android:textAlignment="center"
+            android:text="@string/bank_account_verification" />
+
+        <TextView
+            android:id="@+id/tv_ban_verify_bank_ac"
+            style="@style/Style_text_title_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/dp_8"
+            android:text="@string/account_number" />
+
+        <EditText
+            android:id="@+id/et_bank_verify_acc_num"
+            style="@style/Style_text_title_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_squarebox"
+            android:drawableStart="@drawable/ic_account"
+            android:drawablePadding="@dimen/dp_16"
+            android:inputType="text"
+            android:hint="@string/account_number"
+            android:enabled="true"
+            android:cursorVisible="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:padding="@dimen/dp_12" />
+
+        <TextView
+            android:id="@+id/tv_ban_verify_bank_code"
+            style="@style/Style_text_title_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/dp_8"
+            android:text="@string/bank_code" />
+
+        <EditText
+            android:id="@+id/et_bank_verify_bank_code"
+            style="@style/Style_text_title_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_squarebox"
+            android:drawableStart="@drawable/ic_bank_green"
+            android:drawablePadding="@dimen/dp_16"
+            android:inputType="text"
+            android:hint="@string/bank_code"
+            android:enabled="true"
+            android:cursorVisible="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:padding="@dimen/dp_12" />
+
+        <!-- <Button
+             android:id="@+id/btn_activebank_next"
+             style="@style/DarkGreenButton"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginHorizontal="@dimen/dp_10"
+             android:layout_marginTop="@dimen/dp_16"
+             android:drawableRight="@drawable/ic_arrowright"
+             android:gravity="center|center_vertical"
+             android:paddingLeft="120dp"
+             android:paddingRight="130dp"
+             android:text="@string/next" />-->
+
+
+            <LinearLayout
+                android:id="@+id/ll_bankverifysubmit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dp_12"
+                android:layout_marginTop="@dimen/dp_30"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/button_green"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/nunito_sans_semibold"
+                    android:padding="@dimen/dp_12"
+                    android:text="@string/verify"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dp_14" />
+            </LinearLayout>
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/service_nav"
+    app:startDestination="@id/navigation_choose_service">
+    <fragment
+        android:id="@+id/navigation_choose_service"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.service.ChooseServiceFragment"
+        android:label="Choose Service"
+        tools:layout="@layout/fragment_choose_service">
+        <action
+            android:id="@+id/action_chooseservice_to_ActiveService"
+            app:destination="@id/navigation_activeService"
+             />
+        <action
+            android:id="@+id/action_chooseservice_to_Retiree"
+            app:destination="@id/navigation_Retiree"
+           />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_activeService"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.service.ActiveServiceFragment"
+        android:label="Active Service"
+        tools:layout="@layout/fragment_active_service">
+        <action
+            android:id="@+id/action_activeService_to_chooseservice"
+            app:destination="@id/navigation_choose_service"
+           />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_Retiree"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.service.RetireeServiceFragment"
+        android:label="Retiree Service"
+        tools:layout="@layout/fragment_retiree">
+        <action
+            android:id="@+id/action_Retiree_to_chooseservice"
+            app:destination="@id/navigation_choose_service"
+            />
+    </fragment>
+</navigation>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/dp_30"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/dp_12"
+        android:paddingBottom="@dimen/dp_20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_sans_semibold"
+            android:textSize="@dimen/dp_24"
+            android:textColor="@color/grey_900"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/dp_20"
+            android:textAlignment="center"
+            android:text="Confirm Your EIN" />
+
+        <TextView
+            android:id="@+id/txt_ein_number"
+            style="@style/Style_text_title_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/dp_8"
+            android:text="@string/enter_ein_number" />
+
+        <EditText
+            android:id="@+id/et_ein_number_popup"
+            style="@style/Style_text_title_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_squarebox"
+            android:drawableStart="@drawable/ic_account"
+            android:drawablePadding="@dimen/dp_16"
+            android:hint="@string/et_ein"
+            android:inputType="text"
+            android:padding="@dimen/dp_12" />
+
+        <!-- <Button
+             android:id="@+id/btn_activebank_next"
+             style="@style/DarkGreenButton"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginHorizontal="@dimen/dp_10"
+             android:layout_marginTop="@dimen/dp_16"
+             android:drawableRight="@drawable/ic_arrowright"
+             android:gravity="center|center_vertical"
+             android:paddingLeft="120dp"
+             android:paddingRight="130dp"
+             android:text="@string/next" />-->
+
+        <LinearLayout
+            android:id="@+id/ll_addein_"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_16"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ll_addein_close"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dp_12"
+                android:layout_weight="1"
+                android:background="@drawable/button_light_green"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/nunito_sans_semibold"
+                    android:padding="@dimen/dp_12"
+                    android:text="@string/close"
+                    android:textColor="@color/green_middle"
+                    android:textSize="@dimen/dp_14" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_addein_submit"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dp_12"
+                android:layout_weight="1"
+                android:background="@drawable/button_green"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/nunito_sans_semibold"
+                    android:padding="@dimen/dp_12"
+                    android:text="@string/submit"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dp_14" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

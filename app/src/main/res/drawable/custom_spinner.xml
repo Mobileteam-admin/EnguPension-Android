@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_enabled="true"
+        android:state_focused="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <stroke android:color="@color/colorPrimary" android:width="@dimen/dp_1"/>
+
+                </shape>
+            </item>
+
+            <item android:end="@dimen/dp_12">
+                <bitmap android:src="@drawable/ic_dropdown"
+                    android:gravity="center|end"/>
+            </item>
+
+            <item android:start="@dimen/dp_12">
+                <bitmap android:src="@drawable/ic_bank_green"
+                    android:gravity="center|start"/>
+            </item>
+
+        </layer-list>
+    </item>
+
+    <item android:state_enabled="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <stroke android:color="@color/grey_60" android:width="@dimen/dp_1"/>
+
+                </shape>
+            </item>
+
+            <item android:end="@dimen/dp_12">
+                <bitmap android:src="@drawable/ic_dropdown"
+                    android:gravity="center|end"/>
+            </item>
+
+            <item android:start="@dimen/dp_12" >
+                <bitmap android:src="@drawable/ic_bank_green"
+                    android:gravity="center|start"/>
+            </item>
+
+
+        </layer-list>
+    </item>
+
+</selector>

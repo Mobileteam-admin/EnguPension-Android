@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@id/navigation_dashboard">
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.Dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_profile"
+            app:destination="@id/navigation_profile" />
+        <action
+            android:id="@+id/action_dashboard_to_wallet"
+            app:destination="@id/navigation_wallet" />
+        <action
+            android:id="@+id/action_dashboard_to_account"
+            app:destination="@id/navigation_account" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/navigation_wallet"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.wallet.WalletFragment"
+        android:label="Wallet"
+        tools:layout="@layout/fragment_wallet">
+        <action
+            android:id="@+id/action_wallet_to_wallet_history"
+            app:destination="@id/navigation_wallet_history" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_wallet_history"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.wallet.WalletHistoryFragment"
+        android:label="WalletHistory"
+        tools:layout="@layout/fragment_wallet_history" />
+    <fragment
+        android:id="@+id/navigation_account"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.account.AccountFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_account">
+        <action
+            android:id="@+id/action_account_to_accountstatement"
+            app:destination="@id/navigation_accountstatement" />
+        <action
+            android:id="@+id/action_account_to_kinprofile"
+            app:destination="@id/navigation_kinprofile" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_accountstatement"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.account.AccountStatementFragment"
+        android:label="AccountStatement"
+        tools:layout="@layout/fragment_account_statement" />
+    <fragment
+        android:id="@+id/navigation_kinprofile"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.kin.KinProfileFragment"
+        android:label="KinProfile"
+        tools:layout="@layout/fragment_kin_profile" />
+</navigation>

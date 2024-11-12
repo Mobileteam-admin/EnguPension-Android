@@ -1,0 +1,1812 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white"
+    tools:context=".ui.fragment.service.retiree.RetireeDocumentsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/bottom_bg_retiree_doc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitEnd"
+            android:src="@drawable/ic_newclip_bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/ll_retiree_docs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/dp_12"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/dp_20"
+            android:paddingBottom="@dimen/dp_80"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <!--        ID card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_id_retiree_doc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_10"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="ID card"
+                            android:textColor="@color/black_text"
+                            android:textStyle="bold"
+                            app:drawableRightCompat="@drawable/asterisk_8" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_id_card_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_10"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_id_card_doc_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_id_card_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+                                <Button
+                                    android:id="@+id/retiree_id_card_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_id_card_doc_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_id_card_doc_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_id_card_doc_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_id_card_doc_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_id_card_doc_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_id_card_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_id_card_doc"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_id_card_doc_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_id_card_doc_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_id_card_doc_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+
+                                </LinearLayout>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_id_card_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!--         Passport Photo-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_passportPhoto_retiree_doc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_10"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Passport Photo"
+                            android:textColor="@color/black_text"
+                            android:textStyle="bold"/>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_passport_photo_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_10"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_passport_photo_doc_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_passport_photo_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+                                <Button
+                                    android:id="@+id/retiree_passport_photo_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_passport_photo_doc_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_passport_photo_doc_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_passport_photo_doc_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_passport_photo_doc_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_app_passport_photo_doc_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_passport_photo_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_passport_photo_doc"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_passport_photo_doc_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_passport_photo_doc_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_passport_photo_doc_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+
+                                </LinearLayout>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_passport_photo_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <!--         retiree app form-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_retiree_applicationForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_12"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            style="@style/Style_text_title_1"
+                            android:text="Upload Application form"
+                            android:textStyle="bold"
+                            />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_applicationForm_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_10"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_app_form_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_app_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+                                <Button
+                                    android:id="@+id/retiree_app_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_app_form_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_app_form_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_app_form_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_app_form_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_app_form_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_app_form"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_form_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_app_form_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_retiree_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+
+                                </LinearLayout>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_app_form_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="@dimen/dp_10"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!--         Appointment for payment of monthly arrears-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_retiree_appointment_payment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_12"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            style="@style/Style_text_title_1"
+                            android:text="Appointment for payment of monthly arrears"
+                            android:textStyle="bold"/>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_appointment_payment_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_10"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_appointment_payment_doc_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_appointment_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+                                <Button
+                                    android:id="@+id/retiree_appointment_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_appointment_payment_doc_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_appointment_payment_doc_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_appointment_payment_doc_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_appointment_payment_doc_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_appointment_payment_doc_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_appointment_payment_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_appointment_payment_doc"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_appointment_payment_doc_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_appointment_payment_doc_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_appointment_payment_doc_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+                                </LinearLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_appointment_payment_doc_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!--         Authorisation for payment of retirement/Death-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_retiree_authorization_payment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_10"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Authorisation for payment of retirement/Death"
+                            android:textColor="@color/black_text"
+                            android:textStyle="bold" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_authorisation_payment_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:layout_margin="@dimen/dp_10"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_authorisation_payment_doc_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_authorisation_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+                                <Button
+                                    android:id="@+id/retiree_authorisation_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_authorisation_payment_doc_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_authorisation_payment_doc_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_authorisation_payment_doc_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_authorisation_payment_doc_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_authorisation_payment_doc_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_authorisation_payment_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_authorisation_payment_doc"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_authorisation_payment_doc_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_authorisation_payment_doc_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_authorisation_payment_doc_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+
+                                </LinearLayout>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_authorisation_payment_doc_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!--         clearance form -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_retiree_clearance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_10"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Clearance form"
+                            android:textColor="@color/black_text"
+                            android:textStyle="bold"/>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_clearance_form_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_10"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_clearance_form_doc_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_clearance_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+                                <Button
+                                    android:id="@+id/retiree_clearance_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_clearance_form_doc_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_clearance_form_doc_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_clearance_form_doc_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_clearance_form_doc_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_clearance_form_doc_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_clearance_form_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_clearance_form_doc"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_clearance_form_doc_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_clearance_form_doc_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_clearance_form_doc_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+
+                                </LinearLayout>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_clearance_form_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!--        Notification of Promotion -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_retiree_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_10"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Notification of Promotion"
+                            android:textColor="@color/black_text"
+                            android:textStyle="bold"/>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_notification_promotion_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_10"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_notification_promotion_doc_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_notification_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+                                <Button
+                                    android:id="@+id/retiree_notification_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_notification_promotion_doc_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_notification_promotion_doc_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_notification_promotion_doc_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_notification_promotion_doc_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_notification_promotion_doc_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_notification_promotion_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_notification_promotion_doc"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_notification_promotion_doc_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_notification_promotion_doc_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_notification_promotion_doc_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+
+                                </LinearLayout>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_notification_promotion_doc_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!--        Pension Life certificate-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_pension_life_retiree_doc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_10"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Pension Life certificate"
+                            android:textColor="@color/black_text"
+                            android:textStyle="bold"/>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_pension_certificate_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_10"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_pension_certificate_doc_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_pension_certificate_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+                                <Button
+                                    android:id="@+id/retiree_pension_certificate_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_pension_certificate_doc_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_pension_certificate_doc_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_pension_certificate_doc_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_pension_certificate_doc_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_pension_certificate_doc_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_pension_certificate_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_pension_certificate_doc"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_pension_certificate_doc_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_pension_certificate_doc_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_pension_certificate_doc_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+
+                                </LinearLayout>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_pension_certificate_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+            <!--        Retirement Notice-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_retirementNotice_retiree_doc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_18"
+                app:cardCornerRadius="@dimen/dimen_16"
+                app:cardElevation="@dimen/dp_10">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/dp_10"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Retirement Notice"
+                            android:textColor="@color/black_text"
+                            android:textStyle="bold"/>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_retiree_retirement_notice_doc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_10"
+                            android:visibility="gone"
+                            app:cardCornerRadius="@dimen/dp_16">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="@dimen/dp_16">
+
+                                <TextView
+                                    android:id="@+id/tv_retiree_retirement_notice_doc_filename"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="12dp"
+                                    android:fontFamily="@font/nunito_sans_semibold"
+                                    android:textColor="@color/dark"
+                                    android:textSize="@dimen/dp_14"
+                                    app:layout_constraintEnd_toStartOf="@+id/retiree_retirement_btn_green_view"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="phoenoix-form.pdf" />
+
+
+                                <Button
+                                    android:id="@+id/retiree_retirement_btn_green_view"
+                                    android:layout_width="50dp"
+                                    android:layout_height="25dp"
+                                    android:background="@drawable/green_view_button"
+                                    android:text="View"
+                                    android:textColor="@color/white"
+                                    android:textAllCaps="false"
+                                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_retirement_notice_doc_close"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+
+                                <ImageView
+                                    android:id="@+id/img_retiree_retirement_notice_doc_close"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:padding="@dimen/dp_12"
+                                    android:src="@drawable/ic_close"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_retirement_notice_doc_uploadprogress"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_retiree_retirement_notice_doc_filename">
+
+                                    <LinearLayout
+                                        android:id="@+id/ll_retiree_retirement_notice_doc_percentage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="left"
+                                        android:orientation="horizontal"
+                                        android:visibility="visible">
+
+                                        <TextView
+                                            android:id="@+id/tv_retiree_retirement_notice_doc_percent"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="40%"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                        <TextView
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="@dimen/dp_10"
+                                            android:fontFamily="@font/nunito_sans_semibold"
+                                            android:text="Uploading"
+                                            android:textColor="@color/grey_500"
+                                            android:textSize="@dimen/dp_14" />
+
+                                    </LinearLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pb_retiree_retirement_notice_doc"
+                                        style="?android:attr/progressBarStyleHorizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:progress="25" />
+                                </LinearLayout>
+
+
+                                <LinearLayout
+                                    android:id="@+id/ll_retiree_retirement_notice_doc_size"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="left"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/ll_retiree_retirement_notice_doc_uploadprogress">
+
+                                    <TextView
+                                        android:id="@+id/txt_retirement_notice_doc_filesize"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/nunito_sans_semibold"
+                                        android:textColor="@color/grey_500"
+                                        android:textSize="@dimen/dp_14"
+                                        tools:text="8.77" />
+
+
+                                </LinearLayout>
+
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_retiree_retirement_notice_upload"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/grey_60"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_document_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/dp_10"
+                            android:fontFamily="@font/nunito_sans_semibold"
+                            android:text="Upload"
+                            android:textColor="@color/grey_500"
+                            android:textSize="@dimen/dp_16" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+
+
+            <!--            button bottem green -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ll_retiree_doc_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp_20"
+                android:background="@drawable/button_green"
+                android:padding="@dimen/dp_10">
+
+                <TextView
+                    android:id="@+id/txt_retiree_doc_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito_sans_semibold"
+                    android:paddingLeft="@dimen/dp_130"
+                    android:text="@string/next"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dp_14"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/img_retiree_doc_next"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/img_retiree_doc_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/dp_8"
+                    android:paddingRight="@dimen/dp_130"
+                    android:src="@drawable/ic_arrowright"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/txt_retiree_doc_next"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

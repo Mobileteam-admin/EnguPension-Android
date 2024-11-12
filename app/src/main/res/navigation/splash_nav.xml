@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/splash_nav"
+    app:startDestination="@id/navigation_splash1">
+    <fragment
+        android:id="@+id/navigation_splash1"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.splash.Splash1"
+        android:label="Splash1"
+        tools:layout="@layout/fragment_splash1" >
+
+        <action
+            android:id="@+id/action_splash1_to_splash1"
+            app:destination="@id/navigation_splash2" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_splash2"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.splash.Splash2"
+        android:label="Splash2"
+        tools:layout="@layout/fragment_splash2" />
+
+</navigation>

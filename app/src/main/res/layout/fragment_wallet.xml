@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.fragment.wallet.WalletFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/rl_walletbalance_header"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:scaleType="fitStart"
+                android:src="@drawable/ic_new_main_bg" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_wallet_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/img_wallet_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_back_arrow"
+                    android:padding="@dimen/dp_12"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_wallet_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_18"
+                    android:fontFamily="@font/nunito_sans_semibold"
+                    android:text="@string/wallet_balance"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dp_16"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_wallet_back"
+                    app:layout_constraintEnd_toStartOf="@+id/img_bell"
+                    app:layout_constraintStart_toEndOf="@+id/img_wallet_back"
+                    app:layout_constraintTop_toTopOf="@+id/img_wallet_back" />
+
+
+                <ImageView
+                    android:id="@+id/img_bell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp_12"
+                    android:src="@drawable/ic_bell_icon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cl_wallet_header"
+                android:layout_marginHorizontal="@dimen/dp_30"
+                android:layout_marginTop="@dimen/dp_50"
+                android:background="@drawable/curve_whitebox"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/dp_4">
+
+                <ImageView
+                    android:id="@+id/img_wallet_icon"
+                    android:layout_width="@dimen/dp_50"
+                    android:layout_height="@dimen/dp_50"
+                    android:layout_margin="@dimen/dp_6"
+                    android:src="@drawable/ic_wallet_circle"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_wallet_symbol_sign"
+                    style="@style/Style_text_title_Middle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_12"
+                    android:drawableStart="@drawable/ic_naira"
+                    android:drawablePadding="@dimen/dp_6"
+                    android:text="1245"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/img_wallet_icon"
+                    app:layout_constraintTop_toTopOf="@+id/img_wallet_icon" />
+
+                <TextView
+                    android:id="@+id/tv_wallet_"
+                    style="@style/Style_text_title_2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wallet_balance"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_wallet_icon"
+                    app:layout_constraintStart_toStartOf="@+id/tv_wallet_symbol_sign"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_wallet_symbol_sign" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_walletbalance_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/dp_30"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_walletbalance_bg"
+            app:layout_constraintTop_toBottomOf="@+id/rl_walletbalance_header">
+
+            <TextView
+                style="@style/Style_text_title_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_12"
+                android:text="@string/top_up_wallet" />
+
+            <EditText
+                android:id="@+id/et_top_up_wallet_amount"
+                style="@style/Style_text_title_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_squarebox"
+                android:drawableStart="@drawable/ic_nira_green"
+                android:drawablePadding="@dimen/dp_16"
+                android:hint="@string/enter_amount"
+                android:inputType="text"
+                android:padding="@dimen/dp_12" />
+
+            <TextView
+                android:id="@+id/txt_active_bank"
+                style="@style/Style_text_title_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_8"
+                android:paddingTop="@dimen/dp_12"
+                android:text="@string/select_bank_account" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_squarebox"
+                android:padding="@dimen/dp_6">
+
+                <ImageView
+                    android:id="@+id/img_activebank_"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_4"
+                    android:src="@drawable/ic_bank_green"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Spinner
+                    android:id="@+id/sp_activebank_"
+                    style="@style/edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:dropDownVerticalOffset="38dp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/img_activebank_"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <ImageView
+                    android:id="@+id/img_activeban_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp_6"
+                    android:src="@drawable/ic_downarrow_new"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_wallethistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_20"
+                android:background="@drawable/custom_squarebox"
+                android:padding="@dimen/dp_6">
+
+
+                <TextView
+                    android:id="@+id/txt_wallethistory"
+                    style="@style/Style_text_title_2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_refresh_green"
+                    android:drawablePadding="@dimen/dp_16"
+                    android:hint="@string/wallet_history"
+                    android:inputType="text"
+                    android:padding="@dimen/dp_10"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/img_wallethistory_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp_6"
+                    android:src="@drawable/ic_arrow_right_black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_12"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/cb_wallethistory_autodeduction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPrimary" />
+
+                <TextView
+                    style="@style/Style_text_title_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:text="@string/set_auto_deduciton" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_8"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_wallet_back"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/dp_10"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_light_green"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/nunito_sans_semibold"
+                        android:padding="@dimen/dp_12"
+                        android:text="@string/back"
+                        android:textColor="@color/green_middle"
+                        android:textSize="@dimen/dp_14" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_wallet_topup"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dp_10"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_green"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/nunito_sans_semibold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/top_up_wallet_2"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/dp_14" />
+                    <ImageView
+                        android:id="@+id/img_activebank_next"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/dp_4"
+                        android:src="@drawable/ic_arrowright"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/bottom_walletbalance_bg"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_200"
+            android:scaleType="fitEnd"
+            android:src="@drawable/ic_newclip_bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

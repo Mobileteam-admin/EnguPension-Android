@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.fragment.splash.Splash1">
+
+    <FrameLayout
+        android:id="@+id/rl_engu_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_30"
+        android:gravity="center"
+        android:paddingTop="@dimen/dp_20"
+        app:layout_constraintBottom_toTopOf="@+id/txt_splash_note"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+            android:id="@+id/img_bg_img"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_ellipse_circle" />
+
+        <ImageView
+            android:id="@+id/img_bg_logo"
+            android:layout_width="@dimen/dp_120"
+            android:layout_height="@dimen/dp_120"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_logo" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/txt_splash_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_8"
+        android:gravity="center"
+        android:fontFamily="@font/nunito_sans_regular"
+        android:text="@string/splash_note"
+        android:textColor="@color/grey_900"
+        android:textSize="@dimen/dp_18"
+        app:layout_constraintBottom_toTopOf="@+id/img_next1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rl_engu_logo" />
+
+    <ImageView
+        android:id="@+id/img_next1"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_splash_bg"
+        app:layout_constraintHeight_percent="0.50"
+        app:layout_constraintWidth_percent="0.50"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

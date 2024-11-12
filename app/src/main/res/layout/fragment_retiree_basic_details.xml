@@ -1,0 +1,920 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    tools:context=".ui.fragment.service.retiree.RetireeBasicDetailsFragment">
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       >
+
+
+      <ImageView
+          android:id="@+id/bottom_retireeBasicDetails_bg"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:scaleType="fitEnd"
+          android:src="@drawable/ic_newclip_bottom"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent" />
+      <LinearLayout
+          android:id="@+id/ll_retiree_basicDetails"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginHorizontal="@dimen/dp_30"
+          android:orientation="vertical"
+          android:paddingTop="@dimen/dp_12"
+          android:paddingBottom="@dimen/dp_80"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent">
+
+         <TextView
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:text="@string/first_name"
+             android:layout_marginVertical="@dimen/dp_8"
+             />
+
+         <EditText
+             android:id="@+id/et_retiree_firstName"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_person_icon"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_your_first_name"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+             />
+
+
+         <TextView
+             style="@style/Style_text_title_1"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/middle_name"
+             />
+
+
+         <EditText
+             android:id="@+id/et_retiree_middleName"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_person_icon"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_your_middle_name"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+             />
+
+         <TextView
+             android:id="@+id/tv_retiree_LastName"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/last_name"
+             />
+
+
+         <EditText
+             android:id="@+id/et_retiree_lastName"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_person_icon"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_your_last_name"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+             />
+
+
+         <TextView
+             android:id="@+id/tv_retiree_DOB"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/dob"
+             />
+
+
+         <TextView
+             android:id="@+id/et_retiree_DOB"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_calander"
+             android:drawablePadding="@dimen/dp_16"
+             android:editable="false"
+             android:hint="@string/dd_mm_yyyy"
+             android:padding="@dimen/dp_12"
+             />
+
+
+         <TextView
+             android:id="@+id/tv_retiree_sex"
+             style="@style/Style_text_title_1"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/sex"
+             />
+
+         <!--<LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:paddingVertical="@dimen/dp_6">
+
+
+            <RadioButton
+                android:id="@+id/rb_retiree_male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/male"
+                android:buttonTint="@color/colorPrimary"
+                style="@style/Style_text_title_2"
+                />
+
+            <RadioButton
+                android:id="@+id/rb_retiree_female"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_10"
+                android:text="@string/female"
+                android:buttonTint="@color/colorPrimary"
+                style="@style/Style_text_title_2"
+                />
+
+         </LinearLayout>-->
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+
+            <RadioGroup
+                android:id="@+id/radioGroup_retiree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:orientation="horizontal">
+
+               <RadioButton
+                   android:id="@+id/rb_retiree_male"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="@string/male"
+                   android:buttonTint="@color/colorPrimary"
+                   style="@style/Style_text_title_2"
+                   />
+
+               <RadioButton
+                   android:id="@+id/rb_retiree_female"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="@dimen/dp_10"
+                   android:text="@string/female"
+                   android:buttonTint="@color/colorPrimary"
+                   style="@style/Style_text_title_2"
+                   />
+            </RadioGroup>
+         </LinearLayout>
+
+         <TextView
+             android:id="@+id/tv_retiree_address"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/address"
+             />
+
+         <EditText
+             android:id="@+id/et_retiree_address"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_location"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_your_address"
+             android:inputType="textPostalAddress"
+             android:padding="@dimen/dp_12" />
+
+         <TextView
+             android:id="@+id/tv_retiree_pincode"
+             style="@style/Style_text_title_1"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/pincode"
+             />
+
+         <EditText
+             android:id="@+id/et_retiree_pincode"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_location"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_your_pin"
+             android:inputType="textPostalAddress"
+             android:padding="@dimen/dp_12" />
+
+         <TextView
+             android:id="@+id/tv_retiree_country"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/country"
+             />
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:padding="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/img_retireebank_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:src="@drawable/ic_country"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+
+            <com.rilixtech.widget.countrycodepicker.CountryCodePicker
+                android:id="@+id/ccp_retireedetails"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:ccp_enablePhoneAutoFormatter="false"
+                app:ccp_enableHint="false"
+                app:ccp_defaultNameCode="NG"
+                app:ccp_countryPreference="NG,IN,US,NZ"
+                app:ccp_hideNameCode="true"
+                app:ccp_showFullName="true"
+                app:ccp_hidePhoneCode="true"
+                app:ccp_showFlag="true"
+                app:ccp_textColor="#1C2020"
+                app:ccp_textSize="@dimen/dp_14"
+                android:gravity="center"
+                android:layout_marginStart="@dimen/dp_12"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_retireebank_country"
+                app:layout_constraintTop_toTopOf="parent" />
+
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+         <TextView
+             android:id="@+id/tv_retiree_LGA"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/lga"
+             />
+
+        <!-- <EditText
+             android:id="@+id/et_retiree_LGA"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_lga"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_lga"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+             />-->
+
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:padding="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/img_retiree_lga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:src="@drawable/ic_lga"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/sp_retiree_lga"
+                style="@style/edit_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:dropDownVerticalOffset="38dp"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_retiree_lga"
+                app:layout_constraintTop_toTopOf="parent" />
+            <!-- app:layout_constraintStart_toEndOf="@+id/img_retiree_lga"-->
+
+            <ImageView
+                android:id="@+id/img_retiree_lga_down"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:padding="@dimen/dp_10"
+                android:src="@drawable/ic_dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+         <TextView
+             android:id="@+id/tv_retiree_next_kin"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:drawableRight="@drawable/asterisk_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/name_of_next_of_kin"
+             />
+
+         <EditText
+             android:id="@+id/et_retiree_next_kin"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_person_icon"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_name_of_next_of_kin"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+             />
+
+
+         <TextView
+             android:id="@+id/tv_retiree_next_kin_email"
+             style="@style/Style_text_title_1"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/next_of_kin_email_address"
+             />
+
+         <EditText
+             android:id="@+id/et_retiree_next_kin_email"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_envelope_icon"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_email_of_next_of_kin"
+             android:inputType="textEmailAddress"
+             android:padding="@dimen/dp_12"
+             />
+
+
+         <TextView
+             android:id="@+id/tv_retiree_next_kin_phone"
+             style="@style/Style_text_title_1"
+             android:drawableRight="@drawable/asterisk_8"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/next_of_kin_phone"
+             />
+
+         <!--<EditText
+             android:id="@+id/et_retiree_next_kin_phone"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_phone_icon"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_phone_number_of_next_of_kin"
+             android:inputType="phone"
+             android:padding="@dimen/dp_12"
+             />-->
+
+         <LinearLayout
+             android:id="@+id/ll_retiree_next_kin_phone"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_centerInParent="true"
+             android:background="@drawable/custom_squarebox"
+             android:orientation="horizontal"
+             android:padding="@dimen/dp_12"
+             >
+
+            <com.rilixtech.widget.countrycodepicker.CountryCodePicker
+                android:id="@+id/retiree_next_kin_phone_ccp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:ccp_enablePhoneAutoFormatter="false"
+                app:ccp_enableHint="false"
+                app:ccp_defaultCode="234"
+                app:ccp_defaultNameCode="NG"
+                app:ccp_countryPreference="NG,IN,US,NZ"
+                app:ccp_hideNameCode="false"
+                app:ccp_showFlag="false"
+                app:ccp_textColor="#1C2020"
+                app:ccp_textSize="@dimen/dp_14" />
+
+            <EditText
+                android:id="@+id/et_retiree_next_kin_phone"
+                style="@style/Style_text_title_2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:hint="@string/phone_number"
+                android:inputType="number"
+                android:layout_weight="1"
+                android:paddingStart="@dimen/dp_6" />
+
+         </LinearLayout>
+
+
+         <TextView
+             android:id="@+id/tv_retiree_next_kin_address"
+             style="@style/Style_text_title_1"
+             android:drawableRight="@drawable/asterisk_8"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/next_of_kin_address"
+             />
+
+         <EditText
+             android:id="@+id/et_retiree_next_kin_address"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_location"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_address_of_next_of_kin"
+             android:inputType="textEmailAddress"
+             android:padding="@dimen/dp_12"
+             />
+
+         <TextView
+             android:id="@+id/tv_retiree_kin_pincode"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/pincode"
+             />
+
+         <EditText
+             android:id="@+id/et_retiree_kin_pincode"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_location"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_your_pin"
+             android:inputType="textPostalAddress"
+             android:padding="@dimen/dp_12" />
+         <TextView
+             android:id="@+id/tv_retiree_pension_board"
+             style="@style/Style_text_title_1"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/local_government_pension_board"
+             />
+
+         <!--<EditText
+             android:id="@+id/et_retiree_pension_board"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_occupation"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="Enter local government pension board"
+             android:inputType="textEmailAddress"
+             android:padding="@dimen/dp_12"
+             />-->
+
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:padding="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/img_retiree_pension_board"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:src="@drawable/ic_lga"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/sp_retiree_pension_board"
+                style="@style/edit_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:dropDownVerticalOffset="38dp"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_retiree_pension_board_down"
+                app:layout_constraintStart_toEndOf="@+id/img_retiree_pension_board"
+                app:layout_constraintTop_toTopOf="parent" />
+            <!-- app:layout_constraintStart_toEndOf="@+id/img_retiree_lga"-->
+
+            <ImageView
+                android:id="@+id/img_retiree_pension_board_down"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:padding="@dimen/dp_10"
+                app:layout_constraintHorizontal_bias="1"
+                android:src="@drawable/ic_dropdown"
+                app:layout_constraintStart_toEndOf="@+id/sp_retiree_pension_board"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+         <TextView
+             android:id="@+id/tv_retiree_sub_treasury"
+             style="@style/Style_text_title_1"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/sub_treasury"
+             />
+
+        <!-- <EditText
+             android:id="@+id/et_retiree_sub_treasury"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_nira_green"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_your_sub_treasury"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+             />-->
+
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:padding="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/img_retiree_sub_treasury"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:src="@drawable/ic_lga"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/sp_retiree_sub_treasury"
+                style="@style/edit_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:dropDownVerticalOffset="38dp"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_retiree_sub_treasury"
+                app:layout_constraintTop_toTopOf="parent" />
+            <!-- app:layout_constraintStart_toEndOf="@+id/img_retiree_lga"-->
+
+            <ImageView
+                android:id="@+id/img_retiree_sub_treasury_down"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:padding="@dimen/dp_10"
+                android:src="@drawable/ic_dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+         <TextView
+             android:id="@+id/tv_retiree_date_appointment"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/date_of_appointment"
+             />
+
+         <TextView
+             android:id="@+id/et_retiree_date_appointment"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_calander"
+             android:drawablePadding="@dimen/dp_16"
+             android:editable="false"
+             android:hint="@string/dd_mm_yyyy"
+             android:inputType="date"
+             android:padding="@dimen/dp_12"
+             />
+
+         <TextView
+             android:id="@+id/tv_retiree_last_promotion"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/last_promotion_year"
+            />
+
+         <EditText
+             android:id="@+id/et_retiree_last_promotion"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_calander"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/yyyy"
+             android:maxLength="4"
+             android:inputType="number"
+             android:padding="@dimen/dp_12"
+            />
+
+
+         <TextView
+             android:id="@+id/tv_retiree_grade_level"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/grade_level"
+              />
+
+        <!-- <EditText
+             android:id="@+id/et_retiree_grade_level"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_occupation"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_grade_level"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+              />-->
+
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:padding="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/img_retiree_grade_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:src="@drawable/ic_lga"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/sp_retiree_grade_level"
+                style="@style/edit_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:dropDownVerticalOffset="38dp"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_retiree_grade_level"
+                app:layout_constraintTop_toTopOf="parent" />
+            <!-- app:layout_constraintStart_toEndOf="@+id/img_retiree_grade_level"-->
+
+            <ImageView
+                android:id="@+id/img_retiree_grade_level_down"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:padding="@dimen/dp_10"
+                android:src="@drawable/ic_dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+         <TextView
+             android:id="@+id/tv_retiree_date_retirement"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/date_of_retirement"
+             />
+
+         <TextView
+             android:id="@+id/et_retiree_date_retirement"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_calander"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/dd_mm_yyyy"
+             android:inputType="date"
+             android:padding="@dimen/dp_12"
+             />
+
+
+
+         <TextView
+             android:id="@+id/tv_retiree_position_last"
+             style="@style/Style_text_title_1"
+             android:layout_width="wrap_content"
+             app:drawableRightCompat="@drawable/asterisk_8"
+             android:layout_height="wrap_content"
+             android:layout_marginVertical="@dimen/dp_8"
+             android:paddingTop="@dimen/dp_12"
+             android:text="@string/position_last_held"
+              />
+
+       <!--  <EditText
+             android:id="@+id/et_retiree_position_last"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_occupation"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/enter_your_last_position_held"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+             />-->
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:padding="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/img_retiree_position_last"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_4"
+                android:src="@drawable/ic_occupation"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/sp_retiree_position_last"
+                style="@style/edit_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:dropDownVerticalOffset="38dp"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_retiree_position_last"
+                app:layout_constraintTop_toTopOf="parent" />
+            <!-- app:layout_constraintStart_toEndOf="@+id/img_retiree_grade_level"-->
+
+            <ImageView
+                android:id="@+id/img_retiree_position_last_down"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:padding="@dimen/dp_10"
+                android:src="@drawable/ic_dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+         <EditText
+             android:id="@+id/et_retiree_position_other"
+             style="@style/Style_text_title_2"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@drawable/custom_squarebox"
+             android:drawableStart="@drawable/ic_person_icon"
+             android:drawablePadding="@dimen/dp_16"
+             android:hint="@string/specify_position"
+             android:inputType="text"
+             android:padding="@dimen/dp_12"
+             android:visibility="gone"
+             />
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:id="@+id/ll_retiree_basicdetails_next"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center"
+             android:layout_marginTop="@dimen/dp_50"
+             android:background="@drawable/button_green"
+             android:padding="@dimen/dp_10">
+
+            <TextView
+                android:id="@+id/txt_retiree_basicdetails_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_sans_semibold"
+                android:paddingLeft="@dimen/dp_130"
+                android:text="@string/next"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dp_14"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_retiree_basicdetails_next"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/img_retiree_basicdetails_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/dp_8"
+                android:paddingRight="@dimen/dp_130"
+                android:src="@drawable/ic_arrowright"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/txt_retiree_basicdetails_next"
+                app:layout_constraintTop_toTopOf="parent" />
+         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+      </LinearLayout>
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.core.widget.NestedScrollView>
