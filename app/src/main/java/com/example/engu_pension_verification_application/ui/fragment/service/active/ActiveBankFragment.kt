@@ -516,7 +516,7 @@ class ActiveBankFragment: Fragment() {
                 swiftCode = et_activebank_swiftcode.text.toString(),
                 reEnterAccountNumber = et_activebank_re_accnum.text.toString(),
                 autoRenewal = autoRenewal,
-                userId = prefs.user_id
+//                userId = prefs.user_id
 
             )
         )

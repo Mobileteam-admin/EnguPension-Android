@@ -493,7 +493,7 @@ class RetireeBankFragment(
                 swiftCode = et_retireebank_swiftcode.text.toString(),
                 reEnterAccountNumber = et_retireebank_re_accnum.text.toString(),
                 autoRenewal = autoRenewal,
-                userId = prefs.user_id
+//                userId = prefs.user_id
 
 
             )

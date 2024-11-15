@@ -132,7 +132,7 @@ interface ApiInterface {
     @GET("/api/v1/account_completion/basic_details_retired")
     suspend fun getRetireeBasicRetrive(@Header("Authorization") token: String): ResponseRetireeBasicRetrive
 
-    @GET("/api/v1/users_govt_verfication_status")
+    @GET("/api/v1/users_govt_verification_status")
     suspend fun getActiveProcessingVerify(@Header("Authorization") token: String): ResponseActiveProcessingVerify
 
     @GET("/api/v1/profile/dashboard_details")
