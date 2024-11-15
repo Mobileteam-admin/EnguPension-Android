@@ -2,6 +2,7 @@ package com.example.engu_pension_verification_application.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.engu_pension_verification_application.Constants.AppConstants
 
 object SharedPref {
 
@@ -189,11 +190,17 @@ object SharedPref {
 
     var access_token: String?
         get() = sharedPreferences.getString(USER_ACCESS_TOKEN, "")
-        set(value) = sharedPreferences.edit().putString(USER_ACCESS_TOKEN, value).apply()
+        set(value) {
+            AppConstants.ACCESS_TOKEN = value ?: ""
+            sharedPreferences.edit().putString(USER_ACCESS_TOKEN, value).apply()
+        }
 
     var refresh_token: String?
         get() = sharedPreferences.getString(USER_REFRESH_TOKEN, "")
-        set(value) = sharedPreferences.edit().putString(USER_REFRESH_TOKEN, value).apply()
+        set(value)  {
+            AppConstants.REFRESH_TOKEN = value ?: ""
+            sharedPreferences.edit().putString(USER_REFRESH_TOKEN, value).apply()
+        }
 
 
     //active

@@ -22,7 +22,7 @@ class EIN_Number_Presenter(var einNumberCallback: EIN_Number_CallBack) {
 
                 Log.d("Inputs", "EinSubmitCall: $inputEinNumber")
                 Log.d("token", "EinSubmitCall: "+ prefs.access_token.toString())
-                val response = ApiClient.getRetrofit().getEinNumber("Bearer " + prefs.access_token.toString(),inputEinNumber)
+                val response = ApiClient.getApiInterface().getEinNumber("Bearer " + prefs.access_token.toString(),inputEinNumber)
                 //_ActiveBankInfoStatus.value = response
 
 

@@ -1,7 +1,5 @@
 package com.example.engu_pension_verification_application.ui.fragment.tokenrefresh
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.engu_pension_verification_application.model.input.InputRefreshToken
@@ -29,7 +27,7 @@ class TokenRefreshViewModel(var tokenRefreshCallBack: TokenRefreshCallBack) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
                 val response =
-                    ApiClient.getRetrofit().getRefreshToken(
+                    ApiClient.getApiInterface().getRefreshToken(
                         InputRefreshToken(
                             prefs.refresh_token
                         )

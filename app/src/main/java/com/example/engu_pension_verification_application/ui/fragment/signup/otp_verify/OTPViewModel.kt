@@ -34,7 +34,7 @@ class OTPViewModel(var otpViewCallBack: OtpViewCallBack) {
     fun doVerifyReg(inputSignupVerify: com.example.engu_pension_verification_application.model.input.InputSignupVerify) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getVerifyRegistrationOTP(inputSignupVerify)
+                val response = ApiClient.getApiInterface().getVerifyRegistrationOTP(inputSignupVerify)
                 //_verificationStatus.value = response
                 if (response.detail?.status.equals("success")) {
                     prefs.isLogin = true
@@ -67,7 +67,7 @@ class OTPViewModel(var otpViewCallBack: OtpViewCallBack) {
     fun doVerifyForgot(inputForgotVerify: InputForgotVerify) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getVerifyForgotOTP(inputForgotVerify)
+                val response = ApiClient.getApiInterface().getVerifyForgotOTP(inputForgotVerify)
                 //_verificationStatus.value = response
                 if (response.detail?.status.equals("success")) {
                     prefs.isLogin = true
@@ -97,7 +97,7 @@ class OTPViewModel(var otpViewCallBack: OtpViewCallBack) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
                // Log.d("TAG _ 2", "onClicked: " + inputResendotp)
-                val response = ApiClient.getRetrofit().getResendOTP(inputResendotp)
+                val response = ApiClient.getApiInterface().getResendOTP(inputResendotp)
                 //Log.d("TAG _ 2.1", "onClicked: " + response.detail?.message)
 
                  if (response.detail?.status.equals("success")) {

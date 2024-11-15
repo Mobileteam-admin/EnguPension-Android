@@ -11,10 +11,19 @@ import com.example.engu_pension_verification_application.model.response.GradeLev
 import com.example.engu_pension_verification_application.ui.fragment.service.subtresury.SubTreasuryAdapter
 import java.util.ArrayList
 
-class GradeLevelAdapter(var context: Context?,var GradeLevelsList: ArrayList<GradeLevelsItem?>) :
+class GradeLevelAdapter(var context: Context?,list: ArrayList<GradeLevelsItem?>) :
     BaseAdapter() {
+    private val GradeLevelsList = ArrayList<GradeLevelsItem?>()
+    init {
+        this.GradeLevelsList.addAll(list)
+    }
     val mInflater: LayoutInflater = LayoutInflater.from(context)
 
+    fun changeList(list: ArrayList<GradeLevelsItem?>) {
+        this.GradeLevelsList.clear()
+        this.GradeLevelsList.addAll(list)
+        notifyDataSetChanged()
+    }
 
     fun getPositionByName(name: String): Int {
         return GradeLevelsList.indexOfFirst { it?.level == name }

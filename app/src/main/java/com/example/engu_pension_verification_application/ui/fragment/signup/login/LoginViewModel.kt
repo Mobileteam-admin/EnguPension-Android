@@ -1,14 +1,7 @@
 package com.example.engu_pension_verification_application.ui.fragment.signup.login
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.engu_pension_verification_application.model.input.InputLogin
-import com.example.engu_pension_verification_application.model.response.Detail
-import com.example.engu_pension_verification_application.model.response.LoginDetail
-import com.example.engu_pension_verification_application.model.response.ResponseLogin
-import com.example.engu_pension_verification_application.model.response.SignupResponse
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.utils.SharedPref
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +24,7 @@ class LoginViewModel(var loginViewCallBack: LoginViewCallBack){
     fun doLogin(inputLogin: com.example.engu_pension_verification_application.model.input.InputLogin) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getLogin(inputLogin)
+                val response = ApiClient.getApiInterface().getLogin(inputLogin)
 
                 if (response.login_detail?.status.equals("success")) {
                     prefs.isLogin = true

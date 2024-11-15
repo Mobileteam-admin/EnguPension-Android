@@ -10,9 +10,19 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.model.response.OccupationsItem
 import java.util.ArrayList
 
-class OccupationsAdapter(var context: Context?, var occupationsList: ArrayList<OccupationsItem?>) :
+class OccupationsAdapter(var context: Context?, list: ArrayList<OccupationsItem?>) :
     BaseAdapter() {
+        private val occupationsList = ArrayList<OccupationsItem?>()
+    init {
+        this.occupationsList.addAll(list)
+    }
     val mInflater: LayoutInflater = LayoutInflater.from(context)
+
+    fun changeList(occupationsList: ArrayList<OccupationsItem?>) {
+        this.occupationsList.clear()
+        this.occupationsList.addAll(occupationsList)
+        notifyDataSetChanged()
+    }
 
     fun getPositionByName(name: String): Int {
         return occupationsList.indexOfFirst { it?.name == name }

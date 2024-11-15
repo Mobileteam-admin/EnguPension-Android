@@ -23,7 +23,7 @@ class Retiree_EIN_Number_Presenter(var retireeinNumberCallback:Retiree_EIN_Numbe
 
                 Log.d("Inputs", "RetireeEinSubmitCall: $inputEinNumber")
                 Log.d("token", "RetireeEinSubmitCall: "+ prefs.access_token.toString())
-                val response = ApiClient.getRetrofit().getEinNumber("Bearer " + prefs.access_token.toString(),inputEinNumber)
+                val response = ApiClient.getApiInterface().getEinNumber("Bearer " + prefs.access_token.toString(),inputEinNumber)
                 //_ActiveBankInfoStatus.value = response
 
 

@@ -11,11 +11,19 @@ import com.example.engu_pension_verification_application.model.response.SubTreas
 import com.example.engu_pension_verification_application.ui.fragment.service.lga.LGASpinnerAdapter
 import java.util.ArrayList
 
-class SubTreasuryAdapter(var context: Context?, var subtreasuryList: ArrayList<com.example.engu_pension_verification_application.model.response.SubTreasuryItem?>) :
+class SubTreasuryAdapter(var context: Context?,list: ArrayList<SubTreasuryItem?>) :
     BaseAdapter() {
-
+    private var subtreasuryList = ArrayList<SubTreasuryItem?>()
+    init {
+        this.subtreasuryList.addAll(list)
+    }
     val mInflater: LayoutInflater = LayoutInflater.from(context)
 
+    fun changeList(subtreasuryList: ArrayList<SubTreasuryItem?>) {
+        this.subtreasuryList.clear()
+        this.subtreasuryList.addAll(subtreasuryList)
+        notifyDataSetChanged()
+    }
 
     fun getPositionByName(name: String): Int {
         return subtreasuryList.indexOfFirst { it?.name == name }

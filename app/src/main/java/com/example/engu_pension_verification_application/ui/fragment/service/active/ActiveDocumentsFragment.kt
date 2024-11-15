@@ -21,21 +21,35 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.commons.TabAccessControl
 import com.example.engu_pension_verification_application.commons.setDocumentView
 import com.example.engu_pension_verification_application.commons.setDocumentViewIfPresent
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.FileUrlResponse
 import com.example.engu_pension_verification_application.model.response.ResponseActiveDocRetrive
 import com.example.engu_pension_verification_application.model.response.ResponseActiveDocUpload
 import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
+import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.ActiveDocWebViewActivity
 import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
 import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
 import com.example.engu_pension_verification_application.utils.SharedPref
 import com.example.engu_pension_verification_application.utils.ViewPageCallBack
+import com.example.engu_pension_verification_application.view_models.ActiveDocumentsViewModelFactory
+import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
+import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2Factory
 import kotlinx.android.synthetic.main.fragment_active_documents.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -45,8 +59,13 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 
 
-class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val tabAccessControl: TabAccessControl) : Fragment(),
-    View.OnClickListener, ActiveDocCallBack, TokenRefreshCallBack {
+class ActiveDocumentsFragment(
+) : Fragment(),
+    View.OnClickListener
+{
+    private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
+    private lateinit var activeDocumentsViewModel: ActiveDocumentsViewModel
 
     val prefs = SharedPref
 
@@ -60,10 +79,9 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
     private var PhotoUri: Uri? = null
     private var ClearanceUri: Uri? = null
 
-    private lateinit var activeDocViewModel: ActiveDocumentsViewModel
-    private lateinit var tokenRefreshViewModel: TokenRefreshViewModel
 
     companion object {
+        private const val TAB_POSITION = 1
         const val APPLICATION_FORM_FILE = 101
         const val LETTER_FILE = 102
         const val IDCARD_FILE = 103
@@ -114,11 +132,10 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initViewModels()
+        observeLiveData()
         /*activeDocViewModel =
             ViewModelProvider(this).get(ActiveDocumentsViewModel::class.java)*/
-        activeDocViewModel = ActiveDocumentsViewModel(this)
-        tokenRefreshViewModel = TokenRefreshViewModel(this)
 
         //tabAccessControl.enableDisableTabs(true,true,false)
 
@@ -126,21 +143,17 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
         {
 
             if (prefs.isActiveDocSubmit){
-
-                tabAccessControl.enableDisableTabs(true, true, true)
+                activeServiceViewModel.setTabsEnabledState(true, true, true)
 
             }else{
-
-                tabAccessControl.enableDisableTabs(true, true, false)
-
+                activeServiceViewModel.setTabsEnabledState(true, true, false)
             }
         }else{
             //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-            tabAccessControl.enableDisableTabs(true, false, false)
+            activeServiceViewModel.setTabsEnabledState(true, false, false)
 
         }
 
-        DocRetrivecall()
 
 
         ll_active_app_form_upload.setOnClickListener(this)
@@ -167,7 +180,58 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
 
     }
 
-
+    private fun initViewModels() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        activeDocumentsViewModel = ViewModelProviders.of(
+            this,
+            ActiveDocumentsViewModelFactory(networkRepo)
+        ).get(ActiveDocumentsViewModel::class.java)
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            TokenRefreshViewModel2Factory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
+    }
+    private fun observeLiveData() {
+        activeServiceViewModel.currentTabPos.observe(viewLifecycleOwner){
+            if (it == TAB_POSITION) DocRetrivecall()
+        }
+        activeDocumentsViewModel.documentsApiResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                ActiveUserDocRetrive = response.detail?.fileUrlResponse
+                responseActiveDocRetrive = response
+                onRetrievedDocSetFields2()
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeDocumentsViewModel.fetchActiveDocuments(1)
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        activeDocumentsViewModel.documentsUploadResult.observe(viewLifecycleOwner) { pair ->
+            Loader.hideLoader()
+            val request = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                onDocUploadSuccess(response) //
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeDocumentsViewModel.uploadDocuments(request)
+                        }
+                    }
+                } else {
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
 
     override fun onClick(it: View?) {
         when (it) {
@@ -252,8 +316,8 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
 
                 Log.d("Debug", "ll_activedoc_next clicked")
                 if (!ActiveUserDocRetrive?.idCardFileUrl.isNullOrEmpty()) {
-                    viewPageCallBack.onViewMoveNext()
-                    tabAccessControl.enableDisableTabs(true, true, true)
+                    activeServiceViewModel.moveToNextTab()
+                    activeServiceViewModel.setTabsEnabledState(true, true, true)
                 }else if (isValidDocs()) {
                     Log.d("Debug", "isValidDocs is true")
                     nextButtonCall()
@@ -394,8 +458,7 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
         //Loader.showLoader(requireContext())
         if (context?.isConnectedToNetwork()!!) {
 
-            activeDocViewModel.docRetrive()
-
+            activeDocumentsViewModel.fetchActiveDocuments(0)
             //Loader.hideLoader()
 
 
@@ -625,7 +688,7 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
                     clearance_form_file!!.asRequestBody(clearance_form_fileMIME.toMediaTypeOrNull())
                 ).build()
 
-        activeDocViewModel.docUpload(requestBody)
+        activeDocumentsViewModel.uploadDocuments(requestBody)
 
     }
 
@@ -708,7 +771,7 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
     val requestBody: RequestBody = multipartBuilder.build()
 
     // Now pass the RequestBody to the docUpload function
-    activeDocViewModel.docUpload(requestBody)
+        activeDocumentsViewModel.uploadDocuments(requestBody)
     }
 
 
@@ -1361,34 +1424,19 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
         return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
     }
 
-    override fun onDocUploadSuccess(response: ResponseActiveDocUpload) {
+    fun onDocUploadSuccess(response: ResponseActiveDocUpload) {
         Loader.hideLoader()
 
         //prefs.isActiveDocSubmit = true
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
         prefs.isActiveDocSubmit = true
         //enableDisableTabs(tab_tablayout_activeservice, true, true, true)
-        viewPageCallBack.onViewMoveNext()
+        activeServiceViewModel.moveToNextTab()
         //tabAccessControl.enableDisableTabs(true, true, true)
 
 
     }
 
-    override fun onDocUploadFailure(response: ResponseActiveDocUpload) {
-        Loader.hideLoader()
-        if (response.detail?.tokenStatus.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()
-
-
-        } else {
-            Loader.hideLoader()
-            Toast.makeText(
-                context, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
-        }
-    }
 
 
     private fun onRetrievedDocSetFields2() {
@@ -1401,13 +1449,10 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
                 {
 
                     if (prefs.isActiveDocSubmit){
-
-                        tabAccessControl.enableDisableTabs(true, true, true)
+                        activeServiceViewModel.setTabsEnabledState(true, true, true)
 
                     }else{
-
-                        tabAccessControl.enableDisableTabs(true, true, false)
-
+                        activeServiceViewModel.setTabsEnabledState(true, true, false)
                     }
                 }else{
                     //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
@@ -1512,56 +1557,6 @@ class ActiveDocumentsFragment(var viewPageCallBack: ViewPageCallBack,private val
 
 
     }
-
-
-
-
-    override fun onDocRetriveSuccess(response: ResponseActiveDocRetrive) {
-        Loader.hideLoader()
-
-
-
-
-        ActiveUserDocRetrive = response.detail?.fileUrlResponse!!
-        Log.d("onDocRetriveSuccssVariable", "${ActiveUserDocRetrive?.idCardFileUrl}")
-
-        responseActiveDocRetrive = response
-
-        onRetrievedDocSetFields2()
-
-
-
-        //onRetrivedDocSetFields()
-
-
-    }
-
-
-    override fun onDocRetriveFailure(response: ResponseActiveDocRetrive) {
-        Loader.hideLoader()
-        //ActiveUserDocRetrive = null
-        //responseActiveDocRetrive = null
-        Toast.makeText(
-            context, response.detail?.message, Toast.LENGTH_LONG
-        ).show()
-    }
-
-    override fun onTokenRefreshSuccess(response: ResponseRefreshToken) {
-
-        //Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-        Log.d("refresh_success", "${response.token_detail?.message}")
-
-        docUploadCall2()
-    }
-
-    override fun onTokenRefreshFailure(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(
-            context, response.token_detail?.message, Toast.LENGTH_LONG
-        ).show()
-    }
-
-
 }
 
 
