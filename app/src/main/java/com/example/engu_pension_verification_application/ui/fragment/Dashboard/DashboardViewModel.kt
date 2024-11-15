@@ -1,13 +1,6 @@
 package com.example.engu_pension_verification_application.ui.fragment.Dashboard
 
-import android.app.Application
 import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.engu_pension_verification_application.commons.Loader
-import com.example.engu_pension_verification_application.model.input.InputRefreshToken
 import com.example.engu_pension_verification_application.model.response.*
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.utils.SharedPref
@@ -48,7 +41,7 @@ Loader.hideLoader()
                 ).show()
             }*/
             try {
-                val response = ApiClient.getRetrofit().getLogout("Bearer " +prefs.access_token.toString()) //"Bearer Token " +
+                val response = ApiClient.getApiInterface().getLogout("Bearer " +prefs.access_token.toString()) //"Bearer Token " +
 
                 if (response.logout_detail?.status.equals("success")) {
                     dashboardCallBack.ondashboardLogoutSuccess(response)
@@ -71,7 +64,7 @@ Loader.hideLoader()
     fun getDashboardDetails() {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getDashBoardDetails("Bearer " +prefs.access_token.toString()) //"Bearer Token " +
+                val response = ApiClient.getApiInterface().getDashBoardDetails("Bearer " +prefs.access_token.toString()) //"Bearer Token " +
 
                 if (response.detail?.status.equals("success")) {
                     dashboardCallBack.ondashboardDetailsSuccess(response)

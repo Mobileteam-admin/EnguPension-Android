@@ -22,7 +22,7 @@ class RetireeDocumentsViewModel(var retireeDocCallBack: RetireeDocCallBack) {
             try {
 
 
-                val response = ApiClient.getRetrofit().upLoadRetireeeUserDocuments(
+                val response = ApiClient.getApiInterface().upLoadRetireeeUserDocuments(
                     "Bearer " + prefs.access_token.toString(),requestbody)
 
                 Log.d("DocSubmitRes", "DocSubmitRes : $response")
@@ -49,7 +49,7 @@ class RetireeDocumentsViewModel(var retireeDocCallBack: RetireeDocCallBack) {
     fun retireedocRetrive(){
         GlobalScope.launch(Dispatchers.Main){
             try {
-                val response = ApiClient.getRetrofit().getRetireeDocRetrive(
+                val response = ApiClient.getApiInterface().getRetireeDocRetrive(
                     "Bearer " + prefs.access_token.toString()
                 )
 

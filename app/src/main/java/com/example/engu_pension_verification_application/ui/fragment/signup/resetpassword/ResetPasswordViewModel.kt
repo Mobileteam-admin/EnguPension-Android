@@ -1,14 +1,7 @@
 package com.example.engu_pension_verification_application.ui.fragment.signup.resetpassword
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.engu_pension_verification_application.model.input.InputResetPassword
-import com.example.engu_pension_verification_application.model.response.ForgotPasswordDetail
-import com.example.engu_pension_verification_application.model.response.ResetDetail
-import com.example.engu_pension_verification_application.model.response.ResponseForgotPassword
-import com.example.engu_pension_verification_application.model.response.ResponseResetPassword
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.utils.SharedPref
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +21,7 @@ class ResetPasswordViewModel(var resetPassCallBack: ResetPassCallBack) {
     fun doReset(inputResetPassword: com.example.engu_pension_verification_application.model.input.InputResetPassword) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getResetPassword(inputResetPassword)
+                val response = ApiClient.getApiInterface().getResetPassword(inputResetPassword)
 
                 if (response.reset_detail?.status.equals("success")) {
                     //_ResetPassStatus.value = response

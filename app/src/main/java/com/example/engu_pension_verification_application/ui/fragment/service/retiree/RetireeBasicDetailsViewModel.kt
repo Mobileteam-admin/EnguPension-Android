@@ -33,7 +33,7 @@ class RetireeBasicDetailsViewModel(var retireeBasicDetailsViewCallBack: RetireeB
     fun getCombinedDetails(inputLGAList: InputLGAList) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getCombinationDetails(
+                val response = ApiClient.getApiInterface().getCombinationDetails(
                     inputLGAList
                 ) //"Token " +prefs.access_token.toString()) //"Bearer Token "
                 // "Bearer " + prefs.access_token.toString(),
@@ -65,7 +65,7 @@ class RetireeBasicDetailsViewModel(var retireeBasicDetailsViewCallBack: RetireeB
     fun getAccountDetails(inputRetireeBasicDetails: InputRetireeBasicDetails) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getRetireeDetails(
+                val response = ApiClient.getApiInterface().getRetireeDetails(
                     "Bearer " + prefs.access_token.toString(), inputRetireeBasicDetails
                 )
                 if (response.detail?.status.equals("success")) {
@@ -105,7 +105,7 @@ class RetireeBasicDetailsViewModel(var retireeBasicDetailsViewCallBack: RetireeB
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getRetireeBasicRetrive(
+                val response = ApiClient.getApiInterface().getRetireeBasicRetrive(
                     "Bearer " + prefs.access_token.toString()
                 )
 

@@ -36,7 +36,7 @@ class RetireeBankViewModel(var retireeBankCallBack: RetireeBankFragment) {
 
                 Log.d("Inputs", "FinishFnCall: " + inputActiveBankInfo)
                 Log.d("token", "FinishFnCall: " + prefs.access_token.toString())
-                val response = ApiClient.getRetrofit().getActiveBankInfo(
+                val response = ApiClient.getApiInterface().getActiveBankInfo(
                     "Bearer " + prefs.access_token.toString(),
                     inputActiveBankInfo
                 )
@@ -87,7 +87,7 @@ class RetireeBankViewModel(var retireeBankCallBack: RetireeBankFragment) {
     fun getswiftBankCode(inputswiftcode: InputSwiftBankCode) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getSwiftBankCode(
+                val response = ApiClient.getApiInterface().getSwiftBankCode(
                     "Bearer " + prefs.access_token.toString(), inputswiftcode
                 )
 

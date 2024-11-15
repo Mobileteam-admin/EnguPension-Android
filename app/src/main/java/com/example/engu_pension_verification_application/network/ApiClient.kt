@@ -14,10 +14,19 @@ object ApiClient {
     var prefs = SharedPref
 
     var BASE_URL: String = "https://pension-distributor.demoserver.work"
+    @Volatile private var apiInterface:ApiInterface? =null
 
-
-    fun getRetrofit(): ApiInterface {
-
+    fun getApiInterface(): ApiInterface {
+        if (apiInterface == null) {
+            synchronized(this) {
+                if (apiInterface == null) {
+                    apiInterface = createRetrofit()
+                }
+            }
+        }
+        return apiInterface!!
+    }
+    private fun createRetrofit(): ApiInterface {
         var interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
 

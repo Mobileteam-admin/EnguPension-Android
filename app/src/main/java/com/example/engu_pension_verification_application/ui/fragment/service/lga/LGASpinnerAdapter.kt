@@ -11,8 +11,18 @@ import com.example.engu_pension_verification_application.model.response.LgasItem
 import com.example.engu_pension_verification_application.utils.SharedPref
 import java.util.ArrayList
 
-class LGASpinnerAdapter(var context: Context?,var LGAList: ArrayList<LgasItem?>) : BaseAdapter() {
+class LGASpinnerAdapter(var context: Context?,list: ArrayList<LgasItem?>) : BaseAdapter() {
+    private val LGAList = ArrayList<LgasItem?>()
+    init {
+        this.LGAList.addAll(list)
+    }
     val mInflater: LayoutInflater = LayoutInflater.from(context)
+
+    fun changeList(LGAList: ArrayList<LgasItem?>) {
+        this.LGAList.clear()
+        this.LGAList.addAll(LGAList)
+        notifyDataSetChanged()
+    }
 
     fun getPositionByName(name: String): Int {
         return LGAList.indexOfFirst { it?.name == name }

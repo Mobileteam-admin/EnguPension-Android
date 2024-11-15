@@ -15,7 +15,7 @@ class RetireeServicePresenter(var retireeServiceViewCallBack: RetireeServiceView
         fun getBankList() {
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val response = ApiClient.getRetrofit().getAddedBanks(
+                val response = ApiClient.getApiInterface().getAddedBanks(
                     "Bearer " + prefs.access_token.toString())
                 // Log.d("Model", "getBankList: "+response.banks)
                 if (response.detail?.status.equals("success")) {

@@ -3,19 +3,13 @@ package com.example.engu_pension_verification_application.ui.fragment.service.ba
 import android.util.Log
 import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.model.input.InputBankVerification
-import com.example.engu_pension_verification_application.model.input.InputEinNumber
 import com.example.engu_pension_verification_application.model.response.BankVerifyDetail
-import com.example.engu_pension_verification_application.model.response.Detail
-import com.example.engu_pension_verification_application.model.response.EinNumberDetail
 import com.example.engu_pension_verification_application.model.response.ResponseBankVerify
-import com.example.engu_pension_verification_application.model.response.ResponseEinNumber
 import com.example.engu_pension_verification_application.network.ApiClient
-import com.example.engu_pension_verification_application.ui.fragment.service.EIN_Number.EIN_Number_CallBack
 import com.example.engu_pension_verification_application.utils.SharedPref
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import retrofit2.http.Query
 
 class Bank_Verify_Presenter(var bankVerifyCallback: Bank_Verify_Callback) {
 
@@ -28,7 +22,7 @@ class Bank_Verify_Presenter(var bankVerifyCallback: Bank_Verify_Callback) {
 
                 Log.d("Inputs", "bankverifycall: $inputBankVerification")
                 Log.d("token", "bankverifycall: "+ prefs.access_token.toString())
-                val response = ApiClient.getRetrofit().getBankVerify("Bearer " + prefs.access_token.toString(), inputBankVerification)
+                val response = ApiClient.getApiInterface().getBankVerify("Bearer " + prefs.access_token.toString(), inputBankVerification)
                 //_ActiveBankInfoStatus.value = response
 
 

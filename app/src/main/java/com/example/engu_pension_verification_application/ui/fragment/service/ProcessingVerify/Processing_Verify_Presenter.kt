@@ -55,7 +55,7 @@ class Processing_Verify_Presenter(var processingVerifyCallback: Processing_Verif
 
 
             try {
-                val response = ApiClient.getRetrofit().getActiveProcessingVerify(
+                val response = ApiClient.getApiInterface().getActiveProcessingVerify(
                     "Bearer " + prefs.access_token.toString()
                 ) //
                 // Log.d("Model", "getBankList: "+response.banks)
