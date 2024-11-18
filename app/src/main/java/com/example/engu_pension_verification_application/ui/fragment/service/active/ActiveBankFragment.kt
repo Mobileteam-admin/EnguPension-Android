@@ -37,10 +37,9 @@ import com.example.engu_pension_verification_application.ui.activity.ProcessDash
 import com.example.engu_pension_verification_application.ui.fragment.service.accounttype.AccountTypeAdapter
 import com.example.engu_pension_verification_application.ui.fragment.service.bank.BankAdapter
 import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.view_models.ActiveBankViewModelFactory
 import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
 import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2Factory
 import kotlinx.android.synthetic.main.fragment_active_bank.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -144,11 +143,11 @@ class ActiveBankFragment: Fragment() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         activeBankViewModel = ViewModelProviders.of(
             this,
-            ActiveBankViewModelFactory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(ActiveBankViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
-            TokenRefreshViewModel2Factory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
     private fun observeLiveData() {

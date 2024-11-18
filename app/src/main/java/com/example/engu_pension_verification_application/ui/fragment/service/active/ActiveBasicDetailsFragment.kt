@@ -49,10 +49,9 @@ import com.example.engu_pension_verification_application.ui.fragment.tokenrefres
 import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
 import com.example.engu_pension_verification_application.utils.SharedPref
 import com.example.engu_pension_verification_application.utils.ViewPageCallBack
-import com.example.engu_pension_verification_application.view_models.ActiveBasicDetailViewModelFactory
 import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
 import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2Factory
 import kotlinx.android.synthetic.main.fragment_active_basic_details.*
 import kotlinx.android.synthetic.main.fragment_active_service.tab_tablayout_activeservice
 import kotlinx.coroutines.Dispatchers
@@ -195,11 +194,11 @@ class ActiveBasicDetailsFragment : Fragment()
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         activeBasicDetailViewModel = ViewModelProviders.of(
             this,
-            ActiveBasicDetailViewModelFactory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(ActiveBasicDetailViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
-            TokenRefreshViewModel2Factory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
     private fun observeLiveData() {

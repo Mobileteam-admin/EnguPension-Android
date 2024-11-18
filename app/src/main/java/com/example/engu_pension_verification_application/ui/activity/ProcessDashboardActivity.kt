@@ -12,37 +12,45 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseActiveProcessingVerify
 import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
+import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.fragment.service.ProcessingVerify.Processing_Verify_CallBack
-import com.example.engu_pension_verification_application.ui.fragment.service.ProcessingVerify.Processing_Verify_Presenter
 import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
 import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
+import com.example.engu_pension_verification_application.utils.NetworkUtils
 import com.example.engu_pension_verification_application.utils.SharedPref
+import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
+import com.example.engu_pension_verification_application.view_models.ProcessDashboardViewModel
+import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
+import kotlinx.android.synthetic.main.activity_process_dashboard.btn_retry
+import kotlinx.android.synthetic.main.activity_process_dashboard.ll_processing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-class ProcessDashboardActivity : AppCompatActivity(), Processing_Verify_CallBack,
-    TokenRefreshCallBack {
-    lateinit var processingVerifyPresenter: Processing_Verify_Presenter
-    private lateinit var tokenRefreshViewModel: TokenRefreshViewModel
+class ProcessDashboardActivity : AppCompatActivity() {
+    private lateinit var viewModel: ProcessDashboardViewModel
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     val prefs = SharedPref
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_process_dashboard)
-
-        processingVerifyPresenter = Processing_Verify_Presenter(this)
-        tokenRefreshViewModel = TokenRefreshViewModel(this)
+        initViewModels()
+        observeData()
         initCall()
-
+        initViews()
         CoroutineScope(SupervisorJob()).launch(Dispatchers.IO)  {
             val source = ImageDecoder.createSource(
                 resources, R.drawable.processing
@@ -55,25 +63,64 @@ class ProcessDashboardActivity : AppCompatActivity(), Processing_Verify_CallBack
                 (drawable as? AnimatedImageDrawable)?.start()
             }
         }
-        
-
     }
 
-    private fun initCall() {
-        if (this?.isConnectedToNetwork()!!) {
-            //Bank Loader commented for Loader issue
-            // Loader.showLoader(requireContext())
-            processingVerifyPresenter.getProcessing_Verify()
-        } else {
-            Toast.makeText(this, "Please connect to internet", Toast.LENGTH_LONG).show()
+    private fun initViews() {
+        btn_retry.setOnClickListener {
+            initCall()
         }
     }
-
-
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
+    private fun initViewModels() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        viewModel = ViewModelProviders.of(
+            this,
+            EnguViewModelFactory(networkRepo)
+        ).get(ProcessDashboardViewModel::class.java)
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            this,
+            EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
+    }
+    private fun observeData() {
+        viewModel.verificationStatus.observe(this) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                onProcessingVerifySuccess(response)
+            } else {
+                if (response.detail?.status == AppConstants.EXPIRED) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            viewModel.getGovtVerificationStatus()
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, response.detail?.message, Toast.LENGTH_LONG).show()
+                    ll_processing.isGone = true
+                    btn_retry.isVisible = true
+                }
+            }
+        }
+        tokenRefreshViewModel2.tokenRefreshError.observe(this) { error ->
+            if (error != null) {
+                if (error.isNotEmpty()) Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+                clearLogin()
+                val intent = Intent(this, SignUpActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+    }
+    private fun initCall() {
+        if (NetworkUtils.isConnectedToNetwork(this)) {
+            //Bank Loader commented for Loader issue
+            // Loader.showLoader(requireContext())
+            btn_retry.isGone = true
+            ll_processing.isVisible = true
+            viewModel.getGovtVerificationStatus()
+        } else {
+            Toast.makeText(this, "Please connect to internet", Toast.LENGTH_LONG).show()
+            ll_processing.isGone = true
+            btn_retry.isVisible = true
+        }
     }
 
     private fun clearLogin() {
@@ -88,50 +135,13 @@ class ProcessDashboardActivity : AppCompatActivity(), Processing_Verify_CallBack
 
     private  val SPLASH_TIME: Long= 3000
 
-    override fun onProcessingVerifySuccess(response: ResponseActiveProcessingVerify) {
+    private fun onProcessingVerifySuccess(response: ResponseActiveProcessingVerify) {
         Toast.makeText(this, response.detail?.message, Toast.LENGTH_SHORT).show()
         Handler().postDelayed({
         val intent = Intent(this, DashboardActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         },SPLASH_TIME)
-    }
-
-    override fun onProcessingVerifyFailure(response: ResponseActiveProcessingVerify) {
-        Loader.hideLoader()
-
-        if (response.detail?.tokenStatus.equals("expired")) {
-            Toast.makeText(this, "Please wait.....", Toast.LENGTH_SHORT).show()
-            Loader.hideLoader()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()
-            processingVerifyPresenter.getProcessing_Verify()
-        } else {
-            Loader.hideLoader()
-            Toast.makeText(
-                this, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
-
-        }
-    }
-
-    override fun onTokenRefreshSuccess(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(this, "Please wait.....", Toast.LENGTH_SHORT).show()
-        initCall()
-    }
-
-
-    override fun onTokenRefreshFailure(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(
-            this, response.token_detail?.message, Toast.LENGTH_LONG
-        ).show()
-
-        clearLogin()
-        val intent = Intent(this, SignUpActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
     }
 
     override fun onBackPressed() {

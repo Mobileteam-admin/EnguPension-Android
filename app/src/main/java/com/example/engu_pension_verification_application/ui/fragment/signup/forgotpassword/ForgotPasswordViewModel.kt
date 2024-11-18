@@ -2,45 +2,25 @@ package com.example.engu_pension_verification_application.ui.fragment.signup.for
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.engu_pension_verification_application.network.ApiClient
-import com.example.engu_pension_verification_application.utils.SharedPref
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.model.input.InputForgotPassword
+import com.example.engu_pension_verification_application.model.response.ForgotPasswordDetail
+import com.example.engu_pension_verification_application.model.response.ResponseForgotPassword
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+class ForgotPasswordViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    private val _forgotPassResponse = MutableLiveData<ResponseForgotPassword>()
+    val forgotPassResponse: LiveData<ResponseForgotPassword>
+        get() = _forgotPassResponse
 
-class ForgotPasswordViewModel(var forgotPassViewCallBack: ForgotPassViewCallBack) {
-
-    private val prefs = SharedPref
-
-    private val _ForgotPassStatus = MutableLiveData<com.example.engu_pension_verification_application.model.response.ResponseForgotPassword>()
-    val forgotPassStatus: LiveData<com.example.engu_pension_verification_application.model.response.ResponseForgotPassword>
-        get() = _ForgotPassStatus
-
-    /*init {
-        application.let { prefs.with(it) }
-    }*/
-
-    fun doForgotPass(inputForgotPassword: com.example.engu_pension_verification_application.model.input.InputForgotPassword) {
-        GlobalScope.launch(Dispatchers.Main) {
+    fun doForgotPass(inputForgotPassword: InputForgotPassword) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = ApiClient.getApiInterface().getForgotPassword(inputForgotPassword)
-
-                if (response.forgot_detail?.status.equals("success")) {
-                    //_ForgotPassStatus.value = response
-                    forgotPassViewCallBack.onForgotPassSuccess(response)
-
-                } else {
-                    //_ForgotPassStatus.value = response
-                    forgotPassViewCallBack.onForgotPassFail(response)
-                }
-
-            } catch (e: java.lang.Exception) {
-                _ForgotPassStatus.value =
-                    com.example.engu_pension_verification_application.model.response.ResponseForgotPassword(
-                        com.example.engu_pension_verification_application.model.response.ForgotPasswordDetail(
-                            message = "Something went wrong"
-                        )
-                    )
+                _forgotPassResponse.postValue(networkRepo.forgotPassword(inputForgotPassword))
+            } catch (e: Exception) {
+                _forgotPassResponse.postValue(ResponseForgotPassword(ForgotPasswordDetail(message = "Something went wrong")))
             }
         }
     }

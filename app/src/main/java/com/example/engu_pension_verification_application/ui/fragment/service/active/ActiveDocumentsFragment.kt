@@ -43,10 +43,9 @@ import com.example.engu_pension_verification_application.ui.fragment.tokenrefres
 import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
 import com.example.engu_pension_verification_application.utils.SharedPref
 import com.example.engu_pension_verification_application.utils.ViewPageCallBack
-import com.example.engu_pension_verification_application.view_models.ActiveDocumentsViewModelFactory
 import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
 import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2Factory
 import kotlinx.android.synthetic.main.fragment_active_documents.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -184,11 +183,11 @@ class ActiveDocumentsFragment(
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         activeDocumentsViewModel = ViewModelProviders.of(
             this,
-            ActiveDocumentsViewModelFactory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(ActiveDocumentsViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
-            TokenRefreshViewModel2Factory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
     private fun observeLiveData() {

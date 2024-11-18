@@ -137,4 +137,5 @@
     <string name="reverfy">REVERIFY</string>
     <string name="verified">VERIFIED</string>
     <string name="common_error_msg">Something went wrong</string>
+    <string name="retry">Retry</string>
 </resources>

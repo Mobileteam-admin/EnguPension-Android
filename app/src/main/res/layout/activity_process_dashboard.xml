@@ -65,6 +65,7 @@
                         />
 
                     <LinearLayout
+                        android:id="@+id/ll_processing"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -87,6 +88,19 @@
 
                     </LinearLayout>
 
+                    <TextView
+                        android:id="@+id/btn_retry"
+                        android:visibility="gone"
+                        android:paddingVertical="@dimen/button_vertical_padding"
+                        android:paddingHorizontal="@dimen/button_horizontal_padding"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button_green"
+                        android:fontFamily="@font/nunito_sans_semibold"
+                        android:text="@string/retry"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/dp_14" />
 
 
                 </LinearLayout>

@@ -155,7 +155,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_squarebox"
-                android:drawableStart="@drawable/ic_user"
+                android:drawableStart="@drawable/ic_person"
                 android:drawablePadding="@dimen/dp_16"
                 android:hint="@string/enter_account_holder_name"
                 android:inputType="text"

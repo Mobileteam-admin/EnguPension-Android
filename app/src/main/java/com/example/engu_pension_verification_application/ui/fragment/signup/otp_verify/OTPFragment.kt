@@ -1,7 +1,5 @@
 package com.example.engu_pension_verification_application.ui.fragment.signup.otp_verify
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
@@ -14,20 +12,24 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputForgotVerify
 import com.example.engu_pension_verification_application.model.input.InputSignupVerify
-import com.example.engu_pension_verification_application.model.response.ResendotpResponse
 import com.example.engu_pension_verification_application.model.response.VerifyResponse
+import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.utils.NetworkUtils
 import com.example.engu_pension_verification_application.utils.SharedPref
+import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
 import kotlinx.android.synthetic.main.fragment_o_t_p.*
-import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 @RequiresApi(Build.VERSION_CODES.O)
-class OTPFragment : Fragment(),OtpViewCallBack {
-    lateinit var otpViewModel: OTPViewModel
+class OTPFragment : Fragment() {
+    private lateinit var otpViewModel: OTPViewModel
     var screen: String = ""
     var email: String = "  "
     var phone: String = "  "
@@ -65,10 +67,11 @@ class OTPFragment : Fragment(),OtpViewCallBack {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
+        observeData()
 
         cl_click_login.visibility = View.GONE
         //otpViewModel = ViewModelProvider(this).get(OTPViewModel::class.java)
-        otpViewModel = OTPViewModel(this)
         val bundle = this.arguments
         if (bundle != null) {
             screen = bundle.getString("screen").toString()
@@ -97,7 +100,37 @@ class OTPFragment : Fragment(),OtpViewCallBack {
         //observeVerification()
         focusValidation()
     }
-
+    private fun initViewModel() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        otpViewModel = ViewModelProviders.of(
+            this,
+            EnguViewModelFactory(networkRepo)
+        ).get(OTPViewModel::class.java)
+    }
+    private fun observeData() {
+        otpViewModel.otpVerifyResponse.observe(viewLifecycleOwner) { response ->
+            Loader.hideLoader()
+            Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                onOtpVerifySuccess(response)
+            } else {
+                onOtpVerifyFailure()
+            }
+        }
+        otpViewModel.verifyForgotPassResponse.observe(viewLifecycleOwner) { response ->
+            Loader.hideLoader()
+            Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                onOtpVerifySuccess(response)
+            } else {
+                onOtpVerifyFailure()
+            }
+        }
+        otpViewModel.resendOTPResponse.observe(viewLifecycleOwner) { response ->
+            Loader.hideLoader()
+            Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+        }
+    }
 
    /* private fun observeVerification() {
         otpViewModel.verificationStatus.observe(viewLifecycleOwner, Observer { verifyresponse ->
@@ -158,7 +191,7 @@ class OTPFragment : Fragment(),OtpViewCallBack {
                 Log.d("otp", "onClicked: " + final_otp)
 
                 Loader.showLoader(requireContext())
-                if (context?.isConnectedToNetwork()!!) {
+                if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 
 
 
@@ -197,7 +230,7 @@ class OTPFragment : Fragment(),OtpViewCallBack {
 
         ll_resend_otp.setOnClickListener {
             Loader.showLoader(requireContext())
-            if (context?.isConnectedToNetwork()!!) {
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 Log.d("TAG _ 1", "onClicked: " + email)
                 Log.d("TAG _ 2", "onClicked:Email/Phone " + email_Phn)
 
@@ -299,27 +332,12 @@ class OTPFragment : Fragment(),OtpViewCallBack {
         return true
     }
 
+    fun onOtpVerifySuccess(response: VerifyResponse) {
+        prefs.isLogin = true
+        prefs.user_id = response.detail?.userdetails?.id
+        prefs.user_name = response.detail?.userdetails?.username
+        prefs.email = response.detail?.userdetails?.email
 
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-    }
-
-    override fun onOtpResendSuccess(response: ResendotpResponse) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
-    }
-
-    override fun onOtpResendFailure(response: ResendotpResponse) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
-
-    }
-
-    override fun onOtpVerifySuccess(response: VerifyResponse) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
         if (screen.equals("Signup")) {
 
             prefs.lastActivityDashboard = false
@@ -339,9 +357,7 @@ class OTPFragment : Fragment(),OtpViewCallBack {
         }
     }
 
-    override fun onOtpVerifyFailure(response: VerifyResponse) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+    fun onOtpVerifyFailure() {
         et_otp_1.setText("")
         et_otp_2.setText("")
         et_otp_3.setText("")

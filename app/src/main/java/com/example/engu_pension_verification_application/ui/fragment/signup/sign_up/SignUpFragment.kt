@@ -1,7 +1,5 @@
 package com.example.engu_pension_verification_application.ui.fragment.signup.sign_up
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -11,41 +9,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputSignup
-import com.example.engu_pension_verification_application.model.response.SignupResponse
-import com.example.engu_pension_verification_application.ui.fragment.signup.login.LoginViewModel
-import com.rilixtech.widget.countrycodepicker.CountryCodePicker
-import kotlinx.android.synthetic.main.fragment_dashboard.*
-import kotlinx.android.synthetic.main.fragment_login.*
+import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.utils.NetworkUtils
+import com.example.engu_pension_verification_application.utils.AppUtils
+import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
 import kotlinx.android.synthetic.main.fragment_sign_up.*
-import java.util.regex.Pattern
 
 
-class SignUpFragment : Fragment(), SignUpCallBack {
-    /* Password must have at least 8 characters, include uppercase and lowercase letters, a digit, and a special character*/
-    val EMAIL_ADDRESS_PATTERN = Pattern.compile(
-        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-                "\\@" +
-                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-                "(" +
-                "\\." +
-                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-                ")+"
-    )
-
-
-    val PASSWORD_PATTERN =
-        Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
-
-
+class SignUpFragment : Fragment() {
     var Ph_no: String = ""
     private lateinit var signUpViewModel: SignUpViewModel
 
@@ -60,8 +39,8 @@ class SignUpFragment : Fragment(), SignUpCallBack {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //signUpViewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
-        signUpViewModel = SignUpViewModel(this)
-
+        initViewModel()
+        observeData()
         ccp.registerPhoneNumberTextView(et_signup_phone)
 
        /* et_signup_username.text =  Editable.Factory.getInstance().newEditable("Reema")
@@ -75,16 +54,28 @@ class SignUpFragment : Fragment(), SignUpCallBack {
         onClicked()
         //observeSignUp()
     }
-
+    private fun initViewModel() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        signUpViewModel = ViewModelProviders.of(
+            this,
+            EnguViewModelFactory(networkRepo)
+        ).get(SignUpViewModel::class.java)
+    }
+    private fun observeData() {
+        signUpViewModel.signupStatus.observe(viewLifecycleOwner) { response ->
+            Loader.hideLoader()
+            Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                onSignUpSuccess()
+            }
+        }
+    }
     private fun ontextWatcher() {
         et_signup_password.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(newText: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if ((!PASSWORD_PATTERN.matcher(
-                        newText
-                    ).matches())
-                ) {
+                if (!AppUtils.isValidPassword(newText.toString())) {
                     txt_passwordpattern_error.visibility = View.VISIBLE
                 } else {
                     txt_passwordpattern_error.visibility = View.GONE
@@ -94,10 +85,7 @@ class SignUpFragment : Fragment(), SignUpCallBack {
 
             override fun afterTextChanged(p0: Editable?) {
                 if (p0 != null) {
-                    if ((!PASSWORD_PATTERN.matcher(
-                            et_signup_password.text.toString()
-                        ).matches())
-                    ) {
+                    if (!AppUtils.isValidPassword(et_signup_password.text.toString())) {
                         txt_passwordpattern_error.visibility = View.VISIBLE
                         //"Password must have at least 8 characters, include uppercase and lowercase letters, a digit, and a special character",
                     } else {
@@ -137,24 +125,6 @@ class SignUpFragment : Fragment(), SignUpCallBack {
 
     }
 
-    private fun observeSignUp() {
-        signUpViewModel.signupStatus.observe(viewLifecycleOwner, Observer { signupresponse ->
-            Loader.hideLoader()
-
-            if (signupresponse.detail?.status.equals("success")) {
-                Toast.makeText(context, signupresponse.detail!!.message, Toast.LENGTH_LONG).show()
-                val bundle = Bundle()
-                bundle.putSerializable("screen", "Signup")
-                bundle.putSerializable("Email", et_signup_email.text.toString())
-                bundle.putSerializable("Phone", Ph_no)
-                findNavController().navigate(R.id.action_signup_to_otp, bundle)
-
-            } else {
-                Toast.makeText(context, signupresponse.detail!!.message, Toast.LENGTH_LONG).show()
-            }
-        })
-    }
-
     private fun onClicked() {
 
         ll_signup_signup.setOnClickListener {
@@ -165,9 +135,9 @@ class SignUpFragment : Fragment(), SignUpCallBack {
 
                 //final call
                 Loader.showLoader(requireContext())
-                if (context?.isConnectedToNetwork()!!) {
+                if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                     signUpViewModel.doSignup(
-                        com.example.engu_pension_verification_application.model.input.InputSignup(
+                        InputSignup(
                             username = et_signup_username.text.toString(),
                             email = et_signup_email.text.toString(),
                             phoneNumber = Ph_no,
@@ -175,6 +145,7 @@ class SignUpFragment : Fragment(), SignUpCallBack {
                             confirmPassword = et_signup_confirmPassword.text.toString()
                         )
                     )
+
                 } else {
                     Loader.hideLoader()
                     Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
@@ -209,10 +180,7 @@ class SignUpFragment : Fragment(), SignUpCallBack {
             txt_signup_email_error.visibility = View.GONE
         }
 
-        if (!EMAIL_ADDRESS_PATTERN.matcher(
-                et_signup_email.text.toString()
-            ).matches()
-        ) {
+        if (!AppUtils.isValidEmailAddress(et_signup_email.text.toString())) {
             txt_signup_email_error.visibility = View.VISIBLE
             return false
         } else {
@@ -241,11 +209,7 @@ class SignUpFragment : Fragment(), SignUpCallBack {
         } else {
             txt_signup_password_error.visibility = View.GONE
         }
-
-        if ((!PASSWORD_PATTERN.matcher(
-                et_signup_password.text.toString()
-            ).matches())
-        ) {
+        if (!AppUtils.isValidPassword(et_signup_password.text.toString())) {
             txt_passwordpattern_error.visibility = View.VISIBLE
                  //"Password must have at least 8 characters, include uppercase and lowercase letters, a digit, and a special character",
             return false
@@ -278,15 +242,7 @@ class SignUpFragment : Fragment(), SignUpCallBack {
         return true
     }
 
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-    }
-
-    override fun onSignUpSuccess(response: SignupResponse) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.detail!!.message, Toast.LENGTH_LONG).show()
+    private fun onSignUpSuccess() {
         val bundle = Bundle()
         bundle.putSerializable("screen", "Signup")
         bundle.putSerializable("Email", et_signup_email.text.toString())
@@ -294,10 +250,5 @@ class SignUpFragment : Fragment(), SignUpCallBack {
         findNavController().navigate(R.id.action_signup_to_otp, bundle)
     }
 
-    override fun onSignUpFailure(response: SignupResponse) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.detail!!.message, Toast.LENGTH_LONG).show()
-
-    }
 
 }

@@ -30,8 +30,8 @@ import com.example.engu_pension_verification_application.ui.fragment.service.act
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveDocumentsFragment
 import com.example.engu_pension_verification_application.utils.SharedPref
 import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
 import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2Factory
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_active_service.*
 import kotlinx.coroutines.Dispatchers
@@ -60,7 +60,7 @@ class ActiveServiceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar_activeservice.setTitle(null)
-        initViewModels()
+        initViewModel()
 
 
         setupViewPager(tab_activeservice_viewpager)
@@ -73,11 +73,11 @@ class ActiveServiceFragment : Fragment() {
         onClicked()
     }
 
-    private fun initViewModels() {
+    private fun initViewModel() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
-            TokenRefreshViewModel2Factory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
 
