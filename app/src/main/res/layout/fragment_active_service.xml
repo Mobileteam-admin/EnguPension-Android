@@ -70,7 +70,7 @@
             app:tabTextColor="#ccffffff" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.example.engu_pension_verification_application.utils.NonSwipeableViewPager
+    <com.example.engu_pension_verification_application.util.NonSwipeableViewPager
         android:id="@+id/tab_activeservice_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

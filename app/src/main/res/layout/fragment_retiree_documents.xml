@@ -1356,7 +1356,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_document_green" />
+                            android:src="@drawable/ic_documents_active" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -1797,7 +1797,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/dp_8"
                     android:paddingRight="@dimen/dp_130"
-                    android:src="@drawable/ic_arrowright"
+                    android:src="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/txt_retiree_doc_next"

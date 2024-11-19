@@ -1,9 +1,6 @@
 package com.example.engu_pension_verification_application.ui.fragment.service.active
 
 import android.app.DatePickerDialog
-import android.content.Context
-import android.content.Intent
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -17,32 +14,37 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.utils.AlphabeticTextWatcher
+import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
 import com.example.engu_pension_verification_application.commons.Loader
-import com.example.engu_pension_verification_application.commons.TabAccessControl
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputActiveBasicDetails
-import com.example.engu_pension_verification_application.model.input.InputLGAList
 import com.example.engu_pension_verification_application.model.response.ActiveRetriveUserProfileDetails
 import com.example.engu_pension_verification_application.model.response.GradeLevelsItem
 import com.example.engu_pension_verification_application.model.response.LgasItem
 import com.example.engu_pension_verification_application.model.response.OccupationsItem
 import com.example.engu_pension_verification_application.model.response.ResponseActiveBasicDetails
-import com.example.engu_pension_verification_application.model.response.ResponseActiveBasicRetrive
 import com.example.engu_pension_verification_application.model.response.ResponseCombinationDetails
-import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
 import com.example.engu_pension_verification_application.model.response.SubTreasuryItem
-import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
-import com.example.engu_pension_verification_application.ui.fragment.service.gradelevel.GradeLevelAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.lga.LGASpinnerAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.occupation.OccupationsAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.subtresury.SubTreasuryAdapter
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.utils.ViewPageCallBack
+import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.adapter.GradeLevelAdapter
+import com.example.engu_pension_verification_application.ui.adapter.LGASpinnerAdapter
+import com.example.engu_pension_verification_application.ui.adapter.OccupationsAdapter
+import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.ActiveBasicDetailViewModel
+import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.android.synthetic.main.fragment_active_basic_details.*
-import kotlinx.android.synthetic.main.fragment_active_service.tab_tablayout_activeservice
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
@@ -57,19 +59,13 @@ import kotlin.collections.ArrayList
     return android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
     }
 
-class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private val tabAccessControl: TabAccessControl) : Fragment(),
-    ActiveBasicDetailViewCallBack, TokenRefreshCallBack {
-
-
+class ActiveBasicDetailsFragment : Fragment()
+{
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
     companion object {
-        fun newInstance(viewPageCallBack: ViewPageCallBack, tabAccessControl: TabAccessControl): ActiveBasicDetailsFragment {
-            return ActiveBasicDetailsFragment(viewPageCallBack,tabAccessControl).apply {
-                this.viewPageCallBack = viewPageCallBack
-            }
-        }
+        private const val TAB_POSITION = 0
     }
-
 
     // previous name pattern ^[a-zA-Z\s]+$
     val NAME_PATTERN = Pattern.compile("^[a-zA-Z]+(?:\\s[a-zA-Z]+)*$")
@@ -98,7 +94,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
     val prefs = SharedPref
 
     private lateinit var activeBasicDetailViewModel: ActiveBasicDetailViewModel
-    private lateinit var tokenRefreshViewModel: TokenRefreshViewModel
+    private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
 
     //var selected_country: String? = null
 
@@ -131,32 +127,107 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModels()
+        initViews()
+        observeLiveData()
+    }
+
+    private fun initViewModels() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        activeBasicDetailViewModel = ViewModelProviders.of(
+            this,
+            EnguViewModelFactory(networkRepo)
+        ).get(ActiveBasicDetailViewModel::class.java)
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
+    }
+    private fun observeLiveData() {
+        activeServiceViewModel.currentTabPos.observe(viewLifecycleOwner){
+            if (it == TAB_POSITION) initcall()
+        }
+        activeBasicDetailViewModel.combinedDetailsApiResult.observe(viewLifecycleOwner) { response ->
+            Loader.hideLoader()
+            if (response.combinedetails?.status == AppConstants.SUCCESS) {
+                onAcombinedDetailSuccess(response)
+            } else {
+                Toast.makeText(context, response.combinedetails?.message, Toast.LENGTH_LONG).show()
+                findNavController().popBackStack()
+            }
+        }
+        activeBasicDetailViewModel.basicDetailsApiResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                Loader.hideLoader()
+                response.detail.userProfileDetails?.let {
+                    ActiveUserRetrive = it
+                    onRetrivedDataSetFields()
+                }
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeBasicDetailViewModel.fetchActiveBasicDetails()
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        activeBasicDetailViewModel.basicDetailsSubmissionResult.observe(viewLifecycleOwner) { pair ->
+            Loader.hideLoader()
+            val request = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                onActiveBasicDetailSuccess(response)
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeBasicDetailViewModel.submitAccountDetails(request)
+                        }
+                    }
+                } else {
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun initViews() {
+        lgaSpinnerAdapter = LGASpinnerAdapter(context, LGAList)
+        sp_active_lga.adapter = lgaSpinnerAdapter
+
+        occupationsAdapter = OccupationsAdapter(context, occupationsList)
+        sp_active_occupation_type.adapter = occupationsAdapter
+
+        gradeLevelAdapter = GradeLevelAdapter(context, GradeLevelsList)
+        sp_active_last_grade.adapter = gradeLevelAdapter
+
+        subTreasuryAdapter = SubTreasuryAdapter(context, subtreasuryList)
+        sp_active_sub_treasury.adapter = subTreasuryAdapter
 
         if (prefs.isActiveBasicSubmit == true)
         {
 
             if (prefs.isActiveDocSubmit){
 
-                tabAccessControl.enableDisableTabs(true, true, true)
+                activeServiceViewModel.setTabsEnabledState(true,true,true)
 
             }else{
-
-                tabAccessControl.enableDisableTabs(true, true, false)
-
+                activeServiceViewModel.setTabsEnabledState(true, true, false)
             }
         }else{
-            //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-            tabAccessControl.enableDisableTabs(true, false, false)
-
+            activeServiceViewModel.setTabsEnabledState(true, false, false)
         }
 
 
         /*activeBasicDetailViewModel =
             ViewModelProvider(this).get(ActiveBasicDetailViewModel::class.java)*/
-        activeBasicDetailViewModel = ActiveBasicDetailViewModel(this)
 
         /*tokenRefreshViewModel = ViewModelProvider(this).get(TokenRefreshViewModel::class.java)*/
-        tokenRefreshViewModel = TokenRefreshViewModel(this)
 
         //kinphone
         active_next_kin_phone_ccp.registerPhoneNumberTextView(et_active_next_kin_phone)
@@ -166,7 +237,6 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
         // Example usage to enable only the first tab
         //tabAccessControl.enableDisableTabs(true, false, false)
 
-        initcall()
         onSpinnerTextWatcher()
 
         //ActiveRetriveApiCall()
@@ -175,11 +245,18 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
         ccp_activedetails.setOnCountryChangeListener {
             selected_country = ccp_activedetails.selectedCountryName
-            initcall()
             Log.d("changed_country", "onViewCreated: " + ccp_activedetails.selectedCountryName)
+            Loader.showLoader(requireContext())
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    activeBasicDetailViewModel.fetchCombinedDetails(selected_country)
+                }
+            } else {
+                Loader.hideLoader()
+                Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
+            }
         }
     }
-
 
     private fun onRetrivedDataSetFields() {
 
@@ -196,18 +273,13 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
             {
 
                 if (prefs.isActiveDocSubmit){
-
-                    tabAccessControl.enableDisableTabs(true, true, true)
-
+                    activeServiceViewModel.setTabsEnabledState(true, true, true)
                 }else{
-
-                    tabAccessControl.enableDisableTabs(true, true, false)
-
+                    activeServiceViewModel.setTabsEnabledState(true, true, false)
                 }
             }else{
                 //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                tabAccessControl.enableDisableTabs(true, false, false)
-
+                activeServiceViewModel.setTabsEnabledState(true, false, false)
             }
 
 
@@ -456,7 +528,6 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    TODO("Not yet implemented")
                 }
 
             }
@@ -480,7 +551,6 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
             }
 
         }
@@ -502,7 +572,6 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    TODO("Not yet implemented")
                 }
 
             }
@@ -526,7 +595,6 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
             }
 
         }
@@ -776,8 +844,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
 
     private fun GradeLevelspinnerfun() {
-        gradeLevelAdapter = GradeLevelAdapter(context, GradeLevelsList)
-        sp_active_last_grade.adapter = gradeLevelAdapter
+        gradeLevelAdapter.changeList(GradeLevelsList)
         //sp_active_last_grade.setSelection(prefs.grade!!.toInt())
 /*
         gradelvlS = ActiveUserRetrive.gradeLevel.toString()
@@ -794,8 +861,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
 
     private fun LGAspinnerfun() {
-        lgaSpinnerAdapter = LGASpinnerAdapter(context, LGAList)
-        sp_active_lga.adapter = lgaSpinnerAdapter
+        lgaSpinnerAdapter.changeList(LGAList)
         // sp_active_lga.setSelection(prefs.lga!!.toInt())
 
         Log.d("LogLGA", "LGAList: LGAspinnerfun() $LGAList")
@@ -833,8 +899,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
     }
 
     private fun SubTreasuryspinnerfun() {
-        subTreasuryAdapter = SubTreasuryAdapter(context, subtreasuryList)
-        sp_active_sub_treasury.adapter = subTreasuryAdapter
+        subTreasuryAdapter.changeList(subtreasuryList)
         //sp_active_sub_treasury.setSelection(prefs.sub!!.toInt())
 
         /*subS = ActiveUserRetrive.subTreasury.toString()
@@ -851,8 +916,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
     }
 
     private fun Occupationspinnerfun() {
-        occupationsAdapter = OccupationsAdapter(context, occupationsList)
-        sp_active_occupation_type.adapter = occupationsAdapter
+        occupationsAdapter.changeList(occupationsList)
         // sp_active_occupation_type.setSelection(prefs.Occupation!!.toInt())
         /*occupationS = ActiveUserRetrive.occupation.toString()
 
@@ -894,13 +958,11 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
     private fun initcall() {
         Loader.showLoader(requireContext())
-        if (context?.isConnectedToNetwork()!!) {
-
-            activeBasicDetailViewModel.getCombinedDetails(
-                InputLGAList(
-                    country = selected_country
-                )
-            )
+        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                if (activeBasicDetailViewModel.fetchCombinedDetails(selected_country))
+                    activeBasicDetailViewModel.fetchActiveBasicDetails()
+            }
 
         } else {
             Loader.hideLoader()
@@ -909,16 +971,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
     }
 
-    private fun ActiveRetriveApiCall() {
-        Loader.showLoader(requireContext())
-        /*if (context?.isConnectedToNetwork()!!) {*/
-            activeBasicDetailViewModel.getRetriveDetails()
-        /*}else {
-            Loader.hideLoader()
-            Toast.makeText(context, "Please connect to internet", Toast.LENGTH_SHORT).show()
-        }*/
 
-    }
 
 
     private fun accountdetailCalll() {
@@ -942,7 +995,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
 
 
-        activeBasicDetailViewModel.getAccountDetails(
+        activeBasicDetailViewModel.submitAccountDetails(
             InputActiveBasicDetails(
                 pincode = et_active_pincode.text.toString(),
                 kinPincode = et_active_kin_pincode.text.toString(),
@@ -951,14 +1004,14 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
                 address = et_active_address.text.toString(),
                 subTreasuryId = subtreasury,
                 sex = sex,
-                lastName = et_active_lastName.text.toString(),
-                middleName = et_active_middleName.text.toString(),
-                firstName = et_active_firstName.text.toString(),
+                lastName = et_active_lastName.text.trim().toString(),
+                middleName = et_active_middleName.text.trim().toString(),
+                firstName = et_active_firstName.text.trim().toString(),
                 dateOfAppointment = doa,
                 lgaId = lgalist,
                 nextOfKinAddress = et_active_next_kin_address.text.toString(),
                 nextOfKinEmail = et_active_next_kin_email.text.toString(),
-                nextOfKinName = et_active_next_kin.text.toString(),
+                nextOfKinName = et_active_next_kin.text.trim().toString(),
                 nextOfKinPhoneNumber = Ph_no,
                 gradeLevel = gradelevel,
                 dob = dob,
@@ -972,10 +1025,10 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
     private fun nextButtonCall() {
         Loader.showLoader(requireContext())
-        if (context?.isConnectedToNetwork()!!) {
-            prefs.first_name = et_active_firstName.text.toString()
-            prefs.middle_name = et_active_middleName.text.toString()
-            prefs.last_name = et_active_lastName.text.toString()
+        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+            prefs.first_name = et_active_firstName.text.trim().toString()
+            prefs.middle_name = et_active_middleName.text.trim().toString()
+            prefs.last_name = et_active_lastName.text.trim().toString()
 
             accountdetailCalll()
 
@@ -1014,12 +1067,12 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
             return false
         }*/
 
-        if (TextUtils.isEmpty(et_active_firstName.text)) {
+        if (TextUtils.isEmpty(et_active_firstName.text.trim())) {
             Toast.makeText(context, "Empty FirstName", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (!NAME_PATTERN.matcher(et_active_firstName.text.toString()).matches()) {
+        if (!NAME_PATTERN.matcher(et_active_firstName.text.trim()).matches()) {
 
             Toast.makeText(context, "first name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1032,7 +1085,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
             return false
         }*/
 
-        if (!NAME_PATTERN_OR_NULL.matcher(et_active_middleName.text.toString()).matches()) {
+        if (!NAME_PATTERN_OR_NULL.matcher(et_active_middleName.text.trim()).matches()) {
 
             Toast.makeText(context, "middle name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1040,13 +1093,13 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
 
         //lastname
-        if (TextUtils.isEmpty(et_active_lastName.text)) {
+        if (TextUtils.isEmpty(et_active_lastName.text.trim())) {
             Toast.makeText(context, "Empty Last name", Toast.LENGTH_SHORT).show()
             return false
         }
 
 
-        if (!NAME_PATTERN.matcher(et_active_lastName.text.toString()).matches()) {
+        if (!NAME_PATTERN.matcher(et_active_lastName.text.trim()).matches()) {
 
             Toast.makeText(context, "last name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1097,12 +1150,12 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
         }
 
         //kin name
-        if (TextUtils.isEmpty(et_active_next_kin.text)) {
+        if (TextUtils.isEmpty(et_active_next_kin.text.trim())) {
             Toast.makeText(context, "Empty kin name", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (!NAME_PATTERN.matcher(et_active_next_kin.text.toString()).matches()) {
+        if (!NAME_PATTERN.matcher(et_active_next_kin.text.trim()).matches()) {
 
             Toast.makeText(context, "kin name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1196,19 +1249,13 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
     }
 
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-    }
-
-    override fun onActiveBasicDetailSuccess(response: ResponseActiveBasicDetails) {
+    fun onActiveBasicDetailSuccess(response: ResponseActiveBasicDetails) {
 
         Loader.hideLoader()
 
         Toast.makeText(context, response.detail!!.message, Toast.LENGTH_SHORT).show()
 
-        viewPageCallBack.onViewMoveNext()
+        activeServiceViewModel.moveToNextTab()
         //prefs.isActiveBasicSubmit = true
         //tabAccessControl.enableDisableTabs(true, true, false)
 
@@ -1217,36 +1264,7 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
     }
 
-    override fun onActiveBasicDetailFailure(response: ResponseActiveBasicDetails) {
 
-        Loader.hideLoader()
-
-        Log.d("onActiveBasicDetailFailure", "$response")
-
-            /*if (response.detail?.status.equals("fail")) {
-
-                //for message
-                Toast.makeText(
-                    context, response.detail?.message, Toast.LENGTH_LONG
-                ).show()*/
-
-                if (response.detail?.tokenStatus.equals("expired")) {
-                    Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-                    //refresh api call
-                    tokenRefreshViewModel.getTokenRefresh()
-
-
-                } else {
-                    Loader.hideLoader()
-                    Toast.makeText(
-                        context, response.detail?.message, Toast.LENGTH_LONG
-                    ).show()
-                }
-
-            //}
-
-
-    }
 
     /*override fun onActiveBasicCombinedDetailSuccess(response: ResponseCombinationDetails) {
         Loader.hideLoader()
@@ -1368,195 +1386,102 @@ class ActiveBasicDetailsFragment(var viewPageCallBack: ViewPageCallBack,private 
 
     }*/
 
-    override fun onAcombinedDetailSuccess(response: ResponseCombinationDetails) {
-        Loader.hideLoader()
+    fun onAcombinedDetailSuccess(response: ResponseCombinationDetails) {
         Log.d("Active combine", "onAcombinedDetailSuccess: " + response)
 
 
 
-        if (response.combinedetails?.status.equals("success")) {
-            Log.d(
-                "Combine", "observeActiveDetails: " + response.combinedetails?.combinelgas
+
+        Log.d(
+            "Combine", "observeActiveDetails: " + response.combinedetails?.combinelgas
+        )
+
+        LGAList.clear()
+        subtreasuryList.clear()
+        GradeLevelsList.clear()
+        occupationsList.clear()
+
+        if (response.combinedetails?.combinelgas?.size!! > 0) {
+            LGAList.add(
+                LgasItem(
+                    "", " - Select LGA - ", 0, ""
+                )
             )
 
-            LGAList.clear()
-            subtreasuryList.clear()
-            GradeLevelsList.clear()
-            occupationsList.clear()
-
-            if (response.combinedetails?.combinelgas?.size!! > 0) {
+            response.combinedetails.combinelgas.forEach {
                 LGAList.add(
                     LgasItem(
-                        "", " - Select LGA - ", 0, ""
+                        it?.country, it?.name, it?.id, it?.state
                     )
                 )
-
-                response.combinedetails.combinelgas.forEach {
-                    LGAList.add(
-                        LgasItem(
-                            it?.country, it?.name, it?.id, it?.state
-                        )
-                    )
-                }
             }
-            Log.d("LogLGA", "LGAList:CombinedSuccess $LGAList")
-            //Log.d("TAG", "spinnerLGAList $response.combinedetails?.combinelgas?.size")
-            LGAspinnerfun()
+        }
+        Log.d("LogLGA", "LGAList:CombinedSuccess $LGAList")
+        //Log.d("TAG", "spinnerLGAList $response.combinedetails?.combinelgas?.size")
+        LGAspinnerfun()
 
-            if (response.combinedetails?.combinesubTreasuries?.size!! > 0) {
+        if (response.combinedetails?.combinesubTreasuries?.size!! > 0) {
+            subtreasuryList.add(
+                SubTreasuryItem(
+                    "", " - Select SubTreasury - ", 0, ""
+                )
+            )
+            response.combinedetails.combinesubTreasuries.forEach {
                 subtreasuryList.add(
                     SubTreasuryItem(
-                        "", " - Select SubTreasury - ", 0, ""
+                        it?.country, it?.name, it?.id, it?.state
                     )
                 )
-                response.combinedetails.combinesubTreasuries.forEach {
-                    subtreasuryList.add(
-                        SubTreasuryItem(
-                            it?.country, it?.name, it?.id, it?.state
-                        )
-                    )
-                }
             }
-            SubTreasuryspinnerfun()
+        }
+        SubTreasuryspinnerfun()
 
-            if (response.combinedetails?.combinegradeLevels?.size!! > 0) {
+        if (response.combinedetails?.combinegradeLevels?.size!! > 0) {
+            GradeLevelsList.add(
+                GradeLevelsItem(
+                    " - Select GradeLevel - ", 0
+                )
+            )
+            response.combinedetails.combinegradeLevels.forEach {
                 GradeLevelsList.add(
                     GradeLevelsItem(
-                        " - Select GradeLevel - ", 0
+                        it?.level, it?.id
                     )
                 )
-                response.combinedetails.combinegradeLevels.forEach {
-                    GradeLevelsList.add(
-                        GradeLevelsItem(
-                            it?.level, it?.id
-                        )
-                    )
-                }
             }
-            GradeLevelspinnerfun()
+        }
+        GradeLevelspinnerfun()
 
-            if (response.combinedetails?.combineoccupations?.size!! > 0) {
+        if (response.combinedetails?.combineoccupations?.size!! > 0) {
+            occupationsList.add(
+                OccupationsItem(
+                    " - Select Occupation - ", 0, ""
+                )
+            )
+
+
+            response.combinedetails.combineoccupations.forEach {
                 occupationsList.add(
                     OccupationsItem(
-                        " - Select Occupation - ", 0, ""
+                        it?.name, it?.id, it?.category
                     )
                 )
-
-
-                response.combinedetails.combineoccupations.forEach {
-                    occupationsList.add(
-                        OccupationsItem(
-                            it?.name, it?.id, it?.category
-                        )
-                    )
-                }
-                occupationsList.add(
-                    OccupationsItem(
-                        " Others ", -1, ""
-                    )
-                )
-
-
             }
-            Occupationspinnerfun()
-
-
-            //ActiveRetriveApiCall()
-
-        }
-        ActiveRetriveApiCall()
-
-    }
-
-    override fun onAcombinedDetailFail(response: ResponseCombinationDetails) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.combinedetails?.message, Toast.LENGTH_LONG).show()
-    }
-
-    override fun onActiveRetriveSuccess(response: ResponseActiveBasicRetrive) {
-        Loader.hideLoader()
-        /*if (response.detail?.status.equals("success")) {
-
-        }*/
-
-            /*response.combinedetails.combinelgas.forEach {
-                LGAList.add(
-                    LgasItem(
-                        it?.country,
-                        it?.name,
-                        it?.id,
-                        it?.state
-                    )
+            occupationsList.add(
+                OccupationsItem(
+                    " Others ", -1, ""
                 )
-            }*/
-
-            /*response.detail?.userProfileDetails.f {
-                ActiveRetriveUserProfileDetails.add(
-                    ActiveRetriveUserProfileDetails.add(
-
-                    )
-            }*/
-
-            //prefs.isActiveBasicSubmit = true
-
-            ActiveUserRetrive = response.detail?.userProfileDetails!!
-
-            Log.d("retrive", "ActiveUserRetrive + $ActiveUserRetrive")
-
-            Log.d("LogLGA", "LGAList:RetriveSuccess $LGAList")
-            onRetrivedDataSetFields()
+            )
 
 
-    }
-
-    override fun onActiveRetriveFailure(response: ResponseActiveBasicRetrive) {
-        Loader.hideLoader()
-
-
-        if (response.detail?.tokenStatus.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            //refresh api call
-
-            //tokenRefreshViewModel.getTokenRefresh()
-            //tokenRefreshViewModel.getTokenRefresh()
-            //ActiveRetriveApiCall()
-
-
-
-        } else {
-            Loader.hideLoader()
-            Toast.makeText(
-                context, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
         }
-        //Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
+        Occupationspinnerfun()
+
+
+        //ActiveRetriveApiCall()
+
 
 
     }
-
-    override fun onTokenRefreshSuccess(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-
-        //Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-        Log.d("refresh_success", "${response.token_detail}")
-
-        accountdetailCalll()
-    }
-
-    override fun onTokenRefreshFailure(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Log.d("refresh_fail", "${response.token_detail}")
-        Toast.makeText(
-            context, response.token_detail?.message, Toast.LENGTH_LONG
-        ).show()
-
-        clearLogin()
-        val intent = Intent(context, SignUpActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-    }
-
-
-
 
 }

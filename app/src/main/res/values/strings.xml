@@ -136,4 +136,8 @@
     <string name="bank_account_verification">Bank Account Verification</string>
     <string name="reverfy">REVERIFY</string>
     <string name="verified">VERIFIED</string>
+    <string name="common_error_msg">Something went wrong</string>
+    <string name="common_error_msg_2">Something went wrong, please try again!</string>
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
 </resources>

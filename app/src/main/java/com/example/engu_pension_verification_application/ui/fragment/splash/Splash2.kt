@@ -11,7 +11,7 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.ui.activity.DashboardActivity
 import com.example.engu_pension_verification_application.ui.activity.ServiceActivity
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
-import com.example.engu_pension_verification_application.utils.SharedPref
+import com.example.engu_pension_verification_application.util.SharedPref
 import kotlinx.android.synthetic.main.fragment_splash2.*
 
 

@@ -1,6 +1,5 @@
 package com.example.engu_pension_verification_application.ui.fragment.service.active
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -23,26 +22,29 @@ import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
 import com.example.engu_pension_verification_application.model.input.InputBankVerification
-import com.example.engu_pension_verification_application.model.input.InputEinNumber
-import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
 import com.example.engu_pension_verification_application.model.response.*
+import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.ProcessDashboardActivity
-import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
-import com.example.engu_pension_verification_application.ui.fragment.service.EIN_Number.EIN_Number_CallBack
-import com.example.engu_pension_verification_application.ui.fragment.service.EIN_Number.EIN_Number_Presenter
-import com.example.engu_pension_verification_application.ui.fragment.service.accounttype.AccountTypeAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.bank.BankAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.bank_verification.Bank_Verify_Callback
-import com.example.engu_pension_verification_application.ui.fragment.service.bank_verification.Bank_Verify_Presenter
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
-import com.example.engu_pension_verification_application.utils.SharedPref
+import com.example.engu_pension_verification_application.ui.adapter.AccountTypeAdapter
+import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
+import com.example.engu_pension_verification_application.util.AppUtils
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.ActiveBankViewModel
+import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.android.synthetic.main.fragment_active_bank.*
-import kotlinx.android.synthetic.main.fragment_retiree_bank.et_retireebank_swiftcode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
@@ -54,10 +56,14 @@ val filterUpperCaseAndDigits = InputFilter { source, start, end, dest, dstart, d
     }
     null // Accepts the original characters
 }
-class ActiveBankFragment(
-    var bankdetailsList: ArrayList<ListBanksItem?>,
-    @JvmField var accountTypeList: ArrayList<AccountTypeItem?>,
-) : Fragment(), TokenRefreshCallBack, ActiveBankCallBack, EIN_Number_CallBack,Bank_Verify_Callback {
+class ActiveBankFragment: Fragment() {
+    companion object {
+        private const val TAB_POSITION = 2
+    }
+    var bankdetailsList = mutableListOf<ListBanksItem?>()
+    var accountTypeList = mutableListOf<AccountTypeItem?>()
+
+    private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
 
     val FULL_NAME_PATTERN =
         Pattern.compile("^[a-zA-Z]+(?:\\s[a-zA-Z]+)*$") /*Pattern.compile("^[a-zA-Z\\s]+$")*/
@@ -66,11 +72,7 @@ class ActiveBankFragment(
     val ACC_NO_PATTERN_TWO = Pattern.compile("\\d{10,12}")
 
     private lateinit var activeBankViewModel: ActiveBankViewModel
-    private lateinit var tokenRefreshViewModel: TokenRefreshViewModel
-
-    private lateinit var einnumberpresenter: EIN_Number_Presenter
-
-    private lateinit var bankVerifyPresenter: Bank_Verify_Presenter
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
 
     var a_bankid = ""
@@ -98,16 +100,14 @@ class ActiveBankFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModels()
+        observeLiveData()
 
         //activeBankViewModel = ViewModelProvider(this).get(ActiveBankViewModel::class.java)
-        activeBankViewModel = ActiveBankViewModel(this)
 
         /*tokenRefreshViewModel = ViewModelProvider(this).get(TokenRefreshViewModel::class.java)*/
-        tokenRefreshViewModel = TokenRefreshViewModel(this)
 
-        einnumberpresenter = EIN_Number_Presenter(this)
 
-        bankVerifyPresenter = Bank_Verify_Presenter(this)
 
         //local use
 //        et_activebank_swiftcode.text = Editable.Factory.getInstance().newEditable("MOOGNGL1")
@@ -116,31 +116,137 @@ class ActiveBankFragment(
         et_activebank_bankcode.text = Editable.Factory.getInstance().newEditable("MOOG")*/
 
         et_activebank_swiftcode.filters = arrayOf(InputFilter.AllCaps(), filterUpperCaseAndDigits)
+        et_activebank_accname.setText(AppUtils.getFullName(prefs.first_name,prefs.middle_name,prefs.last_name))
 
-        et_activebank_accname.text = Editable.Factory.getInstance().newEditable(
-            prefs.first_name + if (prefs.middle_name != "") {
-                " " + prefs.middle_name + " "
-            } else {
-                " "
-
-            } + prefs.last_name
-        )
-
-
-
-
-
-
-        setAdapter()
+//        setAdapter()
         // initcall()  - hold
         OnTextWatcher()
         onClicked()
 
         //observeActiveBankDetails()
-
-
     }
 
+    private fun initViewModels() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        activeBankViewModel = ViewModelProviders.of(
+            this,
+            EnguViewModelFactory(networkRepo)
+        ).get(ActiveBankViewModel::class.java)
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
+    }
+    private fun observeLiveData() {
+        activeServiceViewModel.currentTabPos.observe(viewLifecycleOwner){
+            if (it == TAB_POSITION) activeBankViewModel.fetchBankList()
+        }
+        activeBankViewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                Loader.hideLoader()
+                bankdetailsList.clear()
+                accountTypeList.clear()
+                response.detail.banks?.let {  bankdetailsList.addAll(it)}
+                response.detail.accountType?.let {  accountTypeList.addAll(it)}
+                setAdapter()
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeBankViewModel.fetchBankList()
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        activeBankViewModel.bankDetailsApiResult.observe(viewLifecycleOwner) { pair ->
+            val swiftCode = pair.first
+            val response = pair.second
+            if (response.swiftbankdetail?.status == AppConstants.SUCCESS) {
+                Loader.hideLoader()
+                onSwiftBankCodeSuccess(response)
+            } else {
+                if (response.swiftbankdetail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeBankViewModel.fetchBankDetails(swiftCode)
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.swiftbankdetail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        activeBankViewModel.bankInfoSubmissionResult.observe(viewLifecycleOwner) { pair ->
+            val inputActiveBankInfo = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                Loader.hideLoader()
+                onActiveBankInfoSubmitSuccess(response)
+            }else if (response.detail?.status == AppConstants.FAIL) {
+                Loader.hideLoader()
+                Toast.makeText(context, response.detail.message, Toast.LENGTH_LONG).show()
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeBankViewModel.submitBankInfo(inputActiveBankInfo)
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        activeBankViewModel.bankVerificationResult.observe(viewLifecycleOwner) { pair ->
+            val inputBankVerification = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                Loader.hideLoader()
+                onBankVerifySubmitSuccess(response)
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeBankViewModel.verifyBankAccount(inputBankVerification)
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    isBankVerifyBtn = false
+                    tv_activebank_bankcode_verify.visibility = View.INVISIBLE
+                    tv_activebank_bankcode_reverify.visibility = View.VISIBLE
+                    tv_activebank_bankcode_verified.visibility = View.INVISIBLE
+
+                }
+            }
+        }
+        activeBankViewModel.einSubmissionResult.observe(viewLifecycleOwner) { pair ->
+            val ein = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                Loader.hideLoader()
+                onEinNumberSubmitSuccess(response)
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            activeBankViewModel.submitEin(ein)
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
 
 
     private fun setAdapter() {
@@ -216,7 +322,7 @@ class ActiveBankFragment(
                 et_activebank_swiftcode.setOnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) {
 
-                        activeBankViewModel.getswiftBankCode(InputSwiftBankCode(swiftCode = et_activebank_swiftcode.text.toString()))
+                        activeBankViewModel.fetchBankDetails(et_activebank_swiftcode.text.toString())
 
                     }
                 }
@@ -350,7 +456,7 @@ class ActiveBankFragment(
         if (TextUtils.isEmpty(et_activebank_accname.text)) {
             Toast.makeText(context, "Empty account Name", Toast.LENGTH_LONG).show()
             return false
-        } else if (!FULL_NAME_PATTERN.matcher(et_activebank_accname.text.toString()).matches()) {
+        } else if (!FULL_NAME_PATTERN.matcher(et_activebank_accname.text.toString().trim()).matches()) {
 
             Toast.makeText(context, "account name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -385,7 +491,7 @@ class ActiveBankFragment(
     //END Validation Bank info
 
     private fun BankinformationCall() {
-        activeBankViewModel.ActiveBankinformation(
+        activeBankViewModel.submitBankInfo(
             InputActiveBankInfo(
 
                 bankId = a_bankid/*"7b8dc580-ba28-8f3b-354410354410351ab4"*//*sp_active_bank.selectedItemPosition.toString()*/,
@@ -396,7 +502,7 @@ class ActiveBankFragment(
                 swiftCode = et_activebank_swiftcode.text.toString(),
                 reEnterAccountNumber = et_activebank_re_accnum.text.toString(),
                 autoRenewal = autoRenewal,
-                userId = prefs.user_id
+//                userId = prefs.user_id
 
             )
         )
@@ -431,52 +537,15 @@ class ActiveBankFragment(
         return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
     }
 
-    override fun onTokenRefreshSuccess(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
 
-        //again listing api call
-//                    initcall()
-        BankinformationCall()
-    }
-
-    override fun onTokenRefreshFailure(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(
-            context, response.token_detail?.message, Toast.LENGTH_LONG
-        ).show()
-
-        clearLogin()
-        val intent = Intent(context, SignUpActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-    }
-
-
-    override fun onSwiftBankCodeSuccess(response: ResponseSwiftBankCode) {
+    fun onSwiftBankCodeSuccess(response: ResponseSwiftBankCode) {
         Loader.hideLoader()
         et_activebank_bankcode.text = Editable.Factory.getInstance()
             .newEditable(response.swiftbankdetail?.swiftCodeResponse?.bankCode)
 
     }
 
-    override fun onSwiftBankCodeFailure(response: ResponseSwiftBankCode) {
-        Loader.hideLoader()
-        if (response.swiftbankdetail?.tokenStatus.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()
-            activeBankViewModel.getswiftBankCode(InputSwiftBankCode(swiftCode = et_activebank_swiftcode.text.toString()))
-
-        } else {
-            Toast.makeText(
-                context, response.swiftbankdetail?.message, Toast.LENGTH_LONG
-            ).show()
-        }
-
-    }
-
-    override fun onActiveBankInfoSubmitSuccess(response: ResponseBankInfo) {
+    fun onActiveBankInfoSubmitSuccess(response: ResponseBankInfo) {
 
 
         Loader.hideLoader()
@@ -599,7 +668,7 @@ class ActiveBankFragment(
 
     private fun BankVerifyApiCall(etAccNum: EditText?, etBankCode: EditText?) {
 
-        bankVerifyPresenter.BankVerify_Submit(
+        activeBankViewModel.verifyBankAccount(
             InputBankVerification(
                 accountNumber = etAccNum?.text.toString(),
                 bankCode = etBankCode?.text.toString()
@@ -610,14 +679,7 @@ class ActiveBankFragment(
     }
 
     private fun EinSubmitCall(et_ein_number_popupsub: EditText?) {
-
-        einnumberpresenter.Ein_Number_Submit(
-            InputEinNumber(/* ein = "1234567890"*/
-                ein = et_ein_number_popupsub!!.text.toString()
-
-
-            )
-        )
+        activeBankViewModel.submitEin(et_ein_number_popupsub!!.text.toString())
         Log.d("Ein", "EIN_Number${et_ein_number_popupsub.text}")
     }
 
@@ -682,8 +744,7 @@ class ActiveBankFragment(
         if (TextUtils.isEmpty(et_activebank_accname.text)) {
             Toast.makeText(context, "Empty account Name", Toast.LENGTH_LONG).show()
             return false
-        } else if (!FULL_NAME_PATTERN.matcher(et_activebank_accname.text.toString()).matches()) {
-
+        } else if (!FULL_NAME_PATTERN.matcher(et_activebank_accname.text.toString().trim()).matches()) {
             Toast.makeText(context, "account name not valid", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -703,24 +764,7 @@ class ActiveBankFragment(
     }
 
 
-
-    override fun onActiveBankInfoSubmitFailure(response: ResponseBankInfo) {
-        Loader.hideLoader()
-
-        if (response.detail?.tokenStatus.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()
-            BankinformationCall()
-
-        } else {
-            Toast.makeText(
-                context, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-    override fun onEinNumberSubmitSuccess(response: ResponseEinNumber) {
+    fun onEinNumberSubmitSuccess(response: ResponseEinNumber) {
 
         Loader.hideLoader()
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
@@ -732,21 +776,7 @@ class ActiveBankFragment(
         activity?.finish()
     }
 
-    override fun onEinNumberSubmitFailure(response: ResponseEinNumber) {
-        Loader.hideLoader()
-        if (response.detail?.tokenStatus.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()/*  EinSubmitCall()*/
-
-        } else {
-            Toast.makeText(
-                context, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-    override fun onBankVerifySubmitSuccess(response: ResponseBankVerify) {
+    fun onBankVerifySubmitSuccess(response: ResponseBankVerify) {
         Loader.hideLoader()
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
 
@@ -756,25 +786,6 @@ class ActiveBankFragment(
         tv_activebank_bankcode_verify.visibility = View.INVISIBLE
         tv_activebank_bankcode_reverify.visibility = View.INVISIBLE
         tv_activebank_bankcode_verified.visibility = View.VISIBLE
-    }
-
-    override fun onBankVerifySubmitFailure(response: ResponseBankVerify) {
-        Loader.hideLoader()
-        if (response.detail?.tokenStatus.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()/*  EinSubmitCall()*/
-
-        } else {
-            Toast.makeText(
-                context, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
-        }
-        isBankVerifyBtn = false
-
-        tv_activebank_bankcode_verify.visibility = View.INVISIBLE
-        tv_activebank_bankcode_reverify.visibility = View.VISIBLE
-        tv_activebank_bankcode_verified.visibility = View.INVISIBLE
     }
 }
 

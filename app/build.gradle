@@ -40,6 +40,14 @@ android {
     dataBinding {
         enabled = true
     }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def formattedDate = (new Date()).format('dd-MM-yyyy_HH_mm')
+            output.outputFileName = new File(
+                    "Engu-${variant.name}_${formattedDate}.apk"
+            )
+        }
+    }
 }
 
 dependencies {

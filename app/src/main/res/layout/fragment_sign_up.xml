@@ -126,7 +126,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_squarebox"
-                    android:drawableStart="@drawable/ic_person_icon"
+                    android:drawableStart="@drawable/ic_person"
                     android:drawablePadding="@dimen/dp_16"
                     android:hint="@string/enter_your_user_name"
                     android:inputType="text"
@@ -168,7 +168,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_squarebox"
-                    android:drawableStart="@drawable/ic_envelope_icon"
+                    android:drawableStart="@drawable/ic_envelope"
                     android:drawablePadding="@dimen/dimen_16"
                     android:hint="@string/enter_your_email_address"
                     android:inputType="textEmailAddress"
@@ -296,7 +296,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_squarebox"
-                    android:drawableStart="@drawable/ic_lock_icon"
+                    android:drawableStart="@drawable/ic_lock"
                     android:drawablePadding="@dimen/dimen_16"
                     android:hint="@string/enter_your_password"
                     android:inputType="textPassword"
@@ -355,7 +355,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_squarebox"
-                    android:drawableStart="@drawable/ic_lock_icon"
+                    android:drawableStart="@drawable/ic_lock"
                     android:drawablePadding="@dimen/dimen_16"
                     android:hint="@string/re_enter_your_password"
                     android:inputType="textPassword"
@@ -416,7 +416,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/dp_4"
-                        android:src="@drawable/ic_arrowright" />
+                        android:src="@drawable/ic_arrow_right" />
                 </LinearLayout>
 
             </LinearLayout>

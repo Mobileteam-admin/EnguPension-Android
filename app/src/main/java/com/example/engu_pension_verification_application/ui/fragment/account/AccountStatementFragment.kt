@@ -11,8 +11,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.ui.adapter.AccountStatementAdapter
 import kotlinx.android.synthetic.main.fragment_account_statement.*
-import kotlinx.android.synthetic.main.fragment_wallet_history.*
 
 
 class AccountStatementFragment : Fragment() {

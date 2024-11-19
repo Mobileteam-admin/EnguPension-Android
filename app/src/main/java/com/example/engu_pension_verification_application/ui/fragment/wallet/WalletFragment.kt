@@ -8,9 +8,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.ui.fragment.signup.sign_up.SignUpViewModel
+import com.example.engu_pension_verification_application.viewmodel.WalletFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_wallet.*
-import kotlinx.android.synthetic.main.fragment_wallet_history.*
 
 
 class WalletFragment : Fragment() {

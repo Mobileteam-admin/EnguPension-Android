@@ -233,6 +233,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="@dimen/dp_4"
                                 android:layout_weight="1"
+                                android:drawableTint="#88000000"
                                 android:drawableStart="@drawable/ic_verify_black"
                                 android:drawablePadding="@dimen/dp_4"
                                 android:fontFamily="@font/nunito_sans_regular"
@@ -522,8 +523,10 @@
                             android:id="@+id/txt_account"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:drawableStart="@drawable/ic_account_2"
                             android:fontFamily="@font/nunito_sans_regular"
                             android:padding="@dimen/dp_12"
+                            android:drawablePadding="@dimen/dp_6"
                             android:text="Account"
                             android:textColor="@color/black_text"
                             android:textSize="@dimen/dp_14" />
@@ -706,7 +709,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:paddingStart="@dimen/dp_4"
-                                    android:src="@drawable/ic_arrowright"
+                                    android:src="@drawable/ic_arrow_right"
                                     />
                             </LinearLayout>
                         </LinearLayout>

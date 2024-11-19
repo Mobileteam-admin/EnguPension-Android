@@ -20,30 +20,41 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
-import com.example.engu_pension_verification_application.commons.LogoutConfirmDialog
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.DashboardDetails
 import com.example.engu_pension_verification_application.model.response.ResponseDashboardDetails
 import com.example.engu_pension_verification_application.model.response.ResponseLogout
 import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
+import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
+import com.example.engu_pension_verification_application.ui.dialog.LogoutConfirmDialog
 import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
-import com.example.engu_pension_verification_application.utils.SharedPref
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.LogoutConfirmViewModel
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.CompositeDateValidator
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
-import kotlinx.android.synthetic.main.card_add_bank.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.android.synthetic.main.fragment_active_service.tab_activeservice_viewpager
+import kotlinx.android.synthetic.main.fragment_active_service.tab_tablayout_activeservice
 import kotlinx.android.synthetic.main.fragment_dashboard.*
-import kotlinx.android.synthetic.main.fragment_retiree_bank.*
-import kotlinx.android.synthetic.main.fragment_retiree_documents.txt_pension_certificate_doc_filesize
-import kotlinx.android.synthetic.main.fragment_sign_up.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,13 +62,14 @@ import java.util.*
 
 
 
-class DashboardFragment : Fragment(), LogoutConfirmDialog.LogoutClick,DashboardCallBack,TokenRefreshCallBack {
+class DashboardFragment : Fragment() {
 
 
     private lateinit var UserDashboardDetails: DashboardDetails
     lateinit var datePickerDialog: DatePickerDialog
     private lateinit var dashboardViewModel: DashboardViewModel
-    private lateinit var tokenRefreshViewModel: TokenRefreshViewModel
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
+    private val logoutConfirmViewModel by activityViewModels<LogoutConfirmViewModel>()
 
 
     var year = 0
@@ -72,6 +84,7 @@ class DashboardFragment : Fragment(), LogoutConfirmDialog.LogoutClick,DashboardC
     val sdf = SimpleDateFormat("yyyy-MM-dd")
     val currentDate = sdf.format(Date())
     val prefs = SharedPref
+    private lateinit var logoutConfirmDialog: LogoutConfirmDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,34 +96,91 @@ class DashboardFragment : Fragment(), LogoutConfirmDialog.LogoutClick,DashboardC
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dashboardViewModel = DashboardViewModel(this)
-        /*  dashboardViewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)*/
-        /*tokenRefreshViewModel = ViewModelProvider(this).get(TokenRefreshViewModel::class.java)*/
-        tokenRefreshViewModel = TokenRefreshViewModel(this)
-        Log.d("Token", "onViewCreated: access- " + prefs.access_token)
         onClicked()
-        /*   onobserveIn()*/
-
-        /*tv_person_name.text = Editable.Factory.getInstance().newEditable(
-            prefs.first_name + if (prefs.middle_name != "") {
-                " " + prefs.middle_name + " "
-            } else {
-                " "
-
-            } + prefs.last_name
-        )*/
-
-
+        initViewModel()
+        initViews()
         initCall()
+        observeLiveData()
     }
 
+    private fun initViewModel() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
+        dashboardViewModel = ViewModelProviders.of(
+            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            EnguViewModelFactory(networkRepo)
+        ).get(DashboardViewModel::class.java)
+    }
+
+    private fun observeLiveData() {
+        tokenRefreshViewModel2.tokenRefreshError.observe(viewLifecycleOwner) { error ->
+            if (error != null) {
+                onTokenRefreshFailure(error)
+            }
+        }
+        logoutConfirmViewModel.logout.observe(viewLifecycleOwner) { logout ->
+            if(logout != null) callLogout()
+        }
+        dashboardViewModel.logoutResult.observe(viewLifecycleOwner) { response ->
+            if (response.logout_detail?.status == AppConstants.SUCCESS) {
+                ondashboardLogoutSuccess(response)
+            } else {
+                if (response.logout_detail?.tokenStatus == AppConstants.EXPIRED) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            dashboardViewModel.logout()
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.logout_detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                ondashboardDetailsSuccess(response)
+            } else {
+                if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            dashboardViewModel.fetchDashboardDetails()
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    showRetryDashboardFetchDialog(response.detail?.message?:getString(R.string.common_error_msg_2))
+                }
+            }
+        }
+    }
+    private fun showRetryDashboardFetchDialog(message: String) {
+        AlertDialog.Builder(requireContext())
+            .setMessage(message)
+            .setPositiveButton(R.string.retry
+            ) { dialogInterface, _ ->
+                initCall()
+                dialogInterface.dismiss()
+            }
+            .setNegativeButton(R.string.close
+            ) { _, _ ->
+                requireActivity().finish()
+            }
+            .show()
+    }
+    private fun initViews() {
+        logoutConfirmDialog = LogoutConfirmDialog()
+    }
     private fun initCall() {
-        if (context?.isConnectedToNetwork()!!) {
+        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             //Bank Loader commented for Loader issue
             // Loader.showLoader(requireContext())
-            dashboardViewModel.getDashboardDetails()
+            dashboardViewModel.fetchDashboardDetails()
         } else {
-            Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
+            showRetryDashboardFetchDialog("Please connect to internet")
         }
     }
 
@@ -146,7 +216,7 @@ class DashboardFragment : Fragment(), LogoutConfirmDialog.LogoutClick,DashboardC
         }
 
         txt_logout.setOnClickListener {
-            LogoutConfirmDialog.showDialog(requireContext(), this)
+            logoutConfirmDialog.show(parentFragmentManager,null)
         }
     }
 
@@ -306,23 +376,13 @@ class DashboardFragment : Fragment(), LogoutConfirmDialog.LogoutClick,DashboardC
 
     }
 
-    override fun proceedLogout() {
-        /*clearLogin()
-        val intent = Intent(context, SignUpActivity::class.java)
-        intent.flags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)*/
-
-        callLogout()
-
-    }
 
     private fun callLogout() {
         Loader.showLoader(requireContext())
-        if (context?.isConnectedToNetwork()!!) {
+        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 
             prefs.lastActivityDashboard = true
-            dashboardViewModel.getLogout()
+            dashboardViewModel.logout()
 
         } else {
             Loader.hideLoader()
@@ -331,13 +391,8 @@ class DashboardFragment : Fragment(), LogoutConfirmDialog.LogoutClick,DashboardC
 
     }
 
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-    }
 
-    override fun ondashboardDetailsSuccess(response: ResponseDashboardDetails) {
+    private fun ondashboardDetailsSuccess(response: ResponseDashboardDetails) {
         Loader.hideLoader()
 
         /*     Log.d("DashboardDetails", "onDashboardDetailSuccess: " + response)*/
@@ -398,26 +453,7 @@ class DashboardFragment : Fragment(), LogoutConfirmDialog.LogoutClick,DashboardC
         /*  }*/
     }
 
-    override fun ondashboardDetailsFailure(response: ResponseDashboardDetails) {
-        Loader.hideLoader()
-
-        if (response.detail?.tokenStatus.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            Loader.hideLoader()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()
-            dashboardViewModel.getDashboardDetails()
-        } else {
-            Loader.hideLoader()
-            Toast.makeText(
-                context, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
-
-        }
-    }
-
-
-    override fun ondashboardLogoutSuccess(response: ResponseLogout) {
+    private fun ondashboardLogoutSuccess(response: ResponseLogout) {
         Loader.hideLoader()
         Toast.makeText(
             context,
@@ -432,44 +468,12 @@ class DashboardFragment : Fragment(), LogoutConfirmDialog.LogoutClick,DashboardC
         startActivity(intent)
     }
 
-    override fun ondashboardLogoutFailure(response: ResponseLogout) {
-        if (!response.logout_detail?.tokenStatus.isNullOrEmpty()) {
-            if (response.logout_detail?.tokenStatus.equals("expired")) {
-                Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-
-                //refresh api call
-                tokenRefreshViewModel.getTokenRefresh()
-            } else {
-                Loader.hideLoader()
-                Toast.makeText(
-                    context,
-                    response.logout_detail?.message,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        } else {
-            Loader.hideLoader()
-            Toast.makeText(
-                context,
-                response.logout_detail?.message,
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-    override fun onTokenRefreshSuccess(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-        //again logout api call
-        callLogout()
-    }
-
-    override fun onTokenRefreshFailure(response: ResponseRefreshToken) {
+    private fun onTokenRefreshFailure(error:String) {
         Loader.hideLoader()
 
         Toast.makeText(
             context,
-            response.token_detail?.message,
+            error,
             Toast.LENGTH_LONG
         ).show()
 

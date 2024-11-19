@@ -1,8 +1,6 @@
 package com.example.engu_pension_verification_application.ui.fragment.signup.login
 
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -11,41 +9,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
-import com.example.engu_pension_verification_application.model.response.LoginDetail
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseLogin
+import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.DashboardActivity
 import com.example.engu_pension_verification_application.ui.activity.ServiceActivity
-import com.example.engu_pension_verification_application.utils.SharedPref
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.AppUtils
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.fragment_sign_up.*
-import kotlinx.android.synthetic.main.fragment_splash2.*
-import java.util.regex.Pattern
-import kotlin.math.log
 
 
 var loginGovResponse : String? = null
 
 @Suppress("UNREACHABLE_CODE")
-class LoginFragment : Fragment(),LoginViewCallBack {
-
-
-    private lateinit var loginviewModel: LoginViewModel
-
-    val EMAIL_ADDRESS_PATTERN = Pattern.compile(
-        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-                "\\@" +
-                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-                "(" +
-                "\\." +
-                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-                ")+"
-    )
-
-
+class LoginFragment : Fragment() {
+    private lateinit var loginViewModel: LoginViewModel
     var Ph_no: String = ""
     var email_Phn: String = ""
 
@@ -63,40 +49,26 @@ class LoginFragment : Fragment(),LoginViewCallBack {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //loginviewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        loginviewModel = LoginViewModel(this)
-
         login_ccp.registerPhoneNumberTextView(et_login_phone)
+        initViewModel()
+        observeData()
         onClicked()
-        //observeLoggedIn()
     }
-
-    private fun observeLoggedIn() {
-        loginviewModel.loginStatus.observe(viewLifecycleOwner, Observer { responselogin ->
-
+    private fun initViewModel() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        loginViewModel = ViewModelProviders.of(
+            this,
+            EnguViewModelFactory(networkRepo)
+        ).get(LoginViewModel::class.java)
+    }
+    private fun observeData() {
+        loginViewModel.loginStatus.observe(viewLifecycleOwner) { response ->
             Loader.hideLoader()
-
-            if (responselogin.login_detail?.status.equals("success")) {
-                Toast.makeText(context, responselogin.login_detail!!.message, Toast.LENGTH_LONG)
-                    .show()
-
-                //check account completion true or not with local storage
-                //true - dashboar
-              /*  val intent = Intent(context, DashboardActivity::class.java)
-                intent.flags =
-                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)*/
-
-                //false - service
-                val intent = Intent(context, ServiceActivity::class.java)
-                intent.flags =
-                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-            } else {
-                Toast.makeText(context, responselogin.login_detail!!.message, Toast.LENGTH_LONG)
-                    .show()
+            Toast.makeText(context, response.login_detail?.message, Toast.LENGTH_LONG).show()
+            if (response.login_detail?.status == AppConstants.SUCCESS) {
+                onLoginSuccess(response)
             }
-        })
+        }
     }
 
     private fun onClicked() {
@@ -107,7 +79,7 @@ class LoginFragment : Fragment(),LoginViewCallBack {
             if (isValidLogin()) {
                 if (isValidate_password()) {
                     Loader.showLoader(requireContext())
-                    if (context?.isConnectedToNetwork()!!) {
+                    if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                         Log.d(
                             "Login",
                             "onClicked: " + com.example.engu_pension_verification_application.model.input.InputLogin(
@@ -115,7 +87,7 @@ class LoginFragment : Fragment(),LoginViewCallBack {
                                 email_Phn
                             )
                         )
-                        loginviewModel.doLogin(
+                        loginViewModel.doLogin(
                             com.example.engu_pension_verification_application.model.input.InputLogin(
                                 ed_password.text.toString(),
                                 email_Phn
@@ -169,11 +141,7 @@ class LoginFragment : Fragment(),LoginViewCallBack {
             return false
 
         } else {
-
-            if (!EMAIL_ADDRESS_PATTERN.matcher(
-                    ed_email_phn.text.toString()
-                ).matches()
-            ) {
+            if (!AppUtils.isValidEmailAddress(ed_email_phn.text.toString())) {
                 txt_loginemail_error.visibility = View.VISIBLE
                 return false
             } else {
@@ -189,18 +157,13 @@ class LoginFragment : Fragment(),LoginViewCallBack {
         return true
     }
 
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-    }
+    private fun onLoginSuccess(response: ResponseLogin) {
+        prefs.isLogin = true
+        prefs.user_id = response.login_detail?.user_id.toString()
+        prefs.access_token = response.login_detail?.accessToken
+        prefs.refresh_token = response.login_detail?.refreshToken
 
-    override fun onLoginSuccess(response: ResponseLogin) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.login_detail!!.message, Toast.LENGTH_LONG)
-            .show()
-
-        loginGovResponse = response.login_detail.userGovtVerified.toString()
+        loginGovResponse = response.login_detail?.userGovtVerified.toString()
 
         Log.d("gov status login", "variable set$loginGovResponse")
 
@@ -230,13 +193,5 @@ class LoginFragment : Fragment(),LoginViewCallBack {
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(serviceIntent)
         }
-
     }
-
-    override fun onLoginFail(response: ResponseLogin) {
-        Loader.hideLoader()
-        Toast.makeText(context, response.login_detail!!.message, Toast.LENGTH_LONG)
-            .show()
-    }
-
 }

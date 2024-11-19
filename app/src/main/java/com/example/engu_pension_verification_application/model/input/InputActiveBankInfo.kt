@@ -22,8 +22,8 @@ data class InputActiveBankInfo(
 	@field:SerializedName("bank_id")
 	val bankId: String? = null,
 
-	@field:SerializedName("user_id")
-	val userId: String? = null,
+//	@field:SerializedName("user_id")
+//	val userId: String? = null,
 
 	@field:SerializedName("re_enter_account_number")
 	val reEnterAccountNumber: String? = null,
