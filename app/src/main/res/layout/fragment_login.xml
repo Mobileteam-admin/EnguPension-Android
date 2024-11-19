@@ -103,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_squarebox"
-                    android:drawableStart="@drawable/ic_envelope_icon"
+                    android:drawableStart="@drawable/ic_envelope"
                     android:drawablePadding="@dimen/dp_16"
                     android:hint="@string/email_address"
                     android:inputType="textEmailAddress"
@@ -238,7 +238,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/custom_squarebox"
-                        android:drawableStart="@drawable/ic_lock_icon"
+                        android:drawableStart="@drawable/ic_lock"
                         android:drawablePadding="@dimen/dimen_16"
                         android:inputType="textPassword"
                         android:hint="@string/password"
@@ -251,7 +251,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_squarebox"
-                    android:drawableStart="@drawable/ic_lock_icon"
+                    android:drawableStart="@drawable/ic_lock"
                     android:drawablePadding="@dimen/dimen_16"
                     android:hint="@string/password"
                     android:inputType="textPassword"
@@ -322,7 +322,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/dp_4"
-                        android:src="@drawable/ic_arrowright" />
+                        android:src="@drawable/ic_arrow_right" />
                 </LinearLayout>
 
 

@@ -34,13 +34,14 @@ import com.example.engu_pension_verification_application.model.input.InputBankVe
 import com.example.engu_pension_verification_application.model.response.*
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.ProcessDashboardActivity
-import com.example.engu_pension_verification_application.ui.fragment.service.accounttype.AccountTypeAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.bank.BankAdapter
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.view_models.ActiveBankViewModelFactory
-import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2Factory
+import com.example.engu_pension_verification_application.ui.adapter.AccountTypeAdapter
+import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
+import com.example.engu_pension_verification_application.util.AppUtils
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.ActiveBankViewModel
+import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.android.synthetic.main.fragment_active_bank.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -115,20 +116,7 @@ class ActiveBankFragment: Fragment() {
         et_activebank_bankcode.text = Editable.Factory.getInstance().newEditable("MOOG")*/
 
         et_activebank_swiftcode.filters = arrayOf(InputFilter.AllCaps(), filterUpperCaseAndDigits)
-
-        et_activebank_accname.text = Editable.Factory.getInstance().newEditable(
-            prefs.first_name + if (prefs.middle_name != "") {
-                " " + prefs.middle_name + " "
-            } else {
-                " "
-
-            } + prefs.last_name
-        )
-
-
-
-
-
+        et_activebank_accname.setText(AppUtils.getFullName(prefs.first_name,prefs.middle_name,prefs.last_name))
 
 //        setAdapter()
         // initcall()  - hold
@@ -136,19 +124,17 @@ class ActiveBankFragment: Fragment() {
         onClicked()
 
         //observeActiveBankDetails()
-
-
     }
 
     private fun initViewModels() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         activeBankViewModel = ViewModelProviders.of(
             this,
-            ActiveBankViewModelFactory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(ActiveBankViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
-            TokenRefreshViewModel2Factory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
     private fun observeLiveData() {
@@ -516,7 +502,7 @@ class ActiveBankFragment: Fragment() {
                 swiftCode = et_activebank_swiftcode.text.toString(),
                 reEnterAccountNumber = et_activebank_re_accnum.text.toString(),
                 autoRenewal = autoRenewal,
-                userId = prefs.user_id
+//                userId = prefs.user_id
 
             )
         )

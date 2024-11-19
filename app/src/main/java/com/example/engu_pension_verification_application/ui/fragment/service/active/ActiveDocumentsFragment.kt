@@ -22,31 +22,24 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
-import com.example.engu_pension_verification_application.commons.TabAccessControl
 import com.example.engu_pension_verification_application.commons.setDocumentView
 import com.example.engu_pension_verification_application.commons.setDocumentViewIfPresent
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.FileUrlResponse
 import com.example.engu_pension_verification_application.model.response.ResponseActiveDocRetrive
 import com.example.engu_pension_verification_application.model.response.ResponseActiveDocUpload
-import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.ActiveDocWebViewActivity
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.utils.ViewPageCallBack
-import com.example.engu_pension_verification_application.view_models.ActiveDocumentsViewModelFactory
-import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2Factory
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.ActiveDocumentsViewModel
+import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.android.synthetic.main.fragment_active_documents.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -133,7 +126,11 @@ class ActiveDocumentsFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModels()
+        initViews()
         observeLiveData()
+    }
+
+    private fun initViews() {
         /*activeDocViewModel =
             ViewModelProvider(this).get(ActiveDocumentsViewModel::class.java)*/
 
@@ -153,8 +150,6 @@ class ActiveDocumentsFragment(
             activeServiceViewModel.setTabsEnabledState(true, false, false)
 
         }
-
-
 
         ll_active_app_form_upload.setOnClickListener(this)
         img_active_app_form_close.setOnClickListener(this)
@@ -176,19 +171,16 @@ class ActiveDocumentsFragment(
         a_id_card_btn_green_view.setOnClickListener(this)
         a_passport_photo_btn_green_view.setOnClickListener(this)
         a_clearence_form_btn_green_view.setOnClickListener(this)
-
-
     }
-
     private fun initViewModels() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         activeDocumentsViewModel = ViewModelProviders.of(
             this,
-            ActiveDocumentsViewModelFactory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(ActiveDocumentsViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
-            TokenRefreshViewModel2Factory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
     private fun observeLiveData() {
@@ -197,14 +189,14 @@ class ActiveDocumentsFragment(
         }
         activeDocumentsViewModel.documentsApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
-                ActiveUserDocRetrive = response.detail?.fileUrlResponse
+                ActiveUserDocRetrive = response.detail.fileUrlResponse
                 responseActiveDocRetrive = response
                 onRetrievedDocSetFields2()
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            activeDocumentsViewModel.fetchActiveDocuments(1)
+                            activeDocumentsViewModel.fetchActiveDocuments()
                         }
                     }
                 } else {
@@ -458,7 +450,7 @@ class ActiveDocumentsFragment(
         //Loader.showLoader(requireContext())
         if (context?.isConnectedToNetwork()!!) {
 
-            activeDocumentsViewModel.fetchActiveDocuments(0)
+            activeDocumentsViewModel.fetchActiveDocuments()
             //Loader.hideLoader()
 
 

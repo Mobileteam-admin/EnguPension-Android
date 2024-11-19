@@ -12,36 +12,32 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
-import com.example.engu_pension_verification_application.commons.TabAccessControl
-import com.example.engu_pension_verification_application.model.response.AccountTypeItem
-import com.example.engu_pension_verification_application.model.response.ListBanksItem
-import com.example.engu_pension_verification_application.model.response.ResponseBankList
-import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
+import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.fragment.service.retiree.RetireeBankFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.retiree.RetireeBasicDetailsFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.retiree.RetireeDocumentsFragment
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.utils.ViewPageCallBack
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.fragment_active_service.tab_tablayout_activeservice
 import kotlinx.android.synthetic.main.fragment_retiree.*
 
 
-class RetireeServiceFragment() : Fragment(), ViewPageCallBack, RetireeServiceViewCallBack,
-    TokenRefreshCallBack,TabAccessControl {
+class RetireeServiceFragment : Fragment() {
 
-
+    private val retireeServiceViewModel by activityViewModels<RetireeServiceViewModel>()
     val prefs = SharedPref
-    var BankdetailsList = ArrayList<ListBanksItem?>()
-    var AccountTypeList = ArrayList<AccountTypeItem?>()
-    lateinit var retireeServicePresenter: RetireeServicePresenter
-    private lateinit var tokenRefreshViewModel: TokenRefreshViewModel
+//    var BankdetailsList = ArrayList<ListBanksItem?>()
+//    var AccountTypeList = ArrayList<AccountTypeItem?>()
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     val tabIcons = intArrayOf(
         R.drawable.ic_basicdetails_white, R.drawable.ic_documents_active, R.drawable.ic_bank_white
     )
@@ -56,25 +52,51 @@ class RetireeServiceFragment() : Fragment(), ViewPageCallBack, RetireeServiceVie
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // toolbar_retiree.setTitle("Retiree")
+        initViewModel()
+//        retireeServicePresenter = RetireeServicePresenter(this)
 
-        retireeServicePresenter = RetireeServicePresenter(this)
-        tokenRefreshViewModel = TokenRefreshViewModel(this)
 
         setupViewPager(tab_retiree_viewpager)
         tab_tablayout_retiree!!.setupWithViewPager(tab_retiree_viewpager)
 
 
-        initCall()
+//        initCall()
         onClicked()
+        observeLiveData()
     }
 
-    private fun initCall() {
-        if (context?.isConnectedToNetwork()!!) {
-            //Loader.showLoader(requireContext())
-            retireeServicePresenter.getBankList()
-        } else {
-            Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
+    private fun observeLiveData() {
+        retireeServiceViewModel.onMoveToNextTab.observe(viewLifecycleOwner) {
+            tab_retiree_viewpager.setCurrentItem(getItem(+1), true)
         }
+        retireeServiceViewModel.enableTab0.observe(viewLifecycleOwner) {
+            tab_tablayout_retiree.getTabAt(0)?.view?.isEnabled = it
+        }
+        retireeServiceViewModel.enableTab1.observe(viewLifecycleOwner) {
+            tab_tablayout_retiree.getTabAt(1)?.view?.isEnabled = it
+        }
+        retireeServiceViewModel.enableTab2.observe(viewLifecycleOwner) {
+            tab_tablayout_retiree.getTabAt(2)?.view?.isEnabled = it
+        }
+
+        tokenRefreshViewModel2.tokenRefreshError.observe(viewLifecycleOwner) { error ->
+            if (error != null) {
+                Loader.hideLoader()
+                if (error.isNotEmpty()) Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+                SharedPref.logout()
+                val intent = Intent(context, SignUpActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+
+    }
+    private fun initViewModel() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
     }
 
     private fun onClicked() {
@@ -86,17 +108,15 @@ class RetireeServiceFragment() : Fragment(), ViewPageCallBack, RetireeServiceVie
     private fun setupViewPager(viewpager: ViewPager?) {
         val retiree_adapter = ViewPagerAdapter(childFragmentManager)
 
-        retiree_adapter.addFragment(RetireeBasicDetailsFragment(this,this), "Basic Details")
-        retiree_adapter.addFragment(RetireeDocumentsFragment(this,this), "Documents")
-        retiree_adapter.addFragment(
-            RetireeBankFragment(BankdetailsList, AccountTypeList), "Bank Information"
-        )
+        retiree_adapter.addFragment(RetireeBasicDetailsFragment(), "Basic Details")
+        retiree_adapter.addFragment(RetireeDocumentsFragment(), "Documents")
+        retiree_adapter.addFragment(RetireeBankFragment(), "Bank Information")
 
 
         viewpager?.adapter = retiree_adapter
         retiree_adapter.notifyDataSetChanged()
 
-        /*viewpager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewpager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
                 positionOffset: Float,
@@ -106,13 +126,13 @@ class RetireeServiceFragment() : Fragment(), ViewPageCallBack, RetireeServiceVie
             }
 
             override fun onPageSelected(position: Int) {
-                retiree_adapter.notifyDataSetChanged()
+                retireeServiceViewModel.currentTabPos.value= position
             }
 
             override fun onPageScrollStateChanged(state: Int) {
             }
 
-        })*/
+        })
 
 
         tab_tablayout_retiree.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -232,79 +252,16 @@ class RetireeServiceFragment() : Fragment(), ViewPageCallBack, RetireeServiceVie
 
     }
 
-    override fun onViewMoveNext() {
-        tab_retiree_viewpager.setCurrentItem(getItem(+1), true)
-    }
-
     private fun getItem(i: Int): Int {
         return tab_retiree_viewpager.currentItem + i
     }
 
-    override fun onBankDetailsSuccess(response: ResponseBankList) {
-        Loader.hideLoader()
-
-        BankdetailsList.clear()
-        AccountTypeList.clear()
-
-        BankdetailsList.addAll(response.detail?.banks!!)
-        AccountTypeList.addAll(response.detail.accountType!!)
-    }
-
-    override fun onBankDetailsFailure(response: ResponseBankList) {
-        Loader.hideLoader()
-
-        if (response.detail?.status.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            Loader.hideLoader()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()
-        } else {
-            Loader.hideLoader()
-            Toast.makeText(
-                context, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
-
-        }
-    }
-
-    override fun onTokenRefreshSuccess(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-        initCall()
-    }
-
-    override fun onTokenRefreshFailure(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(
-            context, response.token_detail?.message, Toast.LENGTH_LONG
-        ).show()
-
-        clearLogin()
-        val intent = Intent(context, SignUpActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-    }
 
 
-
-    private fun clearLogin() {
-        prefs.isLogin = false
-        prefs.user_id = ""
-        prefs.user_name = ""
-        prefs.email = ""
-        prefs.access_token = ""
-        prefs.refresh_token = ""
-    }
 
     fun Context.isConnectedToNetwork(): Boolean {
         val connectivityManager =
             this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-    }
-
-    override fun enableDisableTabs(enableTab0: Boolean, enableTab1: Boolean, enableTab2: Boolean) {
-        tab_tablayout_retiree.getTabAt(0)?.view?.isEnabled = enableTab0
-        tab_tablayout_retiree.getTabAt(1)?.view?.isEnabled = enableTab1
-        tab_tablayout_retiree.getTabAt(2)?.view?.isEnabled = enableTab2
     }
 }

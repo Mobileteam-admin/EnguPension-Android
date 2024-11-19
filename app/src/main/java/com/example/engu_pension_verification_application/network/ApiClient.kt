@@ -2,7 +2,7 @@ package com.example.engu_pension_verification_application.network
 
 
 
-import com.example.engu_pension_verification_application.utils.SharedPref
+import com.example.engu_pension_verification_application.util.SharedPref
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

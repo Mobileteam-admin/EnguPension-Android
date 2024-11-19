@@ -344,7 +344,7 @@
                     style="@style/Style_text_title_2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_person_icon"
+                    android:drawableStart="@drawable/ic_person"
                     android:drawablePadding="@dimen/dp_16"
                     android:hint="Next of Kin Profile"
                     android:inputType="text"

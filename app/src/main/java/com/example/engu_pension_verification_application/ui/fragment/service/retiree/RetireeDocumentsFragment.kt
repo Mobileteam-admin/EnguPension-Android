@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -18,25 +16,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
-import com.example.engu_pension_verification_application.commons.TabAccessControl
 import com.example.engu_pension_verification_application.commons.setDocumentView
 import com.example.engu_pension_verification_application.commons.setDocumentViewIfPresent
-import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseRetireeDocRetrive
 import com.example.engu_pension_verification_application.model.response.ResponseRetireeDocUpload
 import com.example.engu_pension_verification_application.model.response.RetireeFileUrlResponse
+import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.ActiveDocWebViewActivity
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.utils.ViewPageCallBack
-import kotlinx.android.synthetic.main.fragment_active_documents.*
-import kotlinx.android.synthetic.main.fragment_retiree.tab_tablayout_retiree
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.RetireeDocumentsViewModel
+import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.android.synthetic.main.fragment_retiree_documents.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -45,19 +48,20 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private val tabAccessControl: TabAccessControl) : Fragment(),
-    View.OnClickListener, RetireeDocCallBack, TokenRefreshCallBack {
+class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
 
     val prefs = SharedPref
 
     val mimeTypes = arrayOf("image/jpeg", "image/png", "application/pdf")
 
-    private lateinit var retireeDocViewModel: RetireeDocumentsViewModel
-    private lateinit var tokenRefreshViewModel: TokenRefreshViewModel
-
+    private lateinit var retireeDocumentsViewModel: RetireeDocumentsViewModel
+    private val retireeServiceViewModel by activityViewModels<RetireeServiceViewModel>()
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
 
     companion object {
+        private const val TAB_POSITION = 1
+
         const val RETIREE_APPLICATION_FORM_FILE = 201
         const val RETIREE_APPOINTMENT_PAYMENT_FILE = 202
         const val RETIREE_AUTHORISATION_PAYMENT_FILE = 203
@@ -130,33 +134,23 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-
+        super.onViewCreated(view, savedInstanceState)
+        initViewModels()
+        initViews()
+        observeLiveData()
+    }
+    private fun initViews() {
         if (prefs.isRBasicSubmit)
         {
-
             if (prefs.isRDocSubmit){
-
-                tabAccessControl.enableDisableTabs(true, true, true)
-
+                retireeServiceViewModel.setTabsEnabledState(true, true, true)
             }else{
-
-                tabAccessControl.enableDisableTabs(true, true, false)
-
+                retireeServiceViewModel.setTabsEnabledState(true, true, false)
             }
         }else{
             //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-            tabAccessControl.enableDisableTabs(true, false, false)
-
+            retireeServiceViewModel.setTabsEnabledState(true, false, false)
         }
-
-        retireeDocViewModel = RetireeDocumentsViewModel(this)
-        tokenRefreshViewModel = TokenRefreshViewModel(this)
-
-
-        RetireeDocRetrivecall()
-
-        super.onViewCreated(view, savedInstanceState)
 
         ll_retiree_app_form_upload.setOnClickListener(this)
         img_retiree_app_form_close.setOnClickListener(this)
@@ -199,14 +193,67 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
 
     }
 
+    private fun initViewModels() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        retireeDocumentsViewModel = ViewModelProviders.of(
+            this,
+            EnguViewModelFactory(networkRepo)
+        ).get(RetireeDocumentsViewModel::class.java)
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
+    }
+    private fun observeLiveData() {
+        retireeServiceViewModel.currentTabPos.observe(viewLifecycleOwner){
+            if (it == TAB_POSITION) RetireeDocRetrivecall()
+        }
+        retireeDocumentsViewModel.documentsFetchResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+//                Loader.hideLoader()
+                RetireeUserDocRetrive = response.detail.fileUrlResponse
+                responseRetireeDocRetrive = response
+                onRetireeRetrievedDocSet()
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            retireeDocumentsViewModel.fetchDocuments()
+                        }
+                    }
+                } else {
+                    Loader.hideLoader()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        retireeDocumentsViewModel.documentsUploadResult.observe(viewLifecycleOwner) { pair ->
+            Loader.hideLoader()
+            val request = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                onDocUploadSuccess(response)
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            retireeDocumentsViewModel.uploadDocuments(request)
+                        }
+                    }
+                } else {
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
 
 
     private fun RetireeDocRetrivecall() {
         //Loader.showLoader(requireContext())
-        if (context?.isConnectedToNetwork()!!) {
+        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 
 
-            retireeDocViewModel.retireedocRetrive()
+            retireeDocumentsViewModel.fetchDocuments()
 
             //Loader.hideLoader()
 
@@ -315,8 +362,8 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
 
                 //Log.d("Debug", "ll_retireedoc_next clicked")
                 if (!RetireeUserDocRetrive?.idCardFileUrl.isNullOrEmpty()) {
-                    viewPageCallBack.onViewMoveNext()
-                    tabAccessControl.enableDisableTabs(true, true, true)
+                    retireeServiceViewModel.moveToNextTab()
+                    retireeServiceViewModel.setTabsEnabledState(true, true, true)
                 }else if (isValidDocs()) {
                     Log.d("Debug", "isValidDocs is true")
                     nextButtonCall()
@@ -413,6 +460,7 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
                 }
             }
             retiree_app_btn_green_view -> {
+                Log.i("sssssssssssss", "onClick: 1) $applicationFormUri 2) ${RetireeUserDocRetrive?.applicationFormFileUrl}")
                 if (applicationFormUri != null) {
                     startActivityFromUri(applicationFormUri!!)
                 } else if (!RetireeUserDocRetrive?.applicationFormFileUrl.isNullOrEmpty()) {
@@ -558,82 +606,13 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
     }
 
     private fun nextButtonCall() {
-
-
-
-        if (context?.isConnectedToNetwork()!!) {
+        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             Loader.showLoader(requireContext())
-
             retireedocUploadCall2()
-
-
         } else {
             Loader.hideLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
-
-
-    }
-
-    private fun retireedocUploadCall() {
-        Log.d(
-            "typeofdoc",
-            "nextButtonCall:" + application_form_fileMIME + monthly_arrears_payment_appointment_fileMIME + payment_authorization_retirement_or_death_fileMIME + clearance_form_fileMIME + notification_promotion_fileMIME + pension_life_certificate_fileMIME + passport_photo_fileMIME + retirement_notice_fileMIME + id_card_fileMIME
-        )
-
-        val requestBody: RequestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-
-            .addFormDataPart(
-                "application_form_file",
-                application_form_filename,
-                application_form_file!!.asRequestBody(application_form_fileMIME.toMediaTypeOrNull())
-            )
-
-            .addFormDataPart(
-                "monthly_arrears_payment_appointment_file",
-                monthly_arrears_payment_appointment_filename,
-                monthly_arrears_payment_appointment_file!!.asRequestBody(
-                    monthly_arrears_payment_appointment_fileMIME.toMediaTypeOrNull()
-                )
-            )
-
-            .addFormDataPart(
-                "payment_authorization_retirement_or_death_file",
-                payment_authorization_retirement_or_death_filename,
-                payment_authorization_retirement_or_death_file!!.asRequestBody(
-                    payment_authorization_retirement_or_death_fileMIME.toMediaTypeOrNull()
-                )
-            ).addFormDataPart(
-                "clearance_form_file",
-                clearance_form_filename,
-                clearance_form_file!!.asRequestBody(clearance_form_fileMIME.toMediaTypeOrNull())
-            ).addFormDataPart(
-                "promotion_notification_file",
-                notification_promotion_filename,
-                notification_promotion_file!!.asRequestBody(notification_promotion_fileMIME.toMediaTypeOrNull())
-            ).addFormDataPart(
-                "pension_life_certificate_file",
-                pension_life_certificate_filename,
-                pension_life_certificate_file!!.asRequestBody(pension_life_certificate_fileMIME.toMediaTypeOrNull())
-            )
-
-            .addFormDataPart(
-                "passport_photo_file",
-                passport_photo_filename,
-                passport_photo_file!!.asRequestBody(passport_photo_fileMIME.toMediaTypeOrNull())
-            )
-
-            .addFormDataPart(
-                "retirement_notice_file",
-                retirement_notice_filename,
-                retirement_notice_file!!.asRequestBody(retirement_notice_fileMIME.toMediaTypeOrNull())
-            ).addFormDataPart(
-                "id_card_file",
-                id_card_filename,
-                id_card_file!!.asRequestBody(id_card_fileMIME.toMediaTypeOrNull())
-            ).build()
-
-        retireeDocViewModel.docUpload(requestBody)
     }
 
     private fun retireedocUploadCall2() {
@@ -723,7 +702,7 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
         // Build the RequestBody from the Builder
         val requestBody: RequestBody = multipartBuilder.build()
 
-        retireeDocViewModel.docUpload(requestBody)
+        retireeDocumentsViewModel.uploadDocuments(requestBody)
     }
 
 
@@ -1726,40 +1705,13 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
 
     }
 
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-    }
 
-    override fun onDocUploadSuccess(response: ResponseRetireeDocUpload) {
-        Loader.hideLoader()
-
-
+    fun onDocUploadSuccess(response: ResponseRetireeDocUpload) {
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
-
         prefs.isRDocSubmit = true
         //enableDisableTabs(tab_tablayout_retiree, true, true, false)
-        viewPageCallBack.onViewMoveNext()
+        retireeServiceViewModel.moveToNextTab()
     }
-
-    override fun onDocUploadFailure(response: ResponseRetireeDocUpload) {
-        Loader.hideLoader()
-        if (response.detail?.tokenStatus.equals("expired")) {
-            Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-            //refresh api call
-            tokenRefreshViewModel.getTokenRefresh()
-
-
-        } else {
-            Loader.hideLoader()
-            Toast.makeText(
-                context, response.detail?.message, Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-
 
     private fun onRetireeRetrievedDocSet() {
         RetireeUserDocRetrive?.let { retireeUserDoc ->
@@ -1770,15 +1722,13 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
                 {
 
                     if (prefs.isRDocSubmit){
-
-                        tabAccessControl.enableDisableTabs(true, true, true)
-
+                        retireeServiceViewModel.setTabsEnabledState(true, true, true)
                     }else{
-                        tabAccessControl.enableDisableTabs(true, true, false)
+                        retireeServiceViewModel.setTabsEnabledState(true, true, false)
                     }
                 }else{
                     //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                    tabAccessControl.enableDisableTabs(true, false, false)
+                    retireeServiceViewModel.setTabsEnabledState(true, false, false)
 
                 }
 
@@ -1972,58 +1922,7 @@ class RetireeDocumentsFragment(var viewPageCallBack: ViewPageCallBack, private v
                 ll_retiree_retirement_notice_doc_percentage.visibility = View.GONE
                 pb_retiree_retirement_notice_doc.visibility = View.GONE
             }
-
-
-
             //enableDisableTabs(tab_tablayout_retiree, true, true, true)
-
-
-
-
-
         }
-
-
-    }
-
-
-    override fun onRetireeDocRetriveSuccess(response: ResponseRetireeDocRetrive) {
-        Loader.hideLoader()
-
-
-        RetireeUserDocRetrive = response.detail?.fileUrlResponse!!
-
-        responseRetireeDocRetrive = response
-
-        onRetireeRetrievedDocSet()
-
-        //onRetireeRetrivedDocSetFields()
-
-
-    }
-
-    override fun onRetireeDocRetriveFailure(response: ResponseRetireeDocRetrive) {
-        Loader.hideLoader()
-        //RetireeUserDocRetrive = null
-        //responseRetireeDocRetrive = null
-        Toast.makeText(
-            context, response.detail?.message, Toast.LENGTH_LONG
-        ).show()
-    }
-
-    override fun onTokenRefreshSuccess(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-
-        //Toast.makeText(context, "Please wait.....", Toast.LENGTH_SHORT).show()
-        Log.d("refresh_success", "${response.token_detail?.message}")
-
-        nextButtonCall()
-    }
-
-    override fun onTokenRefreshFailure(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(
-            context, response.token_detail?.message, Toast.LENGTH_LONG
-        ).show()
     }
 }

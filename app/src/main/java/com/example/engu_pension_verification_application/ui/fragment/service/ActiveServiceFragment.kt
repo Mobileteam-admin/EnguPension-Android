@@ -1,9 +1,7 @@
 package com.example.engu_pension_verification_application.ui.fragment.service
 
 
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,27 +13,21 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.viewpager.widget.ViewPager
-import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.response.*
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBankFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBasicDetailsFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveDocumentsFragment
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2Factory
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_active_service.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class ActiveServiceFragment : Fragment() {
@@ -60,7 +52,7 @@ class ActiveServiceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbar_activeservice.setTitle(null)
-        initViewModels()
+        initViewModel()
 
 
         setupViewPager(tab_activeservice_viewpager)
@@ -73,11 +65,11 @@ class ActiveServiceFragment : Fragment() {
         onClicked()
     }
 
-    private fun initViewModels() {
+    private fun initViewModel() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
-            TokenRefreshViewModel2Factory(networkRepo)
+            EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
 
@@ -99,13 +91,12 @@ class ActiveServiceFragment : Fragment() {
             if (error != null) {
                 Loader.hideLoader()
                 if (error.isNotEmpty()) Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-                clearLogin()
+                SharedPref.logout()
                 val intent = Intent(context, SignUpActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             }
         }
-
     }
 
     private fun onClicked() {
@@ -134,7 +125,7 @@ class ActiveServiceFragment : Fragment() {
             }
 
             override fun onPageSelected(position: Int) {
-                activeServiceViewModel.currentTabPos.value= position
+                activeServiceViewModel.currentTabPos.value = position
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -368,35 +359,6 @@ class ActiveServiceFragment : Fragment() {
 
     private fun getItem(i: Int): Int {
         return tab_activeservice_viewpager.currentItem + i
-    }
-
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-    }
-
-
-    fun onTokenRefreshFailure(response: ResponseRefreshToken) {
-        Loader.hideLoader()
-        Toast.makeText(
-            context, response.token_detail?.message, Toast.LENGTH_LONG
-        ).show()
-
-        clearLogin()
-        val intent = Intent(context, SignUpActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-    }
-
-
-    private fun clearLogin() {
-        prefs.isLogin = false
-        prefs.user_id = ""
-        prefs.user_name = ""
-        prefs.email = ""
-        prefs.access_token = ""
-        prefs.refresh_token = ""
     }
 
 }
