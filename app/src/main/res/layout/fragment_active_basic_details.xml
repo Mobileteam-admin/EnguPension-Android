@@ -797,7 +797,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/dp_8"
                     android:paddingRight="@dimen/dp_130"
-                    android:src="@drawable/ic_arrowright"
+                    android:src="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/txt_activebasicdetails_next"

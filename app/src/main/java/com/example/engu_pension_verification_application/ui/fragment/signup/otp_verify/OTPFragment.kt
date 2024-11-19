@@ -22,9 +22,10 @@ import com.example.engu_pension_verification_application.model.input.InputForgot
 import com.example.engu_pension_verification_application.model.input.InputSignupVerify
 import com.example.engu_pension_verification_application.model.response.VerifyResponse
 import com.example.engu_pension_verification_application.network.ApiClient
-import com.example.engu_pension_verification_application.utils.NetworkUtils
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.OTPViewModel
 import kotlinx.android.synthetic.main.fragment_o_t_p.*
 
 @RequiresApi(Build.VERSION_CODES.O)

@@ -17,9 +17,10 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.network.ApiClient
-import com.example.engu_pension_verification_application.utils.AppUtils
-import com.example.engu_pension_verification_application.utils.NetworkUtils
-import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
+import com.example.engu_pension_verification_application.util.AppUtils
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.ResetPasswordViewModel
 import kotlinx.android.synthetic.main.fragment_reset_password.*
 
 

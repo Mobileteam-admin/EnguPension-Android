@@ -1,13 +1,11 @@
 package com.example.engu_pension_verification_application.ui.activity
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.utils.SharedPref
+import com.example.engu_pension_verification_application.util.SharedPref
 
 class DashboardActivity : AppCompatActivity() {
 

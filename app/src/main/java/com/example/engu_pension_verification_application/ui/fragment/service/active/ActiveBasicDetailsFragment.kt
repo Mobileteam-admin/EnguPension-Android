@@ -1,9 +1,6 @@
 package com.example.engu_pension_verification_application.ui.fragment.service.active
 
 import android.app.DatePickerDialog
-import android.content.Context
-import android.content.Intent
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -23,37 +20,29 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.utils.AlphabeticTextWatcher
+import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
 import com.example.engu_pension_verification_application.commons.Loader
-import com.example.engu_pension_verification_application.commons.TabAccessControl
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputActiveBasicDetails
-import com.example.engu_pension_verification_application.model.input.InputLGAList
 import com.example.engu_pension_verification_application.model.response.ActiveRetriveUserProfileDetails
 import com.example.engu_pension_verification_application.model.response.GradeLevelsItem
 import com.example.engu_pension_verification_application.model.response.LgasItem
 import com.example.engu_pension_verification_application.model.response.OccupationsItem
 import com.example.engu_pension_verification_application.model.response.ResponseActiveBasicDetails
-import com.example.engu_pension_verification_application.model.response.ResponseActiveBasicRetrive
 import com.example.engu_pension_verification_application.model.response.ResponseCombinationDetails
-import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
 import com.example.engu_pension_verification_application.model.response.SubTreasuryItem
 import com.example.engu_pension_verification_application.network.ApiClient
-import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
-import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBankFragment.Companion
-import com.example.engu_pension_verification_application.ui.fragment.service.gradelevel.GradeLevelAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.lga.LGASpinnerAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.occupation.OccupationsAdapter
-import com.example.engu_pension_verification_application.ui.fragment.service.subtresury.SubTreasuryAdapter
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.utils.ViewPageCallBack
-import com.example.engu_pension_verification_application.view_models.ActiveServiceViewModel
-import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
+import com.example.engu_pension_verification_application.ui.adapter.GradeLevelAdapter
+import com.example.engu_pension_verification_application.ui.adapter.LGASpinnerAdapter
+import com.example.engu_pension_verification_application.ui.adapter.OccupationsAdapter
+import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.ActiveBasicDetailViewModel
+import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.android.synthetic.main.fragment_active_basic_details.*
-import kotlinx.android.synthetic.main.fragment_active_service.tab_tablayout_activeservice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -139,55 +128,8 @@ class ActiveBasicDetailsFragment : Fragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModels()
-        observeLiveData()
         initViews()
-        if (prefs.isActiveBasicSubmit == true)
-        {
-
-            if (prefs.isActiveDocSubmit){
-
-                activeServiceViewModel.setTabsEnabledState(true,true,true)
-
-            }else{
-                activeServiceViewModel.setTabsEnabledState(true, true, false)
-            }
-        }else{
-            activeServiceViewModel.setTabsEnabledState(true, false, false)
-        }
-
-
-        /*activeBasicDetailViewModel =
-            ViewModelProvider(this).get(ActiveBasicDetailViewModel::class.java)*/
-
-        /*tokenRefreshViewModel = ViewModelProvider(this).get(TokenRefreshViewModel::class.java)*/
-
-        //kinphone
-        active_next_kin_phone_ccp.registerPhoneNumberTextView(et_active_next_kin_phone)
-
-        selected_country = ccp_activedetails.selectedCountryName
-
-        // Example usage to enable only the first tab
-        //tabAccessControl.enableDisableTabs(true, false, false)
-
-        onSpinnerTextWatcher()
-
-        //ActiveRetriveApiCall()
-
-        onClicked()
-
-        ccp_activedetails.setOnCountryChangeListener {
-            selected_country = ccp_activedetails.selectedCountryName
-            Log.d("changed_country", "onViewCreated: " + ccp_activedetails.selectedCountryName)
-            Loader.showLoader(requireContext())
-            if (context?.isConnectedToNetwork()!!) {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    activeBasicDetailViewModel.fetchCombinedDetails(selected_country)
-                }
-            } else {
-                Loader.hideLoader()
-                Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
-            }
-        }
+        observeLiveData()
     }
 
     private fun initViewModels() {
@@ -207,14 +149,19 @@ class ActiveBasicDetailsFragment : Fragment()
         }
         activeBasicDetailViewModel.combinedDetailsApiResult.observe(viewLifecycleOwner) { response ->
             Loader.hideLoader()
-            onAcombinedDetailSuccess(response)
+            if (response.combinedetails?.status == AppConstants.SUCCESS) {
+                onAcombinedDetailSuccess(response)
+            } else {
+                Toast.makeText(context, response.combinedetails?.message, Toast.LENGTH_LONG).show()
+                findNavController().popBackStack()
+            }
         }
         activeBasicDetailViewModel.basicDetailsApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
                 Loader.hideLoader()
                 response.detail.userProfileDetails?.let {
                     ActiveUserRetrive = it
-                    onActiveRetriveSuccess(response)
+                    onRetrivedDataSetFields()
                 }
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -261,6 +208,54 @@ class ActiveBasicDetailsFragment : Fragment()
 
         subTreasuryAdapter = SubTreasuryAdapter(context, subtreasuryList)
         sp_active_sub_treasury.adapter = subTreasuryAdapter
+
+        if (prefs.isActiveBasicSubmit == true)
+        {
+
+            if (prefs.isActiveDocSubmit){
+
+                activeServiceViewModel.setTabsEnabledState(true,true,true)
+
+            }else{
+                activeServiceViewModel.setTabsEnabledState(true, true, false)
+            }
+        }else{
+            activeServiceViewModel.setTabsEnabledState(true, false, false)
+        }
+
+
+        /*activeBasicDetailViewModel =
+            ViewModelProvider(this).get(ActiveBasicDetailViewModel::class.java)*/
+
+        /*tokenRefreshViewModel = ViewModelProvider(this).get(TokenRefreshViewModel::class.java)*/
+
+        //kinphone
+        active_next_kin_phone_ccp.registerPhoneNumberTextView(et_active_next_kin_phone)
+
+        selected_country = ccp_activedetails.selectedCountryName
+
+        // Example usage to enable only the first tab
+        //tabAccessControl.enableDisableTabs(true, false, false)
+
+        onSpinnerTextWatcher()
+
+        //ActiveRetriveApiCall()
+
+        onClicked()
+
+        ccp_activedetails.setOnCountryChangeListener {
+            selected_country = ccp_activedetails.selectedCountryName
+            Log.d("changed_country", "onViewCreated: " + ccp_activedetails.selectedCountryName)
+            Loader.showLoader(requireContext())
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    activeBasicDetailViewModel.fetchCombinedDetails(selected_country)
+                }
+            } else {
+                Loader.hideLoader()
+                Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun onRetrivedDataSetFields() {
@@ -963,7 +958,7 @@ class ActiveBasicDetailsFragment : Fragment()
 
     private fun initcall() {
         Loader.showLoader(requireContext())
-        if (context?.isConnectedToNetwork()!!) {
+        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             lifecycleScope.launch(Dispatchers.IO) {
                 if (activeBasicDetailViewModel.fetchCombinedDetails(selected_country))
                     activeBasicDetailViewModel.fetchActiveBasicDetails()
@@ -1009,14 +1004,14 @@ class ActiveBasicDetailsFragment : Fragment()
                 address = et_active_address.text.toString(),
                 subTreasuryId = subtreasury,
                 sex = sex,
-                lastName = et_active_lastName.text.toString(),
-                middleName = et_active_middleName.text.toString(),
-                firstName = et_active_firstName.text.toString(),
+                lastName = et_active_lastName.text.trim().toString(),
+                middleName = et_active_middleName.text.trim().toString(),
+                firstName = et_active_firstName.text.trim().toString(),
                 dateOfAppointment = doa,
                 lgaId = lgalist,
                 nextOfKinAddress = et_active_next_kin_address.text.toString(),
                 nextOfKinEmail = et_active_next_kin_email.text.toString(),
-                nextOfKinName = et_active_next_kin.text.toString(),
+                nextOfKinName = et_active_next_kin.text.trim().toString(),
                 nextOfKinPhoneNumber = Ph_no,
                 gradeLevel = gradelevel,
                 dob = dob,
@@ -1030,10 +1025,10 @@ class ActiveBasicDetailsFragment : Fragment()
 
     private fun nextButtonCall() {
         Loader.showLoader(requireContext())
-        if (context?.isConnectedToNetwork()!!) {
-            prefs.first_name = et_active_firstName.text.toString()
-            prefs.middle_name = et_active_middleName.text.toString()
-            prefs.last_name = et_active_lastName.text.toString()
+        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+            prefs.first_name = et_active_firstName.text.trim().toString()
+            prefs.middle_name = et_active_middleName.text.trim().toString()
+            prefs.last_name = et_active_lastName.text.trim().toString()
 
             accountdetailCalll()
 
@@ -1072,12 +1067,12 @@ class ActiveBasicDetailsFragment : Fragment()
             return false
         }*/
 
-        if (TextUtils.isEmpty(et_active_firstName.text)) {
+        if (TextUtils.isEmpty(et_active_firstName.text.trim())) {
             Toast.makeText(context, "Empty FirstName", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (!NAME_PATTERN.matcher(et_active_firstName.text.toString()).matches()) {
+        if (!NAME_PATTERN.matcher(et_active_firstName.text.trim()).matches()) {
 
             Toast.makeText(context, "first name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1090,7 +1085,7 @@ class ActiveBasicDetailsFragment : Fragment()
             return false
         }*/
 
-        if (!NAME_PATTERN_OR_NULL.matcher(et_active_middleName.text.toString()).matches()) {
+        if (!NAME_PATTERN_OR_NULL.matcher(et_active_middleName.text.trim()).matches()) {
 
             Toast.makeText(context, "middle name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1098,13 +1093,13 @@ class ActiveBasicDetailsFragment : Fragment()
 
 
         //lastname
-        if (TextUtils.isEmpty(et_active_lastName.text)) {
+        if (TextUtils.isEmpty(et_active_lastName.text.trim())) {
             Toast.makeText(context, "Empty Last name", Toast.LENGTH_SHORT).show()
             return false
         }
 
 
-        if (!NAME_PATTERN.matcher(et_active_lastName.text.toString()).matches()) {
+        if (!NAME_PATTERN.matcher(et_active_lastName.text.trim()).matches()) {
 
             Toast.makeText(context, "last name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1155,12 +1150,12 @@ class ActiveBasicDetailsFragment : Fragment()
         }
 
         //kin name
-        if (TextUtils.isEmpty(et_active_next_kin.text)) {
+        if (TextUtils.isEmpty(et_active_next_kin.text.trim())) {
             Toast.makeText(context, "Empty kin name", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (!NAME_PATTERN.matcher(et_active_next_kin.text.toString()).matches()) {
+        if (!NAME_PATTERN.matcher(et_active_next_kin.text.trim()).matches()) {
 
             Toast.makeText(context, "kin name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1252,12 +1247,6 @@ class ActiveBasicDetailsFragment : Fragment()
 
         return true
 
-    }
-
-    fun Context.isConnectedToNetwork(): Boolean {
-        val connectivityManager =
-            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
     }
 
     fun onActiveBasicDetailSuccess(response: ResponseActiveBasicDetails) {
@@ -1402,132 +1391,95 @@ class ActiveBasicDetailsFragment : Fragment()
 
 
 
-        if (response.combinedetails?.status.equals("success")) {
-            Log.d(
-                "Combine", "observeActiveDetails: " + response.combinedetails?.combinelgas
+
+        Log.d(
+            "Combine", "observeActiveDetails: " + response.combinedetails?.combinelgas
+        )
+
+        LGAList.clear()
+        subtreasuryList.clear()
+        GradeLevelsList.clear()
+        occupationsList.clear()
+
+        if (response.combinedetails?.combinelgas?.size!! > 0) {
+            LGAList.add(
+                LgasItem(
+                    "", " - Select LGA - ", 0, ""
+                )
             )
 
-            LGAList.clear()
-            subtreasuryList.clear()
-            GradeLevelsList.clear()
-            occupationsList.clear()
-
-            if (response.combinedetails?.combinelgas?.size!! > 0) {
+            response.combinedetails.combinelgas.forEach {
                 LGAList.add(
                     LgasItem(
-                        "", " - Select LGA - ", 0, ""
+                        it?.country, it?.name, it?.id, it?.state
                     )
                 )
-
-                response.combinedetails.combinelgas.forEach {
-                    LGAList.add(
-                        LgasItem(
-                            it?.country, it?.name, it?.id, it?.state
-                        )
-                    )
-                }
             }
-            Log.d("LogLGA", "LGAList:CombinedSuccess $LGAList")
-            //Log.d("TAG", "spinnerLGAList $response.combinedetails?.combinelgas?.size")
-            LGAspinnerfun()
+        }
+        Log.d("LogLGA", "LGAList:CombinedSuccess $LGAList")
+        //Log.d("TAG", "spinnerLGAList $response.combinedetails?.combinelgas?.size")
+        LGAspinnerfun()
 
-            if (response.combinedetails?.combinesubTreasuries?.size!! > 0) {
+        if (response.combinedetails?.combinesubTreasuries?.size!! > 0) {
+            subtreasuryList.add(
+                SubTreasuryItem(
+                    "", " - Select SubTreasury - ", 0, ""
+                )
+            )
+            response.combinedetails.combinesubTreasuries.forEach {
                 subtreasuryList.add(
                     SubTreasuryItem(
-                        "", " - Select SubTreasury - ", 0, ""
+                        it?.country, it?.name, it?.id, it?.state
                     )
                 )
-                response.combinedetails.combinesubTreasuries.forEach {
-                    subtreasuryList.add(
-                        SubTreasuryItem(
-                            it?.country, it?.name, it?.id, it?.state
-                        )
-                    )
-                }
             }
-            SubTreasuryspinnerfun()
+        }
+        SubTreasuryspinnerfun()
 
-            if (response.combinedetails?.combinegradeLevels?.size!! > 0) {
+        if (response.combinedetails?.combinegradeLevels?.size!! > 0) {
+            GradeLevelsList.add(
+                GradeLevelsItem(
+                    " - Select GradeLevel - ", 0
+                )
+            )
+            response.combinedetails.combinegradeLevels.forEach {
                 GradeLevelsList.add(
                     GradeLevelsItem(
-                        " - Select GradeLevel - ", 0
+                        it?.level, it?.id
                     )
                 )
-                response.combinedetails.combinegradeLevels.forEach {
-                    GradeLevelsList.add(
-                        GradeLevelsItem(
-                            it?.level, it?.id
-                        )
-                    )
-                }
             }
-            GradeLevelspinnerfun()
+        }
+        GradeLevelspinnerfun()
 
-            if (response.combinedetails?.combineoccupations?.size!! > 0) {
+        if (response.combinedetails?.combineoccupations?.size!! > 0) {
+            occupationsList.add(
+                OccupationsItem(
+                    " - Select Occupation - ", 0, ""
+                )
+            )
+
+
+            response.combinedetails.combineoccupations.forEach {
                 occupationsList.add(
                     OccupationsItem(
-                        " - Select Occupation - ", 0, ""
+                        it?.name, it?.id, it?.category
                     )
                 )
-
-
-                response.combinedetails.combineoccupations.forEach {
-                    occupationsList.add(
-                        OccupationsItem(
-                            it?.name, it?.id, it?.category
-                        )
-                    )
-                }
-                occupationsList.add(
-                    OccupationsItem(
-                        " Others ", -1, ""
-                    )
-                )
-
-
             }
-            Occupationspinnerfun()
+            occupationsList.add(
+                OccupationsItem(
+                    " Others ", -1, ""
+                )
+            )
 
-
-            //ActiveRetriveApiCall()
 
         }
+        Occupationspinnerfun()
 
-    }
 
+        //ActiveRetriveApiCall()
 
-    fun onActiveRetriveSuccess(response: ResponseActiveBasicRetrive) {
-//        Loader.hideLoader()
-        /*if (response.detail?.status.equals("success")) {
-
-        }*/
-
-            /*response.combinedetails.combinelgas.forEach {
-                LGAList.add(
-                    LgasItem(
-                        it?.country,
-                        it?.name,
-                        it?.id,
-                        it?.state
-                    )
-                )
-            }*/
-
-            /*response.detail?.userProfileDetails.f {
-                ActiveRetriveUserProfileDetails.add(
-                    ActiveRetriveUserProfileDetails.add(
-
-                    )
-            }*/
-
-            //prefs.isActiveBasicSubmit = true
-
-            ActiveUserRetrive = response.detail?.userProfileDetails!!
-
-            Log.d("retrive", "ActiveUserRetrive + $ActiveUserRetrive")
-
-            Log.d("LogLGA", "LGAList:RetriveSuccess $LGAList")
-            onRetrivedDataSetFields()
 
 
     }

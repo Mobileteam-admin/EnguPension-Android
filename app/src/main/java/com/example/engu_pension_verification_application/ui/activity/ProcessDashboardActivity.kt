@@ -1,10 +1,8 @@
 package com.example.engu_pension_verification_application.ui.activity
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.ImageDecoder
 import android.graphics.drawable.AnimatedImageDrawable
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -18,19 +16,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseActiveProcessingVerify
-import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
 import com.example.engu_pension_verification_application.network.ApiClient
-import com.example.engu_pension_verification_application.ui.fragment.service.ProcessingVerify.Processing_Verify_CallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshViewModel
-import com.example.engu_pension_verification_application.utils.NetworkUtils
-import com.example.engu_pension_verification_application.utils.SharedPref
-import com.example.engu_pension_verification_application.view_models.EnguViewModelFactory
-import com.example.engu_pension_verification_application.view_models.ProcessDashboardViewModel
-import com.example.engu_pension_verification_application.view_models.TokenRefreshViewModel2
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.ProcessDashboardViewModel
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.android.synthetic.main.activity_process_dashboard.btn_retry
 import kotlinx.android.synthetic.main.activity_process_dashboard.ll_processing
 import kotlinx.coroutines.CoroutineScope
