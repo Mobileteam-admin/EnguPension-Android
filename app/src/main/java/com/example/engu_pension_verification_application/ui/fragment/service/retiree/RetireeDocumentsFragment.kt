@@ -32,6 +32,7 @@ import com.example.engu_pension_verification_application.model.response.RetireeF
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.ActiveDocWebViewActivity
 import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.RetireeDocumentsViewModel
@@ -60,7 +61,7 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
 
 
     companion object {
-        private const val TAB_POSITION = 1
+        const val TAB_POSITION = 1
 
         const val RETIREE_APPLICATION_FORM_FILE = 201
         const val RETIREE_APPOINTMENT_PAYMENT_FILE = 202
@@ -140,18 +141,6 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
         observeLiveData()
     }
     private fun initViews() {
-        if (prefs.isRBasicSubmit)
-        {
-            if (prefs.isRDocSubmit){
-                retireeServiceViewModel.setTabsEnabledState(true, true, true)
-            }else{
-                retireeServiceViewModel.setTabsEnabledState(true, true, false)
-            }
-        }else{
-            //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-            retireeServiceViewModel.setTabsEnabledState(true, false, false)
-        }
-
         ll_retiree_app_form_upload.setOnClickListener(this)
         img_retiree_app_form_close.setOnClickListener(this)
 
@@ -200,7 +189,7 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
             EnguViewModelFactory(networkRepo)
         ).get(RetireeDocumentsViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -213,7 +202,7 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
 //                Loader.hideLoader()
                 RetireeUserDocRetrive = response.detail.fileUrlResponse
                 responseRetireeDocRetrive = response
-                onRetireeRetrievedDocSet()
+                populateViews()
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -358,12 +347,12 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
                 cv_retiree_id_card_doc.visibility = View.GONE
             }
 
-            ll_retiree_doc_next -> ll_retiree_doc_next.setOnClickListener {
-
-                //Log.d("Debug", "ll_retireedoc_next clicked")
+            ll_retiree_doc_next -> {
                 if (!RetireeUserDocRetrive?.idCardFileUrl.isNullOrEmpty()) {
+                    if (prefs.onboardingStage == OnboardingStage.RETIREE_DOCUMENTS)
+                        prefs.onboardingStage = OnboardingStage.RETIREE_BANK_INFO
                     retireeServiceViewModel.moveToNextTab()
-                    retireeServiceViewModel.setTabsEnabledState(true, true, true)
+                    retireeServiceViewModel.refreshTabsState()
                 }else if (isValidDocs()) {
                     Log.d("Debug", "isValidDocs is true")
                     nextButtonCall()
@@ -1706,30 +1695,20 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
     }
 
 
-    fun onDocUploadSuccess(response: ResponseRetireeDocUpload) {
+    private fun onDocUploadSuccess(response: ResponseRetireeDocUpload) {
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
-        prefs.isRDocSubmit = true
-        //enableDisableTabs(tab_tablayout_retiree, true, true, false)
+        if (prefs.onboardingStage == OnboardingStage.RETIREE_DOCUMENTS)
+            prefs.onboardingStage = OnboardingStage.RETIREE_BANK_INFO
         retireeServiceViewModel.moveToNextTab()
+        retireeServiceViewModel.refreshTabsState()
     }
 
-    private fun onRetireeRetrievedDocSet() {
+    private fun populateViews() {
         RetireeUserDocRetrive?.let { retireeUserDoc ->
             if (!retireeUserDoc.idCardFileUrl.isNullOrEmpty()) {
-                prefs.isRDocSubmit = true
-
-                if (prefs.isRBasicSubmit)
-                {
-
-                    if (prefs.isRDocSubmit){
-                        retireeServiceViewModel.setTabsEnabledState(true, true, true)
-                    }else{
-                        retireeServiceViewModel.setTabsEnabledState(true, true, false)
-                    }
-                }else{
-                    //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                    retireeServiceViewModel.setTabsEnabledState(true, false, false)
-
+                if (prefs.onboardingStage == OnboardingStage.RETIREE_DOCUMENTS) {
+                    prefs.onboardingStage = OnboardingStage.RETIREE_BANK_INFO
+                    retireeServiceViewModel.refreshTabsState()
                 }
 
                 // Mandatory documents
@@ -1773,7 +1752,6 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
         //if (!ActiveUserDocRetrive?.applicationFormFileUrl.isNullOrEmpty()){
         if (!RetireeUserDocRetrive?.idCardFileUrl.isNullOrEmpty()) {
 
-            prefs.isRDocSubmit = true
 
             //mandatory
             var idcard_url = RetireeUserDocRetrive!!.idCardFileUrl

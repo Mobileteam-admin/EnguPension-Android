@@ -23,6 +23,7 @@ import com.example.engu_pension_verification_application.ui.activity.SignUpActiv
 import com.example.engu_pension_verification_application.ui.fragment.service.retiree.RetireeBankFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.retiree.RetireeBasicDetailsFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.retiree.RetireeDocumentsFragment
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
@@ -69,21 +70,18 @@ class RetireeServiceFragment : Fragment() {
         retireeServiceViewModel.onMoveToNextTab.observe(viewLifecycleOwner) {
             tab_retiree_viewpager.setCurrentItem(getItem(+1), true)
         }
-        retireeServiceViewModel.enableTab0.observe(viewLifecycleOwner) {
-            tab_tablayout_retiree.getTabAt(0)?.view?.isEnabled = it
+        retireeServiceViewModel.enableDocTab.observe(viewLifecycleOwner) {
+            tab_tablayout_retiree.getTabAt(RetireeDocumentsFragment.TAB_POSITION)?.view?.isEnabled = it
         }
-        retireeServiceViewModel.enableTab1.observe(viewLifecycleOwner) {
-            tab_tablayout_retiree.getTabAt(1)?.view?.isEnabled = it
-        }
-        retireeServiceViewModel.enableTab2.observe(viewLifecycleOwner) {
-            tab_tablayout_retiree.getTabAt(2)?.view?.isEnabled = it
+        retireeServiceViewModel.enableBankTab.observe(viewLifecycleOwner) {
+            tab_tablayout_retiree.getTabAt(RetireeBankFragment.TAB_POSITION)?.view?.isEnabled = it
         }
 
         tokenRefreshViewModel2.tokenRefreshError.observe(viewLifecycleOwner) { error ->
             if (error != null) {
                 Loader.hideLoader()
                 if (error.isNotEmpty()) Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-                SharedPref.logout()
+                prefs.logout()
                 val intent = Intent(context, SignUpActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
@@ -94,7 +92,7 @@ class RetireeServiceFragment : Fragment() {
     private fun initViewModel() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -142,46 +140,6 @@ class RetireeServiceFragment : Fragment() {
                 }*/
 
                 val position = tab!!.position
-
-                /*if (prefs.isRBasicSubmit == true)
-                {
-                    enableDisableTabs(tab_tablayout_retiree, true, true, false)
-                    if (prefs.isRDocSubmit == true){
-                        enableDisableTabs(tab_tablayout_retiree, true, true, true)
-                    }
-                }else{
-                    enableDisableTabs(tab_tablayout_retiree, true, false, false)
-
-                }*/
-
-               /* Log.d("pref", "pref isRBasicSubmit on tab selectd ${prefs.isRBasicSubmit} ")
-                when(prefs.isRBasicSubmit){
-                    true->{
-                        Log.d("pref", "pref isRBasicSubmit in isRBasic pref ${prefs.isRBasicSubmit} ")
-                        enableDisableTabs(tab_tablayout_retiree, true, true, false)
-                    }
-                    false->{
-                        enableDisableTabs(tab_tablayout_retiree, true, false, false)
-                    }
-                }
-                when(prefs.isRDocSubmit){
-                    true->{
-                        Log.d("pref", "pref isRBasicSubmit in isRDoc pref ${prefs.isRBasicSubmit} ")
-                        enableDisableTabs(tab_tablayout_retiree, true, true, true)
-
-                    }
-                    false->{
-
-                        if (prefs.isRBasicSubmit == false){
-                            enableDisableTabs(tab_tablayout_retiree, true, false, false)
-                        }else {
-                            enableDisableTabs(tab_tablayout_retiree, true, true, false)
-                        }
-                    }
-                }*/
-
-
-                Log.d("position", "onTabSelected: " + position)
                 when (position) {
                     0 -> {
                         tab_tablayout_retiree.getTabAt(0)?.setIcon(R.drawable.ic_basicdetails_white)
@@ -217,6 +175,12 @@ class RetireeServiceFragment : Fragment() {
             }
 
         })
+        retireeServiceViewModel.refreshTabsState()
+        viewpager?.currentItem = when (prefs.onboardingStage){
+            OnboardingStage.RETIREE_DOCUMENTS -> RetireeDocumentsFragment.TAB_POSITION
+            OnboardingStage.RETIREE_BANK_INFO -> RetireeBankFragment.TAB_POSITION
+            else -> RetireeBasicDetailsFragment.TAB_POSITION
+        }
     }
     // Function to enable or disable tabs
     /*fun enableDisableTabs(tabLayout: TabLayout, enableTab0: Boolean, enableTab1: Boolean, enableTab2: Boolean) {

@@ -1,0 +1,26 @@
+package com.example.engu_pension_verification_application.viewmodel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
+import com.example.engu_pension_verification_application.model.input.InputBankVerification
+import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
+import com.example.engu_pension_verification_application.model.response.BankDetail
+import com.example.engu_pension_verification_application.model.response.BankVerifyDetail
+import com.example.engu_pension_verification_application.model.response.BanksDetail
+import com.example.engu_pension_verification_application.model.response.EinNumberDetail
+import com.example.engu_pension_verification_application.model.response.ResponseBankInfo
+import com.example.engu_pension_verification_application.model.response.ResponseBankList
+import com.example.engu_pension_verification_application.model.response.ResponseBankVerify
+import com.example.engu_pension_verification_application.model.response.ResponseEinNumber
+import com.example.engu_pension_verification_application.model.response.ResponseSwiftBankCode
+import com.example.engu_pension_verification_application.model.response.SwiftBankDetail
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class ProfileViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+
+}

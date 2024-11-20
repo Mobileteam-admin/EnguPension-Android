@@ -35,6 +35,7 @@ import com.example.engu_pension_verification_application.model.response.Response
 import com.example.engu_pension_verification_application.model.response.ResponseActiveDocUpload
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.ActiveDocWebViewActivity
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.ActiveDocumentsViewModel
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
@@ -74,7 +75,7 @@ class ActiveDocumentsFragment(
 
 
     companion object {
-        private const val TAB_POSITION = 1
+        const val TAB_POSITION = 1
         const val APPLICATION_FORM_FILE = 101
         const val LETTER_FILE = 102
         const val IDCARD_FILE = 103
@@ -131,26 +132,6 @@ class ActiveDocumentsFragment(
     }
 
     private fun initViews() {
-        /*activeDocViewModel =
-            ViewModelProvider(this).get(ActiveDocumentsViewModel::class.java)*/
-
-        //tabAccessControl.enableDisableTabs(true,true,false)
-
-        if (prefs.isActiveBasicSubmit == true)
-        {
-
-            if (prefs.isActiveDocSubmit){
-                activeServiceViewModel.setTabsEnabledState(true, true, true)
-
-            }else{
-                activeServiceViewModel.setTabsEnabledState(true, true, false)
-            }
-        }else{
-            //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-            activeServiceViewModel.setTabsEnabledState(true, false, false)
-
-        }
-
         ll_active_app_form_upload.setOnClickListener(this)
         img_active_app_form_close.setOnClickListener(this)
         ll_active_promotion_letterm_upload.setOnClickListener(this)
@@ -179,7 +160,7 @@ class ActiveDocumentsFragment(
             EnguViewModelFactory(networkRepo)
         ).get(ActiveDocumentsViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -191,7 +172,7 @@ class ActiveDocumentsFragment(
             if (response.detail?.status == AppConstants.SUCCESS) {
                 ActiveUserDocRetrive = response.detail.fileUrlResponse
                 responseActiveDocRetrive = response
-                onRetrievedDocSetFields2()
+                populateViews()
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -304,12 +285,12 @@ class ActiveDocumentsFragment(
                 cv_active_clearence_form.visibility = View.GONE
             }
 
-            ll_activedoc_next -> ll_activedoc_next.setOnClickListener {
-
-                Log.d("Debug", "ll_activedoc_next clicked")
+            ll_activedoc_next -> {
                 if (!ActiveUserDocRetrive?.idCardFileUrl.isNullOrEmpty()) {
+                    if (prefs.onboardingStage == OnboardingStage.ACTIVE_DOCUMENTS)
+                        prefs.onboardingStage = OnboardingStage.ACTIVE_BANK_INFO
                     activeServiceViewModel.moveToNextTab()
-                    activeServiceViewModel.setTabsEnabledState(true, true, true)
+                    activeServiceViewModel.refreshTabsState()
                 }else if (isValidDocs()) {
                     Log.d("Debug", "isValidDocs is true")
                     nextButtonCall()
@@ -1418,40 +1399,22 @@ class ActiveDocumentsFragment(
 
     fun onDocUploadSuccess(response: ResponseActiveDocUpload) {
         Loader.hideLoader()
-
-        //prefs.isActiveDocSubmit = true
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
-        prefs.isActiveDocSubmit = true
-        //enableDisableTabs(tab_tablayout_activeservice, true, true, true)
+        if (prefs.onboardingStage == OnboardingStage.ACTIVE_DOCUMENTS)
+            prefs.onboardingStage = OnboardingStage.ACTIVE_BANK_INFO
         activeServiceViewModel.moveToNextTab()
-        //tabAccessControl.enableDisableTabs(true, true, true)
-
-
+        activeServiceViewModel.refreshTabsState()
     }
 
 
 
-    private fun onRetrievedDocSetFields2() {
+    private fun populateViews() {
         ActiveUserDocRetrive?.let { activeUserDoc ->
             if (!activeUserDoc.idCardFileUrl.isNullOrEmpty()) {
-                Log.d("activeretrive", "${activeUserDoc.idCardFileUrl}")
-                prefs.isActiveDocSubmit = true
-
-                if (prefs.isActiveBasicSubmit == true)
-                {
-
-                    if (prefs.isActiveDocSubmit){
-                        activeServiceViewModel.setTabsEnabledState(true, true, true)
-
-                    }else{
-                        activeServiceViewModel.setTabsEnabledState(true, true, false)
-                    }
-                }else{
-                    //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                    //tabAccessControl.enableDisableTabs(true, false, false)
-
+                if (prefs.onboardingStage == OnboardingStage.ACTIVE_DOCUMENTS) {
+                    prefs.onboardingStage = OnboardingStage.ACTIVE_BANK_INFO
+                    activeServiceViewModel.refreshTabsState()
                 }
-                //tabAccessControl.enableDisableTabs(true, true, true)
 
                 // Mandatory documents
                 setDocumentView(activeUserDoc.idCardFileUrl, a_id_card_btn_green_view, cv_active_id_card, tv_active_id_card_filename, img_active_id_card_close, ll_active_id_card_uploadprogress, ll_active_id_card_percentage, pb_active_id_card)

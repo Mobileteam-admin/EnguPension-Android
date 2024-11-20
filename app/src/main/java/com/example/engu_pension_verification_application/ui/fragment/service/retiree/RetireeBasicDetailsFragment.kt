@@ -33,6 +33,7 @@ import com.example.engu_pension_verification_application.ui.adapter.LocalGovPens
 import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
 import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
 import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.RetireeBasicDetailsViewModel
@@ -49,7 +50,7 @@ import java.util.regex.Pattern
 
 class RetireeBasicDetailsFragment : Fragment() {
     companion object {
-        private const val TAB_POSITION = 0
+        const val TAB_POSITION = 0
     }
     private lateinit var retireeBasicDetailsViewModel: RetireeBasicDetailsViewModel
     private val retireeServiceViewModel by activityViewModels<RetireeServiceViewModel>()
@@ -126,7 +127,7 @@ class RetireeBasicDetailsFragment : Fragment() {
             EnguViewModelFactory(networkRepo)
         ).get(RetireeBasicDetailsViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -148,7 +149,7 @@ class RetireeBasicDetailsFragment : Fragment() {
                 Loader.hideLoader()
                 response.detail.userProfileDetails?.let {
                     RetireeUserRetrive = it
-                    onRetrivedDataSetFields()
+                    populateViews()
                 }
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -198,24 +199,6 @@ class RetireeBasicDetailsFragment : Fragment() {
         localGovPensionAdapter = LocalGovPensionAdapter(context, localGovPensionList)
         sp_retiree_pension_board.adapter = localGovPensionAdapter
 
-        if (prefs.isRBasicSubmit)
-        {
-
-            if (prefs.isRDocSubmit){
-
-                retireeServiceViewModel.setTabsEnabledState(true, true, true)
-
-            }else{
-
-                retireeServiceViewModel.setTabsEnabledState(true, true, false)
-
-            }
-        }else{
-            //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-            retireeServiceViewModel.setTabsEnabledState(true, false, false)
-
-        }
-
         //kinphone
         retiree_next_kin_phone_ccp.registerPhoneNumberTextView(et_retiree_next_kin_phone)
         selected_country = ccp_retireedetails.selectedCountryName
@@ -235,30 +218,14 @@ class RetireeBasicDetailsFragment : Fragment() {
             }
         })
     }
-    private fun onRetrivedDataSetFields() {
+    private fun populateViews() {
         Log.d("LogLGA", "LGAList:onRetrivedDataSetFields() $LGAList")
 
         if (!RetireeUserRetrive.firstName.isNullOrEmpty()) {
-
-            prefs.isRBasicSubmit = true
-
-            if (prefs.isRBasicSubmit)
-            {
-                if (prefs.isRDocSubmit){
-                    retireeServiceViewModel.setTabsEnabledState(true, true, true)
-                }else{
-                    retireeServiceViewModel.setTabsEnabledState(true, true, false)
-                }
-            }else{
-                //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                retireeServiceViewModel.setTabsEnabledState(true, false, false)
+            if (prefs.onboardingStage == OnboardingStage.RETIREE_BASIC_DETAILS) {
+                prefs.onboardingStage = OnboardingStage.RETIREE_DOCUMENTS
+                retireeServiceViewModel.refreshTabsState()
             }
-
-
-            Log.d("LogLGA", "LGAList: RetriveUserRetrive.firstName.isNullOrEmpty() $LGAList")
-
-            Log.d("dataRetriveVariable", "$RetireeUserRetrive")
-
             et_retiree_firstName.setText(RetireeUserRetrive.firstName) //1
             et_retiree_middleName.setText(RetireeUserRetrive.middleName) //2
             et_retiree_lastName.setText(RetireeUserRetrive.lastName) //3
@@ -1072,8 +1039,9 @@ class RetireeBasicDetailsFragment : Fragment() {
 
     private fun onRetireeBasicDetailSuccess(response: ResponseRetireeBasicDetails) {
         Toast.makeText(context, response.detail!!.message, Toast.LENGTH_SHORT).show()
-        prefs.isRBasicSubmit = true
+        if (prefs.onboardingStage == OnboardingStage.RETIREE_BASIC_DETAILS)
+            prefs.onboardingStage = OnboardingStage.RETIREE_DOCUMENTS
         retireeServiceViewModel.moveToNextTab()
-        //enableDisableTabs(tab_tablayout_retiree, true, true, false)
+        retireeServiceViewModel.refreshTabsState()
     }
 }

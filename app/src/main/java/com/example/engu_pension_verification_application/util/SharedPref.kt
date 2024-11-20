@@ -20,13 +20,6 @@ object SharedPref {
     private const val RUSER_MIDDLE_NAME = "Rmiddle_name"
     private const val RUSER_LAST_NAME = "Rlast_name"
 
-    private val IS_ACTIVE_BASIC_SUMBIT = "is_submit"
-    private val IS_ACTIVE_DOC_SUMBIT = "is_submit"
-    private val IS_ACTIVE_BANK_SUBMIT = "is_submit"
-
-    private val IS_R_BASIC_SUMBIT = "is_submit"
-    private val IS_R_DOC_SUMBIT = "is_submit"
-    private val IS_R_BANK_SUBMIT = "is_submit"
 
 
 
@@ -76,8 +69,7 @@ object SharedPref {
     private const val USER_DETAILS = "userDetails"
     private val IS_LOGIN = "is_login"
 
-    private val IS_DASH_LAST = "is_dash_last"
-    private val IS_GOV_VERIFIED = "is_gov_verified"
+    private const val ONBOARDING_STAGE = "onboarding_stage"
     private const val USER_ID = "userid"
     private const val USER_NAME = "username"
     private const val USER_EMAIL = "useremail"
@@ -87,24 +79,9 @@ object SharedPref {
     /*private const val USER_BANK_VERIFY = "refresh_token"*/
 
 
-    fun logout() {
-        isLogin = false
-        user_id = ""
-        user_name = ""
-        email = ""
-        access_token = ""
-        refresh_token = ""
-        lastActivityDashboard = false
-        isGovVerify = false
-    }
-
-
-    var lastActivityDashboard: Boolean
-        get() = sharedPreferences.getBoolean(IS_DASH_LAST, false)
-        set(value) = sharedPreferences.edit().putBoolean(IS_DASH_LAST, value).apply()
-    var isGovVerify : Boolean
-        get() = sharedPreferences.getBoolean(IS_GOV_VERIFIED, false)
-        set(value) = sharedPreferences.edit().putBoolean(IS_GOV_VERIFIED, value).apply()
+    var onboardingStage: OnboardingStage
+        get() = OnboardingStage.fromId(sharedPreferences.getInt(ONBOARDING_STAGE, OnboardingStage.SERVICES.id))
+        set(value) = sharedPreferences.edit().putInt(ONBOARDING_STAGE, value.id).apply()
 
     /*var isBankVerify : Boolean
         get() = sharedPreferences.getBoolean(USER_BANK_VERIFY, false)
@@ -152,32 +129,6 @@ object SharedPref {
     }
 
 
-    var isActiveBasicSubmit : Boolean
-        get() = sharedPreferences.getBoolean(IS_ACTIVE_BASIC_SUMBIT, false)
-        set(value) = sharedPreferences.edit().putBoolean(IS_ACTIVE_BASIC_SUMBIT, value).apply()
-
-    var isActiveDocSubmit : Boolean
-        get() = sharedPreferences.getBoolean(IS_ACTIVE_DOC_SUMBIT, false)
-        set(value) = sharedPreferences.edit().putBoolean(IS_ACTIVE_DOC_SUMBIT, value).apply()
-
-    var isActiveBankSubmit : Boolean
-        get() = sharedPreferences.getBoolean(IS_ACTIVE_BANK_SUBMIT, false)
-        set(value) = sharedPreferences.edit().putBoolean(IS_ACTIVE_BANK_SUBMIT, value).apply()
-
-
-
-
-    var isRBasicSubmit : Boolean
-        get() = sharedPreferences.getBoolean(IS_R_BASIC_SUMBIT, false)
-        set(value) = sharedPreferences.edit().putBoolean(IS_R_BASIC_SUMBIT, value).apply()
-
-    var isRDocSubmit : Boolean
-        get() = sharedPreferences.getBoolean(IS_R_DOC_SUMBIT, false)
-        set(value) = sharedPreferences.edit().putBoolean(IS_R_DOC_SUMBIT, value).apply()
-
-    var isRBankSubmit : Boolean
-        get() = sharedPreferences.getBoolean(IS_R_BANK_SUBMIT, false)
-        set(value) = sharedPreferences.edit().putBoolean(IS_R_BANK_SUBMIT, value).apply()
 
 
 
@@ -239,7 +190,14 @@ object SharedPref {
         set(value) = sharedPreferences.edit().putString(RUSER_LAST_NAME, value).apply()
 
 
-
+    fun logout() {
+        isLogin = false
+        user_id = ""
+        user_name = ""
+        email = ""
+        access_token = ""
+        refresh_token = ""
+    }
 
 
     //trial

@@ -37,6 +37,7 @@ import com.example.engu_pension_verification_application.ui.fragment.service.act
 import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
 import com.example.engu_pension_verification_application.util.AppUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.RetireeBankViewModel
@@ -76,7 +77,7 @@ class RetireeBankFragment : Fragment() {
     val et_ein_number_popup: EditText? = null
 
     companion object {
-        private const val TAB_POSITION = 2
+        const val TAB_POSITION = 2
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -115,7 +116,7 @@ class RetireeBankFragment : Fragment() {
             EnguViewModelFactory(networkRepo)
         ).get(RetireeBankViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -604,7 +605,8 @@ class RetireeBankFragment : Fragment() {
             .newEditable(response.swiftbankdetail?.swiftCodeResponse?.bankCode)
     }
 
-    fun onRetireeBankInfoSubmitSuccess(response: ResponseBankInfo) {
+    private fun onRetireeBankInfoSubmitSuccess(response: ResponseBankInfo) {
+        prefs.onboardingStage = OnboardingStage.GOV_VERIFY
         Loader.hideLoader()
         Toast.makeText(context, "${response.detail?.message}", Toast.LENGTH_LONG).show()
 

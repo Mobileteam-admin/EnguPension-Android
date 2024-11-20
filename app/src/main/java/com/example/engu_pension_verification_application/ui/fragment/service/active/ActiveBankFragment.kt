@@ -37,6 +37,7 @@ import com.example.engu_pension_verification_application.ui.activity.ProcessDash
 import com.example.engu_pension_verification_application.ui.adapter.AccountTypeAdapter
 import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
 import com.example.engu_pension_verification_application.util.AppUtils
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.ActiveBankViewModel
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
@@ -58,7 +59,7 @@ val filterUpperCaseAndDigits = InputFilter { source, start, end, dest, dstart, d
 }
 class ActiveBankFragment: Fragment() {
     companion object {
-        private const val TAB_POSITION = 2
+        const val TAB_POSITION = 2
     }
     var bankdetailsList = mutableListOf<ListBanksItem?>()
     var accountTypeList = mutableListOf<AccountTypeItem?>()
@@ -122,7 +123,6 @@ class ActiveBankFragment: Fragment() {
         // initcall()  - hold
         OnTextWatcher()
         onClicked()
-
         //observeActiveBankDetails()
     }
 
@@ -133,7 +133,7 @@ class ActiveBankFragment: Fragment() {
             EnguViewModelFactory(networkRepo)
         ).get(ActiveBankViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -545,17 +545,8 @@ class ActiveBankFragment: Fragment() {
 
     }
 
-    fun onActiveBankInfoSubmitSuccess(response: ResponseBankInfo) {
-
-
+    private fun onActiveBankInfoSubmitSuccess(response: ResponseBankInfo) {
         Loader.hideLoader()
-//new tablock
-        prefs.isActiveBankSubmit = true
-        prefs.isActiveDocSubmit = true
-
-        prefs.isActiveBasicSubmit = false
-
-        // Toast.makeText(context, response.detail., Toast.LENGTH_LONG).show()
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
 
         /*  val intent = Intent(context, DashboardActivity::class.java)
@@ -764,12 +755,10 @@ class ActiveBankFragment: Fragment() {
     }
 
 
-    fun onEinNumberSubmitSuccess(response: ResponseEinNumber) {
-
+    private fun onEinNumberSubmitSuccess(response: ResponseEinNumber) {
+        prefs.onboardingStage = OnboardingStage.GOV_VERIFY
         Loader.hideLoader()
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
-
-
         val intent = Intent(context, ProcessDashboardActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)

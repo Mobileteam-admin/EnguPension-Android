@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.ui.activity.DashboardActivity
+import com.example.engu_pension_verification_application.ui.activity.ProcessDashboardActivity
 import com.example.engu_pension_verification_application.ui.activity.ServiceActivity
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import kotlinx.android.synthetic.main.fragment_splash2.*
 
@@ -44,23 +46,14 @@ class Splash2 : Fragment() {
                      Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                  startActivity(intent)*/
 
-
-                if (prefs.isGovVerify == true || prefs.lastActivityDashboard == true){
-                    val dashIntent = Intent(context, DashboardActivity::class.java)
-                    dashIntent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    Log.d("pref status", "gov verify : ${prefs.isGovVerify} last dash:${prefs.lastActivityDashboard}")
-
-                    startActivity(dashIntent)
+                val intent = when (prefs.onboardingStage) {
+                    OnboardingStage.DASHBOARD -> Intent(context, DashboardActivity::class.java)
+                    OnboardingStage.GOV_VERIFY -> Intent(context, ProcessDashboardActivity::class.java)
+                    else -> Intent(context, ServiceActivity::class.java)
+                }.apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
-                else{
-                    val serviceIntent = Intent(context, ServiceActivity::class.java)
-                    serviceIntent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    Log.d("pref status", "gov verify : ${prefs.isGovVerify} last dash:${prefs.lastActivityDashboard}")
-
-                    startActivity(serviceIntent)
-                }
+                startActivity(intent)
 
                 //false - service
                 /*val intent = Intent(context, ServiceActivity::class.java)

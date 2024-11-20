@@ -22,6 +22,7 @@ import com.example.engu_pension_verification_application.model.input.InputForgot
 import com.example.engu_pension_verification_application.model.input.InputSignupVerify
 import com.example.engu_pension_verification_application.model.response.VerifyResponse
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
@@ -29,7 +30,7 @@ import com.example.engu_pension_verification_application.viewmodel.OTPViewModel
 import kotlinx.android.synthetic.main.fragment_o_t_p.*
 
 @RequiresApi(Build.VERSION_CODES.O)
-class OTPFragment : Fragment() {
+class OTPFragment : BaseFragment() {
     private lateinit var otpViewModel: OTPViewModel
     var screen: String = ""
     var email: String = "  "
@@ -54,9 +55,9 @@ class OTPFragment : Fragment() {
         activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (screen.equals("Signup")) {
-                    findNavController().navigate(R.id.action_otp_to_signup)
+                    navigate(R.id.action_otp_to_signup)
                 }else{
-                    findNavController().navigate(R.id.action_otp_to_forgotpassword)
+                    navigate(R.id.action_otp_to_forgotpassword)
                 }
                 //activity?.onBackPressedDispatcher!!.onBackPressed()
             }
@@ -258,16 +259,16 @@ class OTPFragment : Fragment() {
         ll_verify_back.setOnClickListener {
             // activity?.onBackPressedDispatcher?.onBackPressed()
             if (screen.equals("Signup")) {
-                findNavController().navigate(R.id.action_otp_to_signup)
+                navigate(R.id.action_otp_to_signup, isReverseAnim = true)
             }else{
-                findNavController().navigate(R.id.action_otp_to_forgotpassword)
+                navigate(R.id.action_otp_to_forgotpassword, isReverseAnim = true)
             }
 
 
         }
 
         ll_click_login.setOnClickListener {
-            findNavController().navigate(R.id.action_otp_to_login)
+            navigate(R.id.action_otp_to_login)
         }
 
     }
@@ -340,9 +341,6 @@ class OTPFragment : Fragment() {
         prefs.email = response.detail?.userdetails?.email
 
         if (screen.equals("Signup")) {
-
-            prefs.lastActivityDashboard = false
-
             ll_verify_buttons.visibility = View.GONE
             cl_click_login.visibility = View.VISIBLE
             //findNavController().navigate(R.id.action_otp_to_login)
@@ -354,7 +352,7 @@ class OTPFragment : Fragment() {
             val bundle = Bundle()
             bundle.putSerializable("Token", token)
             bundle.putSerializable("OTP", final_otp)
-            findNavController().navigate(R.id.action_otp_to_resetpassword,bundle)
+            navigate(R.id.action_otp_to_resetpassword,bundle)
         }
     }
 

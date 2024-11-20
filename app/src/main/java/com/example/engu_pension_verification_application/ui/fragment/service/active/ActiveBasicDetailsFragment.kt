@@ -37,6 +37,7 @@ import com.example.engu_pension_verification_application.ui.adapter.LGASpinnerAd
 import com.example.engu_pension_verification_application.ui.adapter.OccupationsAdapter
 import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
 import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.ActiveBasicDetailViewModel
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
@@ -64,7 +65,7 @@ class ActiveBasicDetailsFragment : Fragment()
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
     companion object {
-        private const val TAB_POSITION = 0
+        const val TAB_POSITION = 0
     }
 
     // previous name pattern ^[a-zA-Z\s]+$
@@ -139,7 +140,7 @@ class ActiveBasicDetailsFragment : Fragment()
             EnguViewModelFactory(networkRepo)
         ).get(ActiveBasicDetailViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -161,7 +162,7 @@ class ActiveBasicDetailsFragment : Fragment()
                 Loader.hideLoader()
                 response.detail.userProfileDetails?.let {
                     ActiveUserRetrive = it
-                    onRetrivedDataSetFields()
+                    populateViews()
                 }
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -209,20 +210,6 @@ class ActiveBasicDetailsFragment : Fragment()
         subTreasuryAdapter = SubTreasuryAdapter(context, subtreasuryList)
         sp_active_sub_treasury.adapter = subTreasuryAdapter
 
-        if (prefs.isActiveBasicSubmit == true)
-        {
-
-            if (prefs.isActiveDocSubmit){
-
-                activeServiceViewModel.setTabsEnabledState(true,true,true)
-
-            }else{
-                activeServiceViewModel.setTabsEnabledState(true, true, false)
-            }
-        }else{
-            activeServiceViewModel.setTabsEnabledState(true, false, false)
-        }
-
 
         /*activeBasicDetailViewModel =
             ViewModelProvider(this).get(ActiveBasicDetailViewModel::class.java)*/
@@ -258,37 +245,12 @@ class ActiveBasicDetailsFragment : Fragment()
         }
     }
 
-    private fun onRetrivedDataSetFields() {
-
-        Log.d("LogLGA", "LGAList:onRetrivedDataSetFields() $LGAList")
-
-
-
+    private fun populateViews() {
         if (!ActiveUserRetrive.firstName.isNullOrEmpty()) {
-
-
-            prefs.isActiveBasicSubmit = true
-            //tabAccessControl.enableDisableTabs(true, true, false)
-            if (prefs.isActiveBasicSubmit == true)
-            {
-
-                if (prefs.isActiveDocSubmit){
-                    activeServiceViewModel.setTabsEnabledState(true, true, true)
-                }else{
-                    activeServiceViewModel.setTabsEnabledState(true, true, false)
-                }
-            }else{
-                //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                activeServiceViewModel.setTabsEnabledState(true, false, false)
+            if (prefs.onboardingStage == OnboardingStage.ACTIVE_BASIC_DETAILS) {
+                prefs.onboardingStage = OnboardingStage.ACTIVE_DOCUMENTS
+                activeServiceViewModel.refreshTabsState()
             }
-
-
-
-
-            Log.d("LogLGA", "LGAList: ActiveUserRetrive.firstName.isNullOrEmpty() $LGAList")
-
-            Log.d("dataRetriveVariable", "$ActiveUserRetrive")
-
             et_active_firstName.setText(ActiveUserRetrive.firstName)
             et_active_middleName.setText(ActiveUserRetrive.middleName)
             et_active_lastName.setText(ActiveUserRetrive.lastName)
@@ -1040,20 +1002,6 @@ class ActiveBasicDetailsFragment : Fragment()
 
     }
 
-    private fun clearLogin() {
-        prefs.isLogin = false
-        prefs.user_id = ""
-        prefs.user_name = ""
-        prefs.email = ""
-        prefs.access_token = ""
-        prefs.refresh_token = ""
-        prefs.isGovVerify = false
-        prefs.isActiveDocSubmit = false
-        prefs.isActiveBasicSubmit = false
-        prefs.isRBasicSubmit = false
-        prefs.isRDocSubmit = false
-    }
-
     private fun isValidActiveBasicDetails(): Boolean {
         //firstname
         /*if (TextUtils.isEmpty(et_active_firstName.text)) {
@@ -1249,13 +1197,16 @@ class ActiveBasicDetailsFragment : Fragment()
 
     }
 
-    fun onActiveBasicDetailSuccess(response: ResponseActiveBasicDetails) {
+    private fun onActiveBasicDetailSuccess(response: ResponseActiveBasicDetails) {
 
         Loader.hideLoader()
 
         Toast.makeText(context, response.detail!!.message, Toast.LENGTH_SHORT).show()
 
+        if (prefs.onboardingStage == OnboardingStage.ACTIVE_BASIC_DETAILS)
+            prefs.onboardingStage = OnboardingStage.ACTIVE_DOCUMENTS
         activeServiceViewModel.moveToNextTab()
+        activeServiceViewModel.refreshTabsState()
         //prefs.isActiveBasicSubmit = true
         //tabAccessControl.enableDisableTabs(true, true, false)
 

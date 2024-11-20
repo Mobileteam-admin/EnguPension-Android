@@ -20,6 +20,7 @@ import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseActiveProcessingVerify
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.ProcessDashboardViewModel
@@ -95,7 +96,7 @@ class ProcessDashboardActivity : AppCompatActivity() {
         tokenRefreshViewModel2.tokenRefreshError.observe(this) { error ->
             if (error != null) {
                 if (error.isNotEmpty()) Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-                clearLogin()
+                prefs.logout()
                 val intent = Intent(this, SignUpActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
@@ -116,19 +117,11 @@ class ProcessDashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun clearLogin() {
-        prefs.isLogin = false
-        prefs.user_id = ""
-        prefs.user_name = ""
-        prefs.email = ""
-        prefs.access_token = ""
-        prefs.refresh_token = ""
-    }
-
 
     private  val SPLASH_TIME: Long= 3000
 
     private fun onProcessingVerifySuccess(response: ResponseActiveProcessingVerify) {
+        prefs.onboardingStage = OnboardingStage.DASHBOARD
         Toast.makeText(this, response.detail?.message, Toast.LENGTH_SHORT).show()
         Handler().postDelayed({
         val intent = Intent(this, DashboardActivity::class.java)

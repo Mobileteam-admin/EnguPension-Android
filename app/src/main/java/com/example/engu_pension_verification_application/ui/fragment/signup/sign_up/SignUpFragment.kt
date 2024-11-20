@@ -18,6 +18,7 @@ import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputSignup
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.AppUtils
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
@@ -25,7 +26,7 @@ import com.example.engu_pension_verification_application.viewmodel.SignUpViewMod
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 
-class SignUpFragment : Fragment() {
+class SignUpFragment : BaseFragment() {
     var Ph_no: String = ""
     private lateinit var signUpViewModel: SignUpViewModel
 
@@ -154,7 +155,9 @@ class SignUpFragment : Fragment() {
             }
         }
 
-        ll_signup_login.setOnClickListener { findNavController().navigate(R.id.action_signup_to_login) }
+        ll_signup_login.setOnClickListener {
+            navigate(R.id.action_signup_to_login,  isReverseAnim = true)
+        }
     }
 
     private fun isValidSignup(): Boolean {
@@ -248,7 +251,7 @@ class SignUpFragment : Fragment() {
         bundle.putSerializable("screen", "Signup")
         bundle.putSerializable("Email", et_signup_email.text.toString())
         bundle.putSerializable("Phone", Ph_no)
-        findNavController().navigate(R.id.action_signup_to_otp, bundle)
+        navigate(R.id.action_signup_to_otp, bundle)
     }
 
 

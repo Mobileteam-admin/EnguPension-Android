@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.logout_dialog.tv_logout_cancel
 import kotlinx.android.synthetic.main.logout_dialog.tv_logout_confirm
 
 
-class LogoutConfirmDialog : DialogFragment() {
+class LogoutConfirmDialog : BaseDialog() {
     private val viewModel by activityViewModels<LogoutConfirmViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,23 +37,6 @@ class LogoutConfirmDialog : DialogFragment() {
         }
         tv_logout_confirm.setOnClickListener {
             viewModel.logout.value = Unit
-        }
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.window!!.requestFeature(Window.FEATURE_NO_TITLE)
-        return dialog
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val dialog = dialog
-        if (dialog != null) {
-            dialog.window!!.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
         }
     }
 }

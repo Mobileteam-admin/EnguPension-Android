@@ -3,6 +3,8 @@ package com.example.engu_pension_verification_application.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.engu_pension_verification_application.util.OnboardingStage
+import com.example.engu_pension_verification_application.util.SharedPref
 
 class RetireeServiceViewModel : ViewModel() {
     private val _onMoveToNextTab = MutableLiveData<Unit>()
@@ -11,15 +13,13 @@ class RetireeServiceViewModel : ViewModel() {
 
     val currentTabPos = MutableLiveData(0)
 
-    val enableTab0 = MutableLiveData(true)
-    val enableTab1 = MutableLiveData(false)
-    val enableTab2 = MutableLiveData(false)
+    val enableDocTab = MutableLiveData(false)
+    val enableBankTab = MutableLiveData(false)
 
-
-    fun setTabsEnabledState(isTab0Enabled: Boolean, isTab1Enabled: Boolean,isTab2Enabled: Boolean) {
-        enableTab0.value = isTab0Enabled
-        enableTab1.value = isTab1Enabled
-        enableTab2.value = isTab2Enabled
+    fun refreshTabsState() {
+        val onboardingStage = SharedPref.onboardingStage
+        enableDocTab.value = onboardingStage == OnboardingStage.ACTIVE_DOCUMENTS || onboardingStage == OnboardingStage.ACTIVE_BANK_INFO
+        enableBankTab.value = onboardingStage == OnboardingStage.ACTIVE_BANK_INFO
     }
     fun moveToNextTab() {
         _onMoveToNextTab.value = Unit

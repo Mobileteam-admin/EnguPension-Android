@@ -17,6 +17,7 @@ import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseForgotPassword
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.AppUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
@@ -26,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_o_t_p.cl_click_login
 import kotlinx.android.synthetic.main.fragment_o_t_p.ll_verify_buttons
 
 
-class ForgotPasswordFragment : Fragment() {
+class ForgotPasswordFragment : BaseFragment() {
     var Ph_no: String = ""
     var email_Phn: String = ""
     private lateinit var forgotPasswordViewModel: ForgotPasswordViewModel
@@ -36,7 +37,7 @@ class ForgotPasswordFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                 findNavController().navigate(R.id.action_forgotpassword_to_login)
+                 navigate(R.id.action_forgotpassword_to_login)
                // isEnabled = false
                 //findNavController().popBackStack()
             }
@@ -109,7 +110,7 @@ class ForgotPasswordFragment : Fragment() {
         ll_forgotpass_back.setOnClickListener {
            // activity?.onBackPressed()
            // activity?.onBackPressedDispatcher?.onBackPressed()
-            findNavController().navigate(R.id.action_forgotpassword_to_login)
+            navigate(R.id.action_forgotpassword_to_login, isReverseAnim = true)
         }
     }
 
@@ -154,7 +155,7 @@ class ForgotPasswordFragment : Fragment() {
         bundle.putSerializable("screen", "ForgotPassword")
         bundle.putSerializable("Email/Phone", email_Phn)
         bundle.putSerializable("Token", response.forgot_detail?.uniqueToken)
-        findNavController().navigate(R.id.action_forgotpassword_to_otpscreen, bundle)
+        navigate(R.id.action_forgotpassword_to_otpscreen, bundle)
 
     }
 

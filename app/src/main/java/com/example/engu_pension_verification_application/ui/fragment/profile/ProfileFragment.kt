@@ -5,31 +5,57 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.commons.Loader
+import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.ProfileViewModel
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class ProfileFragment : Fragment() {
-
-
+    private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        onClicked()
+        initViewModel()
+        initViews()
+//        initCall()
+        observeLiveData()
     }
 
-    private fun onClicked() {
+    private fun initViews() {
         img_profile_back.setOnClickListener {
-            activity?.onBackPressed()
+            findNavController().popBackStack()
         }
     }
 
+    private fun initViewModel() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
+        profileViewModel = ViewModelProviders.of(
+            requireActivity(), EnguViewModelFactory(networkRepo)
+        ).get(ProfileViewModel::class.java)
+    }
+
+    private fun observeLiveData() {
+    }
 }
