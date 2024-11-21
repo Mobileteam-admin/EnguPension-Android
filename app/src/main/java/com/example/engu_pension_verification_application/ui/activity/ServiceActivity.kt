@@ -7,7 +7,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.example.engu_pension_verification_application.R
 
-class ServiceActivity : AppCompatActivity() {
+class ServiceActivity : BaseActivity() {
 
     private lateinit var service_navController: NavController
 

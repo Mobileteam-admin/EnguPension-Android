@@ -16,12 +16,12 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputForgotVerify
 import com.example.engu_pension_verification_application.model.input.InputSignupVerify
 import com.example.engu_pension_verification_application.model.response.VerifyResponse
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
@@ -29,7 +29,7 @@ import com.example.engu_pension_verification_application.viewmodel.OTPViewModel
 import kotlinx.android.synthetic.main.fragment_o_t_p.*
 
 @RequiresApi(Build.VERSION_CODES.O)
-class OTPFragment : Fragment() {
+class OTPFragment : BaseFragment() {
     private lateinit var otpViewModel: OTPViewModel
     var screen: String = ""
     var email: String = "  "
@@ -54,9 +54,9 @@ class OTPFragment : Fragment() {
         activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (screen.equals("Signup")) {
-                    findNavController().navigate(R.id.action_otp_to_signup)
+                    navigate(R.id.action_otp_to_signup)
                 }else{
-                    findNavController().navigate(R.id.action_otp_to_forgotpassword)
+                    navigate(R.id.action_otp_to_forgotpassword)
                 }
                 //activity?.onBackPressedDispatcher!!.onBackPressed()
             }
@@ -110,7 +110,7 @@ class OTPFragment : Fragment() {
     }
     private fun observeData() {
         otpViewModel.otpVerifyResponse.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
             if (response.detail?.status == AppConstants.SUCCESS) {
                 onOtpVerifySuccess(response)
@@ -119,7 +119,7 @@ class OTPFragment : Fragment() {
             }
         }
         otpViewModel.verifyForgotPassResponse.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
             if (response.detail?.status == AppConstants.SUCCESS) {
                 onOtpVerifySuccess(response)
@@ -128,14 +128,14 @@ class OTPFragment : Fragment() {
             }
         }
         otpViewModel.resendOTPResponse.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
         }
     }
 
    /* private fun observeVerification() {
         otpViewModel.verificationStatus.observe(viewLifecycleOwner, Observer { verifyresponse ->
-            Loader.hideLoader()
+            dismissLoader()
             if (verifyresponse.detail?.status.equals("success")) {
                 Toast.makeText(context, verifyresponse.detail?.message, Toast.LENGTH_LONG).show()
 
@@ -167,7 +167,7 @@ class OTPFragment : Fragment() {
         otpViewModel.resendotpStatus.observe(viewLifecycleOwner, Observer { otpresendresponse ->
             Log.d("TAG _ 4", "onClicked: " + otpresendresponse)
 
-            Loader.hideLoader()
+            dismissLoader()
             if (otpresendresponse.detail?.status.equals("success")) {
                 Toast.makeText(context, otpresendresponse.detail?.message, Toast.LENGTH_LONG).show()
             } else {
@@ -191,7 +191,7 @@ class OTPFragment : Fragment() {
                 final_otp = a_otp.toString()
                 Log.d("otp", "onClicked: " + final_otp)
 
-                Loader.showLoader(requireContext())
+                showLoader()
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 
 
@@ -213,7 +213,7 @@ class OTPFragment : Fragment() {
                     }
 
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
                 }
             }
@@ -230,7 +230,7 @@ class OTPFragment : Fragment() {
         }
 
         ll_resend_otp.setOnClickListener {
-            Loader.showLoader(requireContext())
+            showLoader()
             if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 Log.d("TAG _ 1", "onClicked: " + email)
                 Log.d("TAG _ 2", "onClicked:Email/Phone " + email_Phn)
@@ -249,7 +249,7 @@ class OTPFragment : Fragment() {
                     )
                 }
             } else {
-                Loader.hideLoader()
+                dismissLoader()
                 Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
             }
         }
@@ -258,16 +258,16 @@ class OTPFragment : Fragment() {
         ll_verify_back.setOnClickListener {
             // activity?.onBackPressedDispatcher?.onBackPressed()
             if (screen.equals("Signup")) {
-                findNavController().navigate(R.id.action_otp_to_signup)
+                navigate(R.id.action_otp_to_signup, isReverseAnim = true)
             }else{
-                findNavController().navigate(R.id.action_otp_to_forgotpassword)
+                navigate(R.id.action_otp_to_forgotpassword, isReverseAnim = true)
             }
 
 
         }
 
         ll_click_login.setOnClickListener {
-            findNavController().navigate(R.id.action_otp_to_login)
+            navigate(R.id.action_otp_to_login)
         }
 
     }
@@ -340,9 +340,6 @@ class OTPFragment : Fragment() {
         prefs.email = response.detail?.userdetails?.email
 
         if (screen.equals("Signup")) {
-
-            prefs.lastActivityDashboard = false
-
             ll_verify_buttons.visibility = View.GONE
             cl_click_login.visibility = View.VISIBLE
             //findNavController().navigate(R.id.action_otp_to_login)
@@ -354,7 +351,7 @@ class OTPFragment : Fragment() {
             val bundle = Bundle()
             bundle.putSerializable("Token", token)
             bundle.putSerializable("OTP", final_otp)
-            findNavController().navigate(R.id.action_otp_to_resetpassword,bundle)
+            navigate(R.id.action_otp_to_resetpassword,bundle)
         }
     }
 

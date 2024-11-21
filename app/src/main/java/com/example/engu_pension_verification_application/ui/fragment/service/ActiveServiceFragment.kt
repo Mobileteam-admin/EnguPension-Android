@@ -15,13 +15,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBankFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBasicDetailsFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveDocumentsFragment
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
@@ -30,7 +31,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_active_service.*
 
 
-class ActiveServiceFragment : Fragment() {
+class ActiveServiceFragment : BaseFragment() {
         private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
         private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
@@ -68,7 +69,7 @@ class ActiveServiceFragment : Fragment() {
     private fun initViewModel() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -77,21 +78,18 @@ class ActiveServiceFragment : Fragment() {
         activeServiceViewModel.onMoveToNextTab.observe(viewLifecycleOwner) {
             tab_activeservice_viewpager.setCurrentItem(getItem(+1), true)
         }
-        activeServiceViewModel.enableTab0.observe(viewLifecycleOwner) {
-                tab_tablayout_activeservice.getTabAt(0)?.view?.isEnabled = it
+        activeServiceViewModel.enableDocTab.observe(viewLifecycleOwner) {
+                tab_tablayout_activeservice.getTabAt(ActiveDocumentsFragment.TAB_POSITION)?.view?.isEnabled = it
         }
-        activeServiceViewModel.enableTab1.observe(viewLifecycleOwner) {
-                tab_tablayout_activeservice.getTabAt(1)?.view?.isEnabled = it
-        }
-        activeServiceViewModel.enableTab2.observe(viewLifecycleOwner) {
-                tab_tablayout_activeservice.getTabAt(2)?.view?.isEnabled = it
+        activeServiceViewModel.enableBankTab.observe(viewLifecycleOwner) {
+                tab_tablayout_activeservice.getTabAt(ActiveBankFragment.TAB_POSITION)?.view?.isEnabled = it
         }
 
         tokenRefreshViewModel2.tokenRefreshError.observe(viewLifecycleOwner) { error ->
             if (error != null) {
-                Loader.hideLoader()
+                dismissLoader()
                 if (error.isNotEmpty()) Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-                SharedPref.logout()
+                prefs.logout()
                 val intent = Intent(context, SignUpActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
@@ -146,124 +144,6 @@ class ActiveServiceFragment : Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
 
                 val position = tab!!.position
-                //enableDisableTabs(enableTab0 = true, enableTab1 = false, enableTab2 = false)
-                //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-
-                /*val tabLayout: TabLayout = tab_tablayout_activeservice
-
-                // Initially disable all tabs except the first one
-                tabLayout.getTabAt(0)?.select()
-                for (i in 1 until tabLayout.tabCount) {
-                    tabLayout.getTabAt(i)?.view?.isEnabled = false
-                }*/
-
-                //prefs.isActiveBasicSubmit = true
-                //prefs.isActiveDocSubmit = false
-                Log.d("pref", "pref isActiveBasicSubmit on tab selectd ${prefs.isActiveBasicSubmit} ")
-                /*if (prefs.isActiveBasicSubmit){
-
-                    Log.d("pref", "pref isActiveBasicSubmit true  ${prefs.isActiveBasicSubmit} ")
-
-
-                    if (prefs.isActiveDocSubmit){
-                        enableDisableTabs(tab_tablayout_activeservice, true, true, true)
-
-                    } else if (!prefs.isActiveDocSubmit){
-                        enableDisableTabs(tab_tablayout_activeservice, true, true, false)
-
-                    }
-
-                    enableDisableTabs(tab_tablayout_activeservice, true, true, false)
-
-                }
-                else{
-                    enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-
-                }*/
-
-
-                /*when {
-                    prefs.isActiveBasicSubmit -> {
-                    // Enable tabs 0 and 1, disable tab 2
-                        enableDisableTabs(tab_tablayout_activeservice, true, true, false)
-                    }
-
-                    !prefs.isActiveBasicSubmit -> {
-                        enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                    }
-
-
-                    prefs.isActiveDocSubmit -> {
-                    // Enable all tabs 0, 1, and 2
-                        enableDisableTabs(tab_tablayout_activeservice, true, true, true)
-                    }
-
-                    !prefs.isActiveDocSubmit -> {
-                        enableDisableTabs(tab_tablayout_activeservice, true, true, false)
-                    }
-                   *//* else -> {
-                    // Disable tabs 1 and 2, enable tab 0
-                        enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                    }*//*
-                }*/
-
-                /*
-                if (prefs.isActiveBasicSubmit == true)
-                {
-                    //enableDisableTabs(tab_tablayout_activeservice, true, true, false)
-
-                    if (prefs.isActiveDocSubmit == true){
-                        //enableDisableTabs(tab_tablayout_activeservice, true, true, true)
-                        enableDisableTabs(enableTab0 = true, enableTab1 = true, enableTab2 = true)
-                    }else{
-                        enableDisableTabs(enableTab0 = true, enableTab1 = true, enableTab2 = false)
-                    }
-                }else{
-                    //enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                    enableDisableTabs(enableTab0 = true, enableTab1 = false, enableTab2 = false)
-                }
-                */
-
-                /*
-                            false-> {when(prefs.isActiveBasicSubmit){
-                    true->{
-                        Log.d("pref", "pref isActiveBasicSubmit in isActiveBasic pref ${prefs.isActiveBasicSubmit} ")
-                        enableDisableTabs(tab_tablayout_activeservice, true, true, false)
-                        when(prefs.isActiveDocSubmit){
-                            true->{
-                                Log.d("pref", "pref isActiveBasicSubmit in isActiveDoc pref ${prefs.isActiveBasicSubmit} ")
-                                enableDisableTabs(tab_tablayout_activeservice, true, true, true)
-
-                            }
-                                enableDisableTabs(tab_tablayout_activeservice, true, true, false)
-                            }
-
-                        }
-                    }
-                    false->{
-                        enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-
-                    }
-                }
-                */
-                /*when(prefs.isActiveDocSubmit){
-                    true->{
-                        Log.d("pref", "pref isActiveBasicSubmit in isActiveDoc pref ${prefs.isActiveBasicSubmit} ")
-                        enableDisableTabs(tab_tablayout_activeservice, true, true, true)
-
-                    }
-                    false->{
-
-                        if (prefs.isActiveBasicSubmit == false){
-                            enableDisableTabs(tab_tablayout_activeservice, true, false, false)
-                        }else {
-                            enableDisableTabs(tab_tablayout_activeservice, true, true, false)
-                        }
-                    }
-                }*/
-
-
-
                 Log.d("position", "onTabSelected: " + position)
                 when (position) {
                     0 -> {
@@ -304,6 +184,12 @@ class ActiveServiceFragment : Fragment() {
             }
 
         })
+        activeServiceViewModel.refreshTabsState()
+        viewpager?.currentItem = when (prefs.onboardingStage){
+            OnboardingStage.ACTIVE_DOCUMENTS -> ActiveDocumentsFragment.TAB_POSITION
+            OnboardingStage.ACTIVE_BANK_INFO -> ActiveBankFragment.TAB_POSITION
+            else -> ActiveBasicDetailsFragment.TAB_POSITION
+        }
     }
 
 

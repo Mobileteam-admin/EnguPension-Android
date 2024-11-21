@@ -7,7 +7,7 @@ import androidx.navigation.Navigation
 import com.example.engu_pension_verification_application.R
 
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     private lateinit var splash_navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {

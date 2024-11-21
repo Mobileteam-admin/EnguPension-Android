@@ -21,13 +21,15 @@ class TokenRefreshViewModel2(private val networkRepo: NetworkRepo) : ViewModel()
                 SharedPref.refresh_token = response.token_detail.refresh
                 return true
             } else {
-                _tokenRefreshError.postValue(null)
-                _tokenRefreshError.postValue(response.token_detail?.message ?: "")
+                postExpiredError()
             }
         } catch (e: Exception) {
-            _tokenRefreshError.postValue(null)
-            _tokenRefreshError.postValue("")
+            postExpiredError()
         }
         return false
+    }
+    private fun postExpiredError() {
+        _tokenRefreshError.postValue(null)
+        _tokenRefreshError.postValue("Session expired. Please log in again.")
     }
 }

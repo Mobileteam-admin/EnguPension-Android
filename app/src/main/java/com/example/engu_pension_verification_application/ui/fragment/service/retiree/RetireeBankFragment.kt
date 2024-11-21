@@ -12,7 +12,6 @@ import android.text.InputFilter
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
 import com.example.engu_pension_verification_application.model.input.InputBankVerification
@@ -35,8 +33,10 @@ import com.example.engu_pension_verification_application.ui.activity.ProcessDash
 import com.example.engu_pension_verification_application.ui.adapter.AccountTypeAdapter
 import com.example.engu_pension_verification_application.ui.fragment.service.active.filterUpperCaseAndDigits
 import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.AppUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.RetireeBankViewModel
@@ -49,7 +49,7 @@ import java.util.ArrayList
 import java.util.regex.Pattern
 
 
-class RetireeBankFragment : Fragment() {
+class RetireeBankFragment : BaseFragment() {
 
     val ACC_NO_PATTERN = Pattern.compile("\\d+")
 
@@ -76,7 +76,7 @@ class RetireeBankFragment : Fragment() {
     val et_ein_number_popup: EditText? = null
 
     companion object {
-        private const val TAB_POSITION = 2
+        const val TAB_POSITION = 2
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -115,7 +115,7 @@ class RetireeBankFragment : Fragment() {
             EnguViewModelFactory(networkRepo)
         ).get(RetireeBankViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), // use `this` if the ViewModel want to tie with fragment's lifecycle
+            requireActivity(), 
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -125,7 +125,7 @@ class RetireeBankFragment : Fragment() {
         }
         bankViewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
-                Loader.hideLoader()
+                dismissLoader()
                 bankDetailsList.clear()
                 accountTypeList.clear()
                 response.detail.banks?.let {  bankDetailsList.addAll(it)}
@@ -139,7 +139,7 @@ class RetireeBankFragment : Fragment() {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
@@ -157,7 +157,7 @@ class RetireeBankFragment : Fragment() {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.swiftbankdetail?.message, Toast.LENGTH_LONG).show()
                 }
             }
@@ -168,7 +168,7 @@ class RetireeBankFragment : Fragment() {
             if (response.detail?.status == AppConstants.SUCCESS) {
                 onRetireeBankInfoSubmitSuccess(response)
             }else if (response.detail?.status == AppConstants.FAIL) {
-                Loader.hideLoader()
+                dismissLoader()
                 Toast.makeText(context, response.detail.message, Toast.LENGTH_LONG).show()
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -178,7 +178,7 @@ class RetireeBankFragment : Fragment() {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
@@ -196,7 +196,7 @@ class RetireeBankFragment : Fragment() {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                     isBankVerifyBtn = false
                     tv_retireebank_bankcode_verify.visibility = View.INVISIBLE
@@ -209,7 +209,7 @@ class RetireeBankFragment : Fragment() {
             val ein = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
-                Loader.hideLoader()
+                dismissLoader()
                 onRetireeEinNumberSubmitSuccess(response)
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -219,7 +219,7 @@ class RetireeBankFragment : Fragment() {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
@@ -359,10 +359,10 @@ class RetireeBankFragment : Fragment() {
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {/*     //finish the Form
                          FinishFnCall()*/
                     //bank
-                    Loader.showLoader(requireContext())
+                    showLoader()
                     BankinformationCall()
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
                 }
 
@@ -397,7 +397,7 @@ class RetireeBankFragment : Fragment() {
             //bankverifyApicall
             /*
             if (isValidBankAccountNumber(et_bank_verify_number, bankVerifyalertDialog)) {
-                Loader.showLoader(requireContext())
+                showLoader()
                 EINApicall(et_ein_number_popup) // Pass the EditText to the function
             }
             */
@@ -419,13 +419,13 @@ class RetireeBankFragment : Fragment() {
 
 
     private fun BankVerifyCall(et_acc_num: EditText?, et_bank_code: EditText?) {
-        //Loader.showLoader(requireContext())
+        //showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 
             BankVerifyApiCall(et_acc_num,et_bank_code)
 
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
     }
@@ -599,13 +599,14 @@ class RetireeBankFragment : Fragment() {
 
 
     fun onSwiftBankCodeSuccess(response: ResponseSwiftBankCode) {
-        Loader.hideLoader()
+        dismissLoader()
         et_retireebank_bankcode.text = Editable.Factory.getInstance()
             .newEditable(response.swiftbankdetail?.swiftCodeResponse?.bankCode)
     }
 
-    fun onRetireeBankInfoSubmitSuccess(response: ResponseBankInfo) {
-        Loader.hideLoader()
+    private fun onRetireeBankInfoSubmitSuccess(response: ResponseBankInfo) {
+        prefs.onboardingStage = OnboardingStage.PROCESSING
+        dismissLoader()
         Toast.makeText(context, "${response.detail?.message}", Toast.LENGTH_LONG).show()
 
         /*     val intent = Intent(context, DashboardActivity::class.java)
@@ -640,7 +641,7 @@ class RetireeBankFragment : Fragment() {
         addein_submit.setOnClickListener {
 //EINApicall
             if (isValidEinNumber(et_ein_number_popup, add_einalertDialog)) {
-                Loader.showLoader(requireContext())
+                showLoader()
                 EINApicall(et_ein_number_popup) // Pass the EditText to the function
             }
             add_einalertDialog.show()
@@ -651,10 +652,10 @@ class RetireeBankFragment : Fragment() {
 
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             //einnumber
-            /* Loader.showLoader(requireContext())*/
+            /* showLoader()*/
             EinSubmitCall(et_ein_number_popupapicall)
 
-        } else {/*       Loader.hideLoader()*/
+        } else {/*       dismissLoader()*/
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
 
@@ -695,7 +696,7 @@ class RetireeBankFragment : Fragment() {
     }
 
     private fun onBankVerifySubmitSuccess(response: ResponseBankVerify) {
-        Loader.hideLoader()
+        dismissLoader()
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
 
         //prefs.isBankVerify = true
