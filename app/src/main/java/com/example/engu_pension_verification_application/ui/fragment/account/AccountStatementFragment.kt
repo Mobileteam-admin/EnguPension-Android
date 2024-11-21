@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.ui.adapter.AccountStatementAdapter
@@ -49,7 +50,7 @@ class AccountStatementFragment : BaseFragment() {
         }
 
         img_accountstatement_back.setOnClickListener {
-            activity?.onBackPressed()
+            findNavController().navigateUp()
         }
     }
 

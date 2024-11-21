@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -45,22 +44,6 @@ class OTPFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_o_t_p, container, false)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (screen.equals("Signup")) {
-                    navigate(R.id.action_otp_to_signup)
-                }else{
-                    navigate(R.id.action_otp_to_forgotpassword)
-                }
-                //activity?.onBackPressedDispatcher!!.onBackPressed()
-            }
-        })
     }
 
 
@@ -133,50 +116,6 @@ class OTPFragment : BaseFragment() {
         }
     }
 
-   /* private fun observeVerification() {
-        otpViewModel.verificationStatus.observe(viewLifecycleOwner, Observer { verifyresponse ->
-            dismissLoader()
-            if (verifyresponse.detail?.status.equals("success")) {
-                Toast.makeText(context, verifyresponse.detail?.message, Toast.LENGTH_LONG).show()
-
-                if (screen.equals("Signup")) {
-                    findNavController().navigate(R.id.action_otp_to_login)
-                   *//* val intent = Intent(context, ServiceActivity::class.java)
-                    intent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)*//*
-                } else {
-                    val bundle = Bundle()
-                    bundle.putSerializable("Token", token)
-                    bundle.putSerializable("OTP", final_otp)
-                    findNavController().navigate(R.id.action_otp_to_resetpassword,bundle)
-                }
-
-            } else {
-                Toast.makeText(context, verifyresponse.detail?.message, Toast.LENGTH_LONG).show()
-                et_otp_1.setText("")
-                et_otp_2.setText("")
-                et_otp_3.setText("")
-                et_otp_4.setText("")
-                et_otp_5.setText("")
-                et_otp_6.setText("")
-                focusValidation()
-            }
-        })
-
-        otpViewModel.resendotpStatus.observe(viewLifecycleOwner, Observer { otpresendresponse ->
-            Log.d("TAG _ 4", "onClicked: " + otpresendresponse)
-
-            dismissLoader()
-            if (otpresendresponse.detail?.status.equals("success")) {
-                Toast.makeText(context, otpresendresponse.detail?.message, Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(context, otpresendresponse.detail?.message, Toast.LENGTH_LONG).show()
-            }
-        })
-
-    }*/
-
     private fun onClicked() {
         ll_verify.setOnClickListener {
 
@@ -217,16 +156,6 @@ class OTPFragment : BaseFragment() {
                     Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
                 }
             }
-
-            /* if (screen.equals("Signup")) {
-                 val intent = Intent(context, ServiceActivity::class.java)
-                 intent.flags =
-                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                 startActivity(intent)
-             } else {
-                 findNavController().navigate(R.id.action_otp_to_resetpassword)
-             }*/
-
         }
 
         ll_resend_otp.setOnClickListener {
@@ -256,18 +185,11 @@ class OTPFragment : BaseFragment() {
 
 
         ll_verify_back.setOnClickListener {
-            // activity?.onBackPressedDispatcher?.onBackPressed()
-            if (screen.equals("Signup")) {
-                navigate(R.id.action_otp_to_signup, isReverseAnim = true)
-            }else{
-                navigate(R.id.action_otp_to_forgotpassword, isReverseAnim = true)
-            }
-
-
+            findNavController().popBackStack()
         }
 
         ll_click_login.setOnClickListener {
-            navigate(R.id.action_otp_to_login)
+            findNavController().popBackStack(R.id.navigation_login, false)
         }
 
     }
@@ -342,16 +264,11 @@ class OTPFragment : BaseFragment() {
         if (screen.equals("Signup")) {
             ll_verify_buttons.visibility = View.GONE
             cl_click_login.visibility = View.VISIBLE
-            //findNavController().navigate(R.id.action_otp_to_login)
-            /* val intent = Intent(context, ServiceActivity::class.java)
-             intent.flags =
-                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-             startActivity(intent)*/
         } else {
             val bundle = Bundle()
             bundle.putSerializable("Token", token)
             bundle.putSerializable("OTP", final_otp)
-            navigate(R.id.action_otp_to_resetpassword,bundle)
+            navigate(R.id.action_otp_to_resetpassword,bundle, popUpTo = R.id.navigation_otp)
         }
     }
 

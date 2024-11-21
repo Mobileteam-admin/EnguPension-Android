@@ -31,19 +31,6 @@ class ForgotPasswordFragment : BaseFragment() {
     var email_Phn: String = ""
     private lateinit var forgotPasswordViewModel: ForgotPasswordViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                 navigate(R.id.action_forgotpassword_to_login)
-               // isEnabled = false
-                //findNavController().popBackStack()
-            }
-        })
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -107,9 +94,7 @@ class ForgotPasswordFragment : BaseFragment() {
             }
         }
         ll_forgotpass_back.setOnClickListener {
-           // activity?.onBackPressed()
-           // activity?.onBackPressedDispatcher?.onBackPressed()
-            navigate(R.id.action_forgotpassword_to_login, isReverseAnim = true)
+            findNavController().popBackStack()
         }
     }
 
@@ -154,7 +139,10 @@ class ForgotPasswordFragment : BaseFragment() {
         bundle.putSerializable("screen", "ForgotPassword")
         bundle.putSerializable("Email/Phone", email_Phn)
         bundle.putSerializable("Token", response.forgot_detail?.uniqueToken)
-        navigate(R.id.action_forgotpassword_to_otpscreen, bundle)
+        navigate(R.id.action_forgotpassword_to_otpscreen, bundle,
+            popUpTo = R.id.navigation_forgotpassword,
+            popUpToInclusive = true
+            )
 
     }
 

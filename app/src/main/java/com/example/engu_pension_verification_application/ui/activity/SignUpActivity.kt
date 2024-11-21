@@ -3,7 +3,6 @@ package com.example.engu_pension_verification_application.ui.activity
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -26,40 +25,7 @@ class SignUpActivity : BaseActivity(), ExitAppDialog.ExitClick {
 
     }
 
-
-    /* override fun onBackPressed() {
-         Toast.makeText(this,"back button pressed",Toast.LENGTH_LONG).show()
-        *//* if (findNavController(R.id.nav_host_fragment_signup).currentDestination?.id == R.id.navigation_login) {
-           // ExitAppDialog.showDialog(this, this)
-           // super.onBackPressed()
-        } else {
-           // onBackPressedDispatcher.onBackPressed()
-           // super.onBackPressed()
-            //super.getOnBackPressedDispatcher().onBackPressed()
-//supportFragmentManager.popBackStack()
-        }*//*
-    }*/
-
-
-    /*  override fun onSupportNavigateUp(): Boolean {
-          //getSupportFragmentManager().popBackStack()
-          // onBackPressed()
-        //  onBackPressedDispatcher.onBackPressed()
-        //  super.onSupportNavigateUp()
-          return true
-      }*/
-
     override fun proceedExit() {
         // finish()
-    }
-
-    private fun OnBackPressedMethod() {
-        if (findNavController(R.id.nav_host_fragment_signup).currentDestination?.id == R.id.navigation_login) {
-            ExitAppDialog.showDialog(this, this)
-        }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 }

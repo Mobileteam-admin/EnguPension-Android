@@ -23,7 +23,6 @@
         android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.ENGU_Pension_Verification_Application"
         tools:targetApi="tiramisu">
 

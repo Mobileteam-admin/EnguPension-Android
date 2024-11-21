@@ -18,18 +18,6 @@ class DashboardActivity : BaseActivity() {
         dashboard_navController = Navigation.findNavController(this, R.id.nav_host_fragment_dashboard)
     }
 
-
-
-    /*override fun onBackPressed() {
-        if (findNavController(R.id.nav_host_fragment_dashboard).currentDestination?.id == R.id.navigation_dashboard) {
-            // If the current destination is the navigation_dashboard, exit the app.
-         finish()
-        } else {
-            // Otherwise, handle the back press as usual.
-            super.onBackPressed()
-        }
-    }*/
-
     override fun onStop() {
         super.onStop()
     // Save the state indicating that DashboardActivity was the last activity

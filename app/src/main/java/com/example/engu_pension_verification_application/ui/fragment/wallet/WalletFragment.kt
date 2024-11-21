@@ -36,11 +36,14 @@ class WalletFragment : BaseFragment() {
 
     private fun onClicked() {
         img_wallet_back.setOnClickListener {
-            activity?.onBackPressed()
+            findNavController().navigateUp()
+        }
+        ll_wallet_back.setOnClickListener {
+            findNavController().navigateUp()
         }
 
         txt_wallethistory.setOnClickListener {
-            findNavController().navigate(R.id.action_wallet_to_wallet_history)
+            navigate(R.id.action_wallet_to_wallet_history)
         }
     }
 

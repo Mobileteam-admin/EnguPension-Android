@@ -23,19 +23,11 @@
         android:name="com.example.engu_pension_verification_application.ui.fragment.service.ActiveServiceFragment"
         android:label="Active Service"
         tools:layout="@layout/fragment_active_service">
-        <action
-            android:id="@+id/action_activeService_to_chooseservice"
-            app:destination="@id/navigation_choose_service"
-           />
     </fragment>
     <fragment
         android:id="@+id/navigation_Retiree"
         android:name="com.example.engu_pension_verification_application.ui.fragment.service.RetireeServiceFragment"
         android:label="Retiree Service"
         tools:layout="@layout/fragment_retiree">
-        <action
-            android:id="@+id/action_Retiree_to_chooseservice"
-            app:destination="@id/navigation_choose_service"
-            />
     </fragment>
 </navigation>

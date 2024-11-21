@@ -36,15 +36,7 @@ class Splash2 : BaseFragment() {
 
     private fun onClicked() {
         img_next2.setOnClickListener {
-
             if (prefs.isLogin) {
-                //check account completion true or not with local storage
-                //true - dashboar
-                /* val intent = Intent(context, DashboardActivity::class.java)
-                 intent.flags =
-                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                 startActivity(intent)*/
-
                 val intent = when (prefs.onboardingStage) {
                     OnboardingStage.DASHBOARD -> Intent(context, DashboardActivity::class.java)
                     OnboardingStage.PROCESSING -> Intent(context, ProcessDashboardActivity::class.java)

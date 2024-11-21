@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_splash1" >
 
         <action
-            android:id="@+id/action_splash1_to_splash1"
+            android:id="@+id/action_splash1_to_splash2"
             app:destination="@id/navigation_splash2" />
     </fragment>
     <fragment

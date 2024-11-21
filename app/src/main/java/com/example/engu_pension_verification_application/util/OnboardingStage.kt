@@ -1,7 +1,7 @@
 package com.example.engu_pension_verification_application.util
 
 enum class OnboardingStage(val id: Int) {
-    SERVICES(0),
+    CHOOSE_SERVICE(0),
     ACTIVE_BASIC_DETAILS(1),
     ACTIVE_DOCUMENTS(2),
     ACTIVE_BANK_INFO(3),
