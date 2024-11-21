@@ -80,7 +80,7 @@ object SharedPref {
 
 
     var onboardingStage: OnboardingStage
-        get() = OnboardingStage.fromId(sharedPreferences.getInt(ONBOARDING_STAGE, OnboardingStage.SERVICES.id))
+        get() = OnboardingStage.fromId(sharedPreferences.getInt(ONBOARDING_STAGE, OnboardingStage.CHOOSE_SERVICE.id))
         set(value) = sharedPreferences.edit().putInt(ONBOARDING_STAGE, value.id).apply()
 
     /*var isBankVerify : Boolean
@@ -191,6 +191,7 @@ object SharedPref {
 
 
     fun logout() {
+        onboardingStage = OnboardingStage.CHOOSE_SERVICE
         isLogin = false
         user_id = ""
         user_name = ""

@@ -17,8 +17,4 @@ class SplashActivity : BaseActivity() {
         splash_navController = Navigation.findNavController(this, R.id.nav_host_fragment_splash)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
 }

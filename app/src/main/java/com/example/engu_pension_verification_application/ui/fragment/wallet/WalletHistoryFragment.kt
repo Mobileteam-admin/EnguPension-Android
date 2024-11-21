@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.ui.adapter.WalletHistoryAdapter
@@ -39,7 +40,7 @@ class WalletHistoryFragment : BaseFragment() {
 
     private fun onClicked() {
         img_wallethistory_back.setOnClickListener {
-            activity?.onBackPressed()
+            findNavController().navigateUp()
         }
     }
 

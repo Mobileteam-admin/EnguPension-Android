@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
@@ -36,17 +35,6 @@ class ResetPasswordFragment : BaseFragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_reset_password, container, false)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                findNavController().navigate(R.id.action_resetpassword_to_forgotpassword)
-                //findNavController().popBackStack()
-            }
-        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,7 +64,7 @@ class ResetPasswordFragment : BaseFragment() {
             dismissLoader()
             Toast.makeText(context, response.reset_detail?.message, Toast.LENGTH_LONG).show()
             if (response.reset_detail?.status == AppConstants.SUCCESS) {
-                findNavController().navigate(R.id.action_resetpassword_to_login)
+                findNavController().popBackStack(R.id.navigation_login, false)
             }
         }
     }
@@ -122,7 +110,6 @@ class ResetPasswordFragment : BaseFragment() {
 
     private fun onClicked() {
         ll_resetpass_submit.setOnClickListener {
-
             if (isValidReset()) {
 
                 showLoader()
@@ -141,8 +128,7 @@ class ResetPasswordFragment : BaseFragment() {
         }
 
         ll_resetpass_back.setOnClickListener {
-           // activity?.onBackPressed()
-            findNavController().navigate(R.id.action_resetpassword_to_forgotpassword)
+            findNavController().popBackStack()
         }
     }
 

@@ -30,9 +30,8 @@ class Splash1 : BaseFragment() {
 
     private fun onClicked() {
         img_next1.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_splash1_to_splash1
-            )
+            navigate(R.id.action_splash1_to_splash2,
+                allowAnimation = false, popUpTo = R.id.navigation_splash1)
         }
 
 

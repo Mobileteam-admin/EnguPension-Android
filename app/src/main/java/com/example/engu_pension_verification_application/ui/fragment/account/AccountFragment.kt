@@ -29,13 +29,13 @@ class AccountFragment : BaseFragment() {
 
     private fun onClicked() {
         img_account_back.setOnClickListener {
-            activity?.onBackPressed()
+            findNavController().navigateUp()
         }
         txt_statement.setOnClickListener {
-            findNavController().navigate(R.id.action_account_to_accountstatement)
+            navigate(R.id.action_account_to_accountstatement)
         }
         txt_kinprofile.setOnClickListener {
-            findNavController().navigate(R.id.action_account_to_kinprofile)
+            navigate(R.id.action_account_to_kinprofile)
         }
     }
 

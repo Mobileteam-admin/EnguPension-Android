@@ -389,7 +389,7 @@ class ActiveDocumentsFragment(
 //viewPageCallBack.onViewMoveNext()
 
 
-            //ll_activedoc_next -> findNavController().navigate(R.id.action_login_to_signup)
+            //ll_activedoc_next -> navigate(R.id.action_login_to_signup)
 
         }
     }

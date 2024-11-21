@@ -129,8 +129,6 @@ class SignUpFragment : BaseFragment() {
     private fun onClicked() {
 
         ll_signup_signup.setOnClickListener {
-
-
             if (isValidSignup()) {
                 Ph_no = "+" + ccp.fullNumber
 
@@ -155,7 +153,7 @@ class SignUpFragment : BaseFragment() {
         }
 
         ll_signup_login.setOnClickListener {
-            navigate(R.id.action_signup_to_login,  isReverseAnim = true)
+            findNavController().popBackStack()
         }
     }
 

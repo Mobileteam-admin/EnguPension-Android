@@ -26,10 +26,11 @@ open class BaseFragment : Fragment() {
         args: Bundle? = null,
         allowAnimation: Boolean = true,
         @IdRes popUpTo: Int? = null,
-        isReverseAnim: Boolean = false
+        isReverseAnim: Boolean = false,
+        popUpToInclusive: Boolean = true,
     ) {
         val navOptionsBuilder = NavOptions.Builder()
-        popUpTo?.let { navOptionsBuilder.setPopUpTo(popUpTo, true) }
+        popUpTo?.let { navOptionsBuilder.setPopUpTo(popUpTo, popUpToInclusive) }
         if (allowAnimation) {
             if (isReverseAnim) navOptionsBuilder.setEnterAnim(R.anim.slide_in_left)
                 .setExitAnim(R.anim.slide_out_right).setPopEnterAnim(R.anim.slide_in_right)

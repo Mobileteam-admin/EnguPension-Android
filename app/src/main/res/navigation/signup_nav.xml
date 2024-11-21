@@ -22,10 +22,6 @@
         android:name="com.example.engu_pension_verification_application.ui.fragment.signup.sign_up.SignUpFragment"
         android:label="SignUp"
         tools:layout="@layout/fragment_sign_up">
-
-        <action
-            android:id="@+id/action_signup_to_login"
-            app:destination="@id/navigation_login" />
         <action
             android:id="@+id/action_signup_to_otp"
             app:destination="@id/navigation_otp" />
@@ -39,9 +35,6 @@
         <action
             android:id="@+id/action_forgotpassword_to_otpscreen"
             app:destination="@id/navigation_otp" />
-        <action
-            android:id="@+id/action_forgotpassword_to_login"
-            app:destination="@id/navigation_login" />
     </fragment>
 
     <fragment
@@ -50,29 +43,14 @@
         android:label="OTP"
         tools:layout="@layout/fragment_o_t_p" >
         <action
-            android:id="@+id/action_otp_to_forgotpassword"
-            app:destination="@id/navigation_forgotpassword" />
-        <action
-            android:id="@+id/action_otp_to_signup"
-            app:destination="@id/navigation_signup" />
-        <action
             android:id="@+id/action_otp_to_resetpassword"
             app:destination="@id/navigation_resetpassword" />
-        <action
-            android:id="@+id/action_otp_to_login"
-            app:destination="@id/navigation_login" />
     </fragment>
     <fragment
         android:id="@+id/navigation_resetpassword"
         android:name="com.example.engu_pension_verification_application.ui.fragment.signup.resetpassword.ResetPasswordFragment"
         android:label="Reset Password"
         tools:layout="@layout/fragment_reset_password" >
-        <action
-            android:id="@+id/action_resetpassword_to_login"
-            app:destination="@id/navigation_login" />
 
-        <action
-            android:id="@+id/action_resetpassword_to_forgotpassword"
-            app:destination="@id/navigation_forgotpassword" />
     </fragment>
 </navigation>

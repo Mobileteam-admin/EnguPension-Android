@@ -89,7 +89,7 @@
                     android:layout_width="@dimen/dp_50"
                     android:layout_height="@dimen/dp_50"
                     android:layout_margin="@dimen/dp_6"
-                    android:src="@drawable/dummy_person"
+                    android:src="@drawable/baseline_account_circle_green"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -110,7 +110,8 @@
                     android:id="@+id/img_kinprofile_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_refresh_green"
+                    android:src="@drawable/ic_refresh"
+                    app:tint="@color/green_dark"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_kinprofile_user"
                     app:layout_constraintTop_toBottomOf="@+id/tv_kinprofile_user" />
