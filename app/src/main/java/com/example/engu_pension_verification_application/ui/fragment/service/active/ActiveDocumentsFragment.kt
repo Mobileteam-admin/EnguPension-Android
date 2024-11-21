@@ -26,7 +26,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.commons.setDocumentView
 import com.example.engu_pension_verification_application.commons.setDocumentViewIfPresent
 import com.example.engu_pension_verification_application.data.NetworkRepo
@@ -35,6 +34,7 @@ import com.example.engu_pension_verification_application.model.response.Response
 import com.example.engu_pension_verification_application.model.response.ResponseActiveDocUpload
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.ActiveDocWebViewActivity
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.ActiveDocumentsViewModel
@@ -54,7 +54,7 @@ import java.io.FileOutputStream
 
 
 class ActiveDocumentsFragment(
-) : Fragment(),
+) : BaseFragment(),
     View.OnClickListener
 {
     private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
@@ -181,13 +181,13 @@ class ActiveDocumentsFragment(
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
         activeDocumentsViewModel.documentsUploadResult.observe(viewLifecycleOwner) { pair ->
-            Loader.hideLoader()
+            dismissLoader()
             val request = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
@@ -428,15 +428,15 @@ class ActiveDocumentsFragment(
     }
 
     private fun DocRetrivecall() {
-        //Loader.showLoader(requireContext())
+        //showLoader()
         if (context?.isConnectedToNetwork()!!) {
 
             activeDocumentsViewModel.fetchActiveDocuments()
-            //Loader.hideLoader()
+            //dismissLoader()
 
 
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
     }
@@ -618,13 +618,13 @@ class ActiveDocumentsFragment(
     )*/
 
         if (context?.isConnectedToNetwork()!!) {
-            Loader.showLoader(requireContext())
+            showLoader()
 
             docUploadCall2()
 
 
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
 
@@ -1398,7 +1398,7 @@ class ActiveDocumentsFragment(
     }
 
     fun onDocUploadSuccess(response: ResponseActiveDocUpload) {
-        Loader.hideLoader()
+        dismissLoader()
         Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
         if (prefs.onboardingStage == OnboardingStage.ACTIVE_DOCUMENTS)
             prefs.onboardingStage = OnboardingStage.ACTIVE_BANK_INFO

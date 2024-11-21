@@ -13,7 +13,7 @@ import com.example.engu_pension_verification_application.commons.ExitAppDialog
 import java.security.AccessController.getContext
 
 
-class SignUpActivity : AppCompatActivity(), ExitAppDialog.ExitClick {
+class SignUpActivity : BaseActivity(), ExitAppDialog.ExitClick {
     private lateinit var signUp_navController: NavController
 
 

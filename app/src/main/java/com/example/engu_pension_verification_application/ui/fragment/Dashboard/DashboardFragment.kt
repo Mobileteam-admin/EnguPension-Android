@@ -21,7 +21,6 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseLogout
 import com.example.engu_pension_verification_application.network.ApiClient
@@ -103,14 +102,14 @@ class DashboardFragment : BaseFragment() {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.logout_detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
         viewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
-                Loader.hideLoader()
+                dismissLoader()
                 populateViews()
             } else {
                 if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
@@ -120,7 +119,7 @@ class DashboardFragment : BaseFragment() {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     showFetchErrorDialog(
                         response.detail?.message ?: getString(R.string.common_error_msg_2)
                     )
@@ -230,11 +229,11 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun callLogout() {
-        Loader.showLoader(requireContext())
+        showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             viewModel.logout()
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
     }
@@ -261,7 +260,7 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun ondashboardLogoutSuccess(response: ResponseLogout) {
-        Loader.hideLoader()
+        dismissLoader()
         Toast.makeText(context, response.logout_detail?.message, Toast.LENGTH_LONG).show()
         prefs.logout()
         val intent = Intent(context, SignUpActivity::class.java)
@@ -270,7 +269,7 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun onTokenRefreshFailure(error: String) {
-        Loader.hideLoader()
+        dismissLoader()
         if (error.isNotEmpty()) Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
         prefs.logout()
         val intent = Intent(context, SignUpActivity::class.java)

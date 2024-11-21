@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputSignup
 import com.example.engu_pension_verification_application.network.ApiClient
@@ -65,7 +64,7 @@ class SignUpFragment : BaseFragment() {
     }
     private fun observeData() {
         signUpViewModel.signupStatus.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
             if (response.detail?.status == AppConstants.SUCCESS) {
                 onSignUpSuccess()
@@ -136,7 +135,7 @@ class SignUpFragment : BaseFragment() {
                 Ph_no = "+" + ccp.fullNumber
 
                 //final call
-                Loader.showLoader(requireContext())
+                showLoader()
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                     signUpViewModel.doSignup(
                         InputSignup(
@@ -149,7 +148,7 @@ class SignUpFragment : BaseFragment() {
                     )
 
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
                 }
             }

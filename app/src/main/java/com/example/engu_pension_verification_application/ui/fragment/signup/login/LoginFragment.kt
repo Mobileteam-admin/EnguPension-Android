@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseLogin
 import com.example.engu_pension_verification_application.network.ApiClient
@@ -66,10 +65,10 @@ class LoginFragment : BaseFragment() {
     }
     private fun observeData() {
         loginViewModel.loginStatus.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.login_detail?.message, Toast.LENGTH_LONG).show()
             if (response.login_detail?.status == AppConstants.SUCCESS) {
-                onLoginSuccess(response)
+                onLoginSuccess()
             }
         }
     }
@@ -81,7 +80,7 @@ class LoginFragment : BaseFragment() {
         ll_log_login.setOnClickListener {
             if (isValidLogin()) {
                 if (isValidate_password()) {
-                    Loader.showLoader(requireContext())
+                    showLoader()
                     if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                         Log.d(
                             "Login",
@@ -97,7 +96,7 @@ class LoginFragment : BaseFragment() {
                             )
                         )
                     } else {
-                        Loader.hideLoader()
+                        dismissLoader()
                         Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG)
                             .show()
                     }
@@ -152,17 +151,10 @@ class LoginFragment : BaseFragment() {
         return true
     }
 
-    private fun onLoginSuccess(response: ResponseLogin) {
-        prefs.isLogin = true
-        prefs.user_id = response.login_detail?.user_id.toString()
-        prefs.access_token = response.login_detail?.accessToken
-        prefs.refresh_token = response.login_detail?.refreshToken
-        val isGovtVerifiedUser = response.login_detail?.userGovtVerified.toString().lowercase() == "true" // TODO: check
-        val intent = if (isGovtVerifiedUser) {
-            prefs.onboardingStage = OnboardingStage.DASHBOARD
+    private fun onLoginSuccess() {
+        val intent = if (prefs.onboardingStage == OnboardingStage.DASHBOARD) {
             Intent(context, DashboardActivity::class.java)
         } else {
-            prefs.onboardingStage = OnboardingStage.SERVICES
             Intent(context, ServiceActivity::class.java)
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

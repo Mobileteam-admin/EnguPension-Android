@@ -32,7 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-class ProcessDashboardActivity : AppCompatActivity() {
+class ProcessDashboardActivity : BaseActivity() {
     private lateinit var viewModel: ProcessDashboardViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     val prefs = SharedPref
@@ -106,7 +106,7 @@ class ProcessDashboardActivity : AppCompatActivity() {
     private fun initCall() {
         if (NetworkUtils.isConnectedToNetwork(this)) {
             //Bank Loader commented for Loader issue
-            // Loader.showLoader(requireContext())
+            // showLoader()
             btn_retry.isGone = true
             ll_processing.isVisible = true
             viewModel.getGovtVerificationStatus()

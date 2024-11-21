@@ -20,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputRetireeBasicDetails
 import com.example.engu_pension_verification_application.model.response.*
@@ -31,6 +30,7 @@ import com.example.engu_pension_verification_application.ui.adapter.LastPosition
 import com.example.engu_pension_verification_application.ui.adapter.LGASpinnerAdapter
 import com.example.engu_pension_verification_application.ui.adapter.LocalGovPensionAdapter
 import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.OnboardingStage
@@ -48,7 +48,7 @@ import java.util.ArrayList
 import java.util.Calendar
 import java.util.regex.Pattern
 
-class RetireeBasicDetailsFragment : Fragment() {
+class RetireeBasicDetailsFragment : BaseFragment() {
     companion object {
         const val TAB_POSITION = 0
     }
@@ -136,7 +136,7 @@ class RetireeBasicDetailsFragment : Fragment() {
             if (it == TAB_POSITION) initcall()
         }
         retireeBasicDetailsViewModel.combinedDetailsApiResult.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             if (response.combinedetails?.status == AppConstants.SUCCESS) {
                 onRcombinedDetailSuccess(response)
             } else {
@@ -146,7 +146,7 @@ class RetireeBasicDetailsFragment : Fragment() {
         }
         retireeBasicDetailsViewModel.basicDetailsApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
-                Loader.hideLoader()
+                dismissLoader()
                 response.detail.userProfileDetails?.let {
                     RetireeUserRetrive = it
                     populateViews()
@@ -159,13 +159,13 @@ class RetireeBasicDetailsFragment : Fragment() {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
         retireeBasicDetailsViewModel.basicDetailsSubmissionResult.observe(viewLifecycleOwner) { pair ->
-            Loader.hideLoader()
+            dismissLoader()
             val request = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
@@ -720,14 +720,14 @@ class RetireeBasicDetailsFragment : Fragment() {
 
 
     private fun initcall() {
-        Loader.showLoader(requireContext())
+        showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             lifecycleScope.launch (Dispatchers.IO) {
                 if (retireeBasicDetailsViewModel.fetchCombinedDetails(selected_country))
                     retireeBasicDetailsViewModel.fetchRetireeBasicDetails()
             }
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
     }
@@ -862,7 +862,7 @@ class RetireeBasicDetailsFragment : Fragment() {
 
 
     private fun nextButtonCall() {
-        Loader.showLoader(requireContext())
+        showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 
             prefs.Rfirst_name = et_retiree_firstName.text.trim().toString()
@@ -872,7 +872,7 @@ class RetireeBasicDetailsFragment : Fragment() {
 
 
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
 

@@ -22,13 +22,12 @@ open class BaseDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.window!!.requestFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
         dialog.setOnShowListener {
             val window = dialog.window ?: return@setOnShowListener
             val background = MaterialShapeDrawable(
                 ShapeAppearanceModel.builder()
-                    .setAllCornerSizes(resources.getDimension(R.dimen.dimen_16))
-                    .build()
+                    .setAllCornerSizes(resources.getDimension(R.dimen.dimen_16)).build()
             ).apply {
                 fillColor = context?.getColorStateList(R.color.white)
             }
@@ -39,12 +38,9 @@ open class BaseDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val dialog = dialog
-        if (dialog != null) {
-            dialog.window!!.setLayout(
-                (resources.displayMetrics.widthPixels * 0.9f).toInt(),
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
+        dialog?.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.9f).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 }

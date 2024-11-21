@@ -92,6 +92,10 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
         apiInterface.getRetireeDetails(NetworkUtils.getAccessToken(), inputRetireeBasicDetail)
 
     suspend fun logout() = apiInterface.getLogout(NetworkUtils.getAccessToken())
-    suspend fun fetchDashboardDetails() = apiInterface.getDashBoardDetails(NetworkUtils.getAccessToken())
+    suspend fun fetchDashboardDetails() =
+        apiInterface.getDashBoardDetails(NetworkUtils.getAccessToken())
+
+    suspend fun getAccountCompletionStatus() =
+        apiInterface.getAccountCompletionStatus(NetworkUtils.getAccessToken())
 
 }

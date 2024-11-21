@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.ResponseForgotPassword
 import com.example.engu_pension_verification_application.network.ApiClient
@@ -75,7 +74,7 @@ class ForgotPasswordFragment : BaseFragment() {
     }
     private fun observeData() {
         forgotPasswordViewModel.forgotPassResponse.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.forgot_detail?.message, Toast.LENGTH_LONG).show()
             if (response.forgot_detail?.status == AppConstants.SUCCESS) {
                 onForgotPassSuccess(response)
@@ -88,7 +87,7 @@ class ForgotPasswordFragment : BaseFragment() {
 
             if (isValidLogin()) {
 
-                Loader.showLoader(requireContext())
+                showLoader()
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                     Log.d(
                         "forgotpass",
@@ -102,7 +101,7 @@ class ForgotPasswordFragment : BaseFragment() {
                         )
                     )
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
                 }
             }

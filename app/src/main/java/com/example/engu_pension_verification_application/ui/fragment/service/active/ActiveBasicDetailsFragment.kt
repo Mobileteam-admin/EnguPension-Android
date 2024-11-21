@@ -21,7 +21,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputActiveBasicDetails
 import com.example.engu_pension_verification_application.model.response.ActiveRetriveUserProfileDetails
@@ -36,6 +35,7 @@ import com.example.engu_pension_verification_application.ui.adapter.GradeLevelAd
 import com.example.engu_pension_verification_application.ui.adapter.LGASpinnerAdapter
 import com.example.engu_pension_verification_application.ui.adapter.OccupationsAdapter
 import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
@@ -60,7 +60,7 @@ import kotlin.collections.ArrayList
     return android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
     }
 
-class ActiveBasicDetailsFragment : Fragment()
+class ActiveBasicDetailsFragment : BaseFragment()
 {
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
@@ -149,7 +149,7 @@ class ActiveBasicDetailsFragment : Fragment()
             if (it == TAB_POSITION) initcall()
         }
         activeBasicDetailViewModel.combinedDetailsApiResult.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             if (response.combinedetails?.status == AppConstants.SUCCESS) {
                 onAcombinedDetailSuccess(response)
             } else {
@@ -159,7 +159,7 @@ class ActiveBasicDetailsFragment : Fragment()
         }
         activeBasicDetailViewModel.basicDetailsApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
-                Loader.hideLoader()
+                dismissLoader()
                 response.detail.userProfileDetails?.let {
                     ActiveUserRetrive = it
                     populateViews()
@@ -172,13 +172,13 @@ class ActiveBasicDetailsFragment : Fragment()
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
         activeBasicDetailViewModel.basicDetailsSubmissionResult.observe(viewLifecycleOwner) { pair ->
-            Loader.hideLoader()
+            dismissLoader()
             val request = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
@@ -233,13 +233,13 @@ class ActiveBasicDetailsFragment : Fragment()
         ccp_activedetails.setOnCountryChangeListener {
             selected_country = ccp_activedetails.selectedCountryName
             Log.d("changed_country", "onViewCreated: " + ccp_activedetails.selectedCountryName)
-            Loader.showLoader(requireContext())
+            showLoader()
             if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 lifecycleScope.launch(Dispatchers.IO) {
                     activeBasicDetailViewModel.fetchCombinedDetails(selected_country)
                 }
             } else {
-                Loader.hideLoader()
+                dismissLoader()
                 Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
             }
         }
@@ -919,7 +919,7 @@ class ActiveBasicDetailsFragment : Fragment()
 
 
     private fun initcall() {
-        Loader.showLoader(requireContext())
+        showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             lifecycleScope.launch(Dispatchers.IO) {
                 if (activeBasicDetailViewModel.fetchCombinedDetails(selected_country))
@@ -927,7 +927,7 @@ class ActiveBasicDetailsFragment : Fragment()
             }
 
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
 
@@ -986,7 +986,7 @@ class ActiveBasicDetailsFragment : Fragment()
 
 
     private fun nextButtonCall() {
-        Loader.showLoader(requireContext())
+        showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             prefs.first_name = et_active_firstName.text.trim().toString()
             prefs.middle_name = et_active_middleName.text.trim().toString()
@@ -996,7 +996,7 @@ class ActiveBasicDetailsFragment : Fragment()
 
 
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
 
@@ -1199,7 +1199,7 @@ class ActiveBasicDetailsFragment : Fragment()
 
     private fun onActiveBasicDetailSuccess(response: ResponseActiveBasicDetails) {
 
-        Loader.hideLoader()
+        dismissLoader()
 
         Toast.makeText(context, response.detail!!.message, Toast.LENGTH_SHORT).show()
 
@@ -1218,7 +1218,7 @@ class ActiveBasicDetailsFragment : Fragment()
 
 
     /*override fun onActiveBasicCombinedDetailSuccess(response: ResponseCombinationDetails) {
-        Loader.hideLoader()
+        dismissLoader()
         Log.d(
             "Combine",
             "observeActiveDetails: " + response.combinedetails
@@ -1328,7 +1328,7 @@ class ActiveBasicDetailsFragment : Fragment()
 
     override fun onActiveBasicCombinedDetailFailure(response: ResponseCombinationDetails) {
 
-        Loader.hideLoader()
+        dismissLoader()
         Toast.makeText(
             context,
             response.combinedetails?.message,

@@ -12,10 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.ui.adapter.AccountStatementAdapter
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_account_statement.*
 
 
-class AccountStatementFragment : Fragment() {
+class AccountStatementFragment : BaseFragment() {
     private lateinit var accountStatement_lm: LinearLayoutManager
     lateinit var accountStatementAdapter: AccountStatementAdapter
 

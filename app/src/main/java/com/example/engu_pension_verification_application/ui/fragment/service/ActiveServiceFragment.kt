@@ -15,10 +15,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBankFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBasicDetailsFragment
 import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveDocumentsFragment
@@ -31,7 +31,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_active_service.*
 
 
-class ActiveServiceFragment : Fragment() {
+class ActiveServiceFragment : BaseFragment() {
         private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
         private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
@@ -87,7 +87,7 @@ class ActiveServiceFragment : Fragment() {
 
         tokenRefreshViewModel2.tokenRefreshError.observe(viewLifecycleOwner) { error ->
             if (error != null) {
-                Loader.hideLoader()
+                dismissLoader()
                 if (error.isNotEmpty()) Toast.makeText(context, error, Toast.LENGTH_LONG).show()
                 prefs.logout()
                 val intent = Intent(context, SignUpActivity::class.java)

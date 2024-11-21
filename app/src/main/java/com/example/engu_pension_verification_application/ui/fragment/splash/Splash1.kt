@@ -9,10 +9,11 @@ import android.widget.ImageView
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_splash1.*
 
 
-class Splash1 : Fragment() {
+class Splash1 : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

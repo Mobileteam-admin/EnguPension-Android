@@ -14,9 +14,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.AppUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
@@ -24,7 +24,7 @@ import com.example.engu_pension_verification_application.viewmodel.ResetPassword
 import kotlinx.android.synthetic.main.fragment_reset_password.*
 
 
-class ResetPasswordFragment : Fragment() {
+class ResetPasswordFragment : BaseFragment() {
     var token: String = ""
     var OTP: String = ""
 
@@ -73,7 +73,7 @@ class ResetPasswordFragment : Fragment() {
     }
     private fun observeData() {
         resetPasswordViewModel.resetPassResponse.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.reset_detail?.message, Toast.LENGTH_LONG).show()
             if (response.reset_detail?.status == AppConstants.SUCCESS) {
                 findNavController().navigate(R.id.action_resetpassword_to_login)
@@ -125,7 +125,7 @@ class ResetPasswordFragment : Fragment() {
 
             if (isValidReset()) {
 
-                Loader.showLoader(requireContext())
+                showLoader()
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                     resetPasswordViewModel.doReset(
                         com.example.engu_pension_verification_application.model.input.InputResetPassword(

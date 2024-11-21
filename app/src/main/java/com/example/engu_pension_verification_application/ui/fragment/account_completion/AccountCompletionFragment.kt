@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 
 
-class AccountCompletionFragment : Fragment() {
+class AccountCompletionFragment : BaseFragment() {
 
 
     override fun onCreateView(

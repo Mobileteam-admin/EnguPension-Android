@@ -7,7 +7,7 @@ import androidx.navigation.Navigation
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.util.SharedPref
 
-class DashboardActivity : AppCompatActivity() {
+class DashboardActivity : BaseActivity() {
 
     private lateinit var dashboard_navController: NavController
 

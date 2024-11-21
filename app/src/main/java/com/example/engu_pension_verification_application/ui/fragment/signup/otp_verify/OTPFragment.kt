@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputForgotVerify
 import com.example.engu_pension_verification_application.model.input.InputSignupVerify
@@ -111,7 +110,7 @@ class OTPFragment : BaseFragment() {
     }
     private fun observeData() {
         otpViewModel.otpVerifyResponse.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
             if (response.detail?.status == AppConstants.SUCCESS) {
                 onOtpVerifySuccess(response)
@@ -120,7 +119,7 @@ class OTPFragment : BaseFragment() {
             }
         }
         otpViewModel.verifyForgotPassResponse.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
             if (response.detail?.status == AppConstants.SUCCESS) {
                 onOtpVerifySuccess(response)
@@ -129,14 +128,14 @@ class OTPFragment : BaseFragment() {
             }
         }
         otpViewModel.resendOTPResponse.observe(viewLifecycleOwner) { response ->
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
         }
     }
 
    /* private fun observeVerification() {
         otpViewModel.verificationStatus.observe(viewLifecycleOwner, Observer { verifyresponse ->
-            Loader.hideLoader()
+            dismissLoader()
             if (verifyresponse.detail?.status.equals("success")) {
                 Toast.makeText(context, verifyresponse.detail?.message, Toast.LENGTH_LONG).show()
 
@@ -168,7 +167,7 @@ class OTPFragment : BaseFragment() {
         otpViewModel.resendotpStatus.observe(viewLifecycleOwner, Observer { otpresendresponse ->
             Log.d("TAG _ 4", "onClicked: " + otpresendresponse)
 
-            Loader.hideLoader()
+            dismissLoader()
             if (otpresendresponse.detail?.status.equals("success")) {
                 Toast.makeText(context, otpresendresponse.detail?.message, Toast.LENGTH_LONG).show()
             } else {
@@ -192,7 +191,7 @@ class OTPFragment : BaseFragment() {
                 final_otp = a_otp.toString()
                 Log.d("otp", "onClicked: " + final_otp)
 
-                Loader.showLoader(requireContext())
+                showLoader()
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 
 
@@ -214,7 +213,7 @@ class OTPFragment : BaseFragment() {
                     }
 
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
                 }
             }
@@ -231,7 +230,7 @@ class OTPFragment : BaseFragment() {
         }
 
         ll_resend_otp.setOnClickListener {
-            Loader.showLoader(requireContext())
+            showLoader()
             if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 Log.d("TAG _ 1", "onClicked: " + email)
                 Log.d("TAG _ 2", "onClicked:Email/Phone " + email_Phn)
@@ -250,7 +249,7 @@ class OTPFragment : BaseFragment() {
                     )
                 }
             } else {
-                Loader.hideLoader()
+                dismissLoader()
                 Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
             }
         }

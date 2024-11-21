@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_account.*
 
 
-class AccountFragment : Fragment() {
+class AccountFragment : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

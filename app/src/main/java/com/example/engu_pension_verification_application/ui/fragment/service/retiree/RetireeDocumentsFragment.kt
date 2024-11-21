@@ -22,7 +22,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.commons.setDocumentView
 import com.example.engu_pension_verification_application.commons.setDocumentViewIfPresent
 import com.example.engu_pension_verification_application.data.NetworkRepo
@@ -31,6 +30,7 @@ import com.example.engu_pension_verification_application.model.response.Response
 import com.example.engu_pension_verification_application.model.response.RetireeFileUrlResponse
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.ActiveDocWebViewActivity
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
@@ -49,7 +49,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
+class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
 
     val prefs = SharedPref
 
@@ -199,7 +199,7 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
         }
         retireeDocumentsViewModel.documentsFetchResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
-//                Loader.hideLoader()
+//                dismissLoader()
                 RetireeUserDocRetrive = response.detail.fileUrlResponse
                 responseRetireeDocRetrive = response
                 populateViews()
@@ -211,13 +211,13 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
                         }
                     }
                 } else {
-                    Loader.hideLoader()
+                    dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
         retireeDocumentsViewModel.documentsUploadResult.observe(viewLifecycleOwner) { pair ->
-            Loader.hideLoader()
+            dismissLoader()
             val request = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
@@ -238,17 +238,17 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
 
 
     private fun RetireeDocRetrivecall() {
-        //Loader.showLoader(requireContext())
+        //showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 
 
             retireeDocumentsViewModel.fetchDocuments()
 
-            //Loader.hideLoader()
+            //dismissLoader()
 
 
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
     }
@@ -596,10 +596,10 @@ class RetireeDocumentsFragment : Fragment(), View.OnClickListener {
 
     private fun nextButtonCall() {
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
-            Loader.showLoader(requireContext())
+            showLoader()
             retireedocUploadCall2()
         } else {
-            Loader.hideLoader()
+            dismissLoader()
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
     }

@@ -8,7 +8,7 @@ enum class OnboardingStage(val id: Int) {
     RETIREE_BASIC_DETAILS(4),
     RETIREE_DOCUMENTS(5),
     RETIREE_BANK_INFO(6),
-    GOV_VERIFY(7),
+    PROCESSING(7),
     DASHBOARD(8),
     ;
 

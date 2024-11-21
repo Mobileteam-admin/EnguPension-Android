@@ -8,11 +8,12 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.viewmodel.WalletFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_wallet.*
 
 
-class WalletFragment : Fragment() {
+class WalletFragment : BaseFragment() {
     private lateinit var walletFragmentViewModel: WalletFragmentViewModel
 
 

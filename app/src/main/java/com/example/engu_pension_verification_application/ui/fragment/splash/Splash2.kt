@@ -2,8 +2,6 @@ package com.example.engu_pension_verification_application.ui.fragment.splash
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +10,13 @@ import com.example.engu_pension_verification_application.ui.activity.DashboardAc
 import com.example.engu_pension_verification_application.ui.activity.ProcessDashboardActivity
 import com.example.engu_pension_verification_application.ui.activity.ServiceActivity
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import kotlinx.android.synthetic.main.fragment_splash2.*
 
 
-class Splash2 : Fragment() {
+class Splash2 : BaseFragment() {
 
     val prefs = SharedPref
 
@@ -48,7 +47,7 @@ class Splash2 : Fragment() {
 
                 val intent = when (prefs.onboardingStage) {
                     OnboardingStage.DASHBOARD -> Intent(context, DashboardActivity::class.java)
-                    OnboardingStage.GOV_VERIFY -> Intent(context, ProcessDashboardActivity::class.java)
+                    OnboardingStage.PROCESSING -> Intent(context, ProcessDashboardActivity::class.java)
                     else -> Intent(context, ServiceActivity::class.java)
                 }.apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

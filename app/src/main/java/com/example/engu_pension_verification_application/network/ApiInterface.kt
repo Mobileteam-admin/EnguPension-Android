@@ -157,5 +157,7 @@ interface ApiInterface {
         @Body inputBankVerification: InputBankVerification
     ): ResponseBankVerify
 
+    @GET("/api/v1/users_account_completion_status")
+    suspend fun getAccountCompletionStatus(@Header("Authorization") token: String): AccountCompletionStatusResponse
 
 }

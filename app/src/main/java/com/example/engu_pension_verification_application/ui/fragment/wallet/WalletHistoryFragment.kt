@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.ui.adapter.WalletHistoryAdapter
+import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_wallet_history.*
 
 
-class WalletHistoryFragment : Fragment() {
+class WalletHistoryFragment : BaseFragment() {
     private lateinit var walletHistory_lm: LinearLayoutManager
     lateinit var walletHistoryAdapter: WalletHistoryAdapter
 
