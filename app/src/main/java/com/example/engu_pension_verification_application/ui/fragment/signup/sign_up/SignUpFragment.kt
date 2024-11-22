@@ -64,10 +64,16 @@ class SignUpFragment : BaseFragment() {
     }
     private fun observeData() {
         signUpViewModel.signupStatus.observe(viewLifecycleOwner) { response ->
-            dismissLoader()
-            Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
-            if (response.detail?.status == AppConstants.SUCCESS) {
-                onSignUpSuccess()
+            if (response!=null) {
+                dismissLoader()
+                Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                val otpExistsMessage = "OTP is still valid. Please use the previously sent OTP."
+                if (response.detail?.status == AppConstants.SUCCESS ||
+                    response.detail?.message == otpExistsMessage // TODO:
+                ) {
+                    onSignUpSuccess()
+                }
+                signUpViewModel.resetSignupStatus()
             }
         }
     }
