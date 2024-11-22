@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
@@ -77,6 +78,7 @@ class RetireeBankFragment : BaseFragment() {
 
     companion object {
         const val TAB_POSITION = 2
+        private const val BANK_ITEM_SELECT_ID = -1
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -241,7 +243,8 @@ class RetireeBankFragment : BaseFragment() {
                 et_retireebank_swiftcode.setOnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) {
 
-                        bankViewModel.fetchBankDetails(et_retireebank_swiftcode.text.toString())
+                        // TODO: Uncomment after fixing api -> "/api/v1/get_bank_details"
+//                        bankViewModel.fetchBankDetails(et_retireebank_swiftcode.text.toString())
 
                     }
                 }
@@ -256,11 +259,12 @@ class RetireeBankFragment : BaseFragment() {
                 position: Int,
                 id: Long,
             ) {
+                refreshBankCode(position)
+                refreshBankImage(position)
                 if (BankList.get(position)?.id?.equals(0) == true) {
 
                 } else {
                     r_bankid = BankList[position]?.id.toString()
-
                 }
 
             }
@@ -302,7 +306,7 @@ class RetireeBankFragment : BaseFragment() {
 
             BankList.clear()
 
-            BankList.add(ListBanksItem("", "- select Bank", "0", "", 1, ""))
+            BankList.add(ListBanksItem("", " - Select Bank - ", "0", "", BANK_ITEM_SELECT_ID, ""))
             bankDetailsList.forEach {
                 BankList.add(
                     ListBanksItem(
@@ -325,7 +329,7 @@ class RetireeBankFragment : BaseFragment() {
 
             AccountTypeList.clear()
 
-            AccountTypeList.add(AccountTypeItem(0, " - Select AccountType - "))
+            AccountTypeList.add(AccountTypeItem(0, " - Select Account Type - "))
             accountTypeList.forEach {
                 AccountTypeList.add(AccountTypeItem(it?.id, it?.type))
             }
@@ -705,5 +709,22 @@ class RetireeBankFragment : BaseFragment() {
         tv_retireebank_bankcode_verify.visibility = View.INVISIBLE
         tv_retireebank_bankcode_reverify.visibility = View.INVISIBLE
         tv_retireebank_bankcode_verified.visibility = View.VISIBLE
+    }
+    private fun refreshBankImage(position:Int) {
+        img_retireebank_.setImageResource(R.drawable.ic_bank_green)
+        BankList[position]?.let {
+            if (it.id != BANK_ITEM_SELECT_ID) {
+                Glide.with(requireContext())
+                    .load(it.logo)
+                    .placeholder(R.drawable.ic_bank_green)
+                    .into(img_retireebank_)
+            }
+        }
+    }
+
+    // TODO: Remove this function after fixing api -> "/api/v1/get_bank_details"
+    private fun refreshBankCode(position:Int) {
+        val bankCode = if (BankList[position]?.id != BANK_ITEM_SELECT_ID) BankList[position]?.code else ""
+        et_retireebank_bankcode.setText(bankCode)
     }
 }

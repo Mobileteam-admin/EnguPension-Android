@@ -244,7 +244,7 @@
              android:drawableStart="@drawable/ic_location"
              android:drawablePadding="@dimen/dp_16"
              android:hint="@string/enter_your_pin"
-             android:inputType="textPostalAddress"
+             android:inputType="number"
              android:padding="@dimen/dp_12" />
 
          <TextView
@@ -520,7 +520,7 @@
              android:drawableStart="@drawable/ic_location"
              android:drawablePadding="@dimen/dp_16"
              android:hint="@string/enter_your_pin"
-             android:inputType="textPostalAddress"
+             android:inputType="number"
              android:padding="@dimen/dp_12" />
          <TextView
              android:id="@+id/tv_retiree_pension_board"

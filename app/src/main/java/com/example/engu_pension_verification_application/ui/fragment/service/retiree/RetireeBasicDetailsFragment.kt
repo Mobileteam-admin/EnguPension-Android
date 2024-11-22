@@ -213,8 +213,16 @@ class RetireeBasicDetailsFragment : BaseFragment() {
             CountryCodePicker.OnCountryChangeListener {
             override fun onCountrySelected(selectedCountry: Country?) {
                 selected_country = ccp_retireedetails.selectedCountryName
-//                initcall()
                 Log.d("changed_country", "onViewCreated: " + ccp_retireedetails.selectedCountryName)
+                showLoader()
+                if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        retireeBasicDetailsViewModel.fetchCombinedDetails(selected_country)
+                    }
+                } else {
+                    dismissLoader()
+                    Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
+                }
             }
         })
     }
@@ -380,7 +388,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    TODO("Not yet implemented")
+                    
                 }
 
             }
@@ -401,7 +409,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    TODO("Not yet implemented")
+                    
                 }
 
             }
@@ -421,7 +429,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
+                
             }
 
         }
@@ -465,7 +473,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    TODO("Not yet implemented")
+                    
                 }
 
             }
@@ -486,7 +494,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    TODO("Not yet implemented")
+                    
                 }
 
             }

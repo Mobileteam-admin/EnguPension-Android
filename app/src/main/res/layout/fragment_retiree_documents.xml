@@ -1356,7 +1356,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_documents_active" />
+                            android:src="@drawable/ic_document_green" />
 
                         <TextView
                             android:layout_width="wrap_content"

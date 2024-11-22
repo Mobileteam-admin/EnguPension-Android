@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
@@ -59,6 +60,7 @@ val filterUpperCaseAndDigits = InputFilter { source, start, end, dest, dstart, d
 class ActiveBankFragment: BaseFragment() {
     companion object {
         const val TAB_POSITION = 2
+        private const val BANK_ITEM_SELECT_ID = -1
     }
     var bankdetailsList = mutableListOf<ListBanksItem?>()
     var accountTypeList = mutableListOf<AccountTypeItem?>()
@@ -276,7 +278,7 @@ class ActiveBankFragment: BaseFragment() {
 
             BankList.clear()
 
-            BankList.add(ListBanksItem("", "- select Bank", "0", "", 1, ""))
+            BankList.add(ListBanksItem("", "- Select Bank - ", "0", "", BANK_ITEM_SELECT_ID, ""))
             bankdetailsList.forEach {
                 BankList.add(
                     ListBanksItem(
@@ -294,7 +296,7 @@ class ActiveBankFragment: BaseFragment() {
 
             AccountTypeList.clear()
 
-            AccountTypeList.add(AccountTypeItem(0, " - Select AccountType - "))
+            AccountTypeList.add(AccountTypeItem(0, " - Select Account Type - "))
             accountTypeList.forEach {
                 AccountTypeList.add(AccountTypeItem(it?.id, it?.type))
             }
@@ -320,8 +322,8 @@ class ActiveBankFragment: BaseFragment() {
 
                 et_activebank_swiftcode.setOnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) {
-
-                        activeBankViewModel.fetchBankDetails(et_activebank_swiftcode.text.toString())
+                        // TODO: Uncomment after fixing api -> "/api/v1/get_bank_details"
+//                        activeBankViewModel.fetchBankDetails(et_activebank_swiftcode.text.toString())
 
                     }
                 }
@@ -337,6 +339,8 @@ class ActiveBankFragment: BaseFragment() {
                 position: Int,
                 id: Long,
             ) {
+                refreshBankCode(position)
+                refreshBankImage(position)
                 if (BankList.get(position)?.id?.equals(0) == true) {
 
                 } else {
@@ -774,6 +778,22 @@ class ActiveBankFragment: BaseFragment() {
         tv_activebank_bankcode_verify.visibility = View.INVISIBLE
         tv_activebank_bankcode_reverify.visibility = View.INVISIBLE
         tv_activebank_bankcode_verified.visibility = View.VISIBLE
+    }
+    private fun refreshBankImage(position:Int) {
+        img_activebank_.setImageResource(R.drawable.ic_bank_green)
+        BankList[position]?.let {
+            if (it.id != BANK_ITEM_SELECT_ID) {
+                Glide.with(requireContext())
+                    .load(it.logo)
+                    .placeholder(R.drawable.ic_bank_green)
+                    .into(img_activebank_)
+            }
+        }
+    }
+    // TODO: Remove this function after fixing api -> "/api/v1/get_bank_details"
+    private fun refreshBankCode(position:Int) {
+        val bankCode = if (BankList[position]?.id != BANK_ITEM_SELECT_ID) BankList[position]?.code else ""
+        et_activebank_bankcode.setText(bankCode)
     }
 }
 
