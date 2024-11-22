@@ -8,6 +8,8 @@ buildscript {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        // Add Stripe repository
+
         mavenCentral()
     }
     dependencies {
@@ -25,6 +27,7 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
         mavenCentral()
+        maven { url 'https://maven.stripe.com' }
     }
 }
 

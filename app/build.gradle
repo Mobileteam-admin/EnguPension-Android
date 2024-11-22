@@ -86,6 +86,10 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'//2.3.2
 
 
+    // Stripe Android SDK
+    implementation 'com.stripe:stripe-android:22.0.0'
+
+
 
     //noinspection GradleDependency
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -140,5 +144,9 @@ dependencies {
     implementation "com.google.android.material:material:1.4.0"
 
     implementation 'io.michaelrocks:libphonenumber-android:8.13.48'
+
+
+    // Stripe Android SDK
+    implementation 'com.stripe:stripe-android:17.2.0'
 
 }

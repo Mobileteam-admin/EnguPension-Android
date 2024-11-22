@@ -2,12 +2,10 @@ package com.example.engu_pension_verification_application.ui.fragment.Dashboard
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
@@ -33,13 +31,10 @@ import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.response.DashboardDetails
 import com.example.engu_pension_verification_application.model.response.ResponseDashboardDetails
 import com.example.engu_pension_verification_application.model.response.ResponseLogout
-import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.dialog.LogoutConfirmDialog
-import com.example.engu_pension_verification_application.ui.fragment.tokenrefresh.TokenRefreshCallBack
 import com.example.engu_pension_verification_application.util.NetworkUtils
-import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
@@ -49,14 +44,13 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.CompositeDateValidator
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.fragment_active_service.tab_activeservice_viewpager
-import kotlinx.android.synthetic.main.fragment_active_service.tab_tablayout_activeservice
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+
+
 
 
 
@@ -101,6 +95,22 @@ class DashboardFragment : Fragment() {
         initViews()
         initCall()
         observeLiveData()
+        initPayment()
+
+    }
+
+    private fun initPayment() {
+        img_add_amount.setOnClickListener {
+
+            val intent=Intent(requireContext(),PaymentActivity::class.java )
+            startActivity(intent)
+
+            PaymentConfiguration.init(
+                requireContext(),
+                "pk_live_51Q54MvHCzH2YQbvm4mfvkR3qYeflbejKMgW076PxFMfPAcoqGnTbTm7UFUsb277x0jItnqEPQWGP5Xtw6jzTMUXh000CnOoyxt"  // Replace with your actual publishable key
+            )
+
+        }
     }
 
     private fun initViewModel() {
