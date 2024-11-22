@@ -11,8 +11,8 @@ import com.example.engu_pension_verification_application.model.response.SignupRe
 import kotlinx.coroutines.*
 
 class SignUpViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
-    private val _signupStatus = MutableLiveData<SignupResponse>()
-    val signupStatus: LiveData<SignupResponse>
+    private val _signupStatus = MutableLiveData<SignupResponse?>(null)
+    val signupStatus: LiveData<SignupResponse?>
         get() = _signupStatus
 
     fun doSignup(inputSignup: InputSignup) {
@@ -23,5 +23,8 @@ class SignUpViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _signupStatus.postValue(SignupResponse(Detail(message = "Something went wrong")))
             }
         }
+    }
+    fun resetSignupStatus() {
+        _signupStatus.postValue(null)
     }
 }
