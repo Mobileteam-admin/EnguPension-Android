@@ -60,6 +60,7 @@
 
                 <Spinner
                     android:id="@+id/sp_active_bank"
+                    android:background="@android:color/transparent"
                     style="@style/edit_text"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -283,6 +284,7 @@
 
                 <Spinner
                     android:id="@+id/sp_activebank_acctype"
+                    android:background="@android:color/transparent"
                     style="@style/edit_text"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
