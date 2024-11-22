@@ -11,6 +11,7 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.viewmodel.LoaderViewModel
 import com.example.engu_pension_verification_application.viewmodel.LogoutConfirmViewModel
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -19,6 +20,14 @@ import kotlinx.android.synthetic.main.logout_dialog.tv_logout_confirm
 
 
 open class BaseDialog : DialogFragment() {
+    private val loaderViewModel by activityViewModels<LoaderViewModel>()
+    fun showLoader() {
+        loaderViewModel.show()
+    }
+
+    fun dismissLoader() {
+        loaderViewModel.dismiss()
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)

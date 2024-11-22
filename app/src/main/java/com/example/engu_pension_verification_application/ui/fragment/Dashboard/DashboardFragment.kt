@@ -45,7 +45,7 @@ class DashboardFragment : BaseFragment() {
     private lateinit var addBankDialog: AddBankDialog
     lateinit var datePickerDialog: DatePickerDialog
     private lateinit var viewModel: DashboardViewModel
-    private lateinit var addBankViewModel: AddBankViewModel
+//    private lateinit var addBankViewModel: AddBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private val logoutConfirmViewModel by activityViewModels<LogoutConfirmViewModel>()
     val prefs = SharedPref
@@ -76,10 +76,10 @@ class DashboardFragment : BaseFragment() {
             requireActivity(),
             EnguViewModelFactory(networkRepo)
         ).get(DashboardViewModel::class.java)
-        addBankViewModel = ViewModelProviders.of(
-            requireActivity(),
-            EnguViewModelFactory(networkRepo)
-        ).get(AddBankViewModel::class.java)
+//        addBankViewModel = ViewModelProviders.of(
+//            requireActivity(),
+//            EnguViewModelFactory(networkRepo)
+//        ).get(AddBankViewModel::class.java)
     }
 
     private fun observeLiveData() {
@@ -162,7 +162,7 @@ class DashboardFragment : BaseFragment() {
             navigate(R.id.action_dashboard_to_account)
         }
         ll_add_bank.setOnClickListener {
-            addBankDialog.show(parentFragmentManager, null)
+            showDialog(addBankDialog)
         }
         ll_appoinment.setOnClickListener {
             ll_dashboard_main.visibility = View.GONE
@@ -176,7 +176,7 @@ class DashboardFragment : BaseFragment() {
             onDateSelect()
         }
         txt_logout.setOnClickListener {
-            logoutConfirmDialog.show(parentFragmentManager, null)
+            showDialog(logoutConfirmDialog)
         }
     }
 

@@ -61,7 +61,7 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
         apiInterface.getSwiftBankCode(NetworkUtils.getAccessToken(), inputSwiftBankCode)
 
     suspend fun submitBankInfo(inputActiveBankInfo: InputActiveBankInfo) =
-        apiInterface.getActiveBankInfo(NetworkUtils.getAccessToken(), inputActiveBankInfo)
+        apiInterface.submitBankInfo(NetworkUtils.getAccessToken(), inputActiveBankInfo)
 
     suspend fun verifyBankAccount(inputBankVerification: InputBankVerification) =
         apiInterface.getBankVerify(NetworkUtils.getAccessToken(), inputBankVerification)

@@ -54,6 +54,7 @@
                 android:id="@+id/sp_bank"
                 style="@style/edit_text"
                 android:layout_width="0dp"
+                android:background="@android:color/transparent"
                 android:layout_height="match_parent"
                 android:dropDownVerticalOffset="38dp"
                 android:spinnerMode="dropdown"
@@ -146,7 +147,7 @@
             android:text="@string/swift_code" />
 
         <EditText
-            android:id="@+id/et_activebank_swiftcode"
+            android:id="@+id/et_swift_code"
             style="@style/Style_text_title_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -204,6 +205,7 @@
             <Spinner
                 android:id="@+id/sp_account_type"
                 style="@style/edit_text"
+                android:background="@android:color/transparent"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:dropDownVerticalOffset="38dp"
