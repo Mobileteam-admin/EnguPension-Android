@@ -79,7 +79,7 @@ interface ApiInterface {
     ): ResponseRetireeBasicDetails
 
     @POST("/api/v1/create-or-update-bank-details")
-    suspend fun getActiveBankInfo(
+    suspend fun submitBankInfo(
         @Header("Authorization") token: String,
         @Body inputActiveBankinfo: InputActiveBankInfo
     ): ResponseBankInfo
