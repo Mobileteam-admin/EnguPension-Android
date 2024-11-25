@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toast.makeText
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -28,10 +29,15 @@ import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.Loader
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.model.input.BillingAddress
+import com.example.engu_pension_verification_application.model.input.InputPayment
+import com.example.engu_pension_verification_application.model.input.ShippingAddress
 import com.example.engu_pension_verification_application.model.response.DashboardDetails
+import com.example.engu_pension_verification_application.model.response.PaymentResponse
 import com.example.engu_pension_verification_application.model.response.ResponseDashboardDetails
 import com.example.engu_pension_verification_application.model.response.ResponseLogout
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.network.ApiInterface
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.dialog.LogoutConfirmDialog
 import com.example.engu_pension_verification_application.util.NetworkUtils
@@ -44,16 +50,19 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.CompositeDateValidator
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.stripe.android.PaymentConfiguration
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
-
-
-
-
-
 
 
 class DashboardFragment : Fragment() {
@@ -66,13 +75,17 @@ class DashboardFragment : Fragment() {
     private val logoutConfirmViewModel by activityViewModels<LogoutConfirmViewModel>()
 
 
+    private lateinit var paymentSheet: PaymentSheet
+    private lateinit var paymentIntentClientSecret: String
+
+
     var year = 0
     var month = 0
     var dayOfMonth = 0
     lateinit var calendar: Calendar
 
-    var imgurl : String? = null
-    var imgbank : String? = null
+    var imgurl: String? = null
+    var imgbank: String? = null
 
 
     val sdf = SimpleDateFormat("yyyy-MM-dd")
@@ -80,8 +93,7 @@ class DashboardFragment : Fragment() {
     val prefs = SharedPref
     private lateinit var logoutConfirmDialog: LogoutConfirmDialog
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_dashboard, container, false)
@@ -100,18 +112,125 @@ class DashboardFragment : Fragment() {
     }
 
     private fun initPayment() {
+//        img_add_amount.setOnClickListener {
+//            val intent=Intent(requireContext(),PaymentActivity::class.java )
+//            startActivity(intent)
+
+        PaymentConfiguration.init(
+            requireContext(),
+            "pk_live_51Q54MvHCzH2YQbvm4mfvkR3qYeflbejKMgW076PxFMfPAcoqGnTbTm7UFUsb277x0jItnqEPQWGP5Xtw6jzTMUXh000CnOoyxt"  // Replace with your actual publishable key
+        )
+
+        // Initialize the PaymentSheet
+        paymentSheet = PaymentSheet(this@DashboardFragment, ::onPaymentSheetResult)
+
         img_add_amount.setOnClickListener {
+            getPaymentIntentClientSecret()
+        }
 
-            val intent=Intent(requireContext(),PaymentActivity::class.java )
-            startActivity(intent)
 
-            PaymentConfiguration.init(
-                requireContext(),
-                "pk_live_51Q54MvHCzH2YQbvm4mfvkR3qYeflbejKMgW076PxFMfPAcoqGnTbTm7UFUsb277x0jItnqEPQWGP5Xtw6jzTMUXh000CnOoyxt"  // Replace with your actual publishable key
-            )
+    }
 
+
+    private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
+        when (paymentSheetResult) {
+            is PaymentSheetResult.Completed -> {
+                // Handle payment success
+                Toast.makeText(requireContext(), "Payment successful!", Toast.LENGTH_SHORT).show()
+            }
+            is PaymentSheetResult.Canceled -> {
+                // Handle payment cancelation
+                Toast.makeText(requireContext(), "Payment canceled", Toast.LENGTH_SHORT).show()
+            }
+            is PaymentSheetResult.Failed -> {
+                // Handle payment failure
+                Toast.makeText(requireContext(), "Payment failed: ${paymentSheetResult.error.message}", Toast.LENGTH_SHORT).show()
+                Log.d("failcase", "onPaymentSheetResult: ${paymentSheetResult.error.message}")
+            }
         }
     }
+
+
+    private fun getPaymentIntentClientSecret() {
+        val retrofit = Retrofit.Builder().baseUrl("https://pension-distributor.demoserver.work/")
+            .addConverterFactory(GsonConverterFactory.create()).build()
+
+        val paymentApi = retrofit.create(ApiInterface::class.java)
+
+
+        val billingAddress = BillingAddress(
+            country = "NG",
+            city = "Lagos",
+            state = "Lagos",
+            postal_code = "100001",
+            line1 = "123 Example Street"
+        )
+
+        val shippingAddress = ShippingAddress(
+            country = "NG",
+            city = "Lagos",
+            state = "Lagos",
+            postal_code = "100001",
+            line1 = "456 Delivery Lane"
+        )
+
+        val paymentRequest = InputPayment(
+            card_number = "4000000000003220",
+            exp_month = 12,
+            exp_year = 2026,
+            cvc = "123",
+            user_id = 5,
+            bank_id = 7,
+            amount = 1400.40,
+            currency = "ngn",
+            name = "John Doe",
+            description = "Payment for services",
+            billing_address = billingAddress,
+            shipping_address = shippingAddress
+        )
+        Log.d("paymentRequest", paymentRequest.toString())
+
+        paymentApi.createPaymentIntent(paymentRequest).enqueue(object : Callback<PaymentResponse> {
+            override fun onResponse(
+                call: Call<PaymentResponse>, response: Response<PaymentResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val paymentResponse = response.body()
+                    Log.d("paymentResponse", "$paymentResponse")
+                    if (paymentResponse != null) {
+                        paymentIntentClientSecret = paymentResponse.payment_intent_client_secret
+                        presentPaymentSheet()
+                    }
+                } else {
+                    Log.d("paymentResponse", "${response.body()}")
+                    Toast.makeText(
+                        requireContext(), "Failed to get client secret", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onFailure(call: Call<PaymentResponse>, t: Throwable) {
+                makeText(
+                    requireContext(), "API call failed: ${t.message}", Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+    }
+
+
+    private fun presentPaymentSheet() {
+
+        Log.d("clientSecret", "$paymentIntentClientSecret")
+
+        paymentSheet.presentWithPaymentIntent(
+            paymentIntentClientSecret,
+            PaymentSheet.Configuration("Techversant engu payment test")
+        )
+    }
+
+
+
+
 
     private fun initViewModel() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
@@ -132,7 +251,7 @@ class DashboardFragment : Fragment() {
             }
         }
         logoutConfirmViewModel.logout.observe(viewLifecycleOwner) { logout ->
-            if(logout != null) callLogout()
+            if (logout != null) callLogout()
         }
         dashboardViewModel.logoutResult.observe(viewLifecycleOwner) { response ->
             if (response.logout_detail?.status == AppConstants.SUCCESS) {
@@ -146,7 +265,8 @@ class DashboardFragment : Fragment() {
                     }
                 } else {
                     Loader.hideLoader()
-                    Toast.makeText(context, response.logout_detail?.message, Toast.LENGTH_LONG).show()
+                    makeText(context, response.logout_detail?.message, Toast.LENGTH_LONG)
+                        .show()
                 }
             }
         }
@@ -162,28 +282,31 @@ class DashboardFragment : Fragment() {
                     }
                 } else {
                     Loader.hideLoader()
-                    showRetryDashboardFetchDialog(response.detail?.message?:getString(R.string.common_error_msg_2))
+                    showRetryDashboardFetchDialog(
+                        response.detail?.message ?: getString(R.string.common_error_msg_2)
+                    )
                 }
             }
         }
     }
+
     private fun showRetryDashboardFetchDialog(message: String) {
-        AlertDialog.Builder(requireContext())
-            .setMessage(message)
-            .setPositiveButton(R.string.retry
-            ) { dialogInterface, _ ->
-                initCall()
-                dialogInterface.dismiss()
-            }
-            .setNegativeButton(R.string.close
-            ) { _, _ ->
-                requireActivity().finish()
-            }
-            .show()
+        AlertDialog.Builder(requireContext()).setMessage(message).setPositiveButton(
+            R.string.retry
+        ) { dialogInterface, _ ->
+            initCall()
+            dialogInterface.dismiss()
+        }.setNegativeButton(
+            R.string.close
+        ) { _, _ ->
+            requireActivity().finish()
+        }.show()
     }
+
     private fun initViews() {
         logoutConfirmDialog = LogoutConfirmDialog()
     }
+
     private fun initCall() {
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             //Bank Loader commented for Loader issue
@@ -226,7 +349,7 @@ class DashboardFragment : Fragment() {
         }
 
         txt_logout.setOnClickListener {
-            logoutConfirmDialog.show(parentFragmentManager,null)
+            logoutConfirmDialog.show(parentFragmentManager, null)
         }
     }
 
@@ -244,6 +367,7 @@ class DashboardFragment : Fragment() {
         prefs.isRDocSubmit = false
         //prefs.isBankVerify = false
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
 
 
@@ -254,8 +378,7 @@ class DashboardFragment : Fragment() {
         month = calendar.get(Calendar.MONTH)
         dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
         datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { datePicker, year, month, day ->
+            requireContext(), { datePicker, year, month, day ->
 
                 var f_month: Int = month + 1
                 var formatmonth: String = month.toString()
@@ -275,16 +398,14 @@ class DashboardFragment : Fragment() {
 
 
 
-                txt_booking_date.text = Editable.Factory.getInstance()
-                    .newEditable(
-                        formatDayOfMonth + "/" + formatmonth + "/" + year.toString()
-                    )  //day.toString() + "/" + (month + 1) + "/" + year
+                txt_booking_date.text = Editable.Factory.getInstance().newEditable(
+                    formatDayOfMonth + "/" + formatmonth + "/" + year.toString()
+                )  //day.toString() + "/" + (month + 1) + "/" + year
 
             }, year, month, dayOfMonth
         )
 
-        datePickerDialog.setButton(
-            DialogInterface.BUTTON_NEGATIVE,
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
             "Cancel",
             DialogInterface.OnClickListener { dialog, which ->
                 if (which == DialogInterface.BUTTON_NEGATIVE) {
@@ -336,7 +457,7 @@ class DashboardFragment : Fragment() {
 
     }
 
-    fun showDatePickerM3( textView: TextView) {
+    fun showDatePickerM3(textView: TextView) {
 
 
         val constraintsBuilder = CalendarConstraints.Builder()
@@ -372,13 +493,13 @@ class DashboardFragment : Fragment() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
             .setTheme(R.style.Widget_AppTheme_MaterialDatePicker)
-            .setCalendarConstraints(constraintsBuilder.build())
-            .build()
+            .setCalendarConstraints(constraintsBuilder.build()).build()
 
         datePicker.addOnPositiveButtonClickListener { selection ->
             // Format the date and set it to the TextView
             val selectedDate = Calendar.getInstance().apply { timeInMillis = selection }
-            val formattedDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(selectedDate.time)
+            val formattedDate =
+                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(selectedDate.time)
             textView.text = formattedDate
         }
 
@@ -396,7 +517,7 @@ class DashboardFragment : Fragment() {
 
         } else {
             Loader.hideLoader()
-            Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
+            makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
 
     }
@@ -406,7 +527,7 @@ class DashboardFragment : Fragment() {
         Loader.hideLoader()
 
         /*     Log.d("DashboardDetails", "onDashboardDetailSuccess: " + response)*/
-        Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
+        makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
 
         /*  ll_dashboard_banklist.visibility = View.VISIBLE*/
         UserDashboardDetails = response.detail!!
@@ -427,10 +548,8 @@ class DashboardFragment : Fragment() {
             walletBalanceCurrency
             walletBalanceAmount*/
         imgurl = UserDashboardDetails.profilePic
-        Glide.with(this)
-            .load(imgurl)
-            .into(img_profile)
-        /* img_profile.setImageResource(UserDashboardDetails.profilePic.toString())*/
+        Glide.with(this).load(imgurl)
+            .into(img_profile)/* img_profile.setImageResource(UserDashboardDetails.profilePic.toString())*/
         tv_person_name.setText(UserDashboardDetails.fullName)
 
         /* UserDashboardDetails.walletBalanceAmount?.let { tv_wallet_amount.setText(it) }*/
@@ -442,14 +561,12 @@ class DashboardFragment : Fragment() {
         //New Edit Of Bank Details Show
 
         imgbank = UserDashboardDetails.bankDetail?.bankImage
-        if (!imgbank.isNullOrEmpty()){
+        if (!imgbank.isNullOrEmpty()) {
 
             no_bank_msg.visibility = View.GONE
 
             //img_bank_icon
-            Glide.with(this)
-                .load(imgbank)
-                .into(img_bank_icon)
+            Glide.with(this).load(imgbank).into(img_bank_icon)
 
             tv_bankname.setText(UserDashboardDetails.bankDetail?.bankName)
             tv_banktype.setText(UserDashboardDetails.bankDetail?.accountType)
@@ -457,40 +574,31 @@ class DashboardFragment : Fragment() {
         }
 
 
-
-
-
         /*  }*/
     }
 
     private fun ondashboardLogoutSuccess(response: ResponseLogout) {
         Loader.hideLoader()
-        Toast.makeText(
-            context,
-            response.logout_detail?.message,
-            Toast.LENGTH_LONG
+        makeText(
+            context, response.logout_detail?.message, Toast.LENGTH_LONG
         ).show()
         prefs.lastActivityDashboard = true
         clearLogin()
         val intent = Intent(context, SignUpActivity::class.java)
-        intent.flags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
-    private fun onTokenRefreshFailure(error:String) {
+    private fun onTokenRefreshFailure(error: String) {
         Loader.hideLoader()
 
-        Toast.makeText(
-            context,
-            error,
-            Toast.LENGTH_LONG
+        makeText(
+            context, error, Toast.LENGTH_LONG
         ).show()
 
         clearLogin()
         val intent = Intent(context, SignUpActivity::class.java)
-        intent.flags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 
@@ -859,8 +967,7 @@ private fun onobserveIn() {
         })
 
 
-    */
-/*tokenRefreshViewModel.TokenrefreshStatus.observe(
+    *//*tokenRefreshViewModel.TokenrefreshStatus.observe(
         viewLifecycleOwner,
         androidx.lifecycle.Observer { refreshdata ->
             Loader.hideLoader()

@@ -4,6 +4,7 @@ package com.example.engu_pension_verification_application.network
 import com.example.engu_pension_verification_application.model.input.*
 import com.example.engu_pension_verification_application.model.response.*
 import okhttp3.RequestBody
+import retrofit2.Call
 import retrofit2.http.*
 
 
@@ -52,18 +53,10 @@ interface ApiInterface {
     suspend fun getAddedBanks(@Header("Authorization") token: String): ResponseBankList
 
 
-
-
-
-
     @POST("/api/v1/get_bank_details")
     suspend fun getSwiftBankCode(
         @Header("Authorization") token: String, @Body inputSwiftBankCode: InputSwiftBankCode
     ): ResponseSwiftBankCode
-
-
-
-
 
 
     @POST("/api/v1/account_completion/active")
@@ -146,16 +139,15 @@ interface ApiInterface {
     ): ResponseBankVerify
 
 
-
-
-
-
-
     @POST("/api/v1/verify_bank_account")
     suspend fun getBankVerify(
         @Header("Authorization") token: String,
         @Body inputBankVerification: InputBankVerification
     ): ResponseBankVerify
+
+
+    @POST("api/v1/topup")
+    fun createPaymentIntent(@Body request: InputPayment): Call<PaymentResponse>
 
 
 }

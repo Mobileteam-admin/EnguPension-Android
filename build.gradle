@@ -27,7 +27,7 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
         mavenCentral()
-        maven { url 'https://maven.stripe.com' }
+//        maven { url 'https://maven.stripe.com' }
     }
 }
 

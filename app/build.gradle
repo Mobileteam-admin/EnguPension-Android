@@ -87,7 +87,7 @@ dependencies {
 
 
     // Stripe Android SDK
-    implementation 'com.stripe:stripe-android:22.0.0'
+//    implementation 'com.stripe:stripe-android:22.0.0'
 
 
 
@@ -147,6 +147,11 @@ dependencies {
 
 
     // Stripe Android SDK
+//    implementation 'com.stripe:stripe-android:17.2.0'
+//    implementation 'com.stripe:stripe-android:20.0.0'
+
     implementation 'com.stripe:stripe-android:17.2.0'
+
+
 
 }
