@@ -160,4 +160,8 @@ interface ApiInterface {
     @GET("/api/v1/users_account_completion_status")
     suspend fun getAccountCompletionStatus(@Header("Authorization") token: String): AccountCompletionStatusResponse
 
+    @POST("/api/v1/topup")
+    suspend fun topUp(@Header("Authorization") token: String, @Body request: TopUpRequest): TopUpResponse
+
+
 }

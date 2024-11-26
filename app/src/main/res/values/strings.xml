@@ -140,4 +140,6 @@
     <string name="common_error_msg_2">Something went wrong, please try again!</string>
     <string name="retry">Retry</string>
     <string name="cancel">Cancel</string>
+    <string name="no_bank_selected_msg">Please select a bank</string>
+    <string name="invalid_amount_msg">Please enter a valid amount</string>
 </resources>

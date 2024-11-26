@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -28,10 +27,6 @@ import kotlinx.android.synthetic.main.card_add_bank.ll_addbank_close
 import kotlinx.android.synthetic.main.card_add_bank.ll_addbank_submit
 import kotlinx.android.synthetic.main.card_add_bank.sp_account_type
 import kotlinx.android.synthetic.main.card_add_bank.sp_bank
-import kotlinx.android.synthetic.main.fragment_active_bank.et_activebank_swiftcode
-import kotlinx.android.synthetic.main.fragment_active_bank.sp_active_bank
-import kotlinx.android.synthetic.main.fragment_active_bank.sp_activebank_acctype
-import kotlinx.android.synthetic.main.fragment_dashboard.img_bank_icon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

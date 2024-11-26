@@ -18,5 +18,6 @@ class AppUtils {
                 .filter { it.isNotBlank() }
                 .joinToString(" ")
         }
+        fun String.isValidNumber() = this.toLongOrNull() != null
     }
 }

@@ -8,9 +8,8 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
-import java.util.ArrayList
 
-class BankAdapter(val context: Context?,val BankList: ArrayList<ListBanksItem?>): BaseAdapter()
+class BankAdapter(val context: Context?, val BankList: MutableList<ListBanksItem?>): BaseAdapter()
 {
 
     val mInflater: LayoutInflater = LayoutInflater.from(context)
