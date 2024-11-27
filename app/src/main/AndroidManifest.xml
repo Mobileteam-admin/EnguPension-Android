@@ -29,6 +29,7 @@
         <activity
             android:name=".ui.activity.SplashActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,27 +40,38 @@
         <activity
             android:name=".ui.activity.SignUpActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
             android:name=".ui.activity.DashboardActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
             android:name=".ui.activity.ServiceActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar"
              />
 
         <activity
             android:name=".ui.activity.WebView.ActiveDocWebViewActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar"
             />
 
-        <activity android:name=".ui.activity.ProcessDashboardActivity"
+        <activity
+            android:name=".ui.activity.ProcessDashboardActivity"
             android:exported="true"
-            android:theme="@style/Theme.Design.Light.NoActionBar"
-/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
+
+        <activity
+            android:name=".ui.activity.WebView.StripeWebViewActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
     </application>
 
 </manifest>

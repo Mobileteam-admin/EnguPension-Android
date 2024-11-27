@@ -16,6 +16,7 @@ import com.example.engu_pension_verification_application.model.input.InputRetire
 import com.example.engu_pension_verification_application.model.input.InputSignup
 import com.example.engu_pension_verification_application.model.input.InputSignupVerify
 import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
+import com.example.engu_pension_verification_application.model.input.TopUpRequest
 import com.example.engu_pension_verification_application.network.ApiInterface
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import okhttp3.RequestBody
@@ -97,5 +98,13 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
 
     suspend fun getAccountCompletionStatus() =
         apiInterface.getAccountCompletionStatus(NetworkUtils.getAccessToken())
+
+    suspend fun topUp(topUpRequest: TopUpRequest) =
+        apiInterface.topUp(NetworkUtils.getAccessToken(), topUpRequest)
+    fun topUpCall(topUpRequest: TopUpRequest) =
+        apiInterface.topUpCall(NetworkUtils.getAccessToken(), topUpRequest)
+
+    suspend fun getPaymentStatus(sessionId: String) =
+        apiInterface.getPaymentStatus(NetworkUtils.getAccessToken(), sessionId)
 
 }

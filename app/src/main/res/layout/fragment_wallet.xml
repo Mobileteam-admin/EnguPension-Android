@@ -148,7 +148,7 @@
                 android:drawableTint="@color/green_dark"
                 android:drawablePadding="@dimen/dp_16"
                 android:hint="@string/enter_amount"
-                android:inputType="text"
+                android:inputType="number"
                 android:padding="@dimen/dp_12" />
 
             <TextView
@@ -177,12 +177,13 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Spinner
-                    android:id="@+id/sp_activebank_"
+                    android:id="@+id/sp_wallet_bank"
                     style="@style/edit_text"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:dropDownVerticalOffset="38dp"
                     android:spinnerMode="dropdown"
+                    android:background="@android:color/transparent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/img_activebank_"

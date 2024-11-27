@@ -2,7 +2,9 @@ package com.example.engu_pension_verification_application.ui.fragment.base
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.widget.Toast
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -75,9 +77,18 @@ open class BaseFragment : Fragment() {
         }
         builder.show()
     }
-    fun showDialog(dialog:DialogFragment){
+
+    fun showDialog(dialog: DialogFragment) {
         if (!dialog.isAdded) {
             dialog.show(parentFragmentManager, null)
         }
+    }
+
+    fun showToast(message: String, duration: Int = Toast.LENGTH_LONG) {
+        Toast.makeText(requireContext(), message, duration).show()
+    }
+
+    fun showToast(@StringRes messageResId: Int, duration: Int = Toast.LENGTH_LONG) {
+        showToast(getString(messageResId), duration)
     }
 }

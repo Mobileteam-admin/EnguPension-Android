@@ -83,11 +83,6 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun observeLiveData() {
-        tokenRefreshViewModel2.tokenRefreshError.observe(viewLifecycleOwner) { error ->
-            if (error != null) {
-                onTokenRefreshFailure(error)
-            }
-        }
         logoutConfirmViewModel.logout.observe(viewLifecycleOwner) { logout ->
             if (logout != null) callLogout()
         }
@@ -268,14 +263,6 @@ class DashboardFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    private fun onTokenRefreshFailure(error: String) {
-        dismissLoader()
-        if (error.isNotEmpty()) Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
-        prefs.logout()
-        val intent = Intent(context, SignUpActivity::class.java)
-        intent.flags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-    }
+
 
 }
