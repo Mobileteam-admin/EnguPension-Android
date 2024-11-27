@@ -4,6 +4,7 @@ package com.example.engu_pension_verification_application.network
 import com.example.engu_pension_verification_application.model.input.*
 import com.example.engu_pension_verification_application.model.response.*
 import okhttp3.RequestBody
+import retrofit2.Call
 import retrofit2.http.*
 
 
@@ -162,6 +163,12 @@ interface ApiInterface {
 
     @POST("/api/v1/topup")
     suspend fun topUp(@Header("Authorization") token: String, @Body request: TopUpRequest): TopUpResponse
+
+    @POST("/api/v1/topup")
+    fun topUpCall(@Header("Authorization") token: String, @Body request: TopUpRequest): Call<TopUpResponse>
+
+    @GET("/api/v1/checkout/success")
+    suspend fun getPaymentStatus(@Header("Authorization") token: String, @Query("session_id") sessionId: String): PaymentStatusResponse
 
 
 }

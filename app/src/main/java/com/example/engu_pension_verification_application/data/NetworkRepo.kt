@@ -101,5 +101,10 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
 
     suspend fun topUp(topUpRequest: TopUpRequest) =
         apiInterface.topUp(NetworkUtils.getAccessToken(), topUpRequest)
+    fun topUpCall(topUpRequest: TopUpRequest) =
+        apiInterface.topUpCall(NetworkUtils.getAccessToken(), topUpRequest)
+
+    suspend fun getPaymentStatus(sessionId: String) =
+        apiInterface.getPaymentStatus(NetworkUtils.getAccessToken(), sessionId)
 
 }

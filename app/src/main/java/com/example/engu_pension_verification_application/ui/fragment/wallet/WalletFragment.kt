@@ -1,7 +1,7 @@
 package com.example.engu_pension_verification_application.ui.fragment.wallet
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -19,6 +21,7 @@ import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.TopUpRequest
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.activity.WebView.StripeWebViewActivity
 import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.AppUtils.Companion.isValidNumber
@@ -38,6 +41,12 @@ class WalletFragment : BaseFragment() {
 
     private lateinit var viewModel: WalletFragmentViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
+    private lateinit var stripeActivityResultLauncher: ActivityResultLauncher<Intent>
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initVars()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -52,6 +61,17 @@ class WalletFragment : BaseFragment() {
         observeLiveData()
         showLoader()
         viewModel.fetchBankList()
+    }
+
+    private fun initVars() {
+        stripeActivityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val sessionId = result.data?.getStringExtra(AppConstants.SESSION_ID)!!
+                    viewModel.fetchPaymentStatus(sessionId)
+                    showLoader()
+                }
+            }
     }
 
     private fun initViewModels() {
@@ -129,24 +149,34 @@ class WalletFragment : BaseFragment() {
         }
         viewModel.topUpApiResult.observe(viewLifecycleOwner) { pair ->
             dismissLoader()
-            val request = pair.first
-            val response = pair.second
-            if (response.status == AppConstants.SUCCESS) {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(response.checkoutUrl)
-                }
-                requireActivity().startActivity(intent)
-            }else {
-                if (response.tokenStatus.equals(AppConstants.EXPIRED)) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            viewModel.fetchTopUp(request)
-                        }
-                    }
+            if (pair != null) {
+                val request = pair.first
+                val response = pair.second
+                if (response.status == AppConstants.SUCCESS) {
+                    val intent = Intent(requireActivity(), StripeWebViewActivity::class.java)
+                    intent.putExtra(StripeWebViewActivity.EXTRA_URL, response.checkoutUrl)
+                    stripeActivityResultLauncher.launch(intent)
                 } else {
-                    dismissLoader()
-                    showToast(response.message?:getString(R.string.common_error_msg_2))
+                    if (response.tokenStatus.equals(AppConstants.EXPIRED)) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            showLoader()
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                viewModel.fetchTopUp(request)
+                            }
+                        }
+                    } else {
+                        showToast(response.message ?: getString(R.string.common_error_msg_2))
+                    }
                 }
+                viewModel.resetTopUpApiResult()
+            }
+        }
+        viewModel.paymentResult.observe(viewLifecycleOwner) { response ->
+            dismissLoader()
+            if (response != null) {
+                showToast(response.message ?: getString(R.string.common_error_msg))
+                et_top_up_wallet_amount.setText("")
+                viewModel.resetPaymentResult()
             }
         }
     }
@@ -167,7 +197,7 @@ class WalletFragment : BaseFragment() {
         if (!amount.isValidNumber()) {
             errorResId = R.string.invalid_amount_msg
         } else if (sp_wallet_bank.selectedItemPosition !in viewModel.bankItems.indices
-            && viewModel.bankItems[sp_wallet_bank.selectedItemPosition]?.id == BANK_ITEM_SELECT_ID
+            || viewModel.bankItems[sp_wallet_bank.selectedItemPosition]?.id == BANK_ITEM_SELECT_ID
         ) {
             errorResId = R.string.no_bank_selected_msg
         }
