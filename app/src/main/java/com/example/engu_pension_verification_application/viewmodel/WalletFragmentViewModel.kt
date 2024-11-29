@@ -1,5 +1,6 @@
 package com.example.engu_pension_verification_application.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -80,7 +81,11 @@ class WalletFragmentViewModel(private val networkRepo: NetworkRepo) : ViewModel(
                             _topUpApiResult.postValue(
                                 Pair(
                                     topUpRequest,
-                                    TopUpResponse(status = AppConstants.FAIL, message = message)
+                                    TopUpResponse(
+                                        TopUpResponse.Detail(
+                                            status = AppConstants.FAIL, message = message
+                                        )
+                                    )
                                 )
                             )
                         }
@@ -100,8 +105,10 @@ class WalletFragmentViewModel(private val networkRepo: NetworkRepo) : ViewModel(
             } catch (e: Exception) {
                 _paymentResult.postValue(
                     PaymentStatusResponse(
-                        status = AppConstants.FAIL,
-                        message = "Failed to fetch payment result"
+                        PaymentStatusResponse.Detail(
+                            status = AppConstants.FAIL,
+                            message = "Failed to fetch payment result"
+                        )
                     )
                 )
             }

@@ -21,16 +21,29 @@ open class BaseActivity : AppCompatActivity() {
     private fun setTransitionAnimation() {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
+
     private fun observeData() {
         loaderViewModel.isLoading.observe(this) { isLoading ->
-            if (isLoading) {
-                if (!loaderDialog.isAdded) {
-                    loaderDialog.show(supportFragmentManager, LoaderDialog.TAG)
+            try {
+                if (isLoading) {
+                    try {
+                        supportFragmentManager.executePendingTransactions()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    if (!loaderDialog.isAdded && supportFragmentManager.findFragmentByTag(
+                            LoaderDialog.TAG
+                        ) == null
+                    ) {
+                        loaderDialog.show(supportFragmentManager, LoaderDialog.TAG)
+                    }
+                } else {
+                    if (loaderDialog.isAdded) {
+                        loaderDialog.dismiss()
+                    }
                 }
-            } else {
-                if (loaderDialog.isAdded) {
-                    loaderDialog.dismiss()
-                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

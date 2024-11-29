@@ -1,6 +1,7 @@
 package com.example.engu_pension_verification_application.data
 
 import com.example.engu_pension_verification_application.Constants.AppConstants
+import com.example.engu_pension_verification_application.model.input.BookAppointmentRequest
 import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
 import com.example.engu_pension_verification_application.model.input.InputActiveBasicDetails
 import com.example.engu_pension_verification_application.model.input.InputBankVerification
@@ -17,6 +18,7 @@ import com.example.engu_pension_verification_application.model.input.InputSignup
 import com.example.engu_pension_verification_application.model.input.InputSignupVerify
 import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
 import com.example.engu_pension_verification_application.model.input.TopUpRequest
+import com.example.engu_pension_verification_application.model.input.TransferRequest
 import com.example.engu_pension_verification_application.network.ApiInterface
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import okhttp3.RequestBody
@@ -101,10 +103,25 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
 
     suspend fun topUp(topUpRequest: TopUpRequest) =
         apiInterface.topUp(NetworkUtils.getAccessToken(), topUpRequest)
+
     fun topUpCall(topUpRequest: TopUpRequest) =
         apiInterface.topUpCall(NetworkUtils.getAccessToken(), topUpRequest)
 
     suspend fun getPaymentStatus(sessionId: String) =
         apiInterface.getPaymentStatus(NetworkUtils.getAccessToken(), sessionId)
 
+    suspend fun fetchBookingSlots(selectedDay: String) =
+        apiInterface.fetchBookingSlots(NetworkUtils.getAccessToken(), selectedDay)
+
+    suspend fun fetchBookingDateRange() =
+        apiInterface.fetchBookingDateRange(NetworkUtils.getAccessToken())
+
+    suspend fun bookAppointment(request: BookAppointmentRequest) =
+        apiInterface.bookAppointment(NetworkUtils.getAccessToken(), request)
+
+    fun bookAppointmentCall(request: BookAppointmentRequest) =
+        apiInterface.bookAppointmentCall(NetworkUtils.getAccessToken(), request)
+
+    suspend fun transferToFinalAccount(request: TransferRequest) =
+        apiInterface.transferToFinalAccount(NetworkUtils.getAccessToken(), request)
 }

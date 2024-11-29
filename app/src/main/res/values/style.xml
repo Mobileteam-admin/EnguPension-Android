@@ -99,4 +99,11 @@
         <!-- Change text alignment to center -->
         <item name="android:gravity">center</item>
     </style>
+
+
+    <style name="EnguCalenderView" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="android:fontFamily">@font/nunito_sans_semibold</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
 </resources>

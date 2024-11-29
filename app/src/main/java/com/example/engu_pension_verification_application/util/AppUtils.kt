@@ -18,6 +18,6 @@ class AppUtils {
                 .filter { it.isNotBlank() }
                 .joinToString(" ")
         }
-        fun String.isValidNumber() = this.toLongOrNull() != null
+        fun String.isValidNumber() = this.toFloatOrNull() != null
     }
 }

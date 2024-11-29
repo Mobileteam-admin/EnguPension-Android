@@ -74,4 +74,5 @@
             android:theme="@style/Theme.Design.Light.NoActionBar" />
     </application>
 
+
 </manifest>

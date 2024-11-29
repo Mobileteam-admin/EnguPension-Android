@@ -23,8 +23,12 @@
     <color name="grey_900">#191F33</color>
     <color name="grey_border">#DADBDC</color>
     <color name="black_text">#16222E</color>
+    <color name="black_text_2">#333333</color>
+    <color name="black_text_3">#666666</color>
+    <color name="grey_text_1">#BFBFBF</color>
     <color name="dark">#222222</color>
     <color name="green_verylight">#06FF57</color>
     <color name="red">#FF0510</color>
+    <color name="transparent_line">#25000000</color>
 
 </resources>

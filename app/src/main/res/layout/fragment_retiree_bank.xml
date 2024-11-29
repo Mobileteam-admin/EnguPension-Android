@@ -117,6 +117,7 @@
                 android:drawablePadding="@dimen/dp_16"
                 android:hint="@string/enter_your_account_number"
                 android:inputType="numberDecimal"
+                android:maxLength="@integer/account_number_max_length"
                 android:padding="@dimen/dp_12" />
 
             <TextView
@@ -138,6 +139,7 @@
                 android:drawablePadding="@dimen/dp_16"
                 android:hint="@string/re_enter_your_account_number"
                 android:inputType="numberDecimal"
+                android:maxLength="@integer/account_number_max_length"
                 android:padding="@dimen/dp_12" />
 
 
