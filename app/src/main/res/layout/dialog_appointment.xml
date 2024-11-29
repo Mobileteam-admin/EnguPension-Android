@@ -1,0 +1,128 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_dashboard_booking"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/dp_16">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/dp_16"
+        android:fontFamily="@font/nunito_sans_semibold"
+        android:text="@string/book_appointment"
+        android:textColor="@color/grey_900"
+        android:textSize="@dimen/sp_18" />
+
+
+    <TextView
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/dp_8"
+        android:paddingTop="@dimen/dp_12"
+        android:text="Select a Date" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_squarebox"
+        android:drawableStart="@drawable/ic_calander"
+        android:drawablePadding="@dimen/dp_16"
+        android:hint="@string/dd_mm_yyyy"
+        android:inputType="text"
+        android:padding="@dimen/dp_12" />
+
+    <TextView
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/dp_8"
+        android:paddingTop="@dimen/dp_6"
+        android:text="Select Time" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/tv_time"
+            style="@style/Style_text_title_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_squarebox"
+            android:drawableStart="@drawable/ic_time"
+            android:drawablePadding="@dimen/dp_16"
+            android:hint="@string/hr_mm"
+            android:padding="@dimen/dp_12"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginEnd="6dp"
+            android:padding="@dimen/dp_10"
+            android:src="@drawable/ic_dropdown"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/dp_20"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll_back"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/dp_12"
+            android:layout_weight="1"
+            android:background="@drawable/button_light_green"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_sans_semibold"
+                android:padding="@dimen/dp_8"
+                android:text="@string/back"
+                android:textColor="@color/green_middle"
+                android:textSize="@dimen/dp_14" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_pay_now"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_12"
+            android:layout_weight="1"
+            android:background="@drawable/button_green"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_sans_semibold"
+                android:text="@string/pay_now"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dp_14" />
+
+            <ImageView
+                android:id="@+id/img_activebank_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/dp_4"
+                android:src="@drawable/ic_arrow_right" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -55,6 +55,7 @@
     <string name="enter_your_last_name">Enter your last name</string>
     <string name="dob">DOB</string>
     <string name="dd_mm_yyyy">dd/mm/yyyy</string>
+    <string name="hr_mm">hr/mm</string>
     <string name="sex">Sex</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
@@ -94,6 +95,9 @@
     <string name="close">CLOSE</string>
     <string name="submit">SUBMIT</string>
     <string name="book_appointment">Book Appointment</string>
+    <string name="booking_details">Booking Details</string>
+    <string name="booking_date">Booking Date</string>
+    <string name="booking_slot">Booking Slot</string>
     <string name="pay_now">PAY NOW</string>
     <string name="select_bank_account">Select Bank Account</string>
     <string name="top_up_wallet">Top up wallet</string>
@@ -106,6 +110,8 @@
     <string name="profile">Profile</string>
     <string name="ein">EIN</string>
     <string name="account">Account</string>
+    <string name="description">Description</string>
+    <string name="total_payable_amount">Total Payable Amount</string>
     <string name="current_account_balance">Current Account Balance</string>
     <string name="reset_password">RESET PASSWORD</string>
     <string name="create_new_password">Create New Password</string>
@@ -142,4 +148,9 @@
     <string name="cancel">Cancel</string>
     <string name="no_bank_selected_msg">Please select a bank</string>
     <string name="invalid_amount_msg">Please enter a valid amount</string>
+    <string name="date_not_selected_msg">Please select a date</string>
+    <string name="slot_not_selected_msg">Please select a time slot</string>
+    <string name="no_time_slots_msg">Unfortunately, there are no time slots available for the selected date.</string>
+    <string name="select_date">Select Date</string>
+
 </resources>

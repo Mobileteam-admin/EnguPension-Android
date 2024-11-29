@@ -4,7 +4,14 @@ import com.google.gson.annotations.SerializedName
 
 data class PaymentStatusResponse(
 
-    @field:SerializedName("status") val status: String? = null,
+    @field:SerializedName("detail") val detail: Detail? = null,
+) {
 
-    @field:SerializedName("message") val message: String? = null,
-)
+    data class Detail(
+
+        @field:SerializedName("status") val status: String? = null,
+
+        @field:SerializedName("message") val message: String? = null,
+    )
+
+}

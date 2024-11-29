@@ -152,12 +152,12 @@ class WalletFragment : BaseFragment() {
             if (pair != null) {
                 val request = pair.first
                 val response = pair.second
-                if (response.status == AppConstants.SUCCESS) {
+                if (response.detail?.status == AppConstants.SUCCESS) {
                     val intent = Intent(requireActivity(), StripeWebViewActivity::class.java)
-                    intent.putExtra(StripeWebViewActivity.EXTRA_URL, response.checkoutUrl)
+                    intent.putExtra(StripeWebViewActivity.EXTRA_URL, response.detail.checkoutUrl)
                     stripeActivityResultLauncher.launch(intent)
                 } else {
-                    if (response.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                         lifecycleScope.launch(Dispatchers.IO) {
                             showLoader()
                             if (tokenRefreshViewModel2.fetchRefreshToken()) {
@@ -165,7 +165,7 @@ class WalletFragment : BaseFragment() {
                             }
                         }
                     } else {
-                        showToast(response.message ?: getString(R.string.common_error_msg_2))
+                        showToast(response.detail?.message ?: getString(R.string.common_error_msg_2))
                     }
                 }
                 viewModel.resetTopUpApiResult()
@@ -174,7 +174,7 @@ class WalletFragment : BaseFragment() {
         viewModel.paymentResult.observe(viewLifecycleOwner) { response ->
             dismissLoader()
             if (response != null) {
-                showToast(response.message ?: getString(R.string.common_error_msg))
+                showToast(response.detail?.message ?: getString(R.string.common_error_msg))
                 et_top_up_wallet_amount.setText("")
                 viewModel.resetPaymentResult()
             }

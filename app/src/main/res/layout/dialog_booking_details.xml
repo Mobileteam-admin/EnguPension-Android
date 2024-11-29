@@ -1,0 +1,169 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_dashboard_booking"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/dp_16">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/dp_16"
+        android:fontFamily="@font/nunito_sans_semibold"
+        android:text="@string/booking_details"
+        android:textColor="@color/grey_900"
+        android:textSize="@dimen/sp_18" />
+
+
+    <TextView
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_12"
+        android:drawableStart="@drawable/ic_calander"
+        android:drawablePadding="@dimen/dp_16"
+        android:text="@string/booking_date" />
+
+    <TextView
+        android:id="@+id/tv_booking_date"
+        style="@style/Style_text_title_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="01/01/2024" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/dp_16"
+        android:background="@color/transparent_line" />
+
+    <TextView
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_16"
+        android:drawableStart="@drawable/ic_time"
+        android:drawablePadding="@dimen/dp_16"
+        android:text="@string/booking_slot" />
+
+    <TextView
+        android:id="@+id/tv_booking_slot"
+        style="@style/Style_text_title_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="11:00 AM - 11:30 AM" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/dp_16"
+        android:background="@color/transparent_line" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_16">
+
+        <TextView
+            style="@style/Style_text_title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total_payable_amount"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_amount"
+            style="@style/Style_text_title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1400"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sp_18"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <TextView
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_16"
+        android:text="@string/description" />
+
+
+    <EditText
+        android:id="@+id/et_description"
+        style="@style/Style_text_title_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_8"
+        android:background="@drawable/custom_squarebox"
+        android:hint="@string/description"
+        android:padding="@dimen/dp_12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/dp_24"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll_booking_details_back"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/dp_12"
+            android:layout_weight="1"
+            android:background="@drawable/button_light_green"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_sans_semibold"
+                android:padding="@dimen/dp_8"
+                android:text="@string/back"
+                android:textColor="@color/green_middle"
+                android:textSize="@dimen/dp_14" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_booking_pay_now"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_12"
+            android:layout_weight="1"
+            android:background="@drawable/button_green"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_sans_semibold"
+                android:text="@string/pay_now"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dp_14" />
+
+            <ImageView
+                android:id="@+id/img_activebank_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/dp_4"
+                android:src="@drawable/ic_arrow_right" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

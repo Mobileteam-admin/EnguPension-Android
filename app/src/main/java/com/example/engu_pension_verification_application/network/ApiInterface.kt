@@ -170,5 +170,20 @@ interface ApiInterface {
     @GET("/api/v1/checkout/success")
     suspend fun getPaymentStatus(@Header("Authorization") token: String, @Query("session_id") sessionId: String): PaymentStatusResponse
 
+    @GET("/api/v1/booking/list-slots/")
+    suspend fun fetchBookingSlots(@Header("Authorization") token: String, @Query("selected_day") selectedDay: String): BookingSlotResponse
+
+    @GET("/api/v1/booking/booking-date-range/")
+    suspend fun fetchBookingDateRange(@Header("Authorization") token: String): BookingDateRangeResponse
+
+    @POST("/api/v1/booking/create-booking/")
+    suspend fun bookAppointment(@Header("Authorization") token: String,@Body request:BookAppointmentRequest): BookAppointmentResponse
+
+    @POST("/api/v1/booking/create-booking/")
+    fun bookAppointmentCall(@Header("Authorization") token: String,@Body request:BookAppointmentRequest): Call<BookAppointmentResponse>
+
+    @POST("/api/v1/transfer-to-final-account")
+    suspend fun transferToFinalAccount(@Header("Authorization") token: String,@Body request:TransferRequest): TransferResponse
+
 
 }

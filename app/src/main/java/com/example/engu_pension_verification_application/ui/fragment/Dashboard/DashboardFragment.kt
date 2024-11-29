@@ -26,6 +26,7 @@ import com.example.engu_pension_verification_application.model.response.Response
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.dialog.AddBankDialog
+import com.example.engu_pension_verification_application.ui.dialog.AppointmentDialog
 import com.example.engu_pension_verification_application.ui.dialog.LogoutConfirmDialog
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils
@@ -43,9 +44,8 @@ import java.util.*
 class DashboardFragment : BaseFragment() {
     private lateinit var logoutConfirmDialog: LogoutConfirmDialog
     private lateinit var addBankDialog: AddBankDialog
-    lateinit var datePickerDialog: DatePickerDialog
+    private lateinit var appointmentDialog: AppointmentDialog
     private lateinit var viewModel: DashboardViewModel
-//    private lateinit var addBankViewModel: AddBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private val logoutConfirmViewModel by activityViewModels<LogoutConfirmViewModel>()
     val prefs = SharedPref
@@ -76,10 +76,6 @@ class DashboardFragment : BaseFragment() {
             requireActivity(),
             EnguViewModelFactory(networkRepo)
         ).get(DashboardViewModel::class.java)
-//        addBankViewModel = ViewModelProviders.of(
-//            requireActivity(),
-//            EnguViewModelFactory(networkRepo)
-//        ).get(AddBankViewModel::class.java)
     }
 
     private fun observeLiveData() {
@@ -135,6 +131,7 @@ class DashboardFragment : BaseFragment() {
     private fun initViews() {
         logoutConfirmDialog = LogoutConfirmDialog()
         addBankDialog = AddBankDialog()
+        appointmentDialog = AppointmentDialog()
     }
 
     private fun initCall() {
@@ -160,67 +157,11 @@ class DashboardFragment : BaseFragment() {
             showDialog(addBankDialog)
         }
         ll_appoinment.setOnClickListener {
-            ll_dashboard_main.visibility = View.GONE
-            ll_dashboard_booking.visibility = View.VISIBLE
-        }
-        ll_bookappoinment_back.setOnClickListener {
-            ll_dashboard_main.visibility = View.VISIBLE
-            ll_dashboard_booking.visibility = View.GONE
-        }
-        txt_booking_date.setOnClickListener {
-            onDateSelect()
+            showDialog(appointmentDialog)
         }
         txt_logout.setOnClickListener {
             showDialog(logoutConfirmDialog)
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun onDateSelect() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-        datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { datePicker, year, month, day ->
-
-                var f_month: Int = month + 1
-                var formatmonth: String = month.toString()
-                var formatDayOfMonth: String = "" + day
-
-
-                if (f_month < 10) {
-
-                    formatmonth = "0" + f_month
-                } else {
-                    formatmonth = f_month.toString()
-                }
-                if (day < 10) {
-
-                    formatDayOfMonth = "0" + day;
-                }
-
-
-
-                txt_booking_date.text = Editable.Factory.getInstance()
-                    .newEditable(
-                        formatDayOfMonth + "/" + formatmonth + "/" + year.toString()
-                    )  //day.toString() + "/" + (month + 1) + "/" + year
-
-            }, year, month, dayOfMonth
-        )
-
-        datePickerDialog.setButton(
-            DialogInterface.BUTTON_NEGATIVE,
-            "Cancel",
-            DialogInterface.OnClickListener { dialog, which ->
-                if (which == DialogInterface.BUTTON_NEGATIVE) {
-                    datePickerDialog.dismiss()
-
-                }
-            })
-        datePickerDialog.show()
     }
 
     private fun callLogout() {

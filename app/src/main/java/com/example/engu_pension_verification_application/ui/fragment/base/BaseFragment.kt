@@ -2,9 +2,16 @@ package com.example.engu_pension_verification_application.ui.fragment.base
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ListView
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.core.widget.PopupWindowCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,6 +19,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.ui.adapter.PopUpAdapter
 import com.example.engu_pension_verification_application.ui.dialog.LoaderDialog
 import com.example.engu_pension_verification_application.viewmodel.LoaderViewModel
 
@@ -90,5 +98,24 @@ open class BaseFragment : Fragment() {
 
     fun showToast(@StringRes messageResId: Int, duration: Int = Toast.LENGTH_LONG) {
         showToast(getString(messageResId), duration)
+    }
+
+    fun showListPopUp(anchor: View, items: List<String>, onItemClick: (Int,String) -> Unit) {
+        val popupView = LayoutInflater.from(requireContext()).inflate(
+            R.layout.popup_list_layout, null
+        )
+        val listView: ListView = popupView.findViewById(R.id.listView_1)
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        val adapter = PopUpAdapter(requireContext(), items, { position,text ->
+            popupWindow.dismiss()
+            onItemClick(position,text)
+        })
+        listView.adapter = adapter
+        PopupWindowCompat.showAsDropDown(popupWindow, anchor, 0, 0, Gravity.BOTTOM)
     }
 }

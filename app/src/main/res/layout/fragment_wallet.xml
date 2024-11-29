@@ -147,6 +147,7 @@
                 android:drawableStart="@drawable/ic_naira"
                 android:drawableTint="@color/green_dark"
                 android:drawablePadding="@dimen/dp_16"
+                android:maxLength="12"
                 android:hint="@string/enter_amount"
                 android:inputType="number"
                 android:padding="@dimen/dp_12" />
