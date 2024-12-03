@@ -12,24 +12,26 @@ import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentProfileBinding
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.ProfileViewModel
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 class ProfileFragment : BaseFragment() {
+    private lateinit var binding:FragmentProfileBinding
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,7 +43,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        img_profile_back.setOnClickListener {
+        binding.imgProfileBack.setOnClickListener {
             findNavController().popBackStack()
         }
     }

@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.ActivityProcessDashboardBinding
 import com.example.engu_pension_verification_application.model.response.ResponseActiveProcessingVerify
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.util.NetworkUtils
@@ -25,14 +26,13 @@ import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.ProcessDashboardViewModel
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.activity_process_dashboard.btn_retry
-import kotlinx.android.synthetic.main.activity_process_dashboard.ll_processing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class ProcessDashboardActivity : BaseActivity() {
+    private lateinit var binding:ActivityProcessDashboardBinding
     private lateinit var viewModel: ProcessDashboardViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     val prefs = SharedPref
@@ -40,7 +40,8 @@ class ProcessDashboardActivity : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_process_dashboard)
+        binding = ActivityProcessDashboardBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initViewModels()
         observeData()
         initCall()
@@ -60,7 +61,7 @@ class ProcessDashboardActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        btn_retry.setOnClickListener {
+        binding.btnRetry.setOnClickListener {
             initCall()
         }
     }
@@ -88,8 +89,8 @@ class ProcessDashboardActivity : BaseActivity() {
                     }
                 } else {
                     Toast.makeText(this, response.detail?.message, Toast.LENGTH_LONG).show()
-                    ll_processing.isGone = true
-                    btn_retry.isVisible = true
+                    binding.llProcessing.isGone = true
+                    binding.btnRetry.isVisible = true
                 }
             }
         }
@@ -107,13 +108,13 @@ class ProcessDashboardActivity : BaseActivity() {
         if (NetworkUtils.isConnectedToNetwork(this)) {
             //Bank Loader commented for Loader issue
             // showLoader()
-            btn_retry.isGone = true
-            ll_processing.isVisible = true
+            binding.btnRetry.isGone = true
+            binding.llProcessing.isVisible = true
             viewModel.getGovtVerificationStatus()
         } else {
             Toast.makeText(this, "Please connect to internet", Toast.LENGTH_LONG).show()
-            ll_processing.isGone = true
-            btn_retry.isVisible = true
+            binding.llProcessing.isGone = true
+            binding.btnRetry.isVisible = true
         }
     }
 

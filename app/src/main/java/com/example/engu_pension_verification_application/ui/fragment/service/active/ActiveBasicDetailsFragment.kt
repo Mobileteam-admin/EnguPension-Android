@@ -22,6 +22,7 @@ import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentActiveBasicDetailsBinding
 import com.example.engu_pension_verification_application.model.input.InputActiveBasicDetails
 import com.example.engu_pension_verification_application.model.response.ActiveRetriveUserProfileDetails
 import com.example.engu_pension_verification_application.model.response.GradeLevelsItem
@@ -43,7 +44,6 @@ import com.example.engu_pension_verification_application.viewmodel.ActiveBasicDe
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.fragment_active_basic_details.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -62,6 +62,7 @@ import kotlin.collections.ArrayList
 
 class ActiveBasicDetailsFragment : BaseFragment()
 {
+    private lateinit var binding:FragmentActiveBasicDetailsBinding
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
     companion object {
@@ -122,8 +123,8 @@ class ActiveBasicDetailsFragment : BaseFragment()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_active_basic_details, container, false)
+        binding = FragmentActiveBasicDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -199,16 +200,16 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
     private fun initViews() {
         lgaSpinnerAdapter = LGASpinnerAdapter(context, LGAList)
-        sp_active_lga.adapter = lgaSpinnerAdapter
+        binding.spActiveLga.adapter = lgaSpinnerAdapter
 
         occupationsAdapter = OccupationsAdapter(context, occupationsList)
-        sp_active_occupation_type.adapter = occupationsAdapter
+        binding.spActiveOccupationType.adapter = occupationsAdapter
 
         gradeLevelAdapter = GradeLevelAdapter(context, GradeLevelsList)
-        sp_active_last_grade.adapter = gradeLevelAdapter
+        binding.spActiveLastGrade.adapter = gradeLevelAdapter
 
         subTreasuryAdapter = SubTreasuryAdapter(context, subtreasuryList)
-        sp_active_sub_treasury.adapter = subTreasuryAdapter
+        binding.spActiveSubTreasury.adapter = subTreasuryAdapter
 
 
         /*activeBasicDetailViewModel =
@@ -217,9 +218,9 @@ class ActiveBasicDetailsFragment : BaseFragment()
         /*tokenRefreshViewModel = ViewModelProvider(this).get(TokenRefreshViewModel::class.java)*/
 
         //kinphone
-        active_next_kin_phone_ccp.registerPhoneNumberTextView(et_active_next_kin_phone)
+        binding.activeNextKinPhoneCcp.registerPhoneNumberTextView(binding.etActiveNextKinPhone)
 
-        selected_country = ccp_activedetails.selectedCountryName
+        selected_country = binding.ccpActivedetails.selectedCountryName
 
         // Example usage to enable only the first tab
         //tabAccessControl.enableDisableTabs(true, false, false)
@@ -230,9 +231,9 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
         onClicked()
 
-        ccp_activedetails.setOnCountryChangeListener {
-            selected_country = ccp_activedetails.selectedCountryName
-            Log.d("changed_country", "onViewCreated: " + ccp_activedetails.selectedCountryName)
+        binding.ccpActivedetails.setOnCountryChangeListener {
+            selected_country = binding.ccpActivedetails.selectedCountryName
+            Log.d("changed_country", "onViewCreated: " + binding.ccpActivedetails.selectedCountryName)
             showLoader()
             if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -251,35 +252,35 @@ class ActiveBasicDetailsFragment : BaseFragment()
                 prefs.onboardingStage = OnboardingStage.ACTIVE_DOCUMENTS
                 activeServiceViewModel.refreshTabsState()
             }
-            et_active_firstName.setText(ActiveUserRetrive.firstName)
-            et_active_middleName.setText(ActiveUserRetrive.middleName)
-            et_active_lastName.setText(ActiveUserRetrive.lastName)
+            binding.etActiveFirstName.setText(ActiveUserRetrive.firstName)
+            binding.etActiveMiddleName.setText(ActiveUserRetrive.middleName)
+            binding.etActiveLastName.setText(ActiveUserRetrive.lastName)
 
-            et_active_DOB.text = ActiveUserRetrive.dob.toString()
+            binding.etActiveDOB.text = ActiveUserRetrive.dob.toString()
 
             var RetriveSex = ActiveUserRetrive.sex
 
             when (RetriveSex) {
 
                 "male" -> {
-                    radioGroup_active.check(R.id.rb_active_male)
+                    binding.radioGroupActive.check(R.id.rb_active_male)
                     sex = "male"
                 }
 
                 "female" -> {
-                    radioGroup_active.check(R.id.rb_active_female)
+                    binding.radioGroupActive.check(R.id.rb_active_female)
                     sex = "female"
                 }
             }
 
 
-            et_active_address.setText(ActiveUserRetrive.address)
+            binding.etActiveAddress.setText(ActiveUserRetrive.address)
 
-            et_active_pincode.setText(ActiveUserRetrive.pincode)
+            binding.etActivePincode.setText(ActiveUserRetrive.pincode)
 
-            et_active_next_kin.setText(ActiveUserRetrive.nextOfKinName)
+            binding.etActiveNextKin.setText(ActiveUserRetrive.nextOfKinName)
 
-            et_active_next_kin_email.setText(ActiveUserRetrive.nextOfKinEmail)
+            binding.etActiveNextKinEmail.setText(ActiveUserRetrive.nextOfKinEmail)
 
             //backend format indian number +917917854563 thats why takelast 10 digits
             val RetrivePhn = ActiveUserRetrive.nextOfKinPhoneNumber
@@ -290,16 +291,16 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
             var RetriveCCInt = RetriveCC.toInt()
 
-            et_active_next_kin_phone.setText(WithoutCC)
+            binding.etActiveNextKinPhone.setText(WithoutCC)
 
-            active_next_kin_phone_ccp.setCountryForPhoneCode(RetriveCCInt)
+            binding.activeNextKinPhoneCcp.setCountryForPhoneCode(RetriveCCInt)
 
 
-            et_active_next_kin_address.setText(ActiveUserRetrive.nextOfKinAddress)
+            binding.etActiveNextKinAddress.setText(ActiveUserRetrive.nextOfKinAddress)
 
-            et_active_kin_pincode.setText(ActiveUserRetrive.kinPincode)
+            binding.etActiveKinPincode.setText(ActiveUserRetrive.kinPincode)
 
-            et_active_date_appointment.text = ActiveUserRetrive.dateOfAppointment.toString()
+            binding.etActiveDateAppointment.text = ActiveUserRetrive.dateOfAppointment.toString()
 
 
 
@@ -311,7 +312,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
             //lga
             /*lgaSpinnerAdapter = LGASpinnerAdapter(context, LGAList)
-            sp_active_lga.adapter = lgaSpinnerAdapter*/
+            binding.spActiveLga.adapter = lgaSpinnerAdapter*/
 
             lgaS = ActiveUserRetrive.lga.toString()
 
@@ -319,7 +320,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
             if (lgaS.isNotEmpty()) {
                 var pos = lgaSpinnerAdapter.getPositionByName(lgaS)
 
-                sp_active_lga.setSelection(pos)
+                binding.spActiveLga.setSelection(pos)
 
                 Log.d("spinner", "spinnerPos $pos ")
             }
@@ -330,7 +331,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
                 var pos = subTreasuryAdapter.getPositionByName(subS)
 
-                sp_active_sub_treasury.setSelection(pos)
+                binding.spActiveSubTreasury.setSelection(pos)
             }
 
             //gradelvl
@@ -339,7 +340,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
                 var pos = gradeLevelAdapter.getPositionByName(gradelvlS)
 
-                sp_active_last_grade.setSelection(pos)
+                binding.spActiveLastGrade.setSelection(pos)
             }
 
             //ocupations
@@ -350,18 +351,18 @@ class ActiveBasicDetailsFragment : BaseFragment()
                 if (pos != -1) {
 
                     Log.d("LogOccu", "spinnerOccuPos: $pos")
-                    sp_active_occupation_type.setSelection(pos)
+                    binding.spActiveOccupationType.setSelection(pos)
                 } else {
                     //occupation other case
-                    sp_active_occupation_type.setSelection(occupationsAdapter.count -1)
-                    et_active_occupation_other.visibility = View.VISIBLE
-                    et_active_occupation_other.setText(occupationS)
+                    binding.spActiveOccupationType.setSelection(occupationsAdapter.count -1)
+                    binding.etActiveOccupationOther.visibility = View.VISIBLE
+                    binding.etActiveOccupationOther.setText(occupationS)
                     occupation = occupationS
 
                     // below code will prevent the EditText from gaining focus
-                    /*et_active_occupation_other.inputType = InputType.TYPE_NULL
-                    et_active_occupation_other.isFocusable = false
-                    et_active_occupation_other.isFocusableInTouchMode = false*/
+                    /*binding.etActiveOccupationOther.inputType = InputType.TYPE_NULL
+                    binding.etActiveOccupationOther.isFocusable = false
+                    binding.etActiveOccupationOther.isFocusableInTouchMode = false*/
 
                 }
 
@@ -370,12 +371,12 @@ class ActiveBasicDetailsFragment : BaseFragment()
                     if (occupationS.equals(element)) {
                         val updateIndex = index
                         Log.d("LogOccu", "selectedIndex: " + updateIndex)
-                        sp_active_occupation_type.setSelection(updateIndex)
+                        binding.spActiveOccupationType.setSelection(updateIndex)
 
                     } else {
 
-                        et_active_occupation_other.visibility = View.VISIBLE
-                        et_active_occupation_other.setText(occupationS)
+                        binding.etActiveOccupationOther.visibility = View.VISIBLE
+                        binding.etActiveOccupationOther.setText(occupationS)
                     }
                 }*/
 
@@ -391,30 +392,30 @@ class ActiveBasicDetailsFragment : BaseFragment()
             //tabAccessControl.enableDisableTabs(true, false, false)
         }
 
-        /*et_active_lastName.text = Editable.Factory.getInstance().newEditable(prefs.last_name)
-        et_active_firstName.text = Editable.Factory.getInstance().newEditable(prefs.first_name)
-        et_active_middleName.text = Editable.Factory.getInstance().newEditable(prefs.middle_name)
-        sp_active_lga.setSelection(prefs.lga!!.toInt())
+        /*binding.etActiveLastName.text = Editable.Factory.getInstance().newEditable(prefs.last_name)
+        binding.etActiveFirstName.text = Editable.Factory.getInstance().newEditable(prefs.first_name)
+        binding.etActiveMiddleName.text = Editable.Factory.getInstance().newEditable(prefs.middle_name)
+        binding.spActiveLga.setSelection(prefs.lga!!.toInt())
 
-        et_active_lastName.text = Editable.Factory.getInstance().newEditable(prefs.last_name)
-        et_active_DOB.text = Editable.Factory.getInstance().newEditable(prefs.dob)
-        et_active_address.text = Editable.Factory.getInstance().newEditable(prefs.address)
-        et_active_date_appointment.text = Editable.Factory.getInstance().newEditable(prefs.doa)
+        binding.etActiveLastName.text = Editable.Factory.getInstance().newEditable(prefs.last_name)
+        binding.etActiveDOB.text = Editable.Factory.getInstance().newEditable(prefs.dob)
+        binding.etActiveAddress.text = Editable.Factory.getInstance().newEditable(prefs.address)
+        binding.etActiveDateAppointment.text = Editable.Factory.getInstance().newEditable(prefs.doa)
 
-        et_active_DOB.text = Editable.Factory.getInstance().newEditable(prefs.dob)
-        et_active_address.text = Editable.Factory.getInstance().newEditable(prefs.address)
-        et_active_next_kin.text = Editable.Factory.getInstance().newEditable(prefs.kin_name)
-        et_active_next_kin_address.text =
+        binding.etActiveDOB.text = Editable.Factory.getInstance().newEditable(prefs.dob)
+        binding.etActiveAddress.text = Editable.Factory.getInstance().newEditable(prefs.address)
+        binding.etActiveNextKin.text = Editable.Factory.getInstance().newEditable(prefs.kin_name)
+        binding.etActiveNextKinAddress.text =
             Editable.Factory.getInstance().newEditable(prefs.kin_address)
-        et_active_next_kin_email.text = Editable.Factory.getInstance().newEditable(prefs.kin_email)
-        et_active_next_kin_phone.text = Editable.Factory.getInstance().newEditable(prefs.kin_phone)
-        et_active_date_appointment.text = Editable.Factory.getInstance().newEditable(prefs.doa)
+        binding.etActiveNextKinEmail.text = Editable.Factory.getInstance().newEditable(prefs.kin_email)
+        binding.etActiveNextKinPhone.text = Editable.Factory.getInstance().newEditable(prefs.kin_phone)
+        binding.etActiveDateAppointment.text = Editable.Factory.getInstance().newEditable(prefs.doa)
 
-        et_active_occupation_other.text =
+        binding.etActiveOccupationOther.text =
             Editable.Factory.getInstance().newEditable(prefs.a_Occupation)
         if (prefs.sex != "") {
             if (prefs.sex!!.toInt() != -1) {
-                radioGroup_active.check(prefs.sex!!.toInt())
+                binding.radioGroupActive.check(prefs.sex!!.toInt())
             }
         }*/
     }
@@ -429,7 +430,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
     }
 
     private fun onTextOccupationWatcher() {
-        sp_active_occupation_type.onItemSelectedListener =
+        binding.spActiveOccupationType.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?, view: View?, position: Int, id: Long
@@ -440,15 +441,15 @@ class ActiveBasicDetailsFragment : BaseFragment()
                         // Toast.makeText(context, "select occupation item", Toast.LENGTH_SHORT).show()
                     } else if (occupationsList.get(position)?.id?.equals(-1) == true) {
 
-                        // prefs.Occupation = sp_active_occupation_type.selectedItemPosition.toString()
+                        // prefs.Occupation = binding.spActiveOccupationType.selectedItemPosition.toString()
                         //Toast.makeText(context, "others", Toast.LENGTH_SHORT).show()
                         //visiblty show
-                        et_active_occupation_other.visibility = View.VISIBLE
+                        binding.etActiveOccupationOther.visibility = View.VISIBLE
 
                         //for check
-                        //occupation = et_active_occupation_other.text.toString()
+                        //occupation = binding.etActiveOccupationOther.text.toString()
 
-                       /* et_active_occupation_other.setOnFocusChangeListener { view, hasFocus ->
+                       /* binding.etActiveOccupationOther.setOnFocusChangeListener { view, hasFocus ->
                             if (!hasFocus) {
                                 // User has moved the focus away from the EditText
                                 // Implement your logic here
@@ -457,7 +458,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
                         }*/
 
 
-                        et_active_occupation_other.addTextChangedListener(object : TextWatcher {
+                        binding.etActiveOccupationOther.addTextChangedListener(object : TextWatcher {
                             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                                 // Code to handle text before changes are made
                             }
@@ -469,17 +470,17 @@ class ActiveBasicDetailsFragment : BaseFragment()
                             override fun afterTextChanged(s: Editable) {
                                 // Code to handle text after changes are made
 
-                                occupation = et_active_occupation_other.text.toString()
+                                occupation = binding.etActiveOccupationOther.text.toString()
                             }
                         })
 
                         /*
-                                                et_active_occupation_other.text.clear()
-                                                //et_active_occupation_other.inputType = InputType.TYPE_CLASS_TEXT
-                                              et_active_occupation_other.isFocusable = true
-                                                et_active_occupation_other.isFocusableInTouchMode = true*/
+                                                binding.etActiveOccupationOther.text.clear()
+                                                //binding.etActiveOccupationOther.inputType = InputType.TYPE_CLASS_TEXT
+                                              binding.etActiveOccupationOther.isFocusable = true
+                                                binding.etActiveOccupationOther.isFocusableInTouchMode = true*/
                     } else {
-                        et_active_occupation_other.visibility = View.GONE
+                        binding.etActiveOccupationOther.visibility = View.GONE
                         occupation = occupationsList[position]?.id.toString()
 
                         //occuOther = occupationsList[position]?.name.toString()
@@ -496,7 +497,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
     }
 
     private fun onTextGradeLevelWatcher() {
-        sp_active_last_grade.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spActiveLastGrade.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
@@ -505,7 +506,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
                 } else {
                     gradelevel = GradeLevelsList[position]?.id
 
-                    //prefs.grade = sp_active_last_grade.selectedItemPosition.toString()
+                    //prefs.grade = binding.spActiveLastGrade.selectedItemPosition.toString()
 
 
                 }
@@ -519,7 +520,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
     }
 
     private fun onTextSubTresuryWatcher() {
-        sp_active_sub_treasury.onItemSelectedListener =
+        binding.spActiveSubTreasury.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?, view: View?, position: Int, id: Long
@@ -528,7 +529,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
                     } else {
                         subtreasury = subtreasuryList[position]?.id
-                        // prefs.sub = sp_active_sub_treasury.selectedItemPosition.toString()
+                        // prefs.sub = binding.spActiveSubTreasury.selectedItemPosition.toString()
                     }
                 }
 
@@ -540,7 +541,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
     }
 
     private fun onTextLgaWatcher() {
-        sp_active_lga.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spActiveLga.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
@@ -551,7 +552,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
                     lgalist = LGAList[position]?.id
 
                     //lga pref store
-                    //prefs.lga = sp_active_lga.selectedItemPosition.toString()
+                    //prefs.lga = binding.spActiveLga.selectedItemPosition.toString()
                 }
             }
 
@@ -564,13 +565,13 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
     private fun onClicked() {
 
-        et_active_firstName.addTextChangedListener(AlphabeticTextWatcher(et_active_firstName))
-        et_active_middleName.addTextChangedListener(AlphabeticTextWatcher(et_active_middleName))
-        et_active_lastName.addTextChangedListener(AlphabeticTextWatcher(et_active_lastName))
-        et_active_next_kin.addTextChangedListener(AlphabeticTextWatcher(et_active_next_kin))
+        binding.etActiveFirstName.addTextChangedListener(AlphabeticTextWatcher(binding.etActiveFirstName))
+        binding.etActiveMiddleName.addTextChangedListener(AlphabeticTextWatcher(binding.etActiveMiddleName))
+        binding.etActiveLastName.addTextChangedListener(AlphabeticTextWatcher(binding.etActiveLastName))
+        binding.etActiveNextKin.addTextChangedListener(AlphabeticTextWatcher(binding.etActiveNextKin))
 
 
-        radioGroup_active.setOnCheckedChangeListener { group, checkedId ->
+        binding.radioGroupActive.setOnCheckedChangeListener { group, checkedId ->
             //sex = "You selected: " + if (R.id.rb_active_male == checkedId) "male" else "female"
             sex = if (R.id.rb_active_male == checkedId) "male" else "female"
         }
@@ -578,8 +579,8 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
 
-        et_active_DOB.setOnClickListener {
-            showDatePickerPresentToPast(et_active_DOB, dateBirth)
+        binding.etActiveDOB.setOnClickListener {
+            showDatePickerPresentToPast(binding.etActiveDOB, dateBirth)
 
             //dob = dateBirth.toString()
 
@@ -615,7 +616,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
                 datePicker.addOnPositiveButtonClickListener {
                     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                     val date = sdf.format(it)
-                    et_active_DOB.text = date
+                    binding.etActiveDOB.text = date
                 }
             }catch (e:java.lang.Exception){
                 Log.d("Exception", "onClicks: "+e.localizedMessage)
@@ -623,14 +624,14 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
         }
 
-        et_active_date_appointment.setOnClickListener {
-            showDatePickerPresentToPast(et_active_date_appointment, dateAppointment)
+        binding.etActiveDateAppointment.setOnClickListener {
+            showDatePickerPresentToPast(binding.etActiveDateAppointment, dateAppointment)
             //doa = dateAppointment.toString()
         }
 
 
 
-        ll_activebasicdetails_next.setOnClickListener {
+        binding.llActivebasicdetailsNext.setOnClickListener {
             //nextButtonCall()
             if (isValidActiveBasicDetails()) {
                 nextButtonCall()
@@ -649,7 +650,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
             { view, selectedYear, selectedMonth, selectedDayOfMonth ->
                 var doDate =
                     String.format("%02d/%02d/%d", selectedDayOfMonth, selectedMonth, selectedYear)
-                //et_active_DOB.text = doDate
+                //binding.etActiveDOB.text = doDate
                 textView.text = doDate
             }, dob_year, dob_month, dob_dayOfMonth
         )
@@ -807,7 +808,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
     private fun GradeLevelspinnerfun() {
         gradeLevelAdapter.changeList(GradeLevelsList)
-        //sp_active_last_grade.setSelection(prefs.grade!!.toInt())
+        //binding.spActiveLastGrade.setSelection(prefs.grade!!.toInt())
 /*
         gradelvlS = ActiveUserRetrive.gradeLevel.toString()
 
@@ -815,7 +816,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
             val pos = gradeLevelAdapter.getPositionByName(gradelvlS)
 
-            sp_active_last_grade.setSelection(pos)
+            binding.spActiveLastGrade.setSelection(pos)
         }*/
 
 
@@ -824,7 +825,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
     private fun LGAspinnerfun() {
         lgaSpinnerAdapter.changeList(LGAList)
-        // sp_active_lga.setSelection(prefs.lga!!.toInt())
+        // binding.spActiveLga.setSelection(prefs.lga!!.toInt())
 
         Log.d("LogLGA", "LGAList: LGAspinnerfun() $LGAList")
 
@@ -840,7 +841,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
                 val updateIndex = index
                 Log.d("Test", "selectedIndex: " + updateIndex)
 
-                sp_active_lga.setSelection(updateIndex)
+                binding.spActiveLga.setSelection(updateIndex)
             }
         }*/
 
@@ -855,14 +856,14 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
             Log.d("spinner", "LGAspinner: $pos")
 
-            sp_active_lga.setSelection(pos)
+            binding.spActiveLga.setSelection(pos)
         }*/
 
     }
 
     private fun SubTreasuryspinnerfun() {
         subTreasuryAdapter.changeList(subtreasuryList)
-        //sp_active_sub_treasury.setSelection(prefs.sub!!.toInt())
+        //binding.spActiveSubTreasury.setSelection(prefs.sub!!.toInt())
 
         /*subS = ActiveUserRetrive.subTreasury.toString()
 
@@ -871,7 +872,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
             val pos = subTreasuryAdapter.getPositionByName(subS)
 
-            sp_active_sub_treasury.setSelection(pos)
+            binding.spActiveSubTreasury.setSelection(pos)
         }*/
 
 
@@ -879,24 +880,24 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
     private fun Occupationspinnerfun() {
         occupationsAdapter.changeList(occupationsList)
-        // sp_active_occupation_type.setSelection(prefs.Occupation!!.toInt())
+        // binding.spActiveOccupationType.setSelection(prefs.Occupation!!.toInt())
         /*occupationS = ActiveUserRetrive.occupation.toString()
 
         if (!occupationS.isNullOrEmpty()) {
 
             val pos = occupationsAdapter.getPositionByName(occupationS)
             if (pos != -1) {
-                sp_active_occupation_type.setSelection(pos)
+                binding.spActiveOccupationType.setSelection(pos)
             }
             else{
-                et_active_occupation_other.visibility = View.VISIBLE
-                et_active_occupation_other.setText(occupationS)
+                binding.etActiveOccupationOther.visibility = View.VISIBLE
+                binding.etActiveOccupationOther.setText(occupationS)
 
 
-                *//*et_active_occupation_other.inputType = InputType.TYPE_NULL
-                et_active_occupation_other.isFocusable = false
-                et_active_occupation_other.isFocusableInTouchMode = false // This will prevent the EditText from gaining focus
-                et_active_occupation_other.setText(occupationS)*//*
+                *//*binding.etActiveOccupationOther.inputType = InputType.TYPE_NULL
+                binding.etActiveOccupationOther.isFocusable = false
+                binding.etActiveOccupationOther.isFocusableInTouchMode = false // This will prevent the EditText from gaining focus
+                binding.etActiveOccupationOther.setText(occupationS)*//*
 
             }
 
@@ -905,11 +906,11 @@ class ActiveBasicDetailsFragment : BaseFragment()
                 if (occupationS.equals(element)) {
                     val updateIndex = index
                     Log.d("Test", "selectedIndex: " + updateIndex)
-                    sp_active_occupation_type.setSelection(updateIndex)
+                    binding.spActiveOccupationType.setSelection(updateIndex)
 
                 } else {
-                    et_active_occupation_other.visibility = View.VISIBLE
-                    et_active_occupation_other.setText(occupationS)
+                    binding.etActiveOccupationOther.visibility = View.VISIBLE
+                    binding.etActiveOccupationOther.setText(occupationS)
                 }
             }*//*
 
@@ -942,14 +943,14 @@ class ActiveBasicDetailsFragment : BaseFragment()
         val dob : String
 
         if(dateAppointment.toString() == ""){
-            doa = et_active_date_appointment.text.toString()
+            doa = binding.etActiveDateAppointment.text.toString()
         }
         else{
             doa = dateAppointment.toString()
         }
 
         if (dateBirth.toString() == ""){
-            dob = et_active_DOB.text.toString()
+            dob = binding.etActiveDOB.text.toString()
         }
         else{
             dob = dateBirth.toString()
@@ -959,21 +960,21 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
         activeBasicDetailViewModel.submitAccountDetails(
             InputActiveBasicDetails(
-                pincode = et_active_pincode.text.toString(),
-                kinPincode = et_active_kin_pincode.text.toString(),
+                pincode = binding.etActivePincode.text.toString(),
+                kinPincode = binding.etActiveKinPincode.text.toString(),
                 userType = "active",
                 country = selected_country,
-                address = et_active_address.text.toString(),
+                address = binding.etActiveAddress.text.toString(),
                 subTreasuryId = subtreasury,
                 sex = sex,
-                lastName = et_active_lastName.text.trim().toString(),
-                middleName = et_active_middleName.text.trim().toString(),
-                firstName = et_active_firstName.text.trim().toString(),
+                lastName = binding.etActiveLastName.text.trim().toString(),
+                middleName = binding.etActiveMiddleName.text.trim().toString(),
+                firstName = binding.etActiveFirstName.text.trim().toString(),
                 dateOfAppointment = doa,
                 lgaId = lgalist,
-                nextOfKinAddress = et_active_next_kin_address.text.toString(),
-                nextOfKinEmail = et_active_next_kin_email.text.toString(),
-                nextOfKinName = et_active_next_kin.text.trim().toString(),
+                nextOfKinAddress = binding.etActiveNextKinAddress.text.toString(),
+                nextOfKinEmail = binding.etActiveNextKinEmail.text.toString(),
+                nextOfKinName = binding.etActiveNextKin.text.trim().toString(),
                 nextOfKinPhoneNumber = Ph_no,
                 gradeLevel = gradelevel,
                 dob = dob,
@@ -988,9 +989,9 @@ class ActiveBasicDetailsFragment : BaseFragment()
     private fun nextButtonCall() {
         showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
-            prefs.first_name = et_active_firstName.text.trim().toString()
-            prefs.middle_name = et_active_middleName.text.trim().toString()
-            prefs.last_name = et_active_lastName.text.trim().toString()
+            prefs.first_name = binding.etActiveFirstName.text.trim().toString()
+            prefs.middle_name = binding.etActiveMiddleName.text.trim().toString()
+            prefs.last_name = binding.etActiveLastName.text.trim().toString()
 
             accountdetailCalll()
 
@@ -1004,23 +1005,23 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
     private fun isValidActiveBasicDetails(): Boolean {
         //firstname
-        /*if (TextUtils.isEmpty(et_active_firstName.text)) {
+        /*if (TextUtils.isEmpty(binding.etActiveFirstName.text)) {
             Toast.makeText(context, "Empty FirstName", Toast.LENGTH_SHORT).show()
             return false
         } else {
 
         }
-        if (et_active_firstName.text.toString().contains(" ")) {
+        if (binding.etActiveFirstName.text.toString().contains(" ")) {
             Toast.makeText(context, "Enter  Firstname, No whitespace", Toast.LENGTH_SHORT).show()
             return false
         }*/
 
-        if (TextUtils.isEmpty(et_active_firstName.text.trim())) {
+        if (TextUtils.isEmpty(binding.etActiveFirstName.text.trim())) {
             Toast.makeText(context, "Empty FirstName", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (!NAME_PATTERN.matcher(et_active_firstName.text.trim()).matches()) {
+        if (!NAME_PATTERN.matcher(binding.etActiveFirstName.text.trim()).matches()) {
 
             Toast.makeText(context, "first name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1028,12 +1029,12 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
         //middlename
-        /*if (TextUtils.isEmpty(et_active_middleName.text)) {
+        /*if (TextUtils.isEmpty(binding.etActiveMiddleName.text)) {
             Toast.makeText(context, "Empty Middle name", Toast.LENGTH_SHORT).show()
             return false
         }*/
 
-        if (!NAME_PATTERN_OR_NULL.matcher(et_active_middleName.text.trim()).matches()) {
+        if (!NAME_PATTERN_OR_NULL.matcher(binding.etActiveMiddleName.text.trim()).matches()) {
 
             Toast.makeText(context, "middle name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1041,13 +1042,13 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
         //lastname
-        if (TextUtils.isEmpty(et_active_lastName.text.trim())) {
+        if (TextUtils.isEmpty(binding.etActiveLastName.text.trim())) {
             Toast.makeText(context, "Empty Last name", Toast.LENGTH_SHORT).show()
             return false
         }
 
 
-        if (!NAME_PATTERN.matcher(et_active_lastName.text.trim()).matches()) {
+        if (!NAME_PATTERN.matcher(binding.etActiveLastName.text.trim()).matches()) {
 
             Toast.makeText(context, "last name not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1055,7 +1056,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
         //dob
-        if (TextUtils.isEmpty(et_active_DOB.text)) {
+        if (TextUtils.isEmpty(binding.etActiveDOB.text)) {
             Toast.makeText(context, "select dob", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -1066,11 +1067,11 @@ class ActiveBasicDetailsFragment : BaseFragment()
             Toast.makeText(context, "Select gender", Toast.LENGTH_SHORT).show()
 
         }*/
-        if (radioGroup_active.checkedRadioButtonId <= 0) {
+        if (binding.radioGroupActive.checkedRadioButtonId <= 0) {
             Toast.makeText(context, "Select Gender", Toast.LENGTH_SHORT).show()
             return false
         }/*else {
-            radioGroup_active.setOnCheckedChangeListener { group, checkedId ->
+            binding.radioGroupActive.setOnCheckedChangeListener { group, checkedId ->
                 //sex = "You selected: " + if (R.id.rb_active_male == checkedId) "male" else "female"
                 sex = if (R.id.rb_active_male == checkedId) "male" else "female"
                 Toast.makeText(context, sex, Toast.LENGTH_SHORT).show()
@@ -1078,13 +1079,13 @@ class ActiveBasicDetailsFragment : BaseFragment()
         }*/
 
         //address
-        if (TextUtils.isEmpty(et_active_address.text)) {
+        if (TextUtils.isEmpty(binding.etActiveAddress.text)) {
             Toast.makeText(context, "Empty Address", Toast.LENGTH_SHORT).show()
             return false
         }
         //pincode
 
-        if (TextUtils.isEmpty(et_active_pincode.text)) {
+        if (TextUtils.isEmpty(binding.etActivePincode.text)) {
             Toast.makeText(context, "Empty Pincode", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -1092,32 +1093,32 @@ class ActiveBasicDetailsFragment : BaseFragment()
         //country spinner default nigeria selected, no condition check
 
         //LGA
-        if (sp_active_lga.selectedItemPosition == 0 || (sp_active_lga.isEmpty())) {
+        if (binding.spActiveLga.selectedItemPosition == 0 || (binding.spActiveLga.isEmpty())) {
             Toast.makeText(context, "Select valid lga item", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //kin name
-        if (TextUtils.isEmpty(et_active_next_kin.text.trim())) {
+        if (TextUtils.isEmpty(binding.etActiveNextKin.text.trim())) {
             Toast.makeText(context, "Empty kin name", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (!NAME_PATTERN.matcher(et_active_next_kin.text.trim()).matches()) {
+        if (!NAME_PATTERN.matcher(binding.etActiveNextKin.text.trim()).matches()) {
 
             Toast.makeText(context, "kin name not valid", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //kin email
-        if (!et_active_next_kin_email.text.toString().isValidOptionalEmail()) {
+        if (!binding.etActiveNextKinEmail.text.toString().isValidOptionalEmail()) {
             Toast.makeText(context, "kin email not valid", Toast.LENGTH_SHORT).show()
             return false
         }
-        /*if (TextUtils.isEmpty(et_active_next_kin_email.text)){
+        /*if (TextUtils.isEmpty(binding.etActiveNextKinEmail.text)){
                 Toast.makeText(context, " Empty kin email address", Toast.LENGTH_SHORT).show()
             }*/
- /*       if (!EMAIL_ADDRESS_PATTERN.matcher(et_active_next_kin_email.text.toString()).matches()) {
+ /*       if (!EMAIL_ADDRESS_PATTERN.matcher(binding.etActiveNextKinEmail.text.toString()).matches()) {
 
             Toast.makeText(context, " kin email not valid", Toast.LENGTH_SHORT).show()
             return false
@@ -1125,72 +1126,72 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
         //kin phone
-        if (TextUtils.isEmpty(et_active_next_kin_phone.text)) {
+        if (TextUtils.isEmpty(binding.etActiveNextKinPhone.text)) {
             Toast.makeText(context, "Empty phone number", Toast.LENGTH_LONG).show()
             return false
-        } else if ((!active_next_kin_phone_ccp.isValid)) {
+        } else if ((!binding.activeNextKinPhoneCcp.isValid)) {
             Toast.makeText(context, "Phone Number not valid", Toast.LENGTH_LONG).show()
             return false
         } else {
             //80655707
-            Ph_no = "+" + active_next_kin_phone_ccp.fullNumber
+            Ph_no = "+" + binding.activeNextKinPhoneCcp.fullNumber
             Log.d("active_phn", "$Ph_no")
         }
 
         //kin address
-        if (TextUtils.isEmpty(et_active_next_kin_address.text)) {
+        if (TextUtils.isEmpty(binding.etActiveNextKinAddress.text)) {
             Toast.makeText(context, "Empty kin Address", Toast.LENGTH_SHORT).show()
             return false
         }
         //kin pincode
-        if (TextUtils.isEmpty(et_active_kin_pincode.text)) {
+        if (TextUtils.isEmpty(binding.etActiveKinPincode.text)) {
             Toast.makeText(context, "Empty kin Pincode", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //sub tressury
-        if ((sp_active_sub_treasury.selectedItemPosition == 0) || (sp_active_sub_treasury.isEmpty())) {
+        if ((binding.spActiveSubTreasury.selectedItemPosition == 0) || (binding.spActiveSubTreasury.isEmpty())) {
             Toast.makeText(context, "Select valid sub treasury item", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //date of appointment
-        if (TextUtils.isEmpty(et_active_date_appointment.text)) {
+        if (TextUtils.isEmpty(binding.etActiveDateAppointment.text)) {
             Toast.makeText(context, "select date appointment", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //last grade
-        if ((sp_active_last_grade.selectedItemPosition == 0) || (sp_active_last_grade.isEmpty())) {
+        if ((binding.spActiveLastGrade.selectedItemPosition == 0) || (binding.spActiveLastGrade.isEmpty())) {
             Toast.makeText(context, "select valid grade level item", Toast.LENGTH_SHORT).show()
             return false
         }
 
 
         //occupation type
-        /*if (sp_active_occupation_type.selectedItemPosition == 0|| (occupation.isEmpty())) {
+        /*if (binding.spActiveOccupationType.selectedItemPosition == 0|| (occupation.isEmpty())) {
             Toast.makeText(context, "select valid occupation item", Toast.LENGTH_SHORT).show()
             return false
         }*/
 
         //occupation
-        if ((sp_active_occupation_type.selectedItemPosition == 0) || (sp_active_occupation_type.isEmpty())) {
+        if ((binding.spActiveOccupationType.selectedItemPosition == 0) || (binding.spActiveOccupationType.isEmpty())) {
             Toast.makeText(context, "select valid occupation item", Toast.LENGTH_SHORT).show()
             return false
         }
 
 
         //occupation other
-        if (et_active_occupation_other.visibility == View.VISIBLE && ((!NAME_PATTERN.matcher(
-                et_active_occupation_other.text.toString()
-            ).matches() || (TextUtils.isEmpty(et_active_occupation_other.text))))
+        if (binding.etActiveOccupationOther.visibility == View.VISIBLE && ((!NAME_PATTERN.matcher(
+                binding.etActiveOccupationOther.text.toString()
+            ).matches() || (TextUtils.isEmpty(binding.etActiveOccupationOther.text))))
         ) {
             Toast.makeText(context, "Enter other occupation", Toast.LENGTH_SHORT).show()
             return false
-        } /*else if (et_active_occupation_other.visibility == View.GONE) {
+        } /*else if (binding.etActiveOccupationOther.visibility == View.GONE) {
             onTextOccupationWatcher()
         } else {
-            occupation = et_active_occupation_other.text.toString()
+            occupation = binding.etActiveOccupationOther.text.toString()
         }*/
 
         return true
@@ -1251,7 +1252,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
             }
         }
         LGAspinnerfun()
-        //sp_active_lga.setSelection(prefs.lga!!!!.toInt())
+        //binding.spActiveLga.setSelection(prefs.lga!!!!.toInt())
 
         if (response.combinedetails?.combinesubTreasuries?.size!! > 0) {
             subtreasuryList.add(

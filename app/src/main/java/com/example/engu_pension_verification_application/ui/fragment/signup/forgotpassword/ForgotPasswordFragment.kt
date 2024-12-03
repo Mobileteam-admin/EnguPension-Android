@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentForgotPasswordBinding
 import com.example.engu_pension_verification_application.model.response.ResponseForgotPassword
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
@@ -21,12 +22,10 @@ import com.example.engu_pension_verification_application.util.AppUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.ForgotPasswordViewModel
-import kotlinx.android.synthetic.main.fragment_forgot_password.*
-import kotlinx.android.synthetic.main.fragment_o_t_p.cl_click_login
-import kotlinx.android.synthetic.main.fragment_o_t_p.ll_verify_buttons
 
 
 class ForgotPasswordFragment : BaseFragment() {
+    private lateinit var binding:FragmentForgotPasswordBinding
     var Ph_no: String = ""
     var email_Phn: String = ""
     private lateinit var forgotPasswordViewModel: ForgotPasswordViewModel
@@ -35,20 +34,17 @@ class ForgotPasswordFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        return inflater.inflate(R.layout.fragment_forgot_password, container, false)
+        binding = FragmentForgotPasswordBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         observeData()
-        //for hiding sign up success login button
-        ll_verify_buttons?.visibility = View.VISIBLE
-        cl_click_login?.visibility = View.GONE
 
         //forgotPasswordViewModel = ViewModelProvider(this).get(ForgotPasswordViewModel::class.java)
-        forgtpass_ccp.registerPhoneNumberTextView(et_forgtpass_phone)
+        binding.forgtpassCcp.registerPhoneNumberTextView(binding.etForgtpassPhone)
         onClicked()
         //observeforgotPassword()
     }
@@ -70,7 +66,7 @@ class ForgotPasswordFragment : BaseFragment() {
     }
 
     private fun onClicked() {
-        ll_forgotpass_req.setOnClickListener {
+        binding.llForgotpassReq.setOnClickListener {
 
             if (isValidLogin()) {
 
@@ -93,38 +89,38 @@ class ForgotPasswordFragment : BaseFragment() {
                 }
             }
         }
-        ll_forgotpass_back.setOnClickListener {
+        binding.llForgotpassBack.setOnClickListener {
             findNavController().popBackStack()
         }
     }
 
     private fun isValidLogin(): Boolean {
-        if (TextUtils.isEmpty(ed_forgotpass_email.text)) {
+        if (TextUtils.isEmpty(binding.edForgotpassEmail.text)) {
 
-            if (TextUtils.isEmpty(et_forgtpass_phone.text)) {
+            if (TextUtils.isEmpty(binding.etForgtpassPhone.text)) {
                 Toast.makeText(context, "Please enter email or phone number", Toast.LENGTH_LONG)
                     .show()
                 return false
-            } else if ((!forgtpass_ccp.isValid)) {
-                Toast.makeText(context, "forgtpass_ccp", Toast.LENGTH_LONG)
+            } else if ((!binding.forgtpassCcp.isValid)) {
+                Toast.makeText(context, "binding.forgtpassCcp", Toast.LENGTH_LONG)
                     .show()
-                txt_forgotpass_phone_error.visibility = View.VISIBLE
+                binding.txtForgotpassPhoneError.visibility = View.VISIBLE
                 return false
             } else {
-                txt_forgotpass_phone_error.visibility = View.GONE
-                email_Phn = "+" + forgtpass_ccp.fullNumber
+                binding.txtForgotpassPhoneError.visibility = View.GONE
+                email_Phn = "+" + binding.forgtpassCcp.fullNumber
                 return true
             }
             return false
 
         } else {
 
-            if (!AppUtils.isValidEmailAddress(ed_forgotpass_email.text.toString())) {
-                txt_forgotpass_error.visibility = View.VISIBLE
+            if (!AppUtils.isValidEmailAddress(binding.edForgotpassEmail.text.toString())) {
+                binding.txtForgotpassError.visibility = View.VISIBLE
                 return false
             } else {
-                txt_forgotpass_error.visibility = View.GONE
-                email_Phn = ed_forgotpass_email.text.toString()
+                binding.txtForgotpassError.visibility = View.GONE
+                email_Phn = binding.edForgotpassEmail.text.toString()
                 return true
             }
 

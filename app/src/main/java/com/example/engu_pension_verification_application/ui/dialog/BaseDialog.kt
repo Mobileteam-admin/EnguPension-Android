@@ -22,8 +22,6 @@ import com.example.engu_pension_verification_application.viewmodel.LoaderViewMod
 import com.example.engu_pension_verification_application.viewmodel.LogoutConfirmViewModel
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import kotlinx.android.synthetic.main.logout_dialog.tv_logout_cancel
-import kotlinx.android.synthetic.main.logout_dialog.tv_logout_confirm
 
 
 open class BaseDialog : DialogFragment() {

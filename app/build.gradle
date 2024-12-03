@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'kotlin-android-extensions'
 }
 
 android {
@@ -36,9 +35,6 @@ android {
 
     buildFeatures {
         viewBinding true
-    }
-    dataBinding {
-        enabled = true
     }
     applicationVariants.all { variant ->
         variant.outputs.all { output ->

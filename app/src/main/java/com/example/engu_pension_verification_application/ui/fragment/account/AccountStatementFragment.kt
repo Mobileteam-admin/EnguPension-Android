@@ -12,12 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.FragmentAccountStatementBinding
 import com.example.engu_pension_verification_application.ui.adapter.AccountStatementAdapter
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_account_statement.*
-
 
 class AccountStatementFragment : BaseFragment() {
+    private lateinit var binding:FragmentAccountStatementBinding
     private lateinit var accountStatement_lm: LinearLayoutManager
     lateinit var accountStatementAdapter: AccountStatementAdapter
 
@@ -25,8 +25,8 @@ class AccountStatementFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account_statement, container, false)
+        binding = FragmentAccountStatementBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,7 +40,7 @@ class AccountStatementFragment : BaseFragment() {
     }
 
     private fun onClicked() {
-        ll_download.setOnClickListener {
+        binding.llDownload.setOnClickListener {
             val download= context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val PdfUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/online-learning-ea8c0.appspot.com/o/Uploads%2FSystem%20Design%20Basics%20Handbook%20-8.pdf?alt=media&token=084ec8ce-598a-4a14-ad7c-61003e509af6")
             val getPdf = DownloadManager.Request(PdfUri)
@@ -49,7 +49,7 @@ class AccountStatementFragment : BaseFragment() {
             Toast.makeText(context,"Sample Download Started", Toast.LENGTH_LONG).show()
         }
 
-        img_accountstatement_back.setOnClickListener {
+        binding.imgAccountstatementBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
@@ -57,8 +57,8 @@ class AccountStatementFragment : BaseFragment() {
     private fun onAdapterset() {
         accountStatementAdapter = AccountStatementAdapter() {}
         accountStatement_lm = LinearLayoutManager(requireContext())
-        rv_accountstatement.layoutManager = accountStatement_lm
-        rv_accountstatement.adapter = accountStatementAdapter
+        binding.rvAccountstatement.layoutManager = accountStatement_lm
+        binding.rvAccountstatement.adapter = accountStatementAdapter
     }
     private fun getScreenResolution(context: Context): String? {
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager

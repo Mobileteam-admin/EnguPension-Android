@@ -9,26 +9,28 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.ActivityStripeWebViewBinding
 import com.example.engu_pension_verification_application.ui.activity.BaseActivity
-import kotlinx.android.synthetic.main.activity_stripe_web_view.webView
 
 class StripeWebViewActivity : BaseActivity() {
+    private lateinit var binding:ActivityStripeWebViewBinding
     companion object {
         const val EXTRA_URL = "url"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_stripe_web_view)
+        binding = ActivityStripeWebViewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         init()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     fun init() {
         val url = intent.getStringExtra(EXTRA_URL)!!
-        webView.settings.javaScriptEnabled = true
-        webView.settings.javaScriptEnabled = true
-        webView.webViewClient = object : WebViewClient() {
+        binding.webView.settings.javaScriptEnabled = true
+        binding.webView.settings.javaScriptEnabled = true
+        binding.webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 val prefix = "session_id="
@@ -41,6 +43,6 @@ class StripeWebViewActivity : BaseActivity() {
                 }
             }
         }
-        webView.loadUrl(url)
+        binding.webView.loadUrl(url)
     }
 }

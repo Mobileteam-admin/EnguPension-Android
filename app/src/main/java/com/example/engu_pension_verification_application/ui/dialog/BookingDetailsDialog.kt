@@ -9,24 +9,19 @@ import androidx.lifecycle.lifecycleScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.DialogBookingDetailsBinding
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.util.CalendarUtils
 import com.example.engu_pension_verification_application.viewmodel.BookingDetailsViewModel
 import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.dialog_appointment.tv_date
-import kotlinx.android.synthetic.main.dialog_appointment.tv_time
-import kotlinx.android.synthetic.main.dialog_booking_details.et_description
-import kotlinx.android.synthetic.main.dialog_booking_details.ll_booking_details_back
-import kotlinx.android.synthetic.main.dialog_booking_details.ll_booking_pay_now
-import kotlinx.android.synthetic.main.dialog_booking_details.tv_booking_date
-import kotlinx.android.synthetic.main.dialog_booking_details.tv_booking_slot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 class BookingDetailsDialog private constructor() : BaseDialog() {
+    private lateinit var binding:DialogBookingDetailsBinding
     private lateinit var date: String
     private lateinit var slot: String
     private lateinit var viewModel: BookingDetailsViewModel
@@ -60,7 +55,8 @@ class BookingDetailsDialog private constructor() : BaseDialog() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_booking_details, container, false)
+        binding = DialogBookingDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -108,14 +104,14 @@ class BookingDetailsDialog private constructor() : BaseDialog() {
     }
 
     private fun initViews() {
-        tv_booking_date.text = date
-        tv_booking_slot.text = slot
-        ll_booking_details_back.setOnClickListener {
+        binding.tvBookingDate.text = date
+        binding.tvBookingSlot.text = slot
+        binding.llBookingDetailsBack.setOnClickListener {
             dismiss()
         }
-        ll_booking_pay_now.setOnClickListener {
+        binding.llBookingPayNow.setOnClickListener {
             showLoader()
-            viewModel.transferToFinalAccount(et_description.text.toString())
+            viewModel.transferToFinalAccount(binding.etDescription.text.toString())
         }
     }
 }

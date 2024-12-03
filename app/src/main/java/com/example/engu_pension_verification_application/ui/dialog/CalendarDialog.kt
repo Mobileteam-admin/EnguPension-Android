@@ -7,24 +7,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.DialogCalendarBinding
 import com.example.engu_pension_verification_application.ui.custom.CalendarLabelView
 import com.example.engu_pension_verification_application.util.AppUtils.Companion.isValidNumber
 import com.example.engu_pension_verification_application.util.CalendarUtils
 import com.example.engu_pension_verification_application.viewmodel.CalendarResultViewModel
 import com.example.engu_pension_verification_application.viewmodel.CalendarViewModel
 import com.example.engu_pension_verification_application.viewmodel.CalendarViewModel.DayType
-import kotlinx.android.synthetic.main.dialog_calendar.btn_next
-import kotlinx.android.synthetic.main.dialog_calendar.btn_prev
-import kotlinx.android.synthetic.main.dialog_calendar.grid_calendar
-import kotlinx.android.synthetic.main.dialog_calendar.ll_close
-import kotlinx.android.synthetic.main.dialog_calendar.ll_submit
-import kotlinx.android.synthetic.main.dialog_calendar.txt_month_year
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 
 class CalendarDialog : BaseDialog() {
+    private lateinit var binding:DialogCalendarBinding
     private val viewModel by viewModels<CalendarViewModel>()
     private val resultViewModel by activityViewModels<CalendarResultViewModel>()
     private val labels = mutableListOf<MutableList<CalendarLabelView>>()
@@ -32,7 +28,8 @@ class CalendarDialog : BaseDialog() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_calendar, container, false)
+        binding = DialogCalendarBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,18 +44,18 @@ class CalendarDialog : BaseDialog() {
     private fun initViews() {
         initCalendarItems()
         refreshCalendar()
-        btn_prev.setOnClickListener {
+        binding.btnPrev.setOnClickListener {
             viewModel.calendar.add(Calendar.MONTH, -1)
             refreshCalendar()
         }
 
-        btn_next.setOnClickListener {
+        binding.btnNext.setOnClickListener {
             viewModel.calendar.add(Calendar.MONTH, 1)
             refreshCalendar()
         }
 
-        ll_close.setOnClickListener { dismiss() }
-        ll_submit.setOnClickListener {
+        binding.llClose.setOnClickListener { dismiss() }
+        binding.llSubmit.setOnClickListener {
             if (viewModel.getSelectedDate() == null)
                 showToast(R.string.date_not_selected_msg)
             else {
@@ -72,14 +69,14 @@ class CalendarDialog : BaseDialog() {
         labels.clear()
         dayTypes.clear()
         val monthFormat = SimpleDateFormat(CalendarUtils.DATE_FORMAT_2, Locale.getDefault())
-        txt_month_year.text = monthFormat.format(viewModel.calendar.time)
+        binding.txtMonthYear.text = monthFormat.format(viewModel.calendar.time)
         val dayLabels = arrayOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")
         for (dayLabel in dayLabels) {
             val label = CalendarLabelView(requireContext())
             label.setText(dayLabel)
             label.setTextColor(R.color.black_text_2)
             label.setRoundBgVisibility(false)
-            grid_calendar.addView(label)
+            binding.gridCalendar.addView(label)
         }
         repeat(6) { row ->
             val labelRow = mutableListOf<CalendarLabelView>()
@@ -87,7 +84,7 @@ class CalendarDialog : BaseDialog() {
             repeat(7) { column ->
                 val calendarLabelView = CalendarLabelView(requireContext())
                 calendarLabelView.setTextColor(R.color.black_text_3)
-                grid_calendar.addView(calendarLabelView)
+                binding.gridCalendar.addView(calendarLabelView)
                 labelRow.add(calendarLabelView)
                 dayTypeRow.add(DayType.SELECTABLE)
                 calendarLabelView.setClickListener({
@@ -121,7 +118,7 @@ class CalendarDialog : BaseDialog() {
         viewModel.selectedDateRow = -1
         viewModel.selectedDateColumn = -1
         val monthFormat = SimpleDateFormat(CalendarUtils.DATE_FORMAT_2, Locale.getDefault())
-        txt_month_year.text = monthFormat.format(viewModel.calendar.time)
+        binding.txtMonthYear.text = monthFormat.format(viewModel.calendar.time)
         val dayMax = viewModel.calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
         var startDay = viewModel.calendar.get(Calendar.DAY_OF_WEEK) - 2
         startDay = if (startDay == -1) 6 else startDay

@@ -8,18 +8,18 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.FragmentAccountBinding
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_account.*
 
 
 class AccountFragment : BaseFragment() {
-
+    private lateinit var binding:FragmentAccountBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false)
+        binding = FragmentAccountBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -28,13 +28,13 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun onClicked() {
-        img_account_back.setOnClickListener {
+        binding.imgAccountBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        txt_statement.setOnClickListener {
+        binding.txtStatement.setOnClickListener {
             navigate(R.id.action_account_to_accountstatement)
         }
-        txt_kinprofile.setOnClickListener {
+        binding.txtKinprofile.setOnClickListener {
             navigate(R.id.action_account_to_kinprofile)
         }
     }

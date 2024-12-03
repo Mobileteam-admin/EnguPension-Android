@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.DialogAddBankBinding
 import com.example.engu_pension_verification_application.model.response.AccountTypeItem
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
 import com.example.engu_pension_verification_application.network.ApiClient
@@ -21,12 +22,6 @@ import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
 import com.example.engu_pension_verification_application.viewmodel.AddBankViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.card_add_bank.et_swift_code
-import kotlinx.android.synthetic.main.card_add_bank.img_bank
-import kotlinx.android.synthetic.main.card_add_bank.ll_addbank_close
-import kotlinx.android.synthetic.main.card_add_bank.ll_addbank_submit
-import kotlinx.android.synthetic.main.card_add_bank.sp_account_type
-import kotlinx.android.synthetic.main.card_add_bank.sp_bank
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -36,7 +31,7 @@ class AddBankDialog : BaseDialog() {
         private const val BANK_ITEM_SELECT_ID = -1
         private const val ACC_TYPE_ITEM_SELECT_ID = -1
     }
-
+    private lateinit var binding:DialogAddBankBinding
     private lateinit var viewModel: AddBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     override fun onCreateView(
@@ -44,7 +39,8 @@ class AddBankDialog : BaseDialog() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.card_add_bank, container, false)
+        binding = DialogAddBankBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,10 +86,10 @@ class AddBankDialog : BaseDialog() {
     }
 
     private fun initViews() {
-        ll_addbank_close.setOnClickListener { dismiss() }
-        ll_addbank_submit.setOnClickListener {
+        binding.llAddbankClose.setOnClickListener { dismiss() }
+        binding.llAddbankSubmit.setOnClickListener {
         }
-        sp_bank.onItemSelectedListener = object : OnItemSelectedListener {
+        binding.spBank.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 refreshBankImage(position)
             }
@@ -101,7 +97,7 @@ class AddBankDialog : BaseDialog() {
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
         }
-        et_swift_code.setOnFocusChangeListener { view, hasFocus ->  }
+        binding.etSwiftCode.setOnFocusChangeListener { view, hasFocus ->  }
 
 
     }
@@ -142,18 +138,18 @@ class AddBankDialog : BaseDialog() {
                 viewModel.accountTypeItems.add(AccountTypeItem(it?.id, it?.type))
             }
         }
-        sp_bank.adapter = BankAdapter(context, viewModel.bankItems)
-        sp_account_type.adapter = AccountTypeAdapter(context, viewModel.accountTypeItems)
+        binding.spBank.adapter = BankAdapter(context, viewModel.bankItems)
+        binding.spAccountType.adapter = AccountTypeAdapter(context, viewModel.accountTypeItems)
     }
 
     private fun refreshBankImage(position:Int) {
-        img_bank.setImageResource(R.drawable.ic_bank_green)
+        binding.imgBank.setImageResource(R.drawable.ic_bank_green)
         viewModel.bankItems[position]?.let {
             if (it.id != BANK_ITEM_SELECT_ID) {
                 Glide.with(requireContext())
                     .load(it.logo)
                     .placeholder(R.drawable.ic_bank_green)
-                    .into(img_bank)
+                    .into(binding.imgBank)
             }
         }
     }

@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentRetireeBankBinding
 import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
 import com.example.engu_pension_verification_application.model.input.InputBankVerification
 import com.example.engu_pension_verification_application.model.response.*
@@ -43,7 +44,6 @@ import com.example.engu_pension_verification_application.viewmodel.EnguViewModel
 import com.example.engu_pension_verification_application.viewmodel.RetireeBankViewModel
 import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.fragment_retiree_bank.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.ArrayList
@@ -56,6 +56,7 @@ class RetireeBankFragment : BaseFragment() {
 
     val FULL_NAME_PATTERN = Pattern.compile("^[a-zA-Z\\s]+$")
 
+    private lateinit var binding:FragmentRetireeBankBinding
     private lateinit var bankViewModel: RetireeBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private val retireeServiceViewModel by activityViewModels<RetireeServiceViewModel>()
@@ -84,7 +85,8 @@ class RetireeBankFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_retiree_bank, container, false)
+        binding = FragmentRetireeBankBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,7 +97,7 @@ class RetireeBankFragment : BaseFragment() {
     }
 
     private fun initViews(){
-        et_retireebank_swiftcode.filters = arrayOf(InputFilter.AllCaps(), filterUpperCaseAndDigits )
+        binding.etRetireebankSwiftcode.filters = arrayOf(InputFilter.AllCaps(), filterUpperCaseAndDigits )
 //        setAdapter()
         // initcall()  - hold
         OnTextWatcher()
@@ -105,7 +107,7 @@ class RetireeBankFragment : BaseFragment() {
 
 //        et_activebank_swiftcode.text = Editable.Factory.getInstance().newEditable("MOOGNGL1")
 
-        et_retireebank_accname.setText(AppUtils.getFullName(
+        binding.etRetireebankAccname.setText(AppUtils.getFullName(
             prefs.Rfirst_name,
             prefs.Rmiddle_name,
             prefs.Rlast_name))
@@ -201,9 +203,9 @@ class RetireeBankFragment : BaseFragment() {
                     dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                     isBankVerifyBtn = false
-                    tv_retireebank_bankcode_verify.visibility = View.INVISIBLE
-                    tv_retireebank_bankcode_reverify.visibility = View.VISIBLE
-                    tv_retireebank_bankcode_verified.visibility = View.INVISIBLE
+                    binding.tvRetireebankBankcodeVerify.visibility = View.INVISIBLE
+                    binding.tvRetireebankBankcodeReverify.visibility = View.VISIBLE
+                    binding.tvRetireebankBankcodeVerified.visibility = View.INVISIBLE
                 }
             }
         }
@@ -229,7 +231,7 @@ class RetireeBankFragment : BaseFragment() {
     }
     private fun OnTextWatcher() {
 
-        et_retireebank_swiftcode.addTextChangedListener(object : TextWatcher {
+        binding.etRetireebankSwiftcode.addTextChangedListener(object : TextWatcher {
 
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -240,11 +242,11 @@ class RetireeBankFragment : BaseFragment() {
 
             override fun afterTextChanged(p0: Editable?) {
 
-                et_retireebank_swiftcode.setOnFocusChangeListener { view, hasFocus ->
+                binding.etRetireebankSwiftcode.setOnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) {
 
                         // TODO: Uncomment after fixing api -> "/api/v1/get_bank_details"
-//                        bankViewModel.fetchBankDetails(et_retireebank_swiftcode.text.toString())
+//                        bankViewModel.fetchBankDetails(binding.etRetireebankSwiftcode.text.toString())
 
                     }
                 }
@@ -252,7 +254,7 @@ class RetireeBankFragment : BaseFragment() {
             }
         })
 
-        sp_retireebank_.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spRetireebank.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -275,7 +277,7 @@ class RetireeBankFragment : BaseFragment() {
 
         }
 
-        sp_retireebank_acctype.onItemSelectedListener =
+        binding.spRetireebankAcctype.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
 
                 override fun onItemSelected(
@@ -321,7 +323,7 @@ class RetireeBankFragment : BaseFragment() {
             }
         }
         bankAdapter = BankAdapter(context, BankList)
-        sp_retireebank_.adapter = bankAdapter
+        binding.spRetireebank.adapter = bankAdapter
 
 
 
@@ -335,29 +337,29 @@ class RetireeBankFragment : BaseFragment() {
             }
         }
         accounttypeAdapter = AccountTypeAdapter(context, AccountTypeList)
-        sp_retireebank_acctype.adapter = accounttypeAdapter
+        binding.spRetireebankAcctype.adapter = accounttypeAdapter
 
     }
 
     private fun onClicked() {
 
-        cb_retireebank_autorenewal.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.cbRetireebankAutorenewal.setOnCheckedChangeListener { buttonView, isChecked ->
             autoRenewal = isChecked
         }
 
-        tv_retireebank_bankcode_verify.setOnClickListener{
+        binding.tvRetireebankBankcodeVerify.setOnClickListener{
             if (isValidBankAccountNumber()){
                 bankVerifyDialog()
             }
         }
 
-        tv_retireebank_bankcode_reverify.setOnClickListener{
+        binding.tvRetireebankBankcodeReverify.setOnClickListener{
             if (isValidBankAccountNumber()){
                 bankVerifyDialog()
             }
         }
 
-        ll_retireebank_next.setOnClickListener {
+        binding.llRetireebankNext.setOnClickListener {
 
             if (isValidRBank()) {
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {/*     //finish the Form
@@ -388,9 +390,9 @@ class RetireeBankFragment : BaseFragment() {
         val et_bank_verify_bank_code = bankVerifyView.findViewById<EditText>(R.id.et_bank_verify_bank_code)
 
 
-        et_bank_verify_acc_number.text = et_retireebank_accnum.text
+        et_bank_verify_acc_number.text = binding.etRetireebankAccnum.text
 
-        et_bank_verify_bank_code.text = et_retireebank_bankcode.text
+        et_bank_verify_bank_code.text = binding.etRetireebankBankcode.text
 
         val bank_verify_submit = bankVerifyView.findViewById<LinearLayout>(R.id.ll_bankverifysubmit)
         bankVerifyalertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -449,16 +451,16 @@ class RetireeBankFragment : BaseFragment() {
     private fun isValidBankAccountNumber(): Boolean {
 
         //select bank
-        if (sp_retireebank_.selectedItemPosition == 0) {
+        if (binding.spRetireebank.selectedItemPosition == 0) {
             Toast.makeText(context, "Please Select Bank", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //acc number
-        if (TextUtils.isEmpty(et_retireebank_accnum.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankAccnum.text)) {
             Toast.makeText(context, "Empty account number", Toast.LENGTH_LONG).show()
             return false
-        } else if (!ACC_NO_PATTERN.matcher(et_retireebank_accnum.text.toString()).matches()) {
+        } else if (!ACC_NO_PATTERN.matcher(binding.etRetireebankAccnum.text.toString()).matches()) {
             Toast.makeText(
                 context, "Account number Not valid, must 10-12 digits", Toast.LENGTH_LONG
             ).show()
@@ -467,13 +469,13 @@ class RetireeBankFragment : BaseFragment() {
 
 
         //re enter acc number
-        if (TextUtils.isEmpty(et_retireebank_re_accnum.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankReAccnum.text)) {
             Toast.makeText(context, "Empty reAccount number", Toast.LENGTH_LONG).show()
             return false
-        } else if (!ACC_NO_PATTERN.matcher(et_retireebank_re_accnum.text.toString()).matches()) {
+        } else if (!ACC_NO_PATTERN.matcher(binding.etRetireebankReAccnum.text.toString()).matches()) {
             Toast.makeText(context, "reAccount number Not valid, , must 10-12 digits", Toast.LENGTH_LONG).show()
             return false
-        } else if (et_retireebank_accnum.text.toString() != et_retireebank_re_accnum.text.toString()) {
+        } else if (binding.etRetireebankAccnum.text.toString() != binding.etRetireebankReAccnum.text.toString()) {
             Toast.makeText(
                 context, "Account numbers doesn't match", Toast.LENGTH_LONG
             ).show()
@@ -482,23 +484,23 @@ class RetireeBankFragment : BaseFragment() {
 
 
         //acc name
-        if (TextUtils.isEmpty(et_retireebank_accname.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankAccname.text)) {
             Toast.makeText(context, "Empty account Name", Toast.LENGTH_LONG).show()
             return false
-        } else if (!FULL_NAME_PATTERN.matcher(et_retireebank_accname.text.toString()).matches()) {
+        } else if (!FULL_NAME_PATTERN.matcher(binding.etRetireebankAccname.text.toString()).matches()) {
 
             Toast.makeText(context, "account name not valid", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //swift code
-        if (TextUtils.isEmpty(et_retireebank_swiftcode.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankSwiftcode.text)) {
             Toast.makeText(context, "Please enter SwiftCode", Toast.LENGTH_LONG).show()
             return false
         }
 
         //bank code
-        if (TextUtils.isEmpty(et_retireebank_bankcode.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankBankcode.text)) {
             Toast.makeText(context, "Please enter BankCode", Toast.LENGTH_LONG).show()
             return false
         }
@@ -509,16 +511,16 @@ class RetireeBankFragment : BaseFragment() {
     private fun isValidRBank(): Boolean {
 
         //select bank
-        if (sp_retireebank_.selectedItemPosition == 0) {
+        if (binding.spRetireebank.selectedItemPosition == 0) {
             Toast.makeText(context, "Please Select Bank", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //acc number
-        if (TextUtils.isEmpty(et_retireebank_accnum.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankAccnum.text)) {
             Toast.makeText(context, "Empty account number", Toast.LENGTH_LONG).show()
             return false
-        } else if (!ACC_NO_PATTERN.matcher(et_retireebank_accnum.text.toString()).matches()) {
+        } else if (!ACC_NO_PATTERN.matcher(binding.etRetireebankAccnum.text.toString()).matches()) {
             Toast.makeText(
                 context, "Account number not valid", Toast.LENGTH_LONG
             ).show()
@@ -527,13 +529,13 @@ class RetireeBankFragment : BaseFragment() {
 
 
         //re enter acc number
-        if (TextUtils.isEmpty(et_retireebank_re_accnum.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankReAccnum.text)) {
             Toast.makeText(context, "Empty reAccount number", Toast.LENGTH_LONG).show()
             return false
-        } else if (!ACC_NO_PATTERN.matcher(et_retireebank_re_accnum.text.toString()).matches()) {
+        } else if (!ACC_NO_PATTERN.matcher(binding.etRetireebankReAccnum.text.toString()).matches()) {
             Toast.makeText(context, "reAccount number not valid", Toast.LENGTH_LONG).show()
             return false
-        } else if (et_retireebank_accnum.text.toString() != et_retireebank_re_accnum.text.toString()) {
+        } else if (binding.etRetireebankAccnum.text.toString() != binding.etRetireebankReAccnum.text.toString()) {
             Toast.makeText(
                 context, "Account numbers doesn't match", Toast.LENGTH_LONG
             ).show()
@@ -542,29 +544,29 @@ class RetireeBankFragment : BaseFragment() {
 
 
         //acc name
-        if (TextUtils.isEmpty(et_retireebank_accname.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankAccname.text)) {
             Toast.makeText(context, "Empty account Name", Toast.LENGTH_LONG).show()
             return false
-        } else if (!FULL_NAME_PATTERN.matcher(et_retireebank_accname.text.toString()).matches()) {
+        } else if (!FULL_NAME_PATTERN.matcher(binding.etRetireebankAccname.text.toString()).matches()) {
 
             Toast.makeText(context, "account name not valid", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //swift code
-        if (TextUtils.isEmpty(et_retireebank_swiftcode.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankSwiftcode.text)) {
             Toast.makeText(context, "Please enter SwiftCode", Toast.LENGTH_LONG).show()
             return false
         }
 
         //bank code
-        if (TextUtils.isEmpty(et_retireebank_bankcode.text)) {
+        if (TextUtils.isEmpty(binding.etRetireebankBankcode.text)) {
             Toast.makeText(context, "Please enter BankCode", Toast.LENGTH_LONG).show()
             return false
         }
 
         //bank type
-        if (sp_retireebank_acctype.selectedItemPosition == 0) {
+        if (binding.spRetireebankAcctype.selectedItemPosition == 0) {
 
             Toast.makeText(context, "Please Select Bank Type", Toast.LENGTH_LONG).show()
             return false
@@ -587,12 +589,12 @@ class RetireeBankFragment : BaseFragment() {
 //                userId = prefs.user_id?.toInt(),
 
                 bankId = r_bankid/*"7b8dc580-ba28-8f3b-354410354410351ab4"*/,
-                accountNumber = et_retireebank_accnum.text.toString(),
-                bankCode = et_retireebank_bankcode.text.toString(),
-                accountType = r_accounttype /*sp_retireebank_acctype.selectedItemPosition.toString()*/,
-                accountHolderName = et_retireebank_accname.text.toString(),
-                swiftCode = et_retireebank_swiftcode.text.toString(),
-                reEnterAccountNumber = et_retireebank_re_accnum.text.toString(),
+                accountNumber = binding.etRetireebankAccnum.text.toString(),
+                bankCode = binding.etRetireebankBankcode.text.toString(),
+                accountType = r_accounttype /*binding.spRetireebankAcctype.selectedItemPosition.toString()*/,
+                accountHolderName = binding.etRetireebankAccname.text.toString(),
+                swiftCode = binding.etRetireebankSwiftcode.text.toString(),
+                reEnterAccountNumber = binding.etRetireebankReAccnum.text.toString(),
                 autoRenewal = autoRenewal,
 //                userId = prefs.user_id
 
@@ -604,7 +606,7 @@ class RetireeBankFragment : BaseFragment() {
 
     fun onSwiftBankCodeSuccess(response: ResponseSwiftBankCode) {
         dismissLoader()
-        et_retireebank_bankcode.text = Editable.Factory.getInstance()
+        binding.etRetireebankBankcode.text = Editable.Factory.getInstance()
             .newEditable(response.swiftbankdetail?.swiftCodeResponse?.bankCode)
     }
 
@@ -706,18 +708,18 @@ class RetireeBankFragment : BaseFragment() {
         //prefs.isBankVerify = true
 
         isBankVerifyBtn = true
-        tv_retireebank_bankcode_verify.visibility = View.INVISIBLE
-        tv_retireebank_bankcode_reverify.visibility = View.INVISIBLE
-        tv_retireebank_bankcode_verified.visibility = View.VISIBLE
+        binding.tvRetireebankBankcodeVerify.visibility = View.INVISIBLE
+        binding.tvRetireebankBankcodeReverify.visibility = View.INVISIBLE
+        binding.tvRetireebankBankcodeVerified.visibility = View.VISIBLE
     }
     private fun refreshBankImage(position:Int) {
-        img_retireebank_.setImageResource(R.drawable.ic_bank_green)
+        binding.imgRetireebank.setImageResource(R.drawable.ic_bank_green)
         BankList[position]?.let {
             if (it.id != BANK_ITEM_SELECT_ID) {
                 Glide.with(requireContext())
                     .load(it.logo)
                     .placeholder(R.drawable.ic_bank_green)
-                    .into(img_retireebank_)
+                    .into(binding.imgRetireebank)
             }
         }
     }
@@ -725,6 +727,6 @@ class RetireeBankFragment : BaseFragment() {
     // TODO: Remove this function after fixing api -> "/api/v1/get_bank_details"
     private fun refreshBankCode(position:Int) {
         val bankCode = if (BankList[position]?.id != BANK_ITEM_SELECT_ID) BankList[position]?.code else ""
-        et_retireebank_bankcode.setText(bankCode)
+        binding.etRetireebankBankcode.setText(bankCode)
     }
 }
