@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentActiveServiceBinding
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
@@ -28,10 +29,10 @@ import com.example.engu_pension_verification_application.viewmodel.ActiveService
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.fragment_active_service.*
 
 
 class ActiveServiceFragment : BaseFragment() {
+    private lateinit var binding:FragmentActiveServiceBinding
         private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
         private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
@@ -45,19 +46,19 @@ class ActiveServiceFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_active_service, container, false)
+        binding = FragmentActiveServiceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar_activeservice.setTitle(null)
+        binding.toolbarActiveservice.setTitle(null)
         initViewModel()
 
 
-        setupViewPager(tab_activeservice_viewpager)
-        tab_tablayout_activeservice!!.setupWithViewPager(tab_activeservice_viewpager)
+        setupViewPager(binding.tabActiveserviceViewpager)
+        binding.tabTablayoutActiveservice!!.setupWithViewPager(binding.tabActiveserviceViewpager)
 
         //enableDisableTabs(enableTab0 = true, enableTab1 = false, enableTab2 = false)
 
@@ -76,13 +77,13 @@ class ActiveServiceFragment : BaseFragment() {
 
     private fun observeLiveData() {
         activeServiceViewModel.onMoveToNextTab.observe(viewLifecycleOwner) {
-            tab_activeservice_viewpager.setCurrentItem(getItem(+1), true)
+            binding.tabActiveserviceViewpager.setCurrentItem(getItem(+1), true)
         }
         activeServiceViewModel.enableDocTab.observe(viewLifecycleOwner) {
-                tab_tablayout_activeservice.getTabAt(ActiveDocumentsFragment.TAB_POSITION)?.view?.isEnabled = it
+                binding.tabTablayoutActiveservice.getTabAt(ActiveDocumentsFragment.TAB_POSITION)?.view?.isEnabled = it
         }
         activeServiceViewModel.enableBankTab.observe(viewLifecycleOwner) {
-                tab_tablayout_activeservice.getTabAt(ActiveBankFragment.TAB_POSITION)?.view?.isEnabled = it
+                binding.tabTablayoutActiveservice.getTabAt(ActiveBankFragment.TAB_POSITION)?.view?.isEnabled = it
         }
 
         tokenRefreshViewModel2.tokenRefreshError.observe(viewLifecycleOwner) { error ->
@@ -98,7 +99,7 @@ class ActiveServiceFragment : BaseFragment() {
     }
 
     private fun onClicked() {
-        img_back_activeservice.setOnClickListener {
+        binding.imgBackActiveservice.setOnClickListener {
             activity?.onBackPressed()
         }
     }
@@ -139,7 +140,7 @@ class ActiveServiceFragment : BaseFragment() {
         }*/
 
 
-        tab_tablayout_activeservice.addOnTabSelectedListener(object :
+        binding.tabTablayoutActiveservice.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
 
@@ -147,31 +148,31 @@ class ActiveServiceFragment : BaseFragment() {
                 Log.d("position", "onTabSelected: " + position)
                 when (position) {
                     0 -> {
-                        tab_tablayout_activeservice.getTabAt(0)
+                        binding.tabTablayoutActiveservice.getTabAt(0)
                             ?.setIcon(R.drawable.ic_basicdetails_white)
-                        tab_tablayout_activeservice.getTabAt(1)
+                        binding.tabTablayoutActiveservice.getTabAt(1)
                             ?.setIcon(R.drawable.ic_documents_inactive)
-                        tab_tablayout_activeservice.getTabAt(2)
+                        binding.tabTablayoutActiveservice.getTabAt(2)
                             ?.setIcon(R.drawable.ic_bank_inactive)
                     }
 
                     1 -> {
 
-                        tab_tablayout_activeservice.getTabAt(0)
+                        binding.tabTablayoutActiveservice.getTabAt(0)
                             ?.setIcon(R.drawable.ic_basic_details_inactive)
-                        tab_tablayout_activeservice.getTabAt(1)
+                        binding.tabTablayoutActiveservice.getTabAt(1)
                             ?.setIcon(R.drawable.ic_documents_active)
-                        tab_tablayout_activeservice.getTabAt(2)
+                        binding.tabTablayoutActiveservice.getTabAt(2)
                             ?.setIcon(R.drawable.ic_bank_inactive)
                     }
 
                     2 -> {
 
-                        tab_tablayout_activeservice.getTabAt(0)
+                        binding.tabTablayoutActiveservice.getTabAt(0)
                             ?.setIcon(R.drawable.ic_basic_details_inactive)
-                        tab_tablayout_activeservice.getTabAt(1)
+                        binding.tabTablayoutActiveservice.getTabAt(1)
                             ?.setIcon(R.drawable.ic_documents_inactive)
-                        tab_tablayout_activeservice.getTabAt(2)?.setIcon(R.drawable.ic_bank_white)
+                        binding.tabTablayoutActiveservice.getTabAt(2)?.setIcon(R.drawable.ic_bank_white)
                     }
                 }
             }
@@ -200,7 +201,7 @@ class ActiveServiceFragment : BaseFragment() {
     }*/
 
 
-    //tab_tablayout_activeservice
+    //binding.tabTablayoutActiveservice
 
 
 
@@ -244,7 +245,7 @@ class ActiveServiceFragment : BaseFragment() {
     }
 
     private fun getItem(i: Int): Int {
-        return tab_activeservice_viewpager.currentItem + i
+        return binding.tabActiveserviceViewpager.currentItem + i
     }
 
 }

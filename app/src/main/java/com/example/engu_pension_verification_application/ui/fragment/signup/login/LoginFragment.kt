@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentLoginBinding
 import com.example.engu_pension_verification_application.model.response.ResponseLogin
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.DashboardActivity
@@ -26,13 +27,13 @@ import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.LoginViewModel
-import kotlinx.android.synthetic.main.fragment_login.*
 
 
 //var loginGovResponse : String? = null
 
 @Suppress("UNREACHABLE_CODE")
 class LoginFragment : BaseFragment() {
+    private lateinit var binding:FragmentLoginBinding
     private lateinit var loginViewModel: LoginViewModel
     var Ph_no: String = ""
     var email_Phn: String = ""
@@ -45,13 +46,13 @@ class LoginFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false)
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        login_ccp.registerPhoneNumberTextView(et_login_phone)
+        binding.loginCcp.registerPhoneNumberTextView(binding.etLoginPhone)
         initViewModel()
         observeData()
         onClicked()
@@ -74,10 +75,10 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun onClicked() {
-        ll_log_signup.setOnClickListener {
+        binding.llLogSignup.setOnClickListener {
             navigate(R.id.action_login_to_signup)
         }
-        ll_log_login.setOnClickListener {
+        binding.llLogLogin.setOnClickListener {
             if (isValidLogin()) {
                 if (isValidate_password()) {
                     showLoader()
@@ -85,13 +86,13 @@ class LoginFragment : BaseFragment() {
                         Log.d(
                             "Login",
                             "onClicked: " + com.example.engu_pension_verification_application.model.input.InputLogin(
-                                ed_password.text.toString(),
+                                binding.edPassword.text.toString(),
                                 email_Phn
                             )
                         )
                         loginViewModel.doLogin(
                             com.example.engu_pension_verification_application.model.input.InputLogin(
-                                ed_password.text.toString(),
+                                binding.edPassword.text.toString(),
                                 email_Phn
                             )
                         )
@@ -107,44 +108,44 @@ class LoginFragment : BaseFragment() {
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)*/
         }
-        text_forgotPass.setOnClickListener {
+        binding.textForgotPass.setOnClickListener {
             navigate(R.id.action_login_to_forgotpassword)
         }
     }
 
     private fun isValidate_password(): Boolean {
-        if (TextUtils.isEmpty(ed_password.text)) {
-            txt_password_error.visibility = View.VISIBLE
+        if (TextUtils.isEmpty(binding.edPassword.text)) {
+            binding.txtPasswordError.visibility = View.VISIBLE
             return false
         } else {
-            txt_password_error.visibility = View.GONE
+            binding.txtPasswordError.visibility = View.GONE
             return true
         }
         return true
     }
 
     private fun isValidLogin(): Boolean {
-        if (TextUtils.isEmpty(ed_email_phn.text)) {
-            if (TextUtils.isEmpty(et_login_phone.text)) {
+        if (TextUtils.isEmpty(binding.edEmailPhn.text)) {
+            if (TextUtils.isEmpty(binding.etLoginPhone.text)) {
                 Toast.makeText(context, "Please enter email or phone number", Toast.LENGTH_LONG)
                     .show()
                 return false
-            } else if ((!login_ccp.isValid)) {
-                txt_login_phone_error.visibility = View.VISIBLE
+            } else if ((!binding.loginCcp.isValid)) {
+                binding.txtLoginPhoneError.visibility = View.VISIBLE
                 return false
             } else {
-                txt_login_phone_error.visibility = View.GONE
-                email_Phn = "+" + login_ccp.fullNumber
+                binding.txtLoginPhoneError.visibility = View.GONE
+                email_Phn = "+" + binding.loginCcp.fullNumber
                 return true
             }
             return false
         } else {
-            if (!AppUtils.isValidEmailAddress(ed_email_phn.text.toString())) {
-                txt_loginemail_error.visibility = View.VISIBLE
+            if (!AppUtils.isValidEmailAddress(binding.edEmailPhn.text.toString())) {
+                binding.txtLoginemailError.visibility = View.VISIBLE
                 return false
             } else {
-                txt_loginemail_error.visibility = View.GONE
-                email_Phn = ed_email_phn.text.toString()
+                binding.txtLoginemailError.visibility = View.GONE
+                email_Phn = binding.edEmailPhn.text.toString()
                 return true
             }
         }

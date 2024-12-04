@@ -16,9 +16,9 @@ class TokenRefreshViewModel2(private val networkRepo: NetworkRepo) : ViewModel()
     suspend fun fetchRefreshToken(): Boolean {
         try {
             val response = networkRepo.fetchRefreshToken()
-            if (response.token_detail?.status == AppConstants.SUCCESS) {
-                SharedPref.access_token = response.token_detail.access
-                SharedPref.refresh_token = response.token_detail.refresh
+            if (response.tokenDetail?.status == AppConstants.SUCCESS) {
+                SharedPref.access_token = response.tokenDetail.accessToken
+                SharedPref.refresh_token = response.tokenDetail.refreshToken
                 return true
             } else {
                 postExpiredError()

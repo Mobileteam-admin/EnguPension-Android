@@ -11,19 +11,20 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.DialogCalendarBinding
+import com.example.engu_pension_verification_application.databinding.LogoutDialogBinding
 import com.example.engu_pension_verification_application.viewmodel.LogoutConfirmViewModel
-import kotlinx.android.synthetic.main.logout_dialog.tv_logout_cancel
-import kotlinx.android.synthetic.main.logout_dialog.tv_logout_confirm
-
 
 class LogoutConfirmDialog : BaseDialog() {
+    private lateinit var binding:LogoutDialogBinding
     private val viewModel by activityViewModels<LogoutConfirmViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.logout_dialog, container, false)
+        binding = LogoutDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,10 +33,10 @@ class LogoutConfirmDialog : BaseDialog() {
     }
 
     private fun initViews() {
-        tv_logout_cancel.setOnClickListener {
+        binding.tvLogoutCancel.setOnClickListener {
             dismiss()
         }
-        tv_logout_confirm.setOnClickListener {
+        binding.tvLogoutConfirm.setOnClickListener {
             viewModel.logout.value = Unit
         }
     }

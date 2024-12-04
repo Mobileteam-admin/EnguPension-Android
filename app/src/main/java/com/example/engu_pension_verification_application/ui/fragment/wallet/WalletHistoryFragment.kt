@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.FragmentWalletHistoryBinding
 import com.example.engu_pension_verification_application.ui.adapter.WalletHistoryAdapter
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_wallet_history.*
-
 
 class WalletHistoryFragment : BaseFragment() {
+    private lateinit var binding:FragmentWalletHistoryBinding
     private lateinit var walletHistory_lm: LinearLayoutManager
     lateinit var walletHistoryAdapter: WalletHistoryAdapter
 
@@ -21,8 +21,8 @@ class WalletHistoryFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallet_history, container, false)
+        binding = FragmentWalletHistoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,12 +34,12 @@ class WalletHistoryFragment : BaseFragment() {
     private fun onAdapterset() {
         walletHistoryAdapter = WalletHistoryAdapter() {}
         walletHistory_lm = LinearLayoutManager(requireContext())
-        rv_wallethistory.layoutManager = walletHistory_lm
-        rv_wallethistory.adapter = walletHistoryAdapter
+        binding.rvWallethistory.layoutManager = walletHistory_lm
+        binding.rvWallethistory.adapter = walletHistoryAdapter
     }
 
     private fun onClicked() {
-        img_wallethistory_back.setOnClickListener {
+        binding.imgWallethistoryBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }

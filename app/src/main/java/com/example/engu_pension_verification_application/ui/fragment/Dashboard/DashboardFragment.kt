@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentDashboardBinding
 import com.example.engu_pension_verification_application.model.response.ResponseLogout
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
@@ -36,12 +37,12 @@ import com.example.engu_pension_verification_application.viewmodel.DashboardView
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.LogoutConfirmViewModel
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
 class DashboardFragment : BaseFragment() {
+    private lateinit var binding:FragmentDashboardBinding
     private lateinit var logoutConfirmDialog: LogoutConfirmDialog
     private lateinit var addBankDialog: AddBankDialog
     private lateinit var appointmentDialog: AppointmentDialog
@@ -53,7 +54,8 @@ class DashboardFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_dashboard, container, false)
+        binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -144,22 +146,22 @@ class DashboardFragment : BaseFragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun onClicked() {
-        tv_profile_.setOnClickListener {
+        binding.tvProfile.setOnClickListener {
             navigate(R.id.action_dashboard_to_profile)
         }
-        img_add_amount.setOnClickListener {
+        binding.imgAddAmount.setOnClickListener {
             navigate(R.id.action_dashboard_to_wallet)
         }
-        ll_account.setOnClickListener {
+        binding.llAccount.setOnClickListener {
             navigate(R.id.action_dashboard_to_account)
         }
-        ll_add_bank.setOnClickListener {
+        binding.llAddBank.setOnClickListener {
             showDialog(addBankDialog)
         }
-        ll_appoinment.setOnClickListener {
+        binding.llAppoinment.setOnClickListener {
             showDialog(appointmentDialog)
         }
-        txt_logout.setOnClickListener {
+        binding.txtLogout.setOnClickListener {
             showDialog(logoutConfirmDialog)
         }
     }
@@ -178,19 +180,19 @@ class DashboardFragment : BaseFragment() {
         viewModel.dashboardDetailsResult.value?.detail?.let {
             Glide.with(this)
                 .load(it.profilePic)
-                .into(img_profile)
-            tv_person_name.text = it.fullName
-            tv_wallet_amount_digits.text = it.walletBalanceAmount.toString()
-            tv_wallet_symbol_sign.text = it.walletBalanceCurrency
+                .into(binding.imgProfile)
+            binding.tvPersonName.text = it.fullName
+            binding.tvWalletAmountDigits.text = it.walletBalanceAmount.toString()
+            binding.tvWalletSymbolSign.text = it.walletBalanceCurrency
             it.bankDetail?.let { bankDetail ->
-                no_bank_msg.visibility = View.GONE
-                cl_dashboard_bank.visibility = View.VISIBLE
+                binding.noBankMsg.visibility = View.GONE
+                binding.clDashboardBank.visibility = View.VISIBLE
                 if (bankDetail.bankImage != null)
                     Glide.with(this)
                         .load(bankDetail.bankImage)
-                        .into(img_bank_icon)
-                tv_bankname.text = bankDetail.bankName
-                tv_banktype.text = bankDetail.accountType
+                        .into(binding.imgBankIcon)
+                binding.tvBankname.text = bankDetail.bankName
+                binding.tvBanktype.text = bankDetail.accountType
             }
         }
     }

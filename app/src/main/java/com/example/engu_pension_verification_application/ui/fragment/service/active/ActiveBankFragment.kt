@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentActiveBankBinding
 import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
 import com.example.engu_pension_verification_application.model.input.InputBankVerification
 import com.example.engu_pension_verification_application.model.response.*
@@ -43,7 +44,6 @@ import com.example.engu_pension_verification_application.viewmodel.ActiveBankVie
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.fragment_active_bank.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
@@ -58,6 +58,7 @@ val filterUpperCaseAndDigits = InputFilter { source, start, end, dest, dstart, d
     null // Accepts the original characters
 }
 class ActiveBankFragment: BaseFragment() {
+    private lateinit var binding:FragmentActiveBankBinding
     companion object {
         const val TAB_POSITION = 2
         private const val BANK_ITEM_SELECT_ID = -1
@@ -96,8 +97,8 @@ class ActiveBankFragment: BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_active_bank, container, false)
+        binding = FragmentActiveBankBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -112,13 +113,13 @@ class ActiveBankFragment: BaseFragment() {
 
 
         //local use
-//        et_activebank_swiftcode.text = Editable.Factory.getInstance().newEditable("MOOGNGL1")
+//        binding.etActivebankSwiftcode.text = Editable.Factory.getInstance().newEditable("MOOGNGL1")
         //local use
-        /*et_activebank_swiftcode.text = Editable.Factory.getInstance().newEditable("MOOGNGL1")
-        et_activebank_bankcode.text = Editable.Factory.getInstance().newEditable("MOOG")*/
+        /*binding.etActivebankSwiftcode.text = Editable.Factory.getInstance().newEditable("MOOGNGL1")
+        binding.etActivebankBankcode.text = Editable.Factory.getInstance().newEditable("MOOG")*/
 
-        et_activebank_swiftcode.filters = arrayOf(InputFilter.AllCaps(), filterUpperCaseAndDigits)
-        et_activebank_accname.setText(AppUtils.getFullName(prefs.first_name,prefs.middle_name,prefs.last_name))
+        binding.etActivebankSwiftcode.filters = arrayOf(InputFilter.AllCaps(), filterUpperCaseAndDigits)
+        binding.etActivebankAccname.setText(AppUtils.getFullName(prefs.first_name,prefs.middle_name,prefs.last_name))
 
 //        setAdapter()
         // initcall()  - hold
@@ -221,9 +222,9 @@ class ActiveBankFragment: BaseFragment() {
                     dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                     isBankVerifyBtn = false
-                    tv_activebank_bankcode_verify.visibility = View.INVISIBLE
-                    tv_activebank_bankcode_reverify.visibility = View.VISIBLE
-                    tv_activebank_bankcode_verified.visibility = View.INVISIBLE
+                    binding.tvActivebankBankcodeVerify.visibility = View.INVISIBLE
+                    binding.tvActivebankBankcodeReverify.visibility = View.VISIBLE
+                    binding.tvActivebankBankcodeVerified.visibility = View.INVISIBLE
 
                 }
             }
@@ -261,7 +262,7 @@ class ActiveBankFragment: BaseFragment() {
              }
          }
          bankAdapter = BankAdapter(context, BankList)
-         sp_active_bank.adapter = bankAdapter
+         binding.spActiveBank.adapter = bankAdapter
 
 
 
@@ -272,7 +273,7 @@ class ActiveBankFragment: BaseFragment() {
              }
          }
          accounttypeAdapter = AccountTypeAdapter(context, AccountTypeList)
-         sp_activebank_acctype.adapter = accounttypeAdapter*/
+         binding.spActivebankAcctype.adapter = accounttypeAdapter*/
 
         if (bankdetailsList.size > 0) {
 
@@ -288,7 +289,7 @@ class ActiveBankFragment: BaseFragment() {
             }
         }
         bankAdapter = BankAdapter(context, BankList)
-        sp_active_bank.adapter = bankAdapter
+        binding.spActiveBank.adapter = bankAdapter
 
 
 
@@ -302,14 +303,14 @@ class ActiveBankFragment: BaseFragment() {
             }
         }
         accounttypeAdapter = AccountTypeAdapter(context, AccountTypeList)
-        sp_activebank_acctype.adapter = accounttypeAdapter
+        binding.spActivebankAcctype.adapter = accounttypeAdapter
 
 
     }
 
     private fun OnTextWatcher() {
 
-        et_activebank_swiftcode.addTextChangedListener(object : TextWatcher {
+        binding.etActivebankSwiftcode.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
@@ -320,10 +321,10 @@ class ActiveBankFragment: BaseFragment() {
 
             override fun afterTextChanged(p0: Editable?) {
 
-                et_activebank_swiftcode.setOnFocusChangeListener { view, hasFocus ->
+                binding.etActivebankSwiftcode.setOnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) {
                         // TODO: Uncomment after fixing api -> "/api/v1/get_bank_details"
-//                        activeBankViewModel.fetchBankDetails(et_activebank_swiftcode.text.toString())
+//                        activeBankViewModel.fetchBankDetails(binding.etActivebankSwiftcode.text.toString())
 
                     }
                 }
@@ -332,7 +333,7 @@ class ActiveBankFragment: BaseFragment() {
             }
         })
 
-        sp_active_bank.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spActiveBank.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -345,7 +346,7 @@ class ActiveBankFragment: BaseFragment() {
 
                 } else {
                     a_bankid = BankList[position]?.id.toString()
-                    //prefs.A_BANK = sp_active_bank.selectedItemPosition.toString()
+                    //prefs.A_BANK = binding.spActiveBank.selectedItemPosition.toString()
                 }
 
             }
@@ -356,7 +357,7 @@ class ActiveBankFragment: BaseFragment() {
 
         }
 
-        sp_activebank_acctype.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spActivebankAcctype.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -369,7 +370,7 @@ class ActiveBankFragment: BaseFragment() {
 
                 } else {
                     a_accounttype = AccountTypeList[position]?.type.toString()
-                    //prefs.A_ACCTYPE = sp_activebank_acctype.selectedItemPosition.toString()
+                    //prefs.A_ACCTYPE = binding.spActivebankAcctype.selectedItemPosition.toString()
                 }
             }
 
@@ -386,25 +387,25 @@ class ActiveBankFragment: BaseFragment() {
 
         // Assuming you have a CheckBox with the ID 'myCheckBox' in your layout
 
-        cb_activebank_autorenewal.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.cbActivebankAutorenewal.setOnCheckedChangeListener { buttonView, isChecked ->
             autoRenewal = isChecked
         }
 
-        tv_activebank_bankcode_verify.setOnClickListener{
+        binding.tvActivebankBankcodeVerify.setOnClickListener{
 
             if (isValidBankAccountNumber()){
                 bankVerifyDialog()
             }
         }
 
-        tv_activebank_bankcode_reverify.setOnClickListener{
+        binding.tvActivebankBankcodeReverify.setOnClickListener{
             if (isValidBankAccountNumber()){
                 bankVerifyDialog()
             }
         }
 
 
-        ll_activebank_next.setOnClickListener {
+        binding.llActivebankNext.setOnClickListener {
             if (isValidBank()) {
                 //finish the Form
                 if (context?.isConnectedToNetwork()!!) {
@@ -429,54 +430,54 @@ class ActiveBankFragment: BaseFragment() {
     private fun isValidBank(): Boolean {
 
         //select bank
-        if (sp_active_bank.selectedItemPosition == 0) {
+        if (binding.spActiveBank.selectedItemPosition == 0) {
             Toast.makeText(context, "Please Select Bank", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //acc number
-        if (TextUtils.isEmpty(et_activebank_accnum.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankAccnum.text)) {
             Toast.makeText(context, "Empty account number", Toast.LENGTH_LONG).show()
             return false
-        } else if (!ACC_NO_PATTERN.matcher(et_activebank_accnum.text.toString()).matches()) {
+        } else if (!ACC_NO_PATTERN.matcher(binding.etActivebankAccnum.text.toString()).matches()) {
             Toast.makeText(context, "Account number not valid", Toast.LENGTH_LONG).show()
             return false
         }
 
         //re enter acc number
-        if (TextUtils.isEmpty(et_activebank_re_accnum.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankReAccnum.text)) {
             Toast.makeText(context, "Empty reAccount number", Toast.LENGTH_LONG).show()
             return false
-        } else if (!ACC_NO_PATTERN.matcher(et_activebank_re_accnum.text.toString()).matches()) {
+        } else if (!ACC_NO_PATTERN.matcher(binding.etActivebankReAccnum.text.toString()).matches()) {
             Toast.makeText(context, "reAccount number not valid", Toast.LENGTH_LONG).show()
             return false
-        } else if (et_activebank_accnum.text.toString() != et_activebank_re_accnum.text.toString()) {
+        } else if (binding.etActivebankAccnum.text.toString() != binding.etActivebankReAccnum.text.toString()) {
             Toast.makeText(context, "Account numbers doesn't match", Toast.LENGTH_LONG).show()
             return false
         }
 
         //acc name
-        if (TextUtils.isEmpty(et_activebank_accname.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankAccname.text)) {
             Toast.makeText(context, "Empty account Name", Toast.LENGTH_LONG).show()
             return false
-        } else if (!FULL_NAME_PATTERN.matcher(et_activebank_accname.text.toString().trim()).matches()) {
+        } else if (!FULL_NAME_PATTERN.matcher(binding.etActivebankAccname.text.toString().trim()).matches()) {
 
             Toast.makeText(context, "account name not valid", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //swift
-        if (TextUtils.isEmpty(et_activebank_swiftcode.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankSwiftcode.text)) {
             Toast.makeText(context, "Please enter SwiftCode", Toast.LENGTH_LONG).show()
             return false
         }
         //bankcode
-        if (TextUtils.isEmpty(et_activebank_bankcode.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankBankcode.text)) {
             Toast.makeText(context, "Please enter BankCode", Toast.LENGTH_LONG).show()
             return false
         }
         //accounttype
-        if (sp_activebank_acctype.selectedItemPosition == 0) {
+        if (binding.spActivebankAcctype.selectedItemPosition == 0) {
             Toast.makeText(context, "Please Select Account Type", Toast.LENGTH_LONG).show()
             return false
         }
@@ -497,13 +498,13 @@ class ActiveBankFragment: BaseFragment() {
         activeBankViewModel.submitBankInfo(
             InputActiveBankInfo(
 
-                bankId = a_bankid/*"7b8dc580-ba28-8f3b-354410354410351ab4"*//*sp_active_bank.selectedItemPosition.toString()*/,
-                accountNumber = et_activebank_accnum.text.toString(),
-                bankCode = et_activebank_bankcode.text.toString(),
-                accountType = a_accounttype/*sp_activebank_acctype.selectedItemPosition.toString()*/,
-                accountHolderName = et_activebank_accname.text.toString(),
-                swiftCode = et_activebank_swiftcode.text.toString(),
-                reEnterAccountNumber = et_activebank_re_accnum.text.toString(),
+                bankId = a_bankid/*"7b8dc580-ba28-8f3b-354410354410351ab4"*//*binding.spActiveBank.selectedItemPosition.toString()*/,
+                accountNumber = binding.etActivebankAccnum.text.toString(),
+                bankCode = binding.etActivebankBankcode.text.toString(),
+                accountType = a_accounttype/*binding.spActivebankAcctype.selectedItemPosition.toString()*/,
+                accountHolderName = binding.etActivebankAccname.text.toString(),
+                swiftCode = binding.etActivebankSwiftcode.text.toString(),
+                reEnterAccountNumber = binding.etActivebankReAccnum.text.toString(),
                 autoRenewal = autoRenewal,
 //                userId = prefs.user_id
 
@@ -543,7 +544,7 @@ class ActiveBankFragment: BaseFragment() {
 
     fun onSwiftBankCodeSuccess(response: ResponseSwiftBankCode) {
         dismissLoader()
-        et_activebank_bankcode.text = Editable.Factory.getInstance()
+        binding.etActivebankBankcode.text = Editable.Factory.getInstance()
             .newEditable(response.swiftbankdetail?.swiftCodeResponse?.bankCode)
 
     }
@@ -576,9 +577,9 @@ class ActiveBankFragment: BaseFragment() {
         val et_bank_verify_acc_number = bankVerifyView.findViewById<EditText>(R.id.et_bank_verify_acc_num)
         val et_bank_verify_bank_code = bankVerifyView.findViewById<EditText>(R.id.et_bank_verify_bank_code)
 
-        et_bank_verify_acc_number.text = et_activebank_accnum.text
+        et_bank_verify_acc_number.text = binding.etActivebankAccnum.text
 
-        et_bank_verify_bank_code.text = et_activebank_bankcode.text
+        et_bank_verify_bank_code.text = binding.etActivebankBankcode.text
 
         val bank_verify_submit = bankVerifyView.findViewById<LinearLayout>(R.id.ll_bankverifysubmit)
         bankVerifyalertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -708,48 +709,48 @@ class ActiveBankFragment: BaseFragment() {
     private fun isValidBankAccountNumber(): Boolean {
 
         //select bank
-        if (sp_active_bank.selectedItemPosition == 0) {
+        if (binding.spActiveBank.selectedItemPosition == 0) {
             Toast.makeText(context, "Please Select Bank", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //acc number
-        if (TextUtils.isEmpty(et_activebank_accnum.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankAccnum.text)) {
             Toast.makeText(context, "Empty account number", Toast.LENGTH_LONG).show()
             return false
-        } else if (!ACC_NO_PATTERN_TWO.matcher(et_activebank_accnum.text.toString()).matches()) {
+        } else if (!ACC_NO_PATTERN_TWO.matcher(binding.etActivebankAccnum.text.toString()).matches()) {
             Toast.makeText(context, "Account number Not valid, must 10-12 digits", Toast.LENGTH_LONG).show()
             return false
         }
 
         //re enter acc number
-        if (TextUtils.isEmpty(et_activebank_re_accnum.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankReAccnum.text)) {
             Toast.makeText(context, "Empty reAccount number", Toast.LENGTH_LONG).show()
             return false
-        } else if (!ACC_NO_PATTERN_TWO.matcher(et_activebank_re_accnum.text.toString()).matches()) {
+        } else if (!ACC_NO_PATTERN_TWO.matcher(binding.etActivebankReAccnum.text.toString()).matches()) {
             Toast.makeText(context, "reAccount number Not valid, , must 10-12 digits", Toast.LENGTH_LONG).show()
             return false
-        } else if (et_activebank_accnum.text.toString() != et_activebank_re_accnum.text.toString()) {
+        } else if (binding.etActivebankAccnum.text.toString() != binding.etActivebankReAccnum.text.toString()) {
             Toast.makeText(context, "Account numbers doesn't match", Toast.LENGTH_LONG).show()
             return false
         }
 
         //acc name
-        if (TextUtils.isEmpty(et_activebank_accname.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankAccname.text)) {
             Toast.makeText(context, "Empty account Name", Toast.LENGTH_LONG).show()
             return false
-        } else if (!FULL_NAME_PATTERN.matcher(et_activebank_accname.text.toString().trim()).matches()) {
+        } else if (!FULL_NAME_PATTERN.matcher(binding.etActivebankAccname.text.toString().trim()).matches()) {
             Toast.makeText(context, "account name not valid", Toast.LENGTH_SHORT).show()
             return false
         }
 
         //swift
-        if (TextUtils.isEmpty(et_activebank_swiftcode.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankSwiftcode.text)) {
             Toast.makeText(context, "Please enter SwiftCode", Toast.LENGTH_LONG).show()
             return false
         }
         //bankcode
-        if (TextUtils.isEmpty(et_activebank_bankcode.text)) {
+        if (TextUtils.isEmpty(binding.etActivebankBankcode.text)) {
             Toast.makeText(context, "Please enter BankCode", Toast.LENGTH_LONG).show()
             return false
         }
@@ -775,25 +776,25 @@ class ActiveBankFragment: BaseFragment() {
         //prefs.isBankVerify = true
 
         isBankVerifyBtn = true
-        tv_activebank_bankcode_verify.visibility = View.INVISIBLE
-        tv_activebank_bankcode_reverify.visibility = View.INVISIBLE
-        tv_activebank_bankcode_verified.visibility = View.VISIBLE
+        binding.tvActivebankBankcodeVerify.visibility = View.INVISIBLE
+        binding.tvActivebankBankcodeReverify.visibility = View.INVISIBLE
+        binding.tvActivebankBankcodeVerified.visibility = View.VISIBLE
     }
     private fun refreshBankImage(position:Int) {
-        img_activebank_.setImageResource(R.drawable.ic_bank_green)
+        binding.imgActivebank.setImageResource(R.drawable.ic_bank_green)
         BankList[position]?.let {
             if (it.id != BANK_ITEM_SELECT_ID) {
                 Glide.with(requireContext())
                     .load(it.logo)
                     .placeholder(R.drawable.ic_bank_green)
-                    .into(img_activebank_)
+                    .into(binding.imgActivebank)
             }
         }
     }
     // TODO: Remove this function after fixing api -> "/api/v1/get_bank_details"
     private fun refreshBankCode(position:Int) {
         val bankCode = if (BankList[position]?.id != BANK_ITEM_SELECT_ID) BankList[position]?.code else ""
-        et_activebank_bankcode.setText(bankCode)
+        binding.etActivebankBankcode.setText(bankCode)
     }
 }
 

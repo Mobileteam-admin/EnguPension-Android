@@ -25,6 +25,8 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.setDocumentView
 import com.example.engu_pension_verification_application.commons.setDocumentViewIfPresent
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentRetireeBinding
+import com.example.engu_pension_verification_application.databinding.FragmentRetireeDocumentsBinding
 import com.example.engu_pension_verification_application.model.response.ResponseRetireeDocRetrive
 import com.example.engu_pension_verification_application.model.response.ResponseRetireeDocUpload
 import com.example.engu_pension_verification_application.model.response.RetireeFileUrlResponse
@@ -38,7 +40,6 @@ import com.example.engu_pension_verification_application.viewmodel.EnguViewModel
 import com.example.engu_pension_verification_application.viewmodel.RetireeDocumentsViewModel
 import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.fragment_retiree_documents.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -50,7 +51,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 
 class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
-
+    private lateinit var binding:FragmentRetireeDocumentsBinding
     val prefs = SharedPref
 
     val mimeTypes = arrayOf("image/jpeg", "image/png", "application/pdf")
@@ -130,8 +131,8 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_retiree_documents, container, false)
+        binding = FragmentRetireeDocumentsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -141,44 +142,44 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
         observeLiveData()
     }
     private fun initViews() {
-        ll_retiree_app_form_upload.setOnClickListener(this)
-        img_retiree_app_form_close.setOnClickListener(this)
+        binding.llRetireeAppFormUpload.setOnClickListener(this)
+        binding.imgRetireeAppFormClose.setOnClickListener(this)
 
-        ll_retiree_appointment_payment_doc_upload.setOnClickListener(this)
-        img_retiree_appointment_payment_doc_close.setOnClickListener(this)
+        binding.llRetireeAppointmentPaymentDocUpload.setOnClickListener(this)
+        binding.imgRetireeAppointmentPaymentDocClose.setOnClickListener(this)
 
-        ll_retiree_authorisation_payment_doc_upload.setOnClickListener(this)
-        img_retiree_authorisation_payment_doc_close.setOnClickListener(this)
+        binding.llRetireeAuthorisationPaymentDocUpload.setOnClickListener(this)
+        binding.imgRetireeAuthorisationPaymentDocClose.setOnClickListener(this)
 
-        ll_retiree_clearance_form_upload.setOnClickListener(this)
-        img_retiree_clearance_form_doc_close.setOnClickListener(this)
+        binding.llRetireeClearanceFormUpload.setOnClickListener(this)
+        binding.llRetireeClearanceFormUpload.setOnClickListener(this)
 
-        ll_retiree_notification_promotion_doc_upload.setOnClickListener(this)
-        img_retiree_notification_promotion_doc_close.setOnClickListener(this)
+        binding.llRetireeNotificationPromotionDocUpload.setOnClickListener(this)
+        binding.llRetireeNotificationPromotionDocUpload.setOnClickListener(this)
 
-        ll_retiree_pension_certificate_upload.setOnClickListener(this)
-        img_retiree_pension_certificate_doc_close.setOnClickListener(this)
+        binding.llRetireePensionCertificateUpload.setOnClickListener(this)
+        binding.imgRetireePensionCertificateDocClose.setOnClickListener(this)
 
-        ll_retiree_passport_photo_upload.setOnClickListener(this)
-        img_retiree_passport_photo_doc_close.setOnClickListener(this)
+        binding.llRetireePassportPhotoUpload.setOnClickListener(this)
+        binding.imgRetireePassportPhotoDocClose.setOnClickListener(this)
 
-        ll_retiree_retirement_notice_upload.setOnClickListener(this)
-        img_retiree_retirement_notice_doc_close.setOnClickListener(this)
+        binding.llRetireeRetirementNoticeUpload.setOnClickListener(this)
+        binding.imgRetireeRetirementNoticeDocClose.setOnClickListener(this)
 
-        ll_retiree_id_card_upload.setOnClickListener(this)
-        img_retiree_id_card_doc_close.setOnClickListener(this)
+        binding.llRetireeIdCardUpload.setOnClickListener(this)
+        binding.imgRetireeIdCardDocClose.setOnClickListener(this)
 
-        ll_retiree_doc_next.setOnClickListener(this)
+        binding.llRetireeDocNext.setOnClickListener(this)
 
-        retiree_app_btn_green_view.setOnClickListener(this)
-        retiree_appointment_btn_green_view.setOnClickListener(this)
-        retiree_authorisation_btn_green_view.setOnClickListener(this)
-        retiree_clearance_btn_green_view.setOnClickListener(this)
-        retiree_notification_btn_green_view.setOnClickListener(this)
-        retiree_pension_certificate_btn_green_view.setOnClickListener(this)
-        retiree_passport_photo_btn_green_view.setOnClickListener(this)
-        retiree_retirement_btn_green_view.setOnClickListener(this)
-        retiree_id_card_btn_green_view.setOnClickListener(this)
+        binding.retireeAppBtnGreenView.setOnClickListener(this)
+        binding.retireeAppointmentBtnGreenView.setOnClickListener(this)
+        binding.retireeAuthorisationBtnGreenView.setOnClickListener(this)
+        binding.retireeClearanceBtnGreenView.setOnClickListener(this)
+        binding.retireeNotificationBtnGreenView.setOnClickListener(this)
+        binding.retireePensionCertificateBtnGreenView.setOnClickListener(this)
+        binding.retireePassportPhotoBtnGreenView.setOnClickListener(this)
+        binding.retireeRetirementBtnGreenView.setOnClickListener(this)
+        binding.retireeIdCardBtnGreenView.setOnClickListener(this)
 
     }
 
@@ -257,97 +258,97 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
         when (it) {
 
             //App Form
-            ll_retiree_app_form_upload -> {
+            binding.llRetireeAppFormUpload -> {
                 selectPdfJpegPng(RETIREE_APPLICATION_FORM_FILE)
-                retiree_app_btn_green_view.visibility = View.GONE
-                cv_retiree_applicationForm_doc.visibility = View.GONE
+                binding.retireeAppBtnGreenView.visibility = View.GONE
+                binding.cvRetireeApplicationFormDoc.visibility = View.GONE
             }
-            img_retiree_app_form_close -> {
-                retiree_app_btn_green_view.visibility = View.GONE
-                cv_retiree_applicationForm_doc.visibility = View.GONE
+            binding.imgRetireeAppFormClose -> {
+                binding.retireeAppBtnGreenView.visibility = View.GONE
+                binding.cvRetireeApplicationFormDoc.visibility = View.GONE
             }
             //APPOINTMENT_PAYMENT
-            ll_retiree_appointment_payment_doc_upload -> {
+            binding.llRetireeAppointmentPaymentDocUpload -> {
                 selectPdfJpegPng(RETIREE_APPOINTMENT_PAYMENT_FILE)
-                retiree_appointment_btn_green_view.visibility = View.GONE
-                cv_retiree_appointment_payment_doc.visibility = View.GONE
+                binding.retireeAppointmentBtnGreenView.visibility = View.GONE
+                binding.cvRetireeAppointmentPaymentDoc.visibility = View.GONE
             }
-            img_retiree_appointment_payment_doc_close -> {
-                retiree_appointment_btn_green_view.visibility = View.GONE
-                cv_retiree_appointment_payment_doc.visibility = View.GONE
+            binding.imgRetireeAppointmentPaymentDocClose -> {
+                binding.retireeAppointmentBtnGreenView.visibility = View.GONE
+                binding.cvRetireeAppointmentPaymentDoc.visibility = View.GONE
             }
             //RETIREE_AUTHORISATION_PAYMENT
-            ll_retiree_authorisation_payment_doc_upload -> {
-                retiree_authorisation_btn_green_view.visibility=View.GONE
-                cv_retiree_authorisation_payment_doc.visibility = View.GONE
+            binding.llRetireeAuthorisationPaymentDocUpload -> {
+                binding.retireeAuthorisationBtnGreenView.visibility=View.GONE
+                binding.cvRetireeAuthorisationPaymentDoc.visibility = View.GONE
                 selectPdfJpegPng(RETIREE_AUTHORISATION_PAYMENT_FILE)
             }
-            img_retiree_authorisation_payment_doc_close -> {
-                retiree_authorisation_btn_green_view.visibility=View.GONE
-                cv_retiree_authorisation_payment_doc.visibility = View.GONE
+            binding.imgRetireeAuthorisationPaymentDocClose -> {
+                binding.retireeAuthorisationBtnGreenView.visibility=View.GONE
+                binding.cvRetireeAuthorisationPaymentDoc.visibility = View.GONE
             }
             //RETIREE_CLEARANCE_FORM
-            ll_retiree_clearance_form_upload -> {
-                retiree_clearance_btn_green_view.visibility = View.GONE
-                cv_retiree_clearance_form_doc.visibility = View.GONE
+            binding.llRetireeClearanceFormUpload -> {
+                binding.retireeClearanceBtnGreenView.visibility = View.GONE
+                binding.cvRetireeClearanceFormDoc.visibility = View.GONE
                 selectPdfJpegPng(RETIREE_CLEARANCE_FORM_FILE)
             }
-            img_retiree_clearance_form_doc_close -> {
-                retiree_clearance_btn_green_view.visibility = View.GONE
-                cv_retiree_clearance_form_doc.visibility = View.GONE
+            binding.llRetireeClearanceFormUpload -> {
+                binding.retireeClearanceBtnGreenView.visibility = View.GONE
+                binding.cvRetireeClearanceFormDoc.visibility = View.GONE
             }
             //RETIREE_NOTIFICATION_PROMOTION
-            ll_retiree_notification_promotion_doc_upload -> {
-                retiree_notification_btn_green_view.visibility = View.GONE
-                cv_retiree_notification_promotion_doc.visibility = View.GONE
+            binding.llRetireeNotificationPromotionDocUpload -> {
+                binding.retireeNotificationBtnGreenView.visibility = View.GONE
+                binding.cvRetireeNotificationPromotionDoc.visibility = View.GONE
                 selectPdfJpegPng(RETIREE_NOTIFICATION_PROMOTION_FILE)
             }
-            img_retiree_notification_promotion_doc_close -> {
-                retiree_notification_btn_green_view.visibility = View.GONE
-                cv_retiree_notification_promotion_doc.visibility = View.GONE
+            binding.llRetireeNotificationPromotionDocUpload -> {
+                binding.retireeNotificationBtnGreenView.visibility = View.GONE
+                binding.cvRetireeNotificationPromotionDoc.visibility = View.GONE
             }
             //RETIREE_PENSION_CERTIFICATE
-            ll_retiree_pension_certificate_upload -> {
-                retiree_pension_certificate_btn_green_view.visibility =View.GONE
-                cv_retiree_pension_certificate_doc.visibility = View.GONE
+            binding.llRetireePensionCertificateUpload -> {
+                binding.retireePensionCertificateBtnGreenView.visibility =View.GONE
+                binding.cvRetireePensionCertificateDoc.visibility = View.GONE
                 selectPdfJpegPng(RETIREE_PENSION_CERTIFICATE_FILE)
             }
-            img_retiree_pension_certificate_doc_close ->{
-                retiree_pension_certificate_btn_green_view.visibility =View.GONE
-                cv_retiree_pension_certificate_doc.visibility = View.GONE
+            binding.imgRetireePensionCertificateDocClose ->{
+                binding.retireePensionCertificateBtnGreenView.visibility =View.GONE
+                binding.cvRetireePensionCertificateDoc.visibility = View.GONE
             }
             //RETIREE_PASSPORT_PHOTO
-            ll_retiree_passport_photo_upload -> {
-                retiree_passport_photo_btn_green_view.visibility= View.GONE
-                cv_retiree_passport_photo_doc.visibility = View.GONE
+            binding.llRetireePassportPhotoUpload -> {
+                binding.retireePassportPhotoBtnGreenView.visibility= View.GONE
+                binding.cvRetireePassportPhotoDoc.visibility = View.GONE
                 selectPdfJpegPng(RETIREE_PASSPORT_PHOTO_FILE)
             }
-            img_retiree_passport_photo_doc_close ->{
-                retiree_passport_photo_btn_green_view.visibility= View.GONE
-                cv_retiree_passport_photo_doc.visibility = View.GONE
+            binding.imgRetireePassportPhotoDocClose ->{
+                binding.retireePassportPhotoBtnGreenView.visibility= View.GONE
+                binding.cvRetireePassportPhotoDoc.visibility = View.GONE
             }
             //RETIREE_RETIREMENT_NOTICE
-            ll_retiree_retirement_notice_upload -> {
-                retiree_retirement_btn_green_view.visibility = View.GONE
-                cv_retiree_retirement_notice_doc.visibility = View.GONE
+            binding.llRetireeRetirementNoticeUpload -> {
+                binding.retireeRetirementBtnGreenView.visibility = View.GONE
+                binding.cvRetireeRetirementNoticeDoc.visibility = View.GONE
                 selectPdfJpegPng(RETIREE_RETIREMENT_NOTICE_FILE)
             }
-            img_retiree_retirement_notice_doc_close ->{
-                retiree_retirement_btn_green_view.visibility = View.GONE
-                cv_retiree_retirement_notice_doc.visibility = View.GONE
+            binding.imgRetireeRetirementNoticeDocClose ->{
+                binding.retireeRetirementBtnGreenView.visibility = View.GONE
+                binding.cvRetireeRetirementNoticeDoc.visibility = View.GONE
             }
             //RETIREE_ID_CARD
-            ll_retiree_id_card_upload -> {
-                retiree_id_card_btn_green_view.visibility = View.GONE
-                cv_retiree_id_card_doc.visibility = View.GONE
+            binding.llRetireeIdCardUpload -> {
+                binding.retireeIdCardBtnGreenView.visibility = View.GONE
+                binding.cvRetireeIdCardDoc.visibility = View.GONE
                 selectPdfJpegPng(RETIREE_ID_CARD_FILE)
             }
-            img_retiree_id_card_doc_close -> {
-                retiree_id_card_btn_green_view.visibility = View.GONE
-                cv_retiree_id_card_doc.visibility = View.GONE
+            binding.imgRetireeIdCardDocClose -> {
+                binding.retireeIdCardBtnGreenView.visibility = View.GONE
+                binding.cvRetireeIdCardDoc.visibility = View.GONE
             }
 
-            ll_retiree_doc_next -> {
+            binding.llRetireeDocNext -> {
                 if (!RetireeUserDocRetrive?.idCardFileUrl.isNullOrEmpty()) {
                     if (prefs.onboardingStage == OnboardingStage.RETIREE_DOCUMENTS)
                         prefs.onboardingStage = OnboardingStage.RETIREE_BANK_INFO
@@ -366,8 +367,8 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
 
 
             /*
-            //retiree_id_card_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.idCardFileUrl)
-            retiree_id_card_btn_green_view -> if(!RetireeUserDocRetrive?.idCardFileUrl.isNullOrEmpty()){
+            //binding.retireeIdCardBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.idCardFileUrl)
+            binding.retireeIdCardBtnGreenView -> if(!RetireeUserDocRetrive?.idCardFileUrl.isNullOrEmpty()){
 
                 Log.d("viewbutton", " R id cardurl ${RetireeUserDocRetrive?.idCardFileUrl}")
 
@@ -377,62 +378,62 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 Log.d("viewbutton", " R id card url ${RetireeUserDocRetrive?.idCardFileUrl}")
                 idCardUri?.let { it1 -> startActivityFromUri(it1) }
             }
-            //retiree_passport_photo_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.passportPhotoFileUrl)
-            retiree_passport_photo_btn_green_view -> if(!RetireeUserDocRetrive?.passportPhotoFileUrl.isNullOrEmpty()){
+            //binding.retireePassportPhotoBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.passportPhotoFileUrl)
+            binding.retireePassportPhotoBtnGreenView -> if(!RetireeUserDocRetrive?.passportPhotoFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(RetireeUserDocRetrive?.passportPhotoFileUrl)
             }else{
                 passportPhotoUri?.let { it1 -> startActivityFromUri(it1) }
             }
-            //retiree_app_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.applicationFormFileUrl)
-            retiree_app_btn_green_view ->
+            //binding.retireeAppBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.applicationFormFileUrl)
+            binding.retireeAppBtnGreenView ->
                 if(!RetireeUserDocRetrive?.applicationFormFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(RetireeUserDocRetrive?.applicationFormFileUrl)
             }else{
                 applicationFormUri?.let { it1 -> startActivityFromUri(it1) }
             }
-            //retiree_appointment_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.monthlyArrearsPaymentAppointmentFileUrl)
-            retiree_appointment_btn_green_view -> if(!RetireeUserDocRetrive?.monthlyArrearsPaymentAppointmentFileUrl.isNullOrEmpty()){
+            //binding.retireeAppointmentBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.monthlyArrearsPaymentAppointmentFileUrl)
+            binding.retireeAppointmentBtnGreenView -> if(!RetireeUserDocRetrive?.monthlyArrearsPaymentAppointmentFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(RetireeUserDocRetrive?.monthlyArrearsPaymentAppointmentFileUrl)
             }else{
                 appointmentPayUri?.let { it1 -> startActivityFromUri(it1) }
             }
 
-            //retiree_authorisation_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.paymentAuthorizationRetirementOrDeathFileUrl)
-            retiree_authorisation_btn_green_view -> if(!RetireeUserDocRetrive?.paymentAuthorizationRetirementOrDeathFileUrl.isNullOrEmpty()){
+            //binding.retireeAuthorisationBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.paymentAuthorizationRetirementOrDeathFileUrl)
+            binding.retireeAuthorisationBtnGreenView -> if(!RetireeUserDocRetrive?.paymentAuthorizationRetirementOrDeathFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(RetireeUserDocRetrive?.paymentAuthorizationRetirementOrDeathFileUrl)
             }else{
                 authorisationPayUri?.let { it1 -> startActivityFromUri(it1) }
             }
-            //retiree_clearance_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.clearanceFormFileUrl)
-            retiree_clearance_btn_green_view -> if(!RetireeUserDocRetrive?.clearanceFormFileUrl.isNullOrEmpty()){
+            //binding.retireeClearanceBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.clearanceFormFileUrl)
+            binding.retireeClearanceBtnGreenView -> if(!RetireeUserDocRetrive?.clearanceFormFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(RetireeUserDocRetrive?.clearanceFormFileUrl)
             }else{
                 clearanceFormUri?.let { it1 -> startActivityFromUri(it1) }
             }
-            //retiree_notification_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.promotionNotificationFileUrl)
-            retiree_notification_btn_green_view -> if(!RetireeUserDocRetrive?.promotionNotificationFileUrl.isNullOrEmpty()){
+            //binding.retireeNotificationBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.promotionNotificationFileUrl)
+            binding.retireeNotificationBtnGreenView -> if(!RetireeUserDocRetrive?.promotionNotificationFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(RetireeUserDocRetrive?.promotionNotificationFileUrl)
             }else{
                 notificationUri?.let { it1 -> startActivityFromUri(it1) }
             }
 
-            //retiree_pension_certificate_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.pensionLifeCertificateFileUrl)
-            retiree_pension_certificate_btn_green_view -> if(!RetireeUserDocRetrive?.pensionLifeCertificateFileUrl.isNullOrEmpty()){
+            //binding.retireePensionCertificateBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.pensionLifeCertificateFileUrl)
+            binding.retireePensionCertificateBtnGreenView -> if(!RetireeUserDocRetrive?.pensionLifeCertificateFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(RetireeUserDocRetrive?.pensionLifeCertificateFileUrl)
             }else{
                 pensionCertificateUri?.let { it1 -> startActivityFromUri(it1) }
             }
 
 
-            //retiree_retirement_btn_green_view -> viewButtonCall(RetireeUserDocRetrive?.retirementNoticeFileUrl)
-            retiree_retirement_btn_green_view -> if(!RetireeUserDocRetrive?.retirementNoticeFileUrl.isNullOrEmpty()){
+            //binding.retireeRetirementBtnGreenView -> viewButtonCall(RetireeUserDocRetrive?.retirementNoticeFileUrl)
+            binding.retireeRetirementBtnGreenView -> if(!RetireeUserDocRetrive?.retirementNoticeFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(RetireeUserDocRetrive?.retirementNoticeFileUrl)
             }else{
                 retirementNoticeUri?.let { it1 -> startActivityFromUri(it1) }
             }
             */
 
-            retiree_id_card_btn_green_view -> {
+            binding.retireeIdCardBtnGreenView -> {
                 if (idCardUri != null) {
                     Log.d("viewbutton", "R id card uri ${idCardUri}")
                     startActivityFromUri(idCardUri!!)
@@ -441,14 +442,14 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     startActivityWebViewFromUrl(RetireeUserDocRetrive?.idCardFileUrl)
                 }
             }
-            retiree_passport_photo_btn_green_view -> {
+            binding.retireePassportPhotoBtnGreenView -> {
                 if (passportPhotoUri != null) {
                     startActivityFromUri(passportPhotoUri!!)
                 } else if (!RetireeUserDocRetrive?.passportPhotoFileUrl.isNullOrEmpty()) {
                     startActivityWebViewFromUrl(RetireeUserDocRetrive?.passportPhotoFileUrl)
                 }
             }
-            retiree_app_btn_green_view -> {
+            binding.retireeAppBtnGreenView -> {
                 Log.i("sssssssssssss", "onClick: 1) $applicationFormUri 2) ${RetireeUserDocRetrive?.applicationFormFileUrl}")
                 if (applicationFormUri != null) {
                     startActivityFromUri(applicationFormUri!!)
@@ -456,42 +457,42 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     startActivityWebViewFromUrl(RetireeUserDocRetrive?.applicationFormFileUrl)
                 }
             }
-            retiree_appointment_btn_green_view -> {
+            binding.retireeAppointmentBtnGreenView -> {
                 if (appointmentPayUri != null) {
                     startActivityFromUri(appointmentPayUri!!)
                 } else if (!RetireeUserDocRetrive?.monthlyArrearsPaymentAppointmentFileUrl.isNullOrEmpty()) {
                     startActivityWebViewFromUrl(RetireeUserDocRetrive?.monthlyArrearsPaymentAppointmentFileUrl)
                 }
             }
-            retiree_authorisation_btn_green_view -> {
+            binding.retireeAuthorisationBtnGreenView -> {
                 if (authorisationPayUri != null) {
                     startActivityFromUri(authorisationPayUri!!)
                 } else if (!RetireeUserDocRetrive?.paymentAuthorizationRetirementOrDeathFileUrl.isNullOrEmpty()) {
                     startActivityWebViewFromUrl(RetireeUserDocRetrive?.paymentAuthorizationRetirementOrDeathFileUrl)
                 }
             }
-            retiree_clearance_btn_green_view -> {
+            binding.retireeClearanceBtnGreenView -> {
                 if (clearanceFormUri != null) {
                     startActivityFromUri(clearanceFormUri!!)
                 } else if (!RetireeUserDocRetrive?.clearanceFormFileUrl.isNullOrEmpty()) {
                     startActivityWebViewFromUrl(RetireeUserDocRetrive?.clearanceFormFileUrl)
                 }
             }
-            retiree_notification_btn_green_view -> {
+            binding.retireeNotificationBtnGreenView -> {
                 if (notificationUri != null) {
                     startActivityFromUri(notificationUri!!)
                 } else if (!RetireeUserDocRetrive?.promotionNotificationFileUrl.isNullOrEmpty()) {
                     startActivityWebViewFromUrl(RetireeUserDocRetrive?.promotionNotificationFileUrl)
                 }
             }
-            retiree_pension_certificate_btn_green_view -> {
+            binding.retireePensionCertificateBtnGreenView -> {
                 if (pensionCertificateUri != null) {
                     startActivityFromUri(pensionCertificateUri!!)
                 } else if (!RetireeUserDocRetrive?.pensionLifeCertificateFileUrl.isNullOrEmpty()) {
                     startActivityWebViewFromUrl(RetireeUserDocRetrive?.pensionLifeCertificateFileUrl)
                 }
             }
-            retiree_retirement_btn_green_view -> {
+            binding.retireeRetirementBtnGreenView -> {
                 if (retirementNoticeUri != null) {
                     startActivityFromUri(retirementNoticeUri!!)
                 } else if (!RetireeUserDocRetrive?.retirementNoticeFileUrl.isNullOrEmpty()) {
@@ -523,10 +524,10 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
 
     private fun isAllViewBtnEnabled(): Boolean {
 
-        if (retiree_app_btn_green_view.visibility == View.VISIBLE && retiree_appointment_btn_green_view.visibility == View.VISIBLE && retiree_authorisation_btn_green_view.visibility == View.VISIBLE &&
-            retiree_clearance_btn_green_view.visibility == View.VISIBLE && retiree_notification_btn_green_view.visibility == View.VISIBLE &&
-            retiree_pension_certificate_btn_green_view.visibility == View.VISIBLE && retiree_passport_photo_btn_green_view.visibility == View.VISIBLE &&
-            retiree_retirement_btn_green_view.visibility == View.VISIBLE && retiree_id_card_btn_green_view.visibility == View.VISIBLE  )
+        if (binding.retireeAppBtnGreenView.visibility == View.VISIBLE && binding.retireeAppointmentBtnGreenView.visibility == View.VISIBLE && binding.retireeAuthorisationBtnGreenView.visibility == View.VISIBLE &&
+            binding.retireeClearanceBtnGreenView.visibility == View.VISIBLE && binding.retireeNotificationBtnGreenView.visibility == View.VISIBLE &&
+            binding.retireePensionCertificateBtnGreenView.visibility == View.VISIBLE && binding.retireePassportPhotoBtnGreenView.visibility == View.VISIBLE &&
+            binding.retireeRetirementBtnGreenView.visibility == View.VISIBLE && binding.retireeIdCardBtnGreenView.visibility == View.VISIBLE  )
         {
             return true
         }
@@ -536,55 +537,55 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
 
     private fun isValidDocs(): Boolean {
         /*
-        if (TextUtils.isEmpty(tv_retiree_app_form_filename.text) || cv_retiree_applicationForm_doc.visibility == View.GONE
-            || retiree_app_btn_green_view.visibility == View.VISIBLE ) {
+        if (TextUtils.isEmpty(binding.tvRetireeAppFormFilename.text) || binding.cvRetireeApplicationFormDoc.visibility == View.GONE
+            || binding.retireeAppBtnGreenView.visibility == View.VISIBLE ) {
             Toast.makeText(context, "Please select Application Form File", Toast.LENGTH_LONG).show()
             return false
-        } else if (TextUtils.isEmpty(tv_retiree_appointment_payment_doc_filename.text) || cv_retiree_appointment_payment_doc.visibility == View.GONE
-            || retiree_appointment_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvRetireeAppointmentPaymentDocFilename.text) || binding.cvRetireeAppointmentPaymentDoc.visibility == View.GONE
+            || binding.retireeAppointmentBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Appointment payment File", Toast.LENGTH_LONG)
                 .show()
             return false
-        } else if (TextUtils.isEmpty(tv_retiree_id_card_doc_filename.text) || cv_retiree_authorisation_payment_doc.visibility == View.GONE
-            || retiree_authorisation_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvRetireeIdCardDocFilename.text) || binding.cvRetireeAuthorisationPaymentDoc.visibility == View.GONE
+            || binding.retireeAuthorisationBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, " Please select Authorization payment File", Toast.LENGTH_LONG)
                 .show()
             return false
-        } else if (TextUtils.isEmpty(tv_retiree_passport_photo_doc_filename.text) || cv_retiree_clearance_form_doc.visibility == View.GONE
-            || retiree_clearance_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvRetireePassportPhotoDocFilename.text) || binding.cvRetireeClearanceFormDoc.visibility == View.GONE
+            || binding.retireeClearanceBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Clearance Form File ", Toast.LENGTH_LONG).show()
             return false
-        } else if (TextUtils.isEmpty(tv_retiree_notification_promotion_doc_filename.text) || cv_retiree_notification_promotion_doc.visibility == View.GONE
-            || retiree_notification_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvRetireeNotificationPromotionDocFilename.text) || binding.cvRetireeNotificationPromotionDoc.visibility == View.GONE
+            || binding.retireeNotificationBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Notification Promotion File ", Toast.LENGTH_LONG)
                 .show()
             return false
-        } else if (TextUtils.isEmpty(tv_retiree_pension_certificate_doc_filename.text) || cv_retiree_pension_certificate_doc.visibility == View.GONE
-            || retiree_pension_certificate_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvRetireePensionCertificateDocFilename.text) || binding.cvRetireePensionCertificateDoc.visibility == View.GONE
+            || binding.retireePensionCertificateBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Pension Certification File ", Toast.LENGTH_LONG)
                 .show()
             return false
-        } else if (TextUtils.isEmpty(tv_retiree_passport_photo_doc_filename.text) || cv_retiree_passport_photo_doc.visibility == View.GONE
-            || retiree_passport_photo_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvRetireePassportPhotoDocFilename.text) || binding.cvRetireePassportPhotoDoc.visibility == View.GONE
+            || binding.retireePassportPhotoBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Photo", Toast.LENGTH_LONG).show()
             return false
-        } else if (TextUtils.isEmpty(tv_retiree_retirement_notice_doc_filename.text) || cv_retiree_retirement_notice_doc.visibility == View.GONE
-            || retiree_retirement_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvRetireeRetirementNoticeDocFilename.text) || binding.cvRetireeRetirementNoticeDoc.visibility == View.GONE
+            || binding.retireeRetirementBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Retirement Notice File", Toast.LENGTH_LONG)
                 .show()
             return false
-        } else if (TextUtils.isEmpty(tv_retiree_id_card_doc_filename.text) || cv_retiree_id_card_doc.visibility == View.GONE
-            || retiree_id_card_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvRetireeIdCardDocFilename.text) || binding.cvRetireeIdCardDoc.visibility == View.GONE
+            || binding.retireeIdCardBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Id Card ", Toast.LENGTH_LONG).show()
             return false
         }*/
 
 
-        if (TextUtils.isEmpty(tv_retiree_id_card_doc_filename.text) || cv_retiree_id_card_doc.visibility == View.GONE) {
+        if (TextUtils.isEmpty(binding.tvRetireeIdCardDocFilename.text) || binding.cvRetireeIdCardDoc.visibility == View.GONE) {
             Toast.makeText(context, "Please select Id Card", Toast.LENGTH_LONG).show()
             return false
         }
-        /*else if (TextUtils.isEmpty(tv_retiree_passport_photo_doc_filename.text) || cv_retiree_passport_photo_doc.visibility == View.GONE) {
+        /*else if (TextUtils.isEmpty(binding.tvRetireePassportPhotoDocFilename.text) || binding.cvRetireePassportPhotoDoc.visibility == View.GONE) {
             Toast.makeText(context, "Please select PassPort Photo", Toast.LENGTH_LONG).show()
             return false
         }*/
@@ -748,7 +749,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
         when (requestCode) {
 
             RETIREE_APPLICATION_FORM_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_applicationForm_doc.visibility = View.VISIBLE
+                binding.cvRetireeApplicationFormDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -789,7 +790,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_app_form_filename.text = file.name
+                    binding.tvRetireeAppFormFilename.text = file.name
 
                     application_form_file = file
 
@@ -809,7 +810,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
             }
 
             RETIREE_APPOINTMENT_PAYMENT_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_appointment_payment_doc.visibility = View.VISIBLE
+                binding.cvRetireeAppointmentPaymentDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -851,7 +852,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_appointment_payment_doc_filename.text = file.name
+                    binding.tvRetireeAppointmentPaymentDocFilename.text = file.name
 
                     monthly_arrears_payment_appointment_file = file
 
@@ -871,7 +872,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
             }
 
             RETIREE_AUTHORISATION_PAYMENT_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_authorisation_payment_doc.visibility = View.VISIBLE
+                binding.cvRetireeAuthorisationPaymentDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -912,7 +913,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_authorisation_payment_doc_filename.text = file.name
+                    binding.tvRetireeAuthorisationPaymentDocFilename.text = file.name
 
                     payment_authorization_retirement_or_death_file = file
 
@@ -932,7 +933,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
             }
 
             RETIREE_CLEARANCE_FORM_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_clearance_form_doc.visibility = View.VISIBLE
+                binding.cvRetireeClearanceFormDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -974,7 +975,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_clearance_form_doc_filename.text = file.name
+                    binding.tvRetireeClearanceFormDocFilename.text = file.name
 
                     clearance_form_file = file
 
@@ -993,7 +994,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
             }
 
             RETIREE_NOTIFICATION_PROMOTION_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_notification_promotion_doc.visibility = View.VISIBLE
+                binding.cvRetireeNotificationPromotionDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -1034,7 +1035,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_notification_promotion_doc_filename.text = file.name
+                    binding.tvRetireeNotificationPromotionDocFilename.text = file.name
 
                     notification_promotion_file = file
 
@@ -1054,7 +1055,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
             }
 
             RETIREE_PENSION_CERTIFICATE_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_pension_certificate_doc.visibility = View.VISIBLE
+                binding.cvRetireePensionCertificateDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -1095,7 +1096,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_pension_certificate_doc_filename.text = file.name
+                    binding.tvRetireePensionCertificateDocFilename.text = file.name
 
                     pension_life_certificate_file = file
 
@@ -1115,7 +1116,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
             }
 
             RETIREE_PASSPORT_PHOTO_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_passport_photo_doc.visibility = View.VISIBLE
+                binding.cvRetireePassportPhotoDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -1156,7 +1157,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_passport_photo_doc_filename.text = file.name
+                    binding.tvRetireePassportPhotoDocFilename.text = file.name
 
                     passport_photo_file = file
 
@@ -1175,7 +1176,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
             }
 
             RETIREE_RETIREMENT_NOTICE_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_retirement_notice_doc.visibility = View.VISIBLE
+                binding.cvRetireeRetirementNoticeDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -1216,7 +1217,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_retirement_notice_doc_filename.text = file.name
+                    binding.tvRetireeRetirementNoticeDocFilename.text = file.name
 
                     retirement_notice_file = file
 
@@ -1235,7 +1236,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
             }
 
             RETIREE_ID_CARD_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_retiree_id_card_doc.visibility = View.VISIBLE
+                binding.cvRetireeIdCardDoc.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -1277,7 +1278,7 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                     ).show()
                 } else {
 
-                    tv_retiree_id_card_doc_filename.text = file.name
+                    binding.tvRetireeIdCardDocFilename.text = file.name
 
                     id_card_file = file
 
@@ -1338,13 +1339,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_applicationForm.visibility= View.VISIBLE
-                img_retiree_app_form_close.visibility= View.VISIBLE
+                binding.cvRetireeApplicationForm.visibility= View.VISIBLE
+                binding.imgRetireeAppFormClose.visibility= View.VISIBLE
 
-                ll_retiree_app_form_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_app_form_percentage.visibility =View.VISIBLE
-                pb_retiree_app_form.visibility =View.VISIBLE
-                ll_retiree_form_size.visibility = View.GONE
+                binding.llRetireeAppFormUploadprogress.visibility = View.VISIBLE
+                binding.llRetireeAppFormPercentage.visibility =View.VISIBLE
+                binding.pbRetireeAppForm.visibility =View.VISIBLE
+                binding.llRetireeFormSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1355,15 +1356,15 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_app_form?.setProgress(form_status)
+                            binding.pbRetireeAppForm?.setProgress(form_status)
 
-                            tv_retiree_doc_percent.text = form_status.toString() + " %"
+                            binding.tvRetireeDocPercent.text = form_status.toString() + " %"
                             if (form_status == 100) {
 
-                                retiree_app_btn_green_view.visibility = View.VISIBLE
-                                ll_retiree_app_form_uploadprogress.visibility = View.GONE
-                                ll_retiree_form_size.visibility = View.VISIBLE
-                                txt_retiree_filesize.text = pdfSize
+                                binding.retireeAppBtnGreenView.visibility = View.VISIBLE
+                                binding.llRetireeAppFormUploadprogress.visibility = View.GONE
+                                binding.llRetireeFormSize.visibility = View.VISIBLE
+                                binding.txtRetireeFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1376,13 +1377,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_appointment_payment.visibility= View.VISIBLE
-                img_retiree_appointment_payment_doc_close.visibility= View.VISIBLE
+                binding.cvRetireeAppointmentPayment.visibility= View.VISIBLE
+                binding.imgRetireeAppointmentPaymentDocClose.visibility= View.VISIBLE
 
-                ll_retiree_appointment_payment_doc_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_appointment_payment_doc_percentage.visibility = View.VISIBLE
-                pb_retiree_appointment_payment_doc.visibility = View.VISIBLE
-                ll_retiree_appointment_payment_doc_size.visibility = View.GONE
+                binding.llRetireeAppointmentPaymentDocUploadprogress.visibility = View.VISIBLE
+                binding.llRetireeAppointmentPaymentDocPercentage.visibility = View.VISIBLE
+                binding.pbRetireeAppointmentPaymentDoc.visibility = View.VISIBLE
+                binding.llRetireeAppointmentPaymentDocSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1393,18 +1394,18 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_appointment_payment_doc?.setProgress(form_status)
+                            binding.pbRetireeAppointmentPaymentDoc?.setProgress(form_status)
 
-                            tv_retiree_appointment_payment_doc_percent.text =
+                            binding.tvRetireeAppointmentPaymentDocPercent.text =
                                 form_status.toString() + " %"
                             if (form_status == 100) {
 
-                                retiree_appointment_btn_green_view.visibility = View.VISIBLE
+                                binding.retireeAppointmentBtnGreenView.visibility = View.VISIBLE
 
-                                ll_retiree_appointment_payment_doc_uploadprogress.visibility =
+                                binding.llRetireeAppointmentPaymentDocUploadprogress.visibility =
                                     View.GONE
-                                ll_retiree_appointment_payment_doc_size.visibility = View.VISIBLE
-                                txt_appointment_payment_doc_filesize.text = pdfSize
+                                binding.llRetireeAppointmentPaymentDocSize.visibility = View.VISIBLE
+                                binding.txtAppointmentPaymentDocFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1417,13 +1418,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_authorisation_payment_doc.visibility= View.VISIBLE
-                img_retiree_authorisation_payment_doc_close.visibility= View.VISIBLE
+                binding.cvRetireeAuthorisationPaymentDoc.visibility= View.VISIBLE
+                binding.imgRetireeAuthorisationPaymentDocClose.visibility= View.VISIBLE
 
-                ll_retiree_authorisation_payment_doc_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_authorisation_payment_doc_percentage.visibility =View.VISIBLE
-                pb_retiree_authorisation_payment_doc.visibility = View.VISIBLE
-                ll_retiree_authorisation_payment_doc_size.visibility = View.GONE
+                binding.llRetireeAuthorisationPaymentDocUploadprogress.visibility = View.VISIBLE
+                binding.llRetireeAuthorisationPaymentDocPercentage.visibility =View.VISIBLE
+                binding.pbRetireeAuthorisationPaymentDoc.visibility = View.VISIBLE
+                binding.llRetireeAuthorisationPaymentDocSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1434,16 +1435,16 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_authorisation_payment_doc?.setProgress(form_status)
-                            tv_retiree_authorisation_payment_doc_percent.text =
+                            binding.pbRetireeAuthorisationPaymentDoc?.setProgress(form_status)
+                            binding.tvRetireeAuthorisationPaymentDocPercent.text =
                                 form_status.toString() + " %"
                             if (form_status == 100) {
-                                retiree_authorisation_btn_green_view.visibility = View.VISIBLE
+                                binding.retireeAuthorisationBtnGreenView.visibility = View.VISIBLE
 
-                                ll_retiree_authorisation_payment_doc_uploadprogress.visibility =
+                                binding.llRetireeAuthorisationPaymentDocUploadprogress.visibility =
                                     View.GONE
-                                ll_retiree_authorisation_payment_doc_size.visibility = View.VISIBLE
-                                txt_authorisation_payment_doc_filesize.text = pdfSize
+                                binding.llRetireeAuthorisationPaymentDocSize.visibility = View.VISIBLE
+                                binding.txtAuthorisationPaymentDocFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1456,13 +1457,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_clearance_form_doc.visibility= View.VISIBLE
-                img_retiree_clearance_form_doc_close.visibility= View.VISIBLE
+                binding.cvRetireeClearanceFormDoc.visibility= View.VISIBLE
+                binding.llRetireeClearanceFormUpload.visibility= View.VISIBLE
 
-                ll_retiree_clearance_form_doc_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_clearance_form_doc_percentage.visibility =View.VISIBLE
-                pb_retiree_clearance_form_doc.visibility =View.VISIBLE
-                ll_retiree_clearance_form_doc_size.visibility = View.GONE
+                binding.llRetireeClearanceFormDocUploadprogress.visibility = View.VISIBLE
+                binding.llRetireeClearanceFormDocPercentage.visibility =View.VISIBLE
+                binding.pbRetireeClearanceFormDoc.visibility =View.VISIBLE
+                binding.llRetireeClearanceFormDocSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1473,16 +1474,16 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_clearance_form_doc?.setProgress(form_status)
+                            binding.pbRetireeClearanceFormDoc?.setProgress(form_status)
 
-                            tv_retiree_clearance_form_doc_percent.text =
+                            binding.tvRetireeClearanceFormDocPercent.text =
                                 form_status.toString() + " %"
                             if (form_status == 100) {
-                                retiree_clearance_btn_green_view.visibility = View.VISIBLE
+                                binding.retireeClearanceBtnGreenView.visibility = View.VISIBLE
 
-                                ll_retiree_clearance_form_doc_uploadprogress.visibility = View.GONE
-                                ll_retiree_clearance_form_doc_size.visibility = View.VISIBLE
-                                txt_clearance_form_doc_filesize.text = pdfSize
+                                binding.llRetireeClearanceFormDocUploadprogress.visibility = View.GONE
+                                binding.llRetireeClearanceFormDocSize.visibility = View.VISIBLE
+                                binding.txtClearanceFormDocFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1495,13 +1496,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_notification_promotion_doc.visibility= View.VISIBLE
-                img_retiree_notification_promotion_doc_close.visibility= View.VISIBLE
+                binding.cvRetireeNotificationPromotionDoc.visibility= View.VISIBLE
+                binding.llRetireeNotificationPromotionDocUpload.visibility= View.VISIBLE
 
-                ll_retiree_notification_promotion_doc_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_notification_promotion_doc_percentage.visibility = View.VISIBLE
-                pb_retiree_notification_promotion_doc.visibility = View.VISIBLE
-                ll_retiree_notification_promotion_doc_size.visibility = View.GONE
+                binding.llRetireeNotificationPromotionDocUploadprogress.visibility = View.VISIBLE
+                binding.llRetireeNotificationPromotionDocPercentage.visibility = View.VISIBLE
+                binding.pbRetireeNotificationPromotionDoc.visibility = View.VISIBLE
+                binding.llRetireeNotificationPromotionDocSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1512,17 +1513,17 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_notification_promotion_doc?.setProgress(form_status)
+                            binding.pbRetireeNotificationPromotionDoc?.setProgress(form_status)
 
-                            tv_retiree_notification_promotion_doc_percent.text =
+                            binding.tvRetireeNotificationPromotionDocPercent.text =
                                 form_status.toString() + " %"
                             if (form_status == 100) {
-                                retiree_notification_btn_green_view.visibility = View.VISIBLE
+                                binding.retireeNotificationBtnGreenView.visibility = View.VISIBLE
 
-                                ll_retiree_notification_promotion_doc_uploadprogress.visibility =
+                                binding.llRetireeNotificationPromotionDocUploadprogress.visibility =
                                     View.GONE
-                                ll_retiree_notification_promotion_doc_size.visibility = View.VISIBLE
-                                txt_notification_promotion_doc_filesize.text = pdfSize
+                                binding.llRetireeNotificationPromotionDocSize.visibility = View.VISIBLE
+                                binding.txtNotificationPromotionDocFilesize.text = pdfSize
 
                             }
                         })
@@ -1536,13 +1537,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_pension_certificate_doc.visibility= View.VISIBLE
-                img_retiree_pension_certificate_doc_close.visibility= View.VISIBLE
+                binding.cvRetireePensionCertificateDoc.visibility= View.VISIBLE
+                binding.imgRetireePensionCertificateDocClose.visibility= View.VISIBLE
 
-                ll_retiree_pension_certificate_doc_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_pension_certificate_doc_percentage.visibility =View.VISIBLE
-                pb_retiree_pension_certificate_doc.visibility =View.VISIBLE
-                ll_retiree_pension_certificate_doc_size.visibility = View.GONE
+                binding.llRetireePensionCertificateDocUploadprogress.visibility = View.VISIBLE
+                binding.llRetireePensionCertificateDocPercentage.visibility =View.VISIBLE
+                binding.pbRetireePensionCertificateDoc.visibility =View.VISIBLE
+                binding.llRetireePensionCertificateDocSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1553,17 +1554,17 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_pension_certificate_doc?.setProgress(form_status)
+                            binding.pbRetireePensionCertificateDoc?.setProgress(form_status)
 
-                            tv_retiree_pension_certificate_doc_percent.text =
+                            binding.tvRetireePensionCertificateDocPercent.text =
                                 form_status.toString() + " %"
                             if (form_status == 100) {
-                                retiree_pension_certificate_btn_green_view.visibility = View.VISIBLE
+                                binding.retireePensionCertificateBtnGreenView.visibility = View.VISIBLE
 
-                                ll_retiree_pension_certificate_doc_uploadprogress.visibility =
+                                binding.llRetireePensionCertificateDocUploadprogress.visibility =
                                     View.GONE
-                                ll_retiree_pension_certificate_doc_size.visibility = View.VISIBLE
-                                txt_pension_certificate_doc_filesize.text = pdfSize
+                                binding.llRetireePensionCertificateDocSize.visibility = View.VISIBLE
+                                binding.txtPensionCertificateDocFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1576,13 +1577,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_passport_photo_doc.visibility= View.VISIBLE
-                img_retiree_passport_photo_doc_close.visibility= View.VISIBLE
+                binding.cvRetireePassportPhotoDoc.visibility= View.VISIBLE
+                binding.imgRetireePassportPhotoDocClose.visibility= View.VISIBLE
 
-                ll_retiree_passport_photo_doc_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_app_passport_photo_doc_percentage.visibility =View.VISIBLE
-                pb_retiree_passport_photo_doc.visibility =View.VISIBLE
-                ll_retiree_passport_photo_doc_size.visibility = View.GONE
+                binding.llRetireePassportPhotoDocUploadprogress.visibility = View.VISIBLE
+                binding.llRetireeAppPassportPhotoDocPercentage.visibility =View.VISIBLE
+                binding.pbRetireePassportPhotoDoc.visibility =View.VISIBLE
+                binding.llRetireePassportPhotoDocSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1593,16 +1594,16 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_passport_photo_doc?.setProgress(form_status)
+                            binding.pbRetireePassportPhotoDoc?.setProgress(form_status)
 
-                            tv_retiree_passport_photo_doc_percent.text =
+                            binding.tvRetireePassportPhotoDocPercent.text =
                                 form_status.toString() + " %"
                             if (form_status == 100) {
-                                retiree_passport_photo_btn_green_view.visibility = View.VISIBLE
+                                binding.retireePassportPhotoBtnGreenView.visibility = View.VISIBLE
 
-                                ll_retiree_passport_photo_doc_uploadprogress.visibility = View.GONE
-                                ll_retiree_passport_photo_doc_size.visibility = View.VISIBLE
-                                txt_passport_photo_doc_filesize.text = pdfSize
+                                binding.llRetireePassportPhotoDocUploadprogress.visibility = View.GONE
+                                binding.llRetireePassportPhotoDocSize.visibility = View.VISIBLE
+                                binding.txtPassportPhotoDocFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1615,13 +1616,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_retirement_notice_doc.visibility= View.VISIBLE
-                img_retiree_retirement_notice_doc_close.visibility= View.VISIBLE
+                binding.cvRetireeRetirementNoticeDoc.visibility= View.VISIBLE
+                binding.imgRetireeRetirementNoticeDocClose.visibility= View.VISIBLE
 
-                ll_retiree_retirement_notice_doc_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_retirement_notice_doc_percentage.visibility =View.VISIBLE
-                pb_retiree_retirement_notice_doc.visibility = View.VISIBLE
-                ll_retiree_retirement_notice_doc_size.visibility = View.GONE
+                binding.llRetireeRetirementNoticeDocUploadprogress.visibility = View.VISIBLE
+                binding.llRetireeRetirementNoticeDocPercentage.visibility =View.VISIBLE
+                binding.pbRetireeRetirementNoticeDoc.visibility = View.VISIBLE
+                binding.llRetireeRetirementNoticeDocSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1632,17 +1633,17 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_retirement_notice_doc?.setProgress(form_status)
+                            binding.pbRetireeRetirementNoticeDoc?.setProgress(form_status)
 
-                            tv_retiree_retirement_notice_doc_percent.text =
+                            binding.tvRetireeRetirementNoticeDocPercent.text =
                                 form_status.toString() + " %"
                             if (form_status == 100) {
-                                retiree_retirement_btn_green_view.visibility = View.VISIBLE
+                                binding.retireeRetirementBtnGreenView.visibility = View.VISIBLE
 
-                                ll_retiree_retirement_notice_doc_uploadprogress.visibility =
+                                binding.llRetireeRetirementNoticeDocUploadprogress.visibility =
                                     View.GONE
-                                ll_retiree_retirement_notice_doc_size.visibility = View.VISIBLE
-                                txt_retirement_notice_doc_filesize.text = pdfSize
+                                binding.llRetireeRetirementNoticeDocSize.visibility = View.VISIBLE
+                                binding.txtRetirementNoticeDocFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1654,13 +1655,13 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_retiree_id_card_doc.visibility= View.VISIBLE
-                img_retiree_id_card_doc_close.visibility= View.VISIBLE
+                binding.cvRetireeIdCardDoc.visibility= View.VISIBLE
+                binding.imgRetireeIdCardDocClose.visibility= View.VISIBLE
 
-                ll_retiree_id_card_doc_uploadprogress.visibility = View.VISIBLE
-                ll_retiree_id_card_doc_percentage.visibility = View.VISIBLE
-                pb_retiree_id_card_doc.visibility = View.VISIBLE
-                ll_retiree_id_card_doc_size.visibility = View.GONE
+                binding.llRetireeIdCardDocUploadprogress.visibility = View.VISIBLE
+                binding.llRetireeIdCardDocPercentage.visibility = View.VISIBLE
+                binding.pbRetireeIdCardDoc.visibility = View.VISIBLE
+                binding.llRetireeIdCardDocSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1671,16 +1672,16 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                             e.printStackTrace()
                         }
                         form_handler.post(Runnable {
-                            pb_retiree_id_card_doc?.setProgress(form_status)
+                            binding.pbRetireeIdCardDoc?.setProgress(form_status)
 
-                            tv_retiree_id_card_doc_percent.text = form_status.toString() + " %"
+                            binding.tvRetireeIdCardDocPercent.text = form_status.toString() + " %"
                             if (form_status == 100) {
 
-                                retiree_id_card_btn_green_view.visibility = View.VISIBLE
+                                binding.retireeIdCardBtnGreenView.visibility = View.VISIBLE
 
-                                ll_retiree_id_card_doc_uploadprogress.visibility = View.GONE
-                                ll_retiree_id_card_doc_size.visibility = View.VISIBLE
-                                txt_id_card_doc_filesize.text = pdfSize
+                                binding.llRetireeIdCardDocUploadprogress.visibility = View.GONE
+                                binding.llRetireeIdCardDocSize.visibility = View.VISIBLE
+                                binding.txtIdCardDocFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1712,16 +1713,16 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
                 }
 
                 // Mandatory documents
-                setDocumentView(retireeUserDoc.idCardFileUrl, retiree_id_card_btn_green_view, cv_retiree_id_card_doc, tv_retiree_id_card_doc_filename, img_retiree_id_card_doc_close, ll_retiree_id_card_doc_uploadprogress, ll_retiree_id_card_doc_percentage, pb_retiree_id_card_doc)
+                setDocumentView(retireeUserDoc.idCardFileUrl, binding.retireeIdCardBtnGreenView, binding.cvRetireeIdCardDoc, binding.tvRetireeIdCardDocFilename, binding.imgRetireeIdCardDocClose, binding.llRetireeIdCardDocUploadprogress, binding.llRetireeIdCardDocPercentage, binding.pbRetireeIdCardDoc)
                 // Optional documents
-                setDocumentViewIfPresent(retireeUserDoc.passportPhotoFileUrl, retiree_passport_photo_btn_green_view, cv_retiree_passport_photo_doc, tv_retiree_passport_photo_doc_filename, img_retiree_passport_photo_doc_close, ll_retiree_passport_photo_doc_uploadprogress, ll_retiree_app_passport_photo_doc_percentage, pb_retiree_passport_photo_doc)
-                setDocumentViewIfPresent(retireeUserDoc.applicationFormFileUrl, retiree_app_btn_green_view, cv_retiree_applicationForm_doc, tv_retiree_app_form_filename, img_retiree_app_form_close, ll_retiree_app_form_uploadprogress, ll_retiree_app_form_percentage, pb_retiree_app_form)
-                setDocumentViewIfPresent(retireeUserDoc.monthlyArrearsPaymentAppointmentFileUrl, retiree_appointment_btn_green_view, cv_retiree_appointment_payment_doc, tv_retiree_appointment_payment_doc_filename, img_retiree_appointment_payment_doc_close, ll_retiree_appointment_payment_doc_uploadprogress, ll_retiree_appointment_payment_doc_percentage, pb_retiree_appointment_payment_doc)
-                setDocumentViewIfPresent(retireeUserDoc.paymentAuthorizationRetirementOrDeathFileUrl, retiree_authorisation_btn_green_view, cv_retiree_authorisation_payment_doc, tv_retiree_authorisation_payment_doc_filename, img_retiree_authorisation_payment_doc_close, ll_retiree_authorisation_payment_doc_uploadprogress, ll_retiree_authorisation_payment_doc_percentage, pb_retiree_authorisation_payment_doc)
-                setDocumentViewIfPresent(retireeUserDoc.clearanceFormFileUrl, retiree_clearance_btn_green_view, cv_retiree_clearance_form_doc, tv_retiree_clearance_form_doc_filename, img_retiree_clearance_form_doc_close, ll_retiree_clearance_form_doc_uploadprogress, ll_retiree_clearance_form_doc_percentage, pb_retiree_clearance_form_doc)
-                setDocumentViewIfPresent(retireeUserDoc.promotionNotificationFileUrl, retiree_notification_btn_green_view, cv_retiree_notification_promotion_doc, tv_retiree_notification_promotion_doc_filename, img_retiree_notification_promotion_doc_close, ll_retiree_notification_promotion_doc_uploadprogress, ll_retiree_notification_promotion_doc_percentage, pb_retiree_notification_promotion_doc)
-                setDocumentViewIfPresent(retireeUserDoc.pensionLifeCertificateFileUrl, retiree_pension_certificate_btn_green_view, cv_retiree_pension_certificate_doc, tv_retiree_pension_certificate_doc_filename, img_retiree_pension_certificate_doc_close, ll_retiree_pension_certificate_doc_uploadprogress, ll_retiree_pension_certificate_doc_percentage, pb_retiree_pension_certificate_doc)
-                setDocumentViewIfPresent(retireeUserDoc.retirementNoticeFileUrl, retiree_retirement_btn_green_view, cv_retiree_retirement_notice_doc, tv_retiree_retirement_notice_doc_filename, img_retiree_retirement_notice_doc_close, ll_retiree_retirement_notice_doc_uploadprogress, ll_retiree_retirement_notice_doc_percentage, pb_retiree_retirement_notice_doc)
+                setDocumentViewIfPresent(retireeUserDoc.passportPhotoFileUrl, binding.retireePassportPhotoBtnGreenView, binding.cvRetireePassportPhotoDoc, binding.tvRetireePassportPhotoDocFilename, binding.imgRetireePassportPhotoDocClose, binding.llRetireePassportPhotoDocUploadprogress, binding.llRetireeAppPassportPhotoDocPercentage, binding.pbRetireePassportPhotoDoc)
+                setDocumentViewIfPresent(retireeUserDoc.applicationFormFileUrl, binding.retireeAppBtnGreenView, binding.cvRetireeApplicationFormDoc, binding.tvRetireeAppFormFilename, binding.imgRetireeAppFormClose, binding.llRetireeAppFormUploadprogress, binding.llRetireeAppFormPercentage, binding.pbRetireeAppForm)
+                setDocumentViewIfPresent(retireeUserDoc.monthlyArrearsPaymentAppointmentFileUrl, binding.retireeAppointmentBtnGreenView, binding.cvRetireeAppointmentPaymentDoc, binding.tvRetireeAppointmentPaymentDocFilename, binding.imgRetireeAppointmentPaymentDocClose, binding.llRetireeAppointmentPaymentDocUploadprogress, binding.llRetireeAppointmentPaymentDocPercentage, binding.pbRetireeAppointmentPaymentDoc)
+                setDocumentViewIfPresent(retireeUserDoc.paymentAuthorizationRetirementOrDeathFileUrl, binding.retireeAuthorisationBtnGreenView, binding.cvRetireeAuthorisationPaymentDoc, binding.tvRetireeAuthorisationPaymentDocFilename, binding.imgRetireeAuthorisationPaymentDocClose, binding.llRetireeAuthorisationPaymentDocUploadprogress, binding.llRetireeAuthorisationPaymentDocPercentage, binding.pbRetireeAuthorisationPaymentDoc)
+                setDocumentViewIfPresent(retireeUserDoc.clearanceFormFileUrl, binding.retireeClearanceBtnGreenView, binding.cvRetireeClearanceFormDoc, binding.tvRetireeClearanceFormDocFilename, binding.llRetireeClearanceFormUpload, binding.llRetireeClearanceFormDocUploadprogress, binding.llRetireeClearanceFormDocPercentage, binding.pbRetireeClearanceFormDoc)
+                setDocumentViewIfPresent(retireeUserDoc.promotionNotificationFileUrl, binding.retireeNotificationBtnGreenView, binding.cvRetireeNotificationPromotionDoc, binding.tvRetireeNotificationPromotionDocFilename, binding.llRetireeNotificationPromotionDocUpload, binding.llRetireeNotificationPromotionDocUploadprogress, binding.llRetireeNotificationPromotionDocPercentage, binding.pbRetireeNotificationPromotionDoc)
+                setDocumentViewIfPresent(retireeUserDoc.pensionLifeCertificateFileUrl, binding.retireePensionCertificateBtnGreenView, binding.cvRetireePensionCertificateDoc, binding.tvRetireePensionCertificateDocFilename, binding.imgRetireePensionCertificateDocClose, binding.llRetireePensionCertificateDocUploadprogress, binding.llRetireePensionCertificateDocPercentage, binding.pbRetireePensionCertificateDoc)
+                setDocumentViewIfPresent(retireeUserDoc.retirementNoticeFileUrl, binding.retireeRetirementBtnGreenView, binding.cvRetireeRetirementNoticeDoc, binding.tvRetireeRetirementNoticeDocFilename, binding.imgRetireeRetirementNoticeDocClose, binding.llRetireeRetirementNoticeDocUploadprogress, binding.llRetireeRetirementNoticeDocPercentage, binding.pbRetireeRetirementNoticeDoc)
 
                 // Enable tabs if needed
                 // enableDisableTabs(tab_tablayout_retiree, true, true, true)
@@ -1767,51 +1768,51 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
 
 
             /*
-            retiree_app_btn_green_view.setOnClickListener(this)
-            retiree_appointment_btn_green_view.setOnClickListener(this)
-            retiree_authorisation_btn_green_view.setOnClickListener(this)
-            retiree_clearance_btn_green_view.setOnClickListener(this)
-            retiree_notification_btn_green_view.setOnClickListener(this)
-            retiree_pension_certificate_btn_green_view.setOnClickListener(this)
-            retiree_passport_photo_btn_green_view.setOnClickListener(this)
-            retiree_retirement_btn_green_view.setOnClickListener(this)
-            retiree_id_card_btn_green_view.setOnClickListener(this)
+            binding.retireeAppBtnGreenView.setOnClickListener(this)
+            binding.retireeAppointmentBtnGreenView.setOnClickListener(this)
+            binding.retireeAuthorisationBtnGreenView.setOnClickListener(this)
+            binding.retireeClearanceBtnGreenView.setOnClickListener(this)
+            binding.retireeNotificationBtnGreenView.setOnClickListener(this)
+            binding.retireePensionCertificateBtnGreenView.setOnClickListener(this)
+            binding.retireePassportPhotoBtnGreenView.setOnClickListener(this)
+            binding.retireeRetirementBtnGreenView.setOnClickListener(this)
+            binding.retireeIdCardBtnGreenView.setOnClickListener(this)
              */
 
             //visible view btn mandatory
 
-            retiree_id_card_btn_green_view.visibility = View.VISIBLE
-            retiree_passport_photo_btn_green_view.visibility = View.VISIBLE
+            binding.retireeIdCardBtnGreenView.visibility = View.VISIBLE
+            binding.retireePassportPhotoBtnGreenView.visibility = View.VISIBLE
 
             //retiree id Card
-            cv_retiree_id_card_doc.visibility = View.VISIBLE
-            tv_retiree_id_card_doc_filename.text = idcard_url!!.substringAfterLast('/')
-            img_retiree_id_card_doc_close.visibility = View.VISIBLE
-            ll_retiree_id_card_doc_uploadprogress.visibility = View.GONE
-            ll_retiree_id_card_doc_percentage.visibility = View.GONE
-            pb_retiree_id_card_doc.visibility = View.GONE
+            binding.cvRetireeIdCardDoc.visibility = View.VISIBLE
+            binding.tvRetireeIdCardDocFilename.text = idcard_url!!.substringAfterLast('/')
+            binding.imgRetireeIdCardDocClose.visibility = View.VISIBLE
+            binding.llRetireeIdCardDocUploadprogress.visibility = View.GONE
+            binding.llRetireeIdCardDocPercentage.visibility = View.GONE
+            binding.pbRetireeIdCardDoc.visibility = View.GONE
 
             //PassPort photo
-            cv_retiree_passport_photo_doc.visibility = View.VISIBLE
-            tv_retiree_passport_photo_doc_filename.text = passPhoto_url!!.substringAfterLast('/')
-            img_retiree_passport_photo_doc_close.visibility = View.VISIBLE
-            ll_retiree_passport_photo_doc_uploadprogress.visibility = View.GONE
-            ll_retiree_app_passport_photo_doc_percentage.visibility = View.GONE
-            pb_retiree_passport_photo_doc.visibility = View.GONE
+            binding.cvRetireePassportPhotoDoc.visibility = View.VISIBLE
+            binding.tvRetireePassportPhotoDocFilename.text = passPhoto_url!!.substringAfterLast('/')
+            binding.imgRetireePassportPhotoDocClose.visibility = View.VISIBLE
+            binding.llRetireePassportPhotoDocUploadprogress.visibility = View.GONE
+            binding.llRetireeAppPassportPhotoDocPercentage.visibility = View.GONE
+            binding.pbRetireePassportPhotoDoc.visibility = View.GONE
 
 
 
             //optional button visible
             //app form
             if (!appform_url.isNullOrEmpty()){
-                retiree_app_btn_green_view.visibility = View.VISIBLE
-                cv_retiree_applicationForm_doc.visibility = View.VISIBLE
-            tv_retiree_app_form_filename.text = appform_url!!.substringAfterLast('/')
+                binding.retireeAppBtnGreenView.visibility = View.VISIBLE
+                binding.cvRetireeApplicationFormDoc.visibility = View.VISIBLE
+            binding.tvRetireeAppFormFilename.text = appform_url!!.substringAfterLast('/')
 
-            img_retiree_app_form_close.visibility = View.VISIBLE
-            ll_retiree_app_form_uploadprogress.visibility = View.GONE
-            ll_retiree_app_form_percentage.visibility = View.GONE
-            pb_retiree_app_form.visibility = View.GONE
+            binding.imgRetireeAppFormClose.visibility = View.VISIBLE
+            binding.llRetireeAppFormUploadprogress.visibility = View.GONE
+            binding.llRetireeAppFormPercentage.visibility = View.GONE
+            binding.pbRetireeAppForm.visibility = View.GONE
             }
 
             //tv_active_app_form_filename.text = ActiveUserDocRetrive?.applicationFormFileUrl
@@ -1819,86 +1820,86 @@ class RetireeDocumentsFragment : BaseFragment(), View.OnClickListener {
 
             //Appoinment payment
             if (!appoinment_payment_url.isNullOrEmpty()){
-            retiree_appointment_btn_green_view.visibility = View.VISIBLE
+            binding.retireeAppointmentBtnGreenView.visibility = View.VISIBLE
 
-            cv_retiree_appointment_payment_doc.visibility = View.VISIBLE
-            tv_retiree_appointment_payment_doc_filename.text = appoinment_payment_url!!.substringAfterLast('/')
+            binding.cvRetireeAppointmentPaymentDoc.visibility = View.VISIBLE
+            binding.tvRetireeAppointmentPaymentDocFilename.text = appoinment_payment_url!!.substringAfterLast('/')
 
-            img_retiree_appointment_payment_doc_close.visibility = View.VISIBLE
-            ll_retiree_appointment_payment_doc_uploadprogress.visibility = View.GONE
-            ll_retiree_appointment_payment_doc_percentage.visibility = View.GONE
-            pb_retiree_appointment_payment_doc.visibility = View.GONE
+            binding.imgRetireeAppointmentPaymentDocClose.visibility = View.VISIBLE
+            binding.llRetireeAppointmentPaymentDocUploadprogress.visibility = View.GONE
+            binding.llRetireeAppointmentPaymentDocPercentage.visibility = View.GONE
+            binding.pbRetireeAppointmentPaymentDoc.visibility = View.GONE
             }
 
             //Authorization Payment
             if (!autherization_payment_url.isNullOrEmpty()) {
 
-                retiree_authorisation_btn_green_view.visibility = View.VISIBLE
-                cv_retiree_authorisation_payment_doc.visibility = View.VISIBLE
-                tv_retiree_authorisation_payment_doc_filename.text =
+                binding.retireeAuthorisationBtnGreenView.visibility = View.VISIBLE
+                binding.cvRetireeAuthorisationPaymentDoc.visibility = View.VISIBLE
+                binding.tvRetireeAuthorisationPaymentDocFilename.text =
                     autherization_payment_url!!.substringAfterLast('/')
 
-                img_retiree_authorisation_payment_doc_close.visibility = View.VISIBLE
-                ll_retiree_authorisation_payment_doc_uploadprogress.visibility = View.GONE
-                ll_retiree_authorisation_payment_doc_percentage.visibility = View.GONE
-                pb_retiree_authorisation_payment_doc.visibility = View.GONE
+                binding.imgRetireeAuthorisationPaymentDocClose.visibility = View.VISIBLE
+                binding.llRetireeAuthorisationPaymentDocUploadprogress.visibility = View.GONE
+                binding.llRetireeAuthorisationPaymentDocPercentage.visibility = View.GONE
+                binding.pbRetireeAuthorisationPaymentDoc.visibility = View.GONE
             }
 
             //clearance
             if (!clearrance_url.isNullOrEmpty()){
-                retiree_clearance_btn_green_view.visibility = View.VISIBLE
-                cv_retiree_clearance_form_doc.visibility = View.VISIBLE
-            tv_retiree_clearance_form_doc_filename.text = clearrance_url!!.substringAfterLast('/')
+                binding.retireeClearanceBtnGreenView.visibility = View.VISIBLE
+                binding.cvRetireeClearanceFormDoc.visibility = View.VISIBLE
+            binding.tvRetireeClearanceFormDocFilename.text = clearrance_url!!.substringAfterLast('/')
 
-            img_retiree_clearance_form_doc_close.visibility = View.VISIBLE
-            ll_retiree_clearance_form_doc_uploadprogress.visibility = View.GONE
-            ll_retiree_clearance_form_doc_percentage.visibility = View.GONE
-            pb_retiree_clearance_form_doc.visibility = View.GONE
+            binding.llRetireeClearanceFormUpload.visibility = View.VISIBLE
+            binding.llRetireeClearanceFormDocUploadprogress.visibility = View.GONE
+            binding.llRetireeClearanceFormDocPercentage.visibility = View.GONE
+            binding.pbRetireeClearanceFormDoc.visibility = View.GONE
             }
 
             //notification promotion
             if (!notification_promotion_url.isNullOrEmpty()) {
-                retiree_notification_btn_green_view.visibility = View.VISIBLE
+                binding.retireeNotificationBtnGreenView.visibility = View.VISIBLE
 
-                cv_retiree_notification_promotion_doc.visibility = View.VISIBLE
-                tv_retiree_notification_promotion_doc_filename.text =
+                binding.cvRetireeNotificationPromotionDoc.visibility = View.VISIBLE
+                binding.tvRetireeNotificationPromotionDocFilename.text =
                     notification_promotion_url!!.substringAfterLast('/')
 
-                img_retiree_notification_promotion_doc_close.visibility = View.VISIBLE
-                ll_retiree_notification_promotion_doc_uploadprogress.visibility = View.GONE
-                ll_retiree_notification_promotion_doc_percentage.visibility = View.GONE
-                pb_retiree_notification_promotion_doc.visibility = View.GONE
+                binding.llRetireeNotificationPromotionDocUpload.visibility = View.VISIBLE
+                binding.llRetireeNotificationPromotionDocUploadprogress.visibility = View.GONE
+                binding.llRetireeNotificationPromotionDocPercentage.visibility = View.GONE
+                binding.pbRetireeNotificationPromotionDoc.visibility = View.GONE
             }
 
 
             //Pension certification
             if (!pension_certificate_url.isNullOrEmpty()) {
-                retiree_pension_certificate_btn_green_view.visibility = View.VISIBLE
+                binding.retireePensionCertificateBtnGreenView.visibility = View.VISIBLE
 
-                cv_retiree_pension_certificate_doc.visibility = View.VISIBLE
-                tv_retiree_pension_certificate_doc_filename.text =
+                binding.cvRetireePensionCertificateDoc.visibility = View.VISIBLE
+                binding.tvRetireePensionCertificateDocFilename.text =
                     pension_certificate_url!!.substringAfterLast('/')
 
-                img_retiree_pension_certificate_doc_close.visibility = View.VISIBLE
-                ll_retiree_pension_certificate_doc_uploadprogress.visibility = View.GONE
-                ll_retiree_pension_certificate_doc_percentage.visibility = View.GONE
-                pb_retiree_pension_certificate_doc.visibility = View.GONE
+                binding.imgRetireePensionCertificateDocClose.visibility = View.VISIBLE
+                binding.llRetireePensionCertificateDocUploadprogress.visibility = View.GONE
+                binding.llRetireePensionCertificateDocPercentage.visibility = View.GONE
+                binding.pbRetireePensionCertificateDoc.visibility = View.GONE
             }
 
 
 
             //retiree retirement
             if (!retirement_url.isNullOrEmpty()) {
-                retiree_retirement_btn_green_view.visibility = View.VISIBLE
+                binding.retireeRetirementBtnGreenView.visibility = View.VISIBLE
 
-                cv_retiree_retirement_notice_doc.visibility = View.VISIBLE
-                tv_retiree_retirement_notice_doc_filename.text =
+                binding.cvRetireeRetirementNoticeDoc.visibility = View.VISIBLE
+                binding.tvRetireeRetirementNoticeDocFilename.text =
                     retirement_url!!.substringAfterLast('/')
 
-                img_retiree_retirement_notice_doc_close.visibility = View.VISIBLE
-                ll_retiree_retirement_notice_doc_uploadprogress.visibility = View.GONE
-                ll_retiree_retirement_notice_doc_percentage.visibility = View.GONE
-                pb_retiree_retirement_notice_doc.visibility = View.GONE
+                binding.imgRetireeRetirementNoticeDocClose.visibility = View.VISIBLE
+                binding.llRetireeRetirementNoticeDocUploadprogress.visibility = View.GONE
+                binding.llRetireeRetirementNoticeDocPercentage.visibility = View.GONE
+                binding.pbRetireeRetirementNoticeDoc.visibility = View.GONE
             }
             //enableDisableTabs(tab_tablayout_retiree, true, true, true)
         }

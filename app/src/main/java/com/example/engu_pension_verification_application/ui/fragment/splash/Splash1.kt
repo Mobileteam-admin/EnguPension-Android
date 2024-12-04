@@ -9,18 +9,18 @@ import android.widget.ImageView
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.FragmentSplash1Binding
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_splash1.*
 
 
 class Splash1 : BaseFragment() {
-
+    private lateinit var binding:FragmentSplash1Binding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_splash1, container, false)
+        binding = FragmentSplash1Binding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,7 +29,7 @@ class Splash1 : BaseFragment() {
     }
 
     private fun onClicked() {
-        img_next1.setOnClickListener {
+        binding.imgNext1.setOnClickListener {
             navigate(R.id.action_splash1_to_splash2,
                 allowAnimation = false, popUpTo = R.id.navigation_splash1)
         }

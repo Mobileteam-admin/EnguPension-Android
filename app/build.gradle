@@ -3,17 +3,16 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'kotlin-android-extensions'
 }
 
 android {
     // namespace 'com.example.engu_pension_verification_application'
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.example.engu_pension_verification_application"
         minSdk 24
-        targetSdk 33
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -37,9 +36,7 @@ android {
     buildFeatures {
         viewBinding true
     }
-    dataBinding {
-        enabled = true
-    }
+    namespace 'com.example.engu_pension_verification_application'
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             def formattedDate = (new Date()).format('dd-MM-yyyy_HH_mm')

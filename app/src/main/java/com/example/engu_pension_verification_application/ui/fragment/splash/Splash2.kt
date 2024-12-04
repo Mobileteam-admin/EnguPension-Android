@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.FragmentSplash1Binding
+import com.example.engu_pension_verification_application.databinding.FragmentSplash2Binding
 import com.example.engu_pension_verification_application.ui.activity.DashboardActivity
 import com.example.engu_pension_verification_application.ui.activity.ProcessDashboardActivity
 import com.example.engu_pension_verification_application.ui.activity.ServiceActivity
@@ -13,19 +15,18 @@ import com.example.engu_pension_verification_application.ui.activity.SignUpActiv
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
-import kotlinx.android.synthetic.main.fragment_splash2.*
 
 
 class Splash2 : BaseFragment() {
-
+    private lateinit var binding:FragmentSplash2Binding
     val prefs = SharedPref
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_splash2, container, false)
+        binding = FragmentSplash2Binding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,7 +36,7 @@ class Splash2 : BaseFragment() {
     }
 
     private fun onClicked() {
-        img_next2.setOnClickListener {
+        binding.imgNext2.setOnClickListener {
             if (prefs.isLogin) {
                 val intent = when (prefs.onboardingStage) {
                     OnboardingStage.DASHBOARD -> Intent(context, DashboardActivity::class.java)

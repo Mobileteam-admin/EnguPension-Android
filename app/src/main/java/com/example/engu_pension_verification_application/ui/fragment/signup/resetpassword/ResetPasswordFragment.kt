@@ -14,16 +14,17 @@ import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentResetPasswordBinding
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.AppUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.ResetPasswordViewModel
-import kotlinx.android.synthetic.main.fragment_reset_password.*
 
 
 class ResetPasswordFragment : BaseFragment() {
+    private lateinit var binding:FragmentResetPasswordBinding
     var token: String = ""
     var OTP: String = ""
 
@@ -33,8 +34,8 @@ class ResetPasswordFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reset_password, container, false)
+        binding = FragmentResetPasswordBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,14 +71,14 @@ class ResetPasswordFragment : BaseFragment() {
     }
 
     private fun ontextWatcher() {
-        et_new_resetpass.addTextChangedListener(object : TextWatcher {
+        binding.etNewResetpass.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(newText: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (!AppUtils.isValidPassword(et_new_resetpass.text.toString())) {
-                    txt_reset_newpass_pattern_error.visibility = View.VISIBLE
+                if (!AppUtils.isValidPassword(binding.etNewResetpass.text.toString())) {
+                    binding.txtResetNewpassPatternError.visibility = View.VISIBLE
                 } else {
-                    txt_reset_newpass_pattern_error.visibility = View.GONE
+                    binding.txtResetNewpassPatternError.visibility = View.GONE
                 }
 
             }
@@ -85,23 +86,23 @@ class ResetPasswordFragment : BaseFragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (p0.toString() != null) {
                     if (!p0.toString().isEmpty()) {
-                        txt_resetnew_password_error.visibility = View.GONE
+                        binding.txtResetnewPasswordError.visibility = View.GONE
                     }
 
                 }
             }
         })
 
-        et_confirm_resetpass.addTextChangedListener(object : TextWatcher{
+        binding.etConfirmResetpass.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(p0: Editable?) {
-                if (!et_new_resetpass.text.toString().equals(p0.toString())) {
-                    txt_reset_confirmPassword_error.visibility = View.VISIBLE
+                if (!binding.etNewResetpass.text.toString().equals(p0.toString())) {
+                    binding.txtResetConfirmPasswordError.visibility = View.VISIBLE
                 } else {
-                    txt_reset_confirmPassword_error.visibility = View.GONE
+                    binding.txtResetConfirmPasswordError.visibility = View.GONE
                 }
             }
         } )
@@ -109,14 +110,14 @@ class ResetPasswordFragment : BaseFragment() {
     }
 
     private fun onClicked() {
-        ll_resetpass_submit.setOnClickListener {
+        binding.llResetpassSubmit.setOnClickListener {
             if (isValidReset()) {
 
                 showLoader()
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                     resetPasswordViewModel.doReset(
                         com.example.engu_pension_verification_application.model.input.InputResetPassword(
-                            password = et_new_resetpass.text.toString(),
+                            password = binding.etNewResetpass.text.toString(),
                             token = token,
                             otp = OTP
                         )
@@ -127,7 +128,7 @@ class ResetPasswordFragment : BaseFragment() {
             }
         }
 
-        ll_resetpass_back.setOnClickListener {
+        binding.llResetpassBack.setOnClickListener {
             findNavController().popBackStack()
         }
     }
@@ -135,39 +136,39 @@ class ResetPasswordFragment : BaseFragment() {
     private fun isValidReset(): Boolean {
 
 
-        if (TextUtils.isEmpty(et_new_resetpass.text)) {
-            txt_resetnew_password_error.visibility = View.VISIBLE
+        if (TextUtils.isEmpty(binding.etNewResetpass.text)) {
+            binding.txtResetnewPasswordError.visibility = View.VISIBLE
             return false
         } else {
-            txt_resetnew_password_error.visibility = View.GONE
+            binding.txtResetnewPasswordError.visibility = View.GONE
         }
 
-        if (!AppUtils.isValidPassword(et_new_resetpass.text.toString())) {
-            txt_reset_newpass_pattern_error.visibility = View.VISIBLE
+        if (!AppUtils.isValidPassword(binding.etNewResetpass.text.toString())) {
+            binding.txtResetNewpassPatternError.visibility = View.VISIBLE
             //"Password must have at least 8 characters, include uppercase and lowercase letters, a digit, and a special character",
             return false
         } else {
-            txt_reset_newpass_pattern_error.visibility = View.GONE
+            binding.txtResetNewpassPatternError.visibility = View.GONE
         }
 
 
 
-        if (TextUtils.isEmpty(et_confirm_resetpass.text)) {
-            txt_reset_confirmPassword_error.visibility = View.VISIBLE
-            txt_reset_confirmPassword_error.text =
+        if (TextUtils.isEmpty(binding.etConfirmResetpass.text)) {
+            binding.txtResetConfirmPasswordError.visibility = View.VISIBLE
+            binding.txtResetConfirmPasswordError.text =
                 getResources().getString(R.string.enter_valid_password)
             return false
         } else {
-            txt_reset_confirmPassword_error.visibility = View.GONE
+            binding.txtResetConfirmPasswordError.visibility = View.GONE
         }
 
-        if (et_new_resetpass.text.toString() != et_confirm_resetpass.text.toString()) {
-            txt_reset_confirmPassword_error.visibility = View.VISIBLE
-            txt_reset_confirmPassword_error.text =
+        if (binding.etNewResetpass.text.toString() != binding.etConfirmResetpass.text.toString()) {
+            binding.txtResetConfirmPasswordError.visibility = View.VISIBLE
+            binding.txtResetConfirmPasswordError.text =
                 getResources().getString(R.string.password_mismatch)
             return false
         } else {
-            txt_reset_confirmPassword_error.visibility = View.GONE
+            binding.txtResetConfirmPasswordError.visibility = View.GONE
         }
         return true
     }

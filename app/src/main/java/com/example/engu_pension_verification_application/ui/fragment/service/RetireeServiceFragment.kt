@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentRetireeBinding
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
@@ -29,11 +30,10 @@ import com.example.engu_pension_verification_application.viewmodel.EnguViewModel
 import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.fragment_retiree.*
 
 
 class RetireeServiceFragment : BaseFragment() {
-
+    private lateinit var binding:FragmentRetireeBinding
     private val retireeServiceViewModel by activityViewModels<RetireeServiceViewModel>()
     val prefs = SharedPref
 //    var BankdetailsList = ArrayList<ListBanksItem?>()
@@ -46,8 +46,8 @@ class RetireeServiceFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_retiree, container, false)
+        binding = FragmentRetireeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,8 +57,8 @@ class RetireeServiceFragment : BaseFragment() {
 //        retireeServicePresenter = RetireeServicePresenter(this)
 
 
-        setupViewPager(tab_retiree_viewpager)
-        tab_tablayout_retiree!!.setupWithViewPager(tab_retiree_viewpager)
+        setupViewPager(binding.tabRetireeViewpager)
+        binding.tabTablayoutRetiree!!.setupWithViewPager(binding.tabRetireeViewpager)
 
 
 //        initCall()
@@ -68,13 +68,13 @@ class RetireeServiceFragment : BaseFragment() {
 
     private fun observeLiveData() {
         retireeServiceViewModel.onMoveToNextTab.observe(viewLifecycleOwner) {
-            tab_retiree_viewpager.setCurrentItem(getItem(+1), true)
+            binding.tabRetireeViewpager.setCurrentItem(getItem(+1), true)
         }
         retireeServiceViewModel.enableDocTab.observe(viewLifecycleOwner) {
-            tab_tablayout_retiree.getTabAt(RetireeDocumentsFragment.TAB_POSITION)?.view?.isEnabled = it
+            binding.tabTablayoutRetiree.getTabAt(RetireeDocumentsFragment.TAB_POSITION)?.view?.isEnabled = it
         }
         retireeServiceViewModel.enableBankTab.observe(viewLifecycleOwner) {
-            tab_tablayout_retiree.getTabAt(RetireeBankFragment.TAB_POSITION)?.view?.isEnabled = it
+            binding.tabTablayoutRetiree.getTabAt(RetireeBankFragment.TAB_POSITION)?.view?.isEnabled = it
         }
 
         tokenRefreshViewModel2.tokenRefreshError.observe(viewLifecycleOwner) { error ->
@@ -98,7 +98,7 @@ class RetireeServiceFragment : BaseFragment() {
     }
 
     private fun onClicked() {
-        img_back_retiree.setOnClickListener {
+        binding.imgBackRetiree.setOnClickListener {
             activity?.onBackPressed()
         }
     }
@@ -133,7 +133,7 @@ class RetireeServiceFragment : BaseFragment() {
         })
 
 
-        tab_tablayout_retiree.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        binding.tabTablayoutRetiree.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {/*val view = tab?.customView
                 if (view is AppCompatTextView) {
                     view.setTypeface(view.typeface, Typeface.BOLD)
@@ -142,23 +142,23 @@ class RetireeServiceFragment : BaseFragment() {
                 val position = tab!!.position
                 when (position) {
                     0 -> {
-                        tab_tablayout_retiree.getTabAt(0)?.setIcon(R.drawable.ic_basicdetails_white)
-                        tab_tablayout_retiree.getTabAt(1)?.setIcon(R.drawable.ic_documents_inactive)
-                        tab_tablayout_retiree.getTabAt(2)?.setIcon(R.drawable.ic_bank_inactive)
+                        binding.tabTablayoutRetiree.getTabAt(0)?.setIcon(R.drawable.ic_basicdetails_white)
+                        binding.tabTablayoutRetiree.getTabAt(1)?.setIcon(R.drawable.ic_documents_inactive)
+                        binding.tabTablayoutRetiree.getTabAt(2)?.setIcon(R.drawable.ic_bank_inactive)
                     }
 
                     1 -> {
-                        tab_tablayout_retiree.getTabAt(0)
+                        binding.tabTablayoutRetiree.getTabAt(0)
                             ?.setIcon(R.drawable.ic_basic_details_inactive)
-                        tab_tablayout_retiree.getTabAt(1)?.setIcon(R.drawable.ic_documents_active)
-                        tab_tablayout_retiree.getTabAt(2)?.setIcon(R.drawable.ic_bank_inactive)
+                        binding.tabTablayoutRetiree.getTabAt(1)?.setIcon(R.drawable.ic_documents_active)
+                        binding.tabTablayoutRetiree.getTabAt(2)?.setIcon(R.drawable.ic_bank_inactive)
                     }
 
                     2 -> {
-                        tab_tablayout_retiree.getTabAt(0)
+                        binding.tabTablayoutRetiree.getTabAt(0)
                             ?.setIcon(R.drawable.ic_basic_details_inactive)
-                        tab_tablayout_retiree.getTabAt(1)?.setIcon(R.drawable.ic_documents_inactive)
-                        tab_tablayout_retiree.getTabAt(2)?.setIcon(R.drawable.ic_bank_white)
+                        binding.tabTablayoutRetiree.getTabAt(1)?.setIcon(R.drawable.ic_documents_inactive)
+                        binding.tabTablayoutRetiree.getTabAt(2)?.setIcon(R.drawable.ic_bank_white)
                     }
                 }
             }
@@ -217,7 +217,7 @@ class RetireeServiceFragment : BaseFragment() {
     }
 
     private fun getItem(i: Int): Int {
-        return tab_retiree_viewpager.currentItem + i
+        return binding.tabRetireeViewpager.currentItem + i
     }
 
 

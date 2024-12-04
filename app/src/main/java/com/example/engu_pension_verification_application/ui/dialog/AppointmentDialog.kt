@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.DialogAppointmentBinding
 import com.example.engu_pension_verification_application.model.input.BookAppointmentRequest
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.util.CalendarUtils
@@ -18,15 +19,12 @@ import com.example.engu_pension_verification_application.viewmodel.CalendarResul
 import com.example.engu_pension_verification_application.viewmodel.CalendarViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.dialog_appointment.ll_back
-import kotlinx.android.synthetic.main.dialog_appointment.ll_pay_now
-import kotlinx.android.synthetic.main.dialog_appointment.tv_date
-import kotlinx.android.synthetic.main.dialog_appointment.tv_time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 class AppointmentDialog : BaseDialog() {
+    private lateinit var binding:DialogAppointmentBinding
     private lateinit var viewModel: AppointmentViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private val calendarResultViewModel by activityViewModels<CalendarResultViewModel>()
@@ -34,7 +32,8 @@ class AppointmentDialog : BaseDialog() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_appointment, container, false)
+        binding = DialogAppointmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -76,8 +75,8 @@ class AppointmentDialog : BaseDialog() {
                     CalendarUtils.DATE_FORMAT_3,
                     calendar
                 )
-                tv_date.text = selectedDay
-                tv_time.text = ""
+                binding.tvDate.text = selectedDay
+                binding.tvTime.text = ""
                 viewModel.selectedDate = selectedDay
                 viewModel.selectedTimeSlotId = null
                 showLoader()
@@ -138,7 +137,7 @@ class AppointmentDialog : BaseDialog() {
                 dismissLoader()
                 response.detail?.message?.let { showToast(it) }
                 dismiss()
-                showDialog(BookingDetailsDialog.newInstance(tv_date.text.toString(),tv_time.text.toString()))
+                showDialog(BookingDetailsDialog.newInstance(binding.tvDate.text.toString(),binding.tvTime.text.toString()))
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -157,12 +156,12 @@ class AppointmentDialog : BaseDialog() {
 
     private fun initViews() {
         calendarDialog = CalendarDialog()
-        tv_date.setOnClickListener {
+        binding.tvDate.setOnClickListener {
             showDialog(calendarDialog)
         }
-        tv_time.setOnClickListener { showTimeSlotPopUp() }
-        ll_back.setOnClickListener { dismiss() }
-        ll_pay_now.setOnClickListener { bookAppointment() }
+        binding.tvTime.setOnClickListener { showTimeSlotPopUp() }
+        binding.llBack.setOnClickListener { dismiss() }
+        binding.llPayNow.setOnClickListener { bookAppointment() }
 
     }
 
@@ -188,12 +187,12 @@ class AppointmentDialog : BaseDialog() {
             items.add("${it.startTime} - ${it.endTime}")
         }
         if (items.isNotEmpty()) {
-            showListPopUp(tv_time, items) { position, text ->
+            showListPopUp(binding.tvTime, items) { position, text ->
                 val slot = viewModel.slotApiResult.value?.second?.detail?.slots?.get(position)
                 viewModel.selectedTimeSlotId = slot?.id
-                tv_time.text = text
+                binding.tvTime.text = text
             }
-        } else if (tv_date.text.isNotEmpty()){
+        } else if (binding.tvDate.text.isNotEmpty()){
             showToast(R.string.no_time_slots_msg)
         }
     }

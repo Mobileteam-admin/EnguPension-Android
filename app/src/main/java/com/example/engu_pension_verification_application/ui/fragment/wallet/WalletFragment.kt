@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentWalletBinding
 import com.example.engu_pension_verification_application.model.input.TopUpRequest
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
 import com.example.engu_pension_verification_application.network.ApiClient
@@ -29,7 +30,6 @@ import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import com.example.engu_pension_verification_application.viewmodel.WalletFragmentViewModel
-import kotlinx.android.synthetic.main.fragment_wallet.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -38,7 +38,7 @@ class WalletFragment : BaseFragment() {
     companion object {
         const val BANK_ITEM_SELECT_ID = -1
     }
-
+    private lateinit var binding:FragmentWalletBinding
     private lateinit var viewModel: WalletFragmentViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private lateinit var stripeActivityResultLauncher: ActivityResultLauncher<Intent>
@@ -50,8 +50,8 @@ class WalletFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallet, container, false)
+        binding = FragmentWalletBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,28 +85,28 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        img_wallet_back.setOnClickListener {
+        binding.imgWalletBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        ll_wallet_back.setOnClickListener {
+        binding.llWalletBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        txt_wallethistory.setOnClickListener {
+        binding.txtWallethistory.setOnClickListener {
             navigate(R.id.action_wallet_to_wallet_history)
         }
-        ll_wallet_topup.setOnClickListener {
+        binding.llWalletTopup.setOnClickListener {
             if (validateInputs()) {
                 val topUpRequest = TopUpRequest(
                     userId = SharedPref.user_id?.toInt()!!,
-                    bankId = sp_wallet_bank.selectedItemPosition,
-                    amount = et_top_up_wallet_amount.text.toString().toFloat(),
+                    bankId = binding.spWalletBank.selectedItemPosition,
+                    amount = binding.etTopUpWalletAmount.text.toString().toFloat(),
                     currency = AppConstants.DEFAULT_CURRENCY_CODE,
                 )
                 viewModel.fetchTopUp(topUpRequest)
                 showLoader()
             }
         }
-        sp_wallet_bank.onItemSelectedListener = object : OnItemSelectedListener {
+        binding.spWalletBank.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -133,7 +133,7 @@ class WalletFragment : BaseFragment() {
                     )
                 )
                 response.detail.banks?.let { viewModel.bankItems.addAll(it) }
-                sp_wallet_bank.adapter = BankAdapter(context, viewModel.bankItems)
+                binding.spWalletBank.adapter = BankAdapter(context, viewModel.bankItems)
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -175,29 +175,29 @@ class WalletFragment : BaseFragment() {
             dismissLoader()
             if (response != null) {
                 showToast(response.detail?.message ?: getString(R.string.common_error_msg))
-                et_top_up_wallet_amount.setText("")
+                binding.etTopUpWalletAmount.setText("")
                 viewModel.resetPaymentResult()
             }
         }
     }
 
     private fun refreshBankImage(position: Int) {
-        img_activebank_.setImageResource(R.drawable.ic_bank_green)
+        binding.imgActivebank.setImageResource(R.drawable.ic_bank_green)
         viewModel.bankItems[position]?.let {
             Glide.with(requireContext())
                 .load(it.logo)
                 .placeholder(R.drawable.ic_bank_green)
-                .into(img_activebank_)
+                .into(binding.imgActivebank)
         }
     }
 
     private fun validateInputs(): Boolean {
         var errorResId: Int? = null
-        val amount = et_top_up_wallet_amount.text.toString()
+        val amount = binding.etTopUpWalletAmount.text.toString()
         if (!amount.isValidNumber()) {
             errorResId = R.string.invalid_amount_msg
-        } else if (sp_wallet_bank.selectedItemPosition !in viewModel.bankItems.indices
-            || viewModel.bankItems[sp_wallet_bank.selectedItemPosition]?.id == BANK_ITEM_SELECT_ID
+        } else if (binding.spWalletBank.selectedItemPosition !in viewModel.bankItems.indices
+            || viewModel.bankItems[binding.spWalletBank.selectedItemPosition]?.id == BANK_ITEM_SELECT_ID
         ) {
             errorResId = R.string.no_bank_selected_msg
         }

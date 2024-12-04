@@ -8,16 +8,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.FragmentChooseServiceBinding
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.ChooseServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
-import kotlinx.android.synthetic.main.fragment_choose_service.*
 
 
 class ChooseServiceFragment : BaseFragment() {
+    private lateinit var binding:FragmentChooseServiceBinding
     private val viewModel by activityViewModels<ChooseServiceViewModel>()
     private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
     private val retireeServiceViewModel by activityViewModels<RetireeServiceViewModel>()
@@ -25,8 +26,8 @@ class ChooseServiceFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_choose_service, container, false)
+        binding = FragmentChooseServiceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,11 +49,11 @@ class ChooseServiceFragment : BaseFragment() {
     }
 
     private fun setClickListeners() {
-        cv_activeservice.setOnClickListener {
+        binding.cvActiveservice.setOnClickListener {
             SharedPref.onboardingStage = OnboardingStage.ACTIVE_BASIC_DETAILS
             navigateToActiveService(true)
         }
-        cv_retiree.setOnClickListener {
+        binding.cvRetiree.setOnClickListener {
             SharedPref.onboardingStage = OnboardingStage.RETIREE_BASIC_DETAILS
             navigateToRetireService(true)
         }

@@ -29,6 +29,7 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.commons.setDocumentView
 import com.example.engu_pension_verification_application.commons.setDocumentViewIfPresent
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.FragmentActiveDocumentsBinding
 import com.example.engu_pension_verification_application.model.response.FileUrlResponse
 import com.example.engu_pension_verification_application.model.response.ResponseActiveDocRetrive
 import com.example.engu_pension_verification_application.model.response.ResponseActiveDocUpload
@@ -41,7 +42,6 @@ import com.example.engu_pension_verification_application.viewmodel.ActiveDocumen
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import kotlinx.android.synthetic.main.fragment_active_documents.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -57,6 +57,7 @@ class ActiveDocumentsFragment(
 ) : BaseFragment(),
     View.OnClickListener
 {
+    private lateinit var binding:FragmentActiveDocumentsBinding
     private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private lateinit var activeDocumentsViewModel: ActiveDocumentsViewModel
@@ -119,9 +120,8 @@ class ActiveDocumentsFragment(
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_active_documents, container, false)
+        binding = FragmentActiveDocumentsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -132,26 +132,26 @@ class ActiveDocumentsFragment(
     }
 
     private fun initViews() {
-        ll_active_app_form_upload.setOnClickListener(this)
-        img_active_app_form_close.setOnClickListener(this)
-        ll_active_promotion_letterm_upload.setOnClickListener(this)
-        img_active_promotion_letter_close.setOnClickListener(this)
-        ll_active_id_card_upload.setOnClickListener(this)
-        img_active_id_card_close.setOnClickListener(this)
-        ll_active_passport_photo_upload.setOnClickListener(this)
-        img_active_passport_photo_close.setOnClickListener(this)
-        ll_active_clearence_form_upload.setOnClickListener(this)
-        img_active_clearence_form_close.setOnClickListener(this)
-        ll_activedoc_next.setOnClickListener(this)
-        tv_active_app_form_filename.setOnClickListener(this)
+        binding.llActiveAppFormUpload.setOnClickListener(this)
+        binding.imgActiveAppFormClose.setOnClickListener(this)
+        binding.llActivePromotionLettermUpload.setOnClickListener(this)
+        binding.imgActivePromotionLetterClose.setOnClickListener(this)
+        binding.llActiveIdCardUpload.setOnClickListener(this)
+        binding.imgActiveIdCardClose.setOnClickListener(this)
+        binding.llActivePassportPhotoUpload.setOnClickListener(this)
+        binding.imgActivePassportPhotoClose.setOnClickListener(this)
+        binding.llActiveClearenceFormUpload.setOnClickListener(this)
+        binding.imgActiveClearenceFormClose.setOnClickListener(this)
+        binding.llActivedocNext.setOnClickListener(this)
+        binding.tvActiveAppFormFilename.setOnClickListener(this)
 
         //observeActiveDoc()
 
-        app_form_btn_green_view.setOnClickListener(this)
-        promotion_letter_btn_green_view.setOnClickListener(this)
-        a_id_card_btn_green_view.setOnClickListener(this)
-        a_passport_photo_btn_green_view.setOnClickListener(this)
-        a_clearence_form_btn_green_view.setOnClickListener(this)
+        binding.appFormBtnGreenView.setOnClickListener(this)
+        binding.promotionLetterBtnGreenView.setOnClickListener(this)
+        binding.aIdCardBtnGreenView.setOnClickListener(this)
+        binding.aPassportPhotoBtnGreenView.setOnClickListener(this)
+        binding.aClearenceFormBtnGreenView.setOnClickListener(this)
     }
     private fun initViewModels() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
@@ -209,83 +209,83 @@ class ActiveDocumentsFragment(
     override fun onClick(it: View?) {
         when (it) {
 
-            ll_active_app_form_upload -> {
+            binding.llActiveAppFormUpload -> {
                 selectPdfJpegPng(APPLICATION_FORM_FILE)
-                app_form_btn_green_view.visibility = View.GONE
-                cv_active_app_form.visibility = View.GONE
+                binding.appFormBtnGreenView.visibility = View.GONE
+                binding.cvActiveAppForm.visibility = View.GONE
 
-                /*ll_active_app_form_uploadprogress.visibility = View.VISIBLE
-                ll_active_app_form_percentage.visibility = View.VISIBLE
-                pb_active_app_form.visibility = View.VISIBLE*/
+                /*binding.llActiveAppFormUploadprogress.visibility = View.VISIBLE
+                binding.llActiveAppFormPercentage.visibility = View.VISIBLE
+                binding.pbActiveAppForm.visibility = View.VISIBLE*/
 
 
             }
 
-            img_active_app_form_close -> {
-                app_form_btn_green_view.visibility = View.GONE
-                cv_active_app_form.visibility = View.GONE
+            binding.imgActiveAppFormClose -> {
+                binding.appFormBtnGreenView.visibility = View.GONE
+                binding.cvActiveAppForm.visibility = View.GONE
             }
 
-            ll_active_promotion_letterm_upload -> {
+            binding.llActivePromotionLettermUpload -> {
                 selectPdfJpegPng(LETTER_FILE)
-                promotion_letter_btn_green_view.visibility = View.GONE
-                cv_active_promotion_letter.visibility = View.GONE/*ll_active_promotion_letter_uploadprogress.visibility = View.VISIBLE
-                ll_active_promotion_letter_percentage.visibility = View.VISIBLE
-                pb_active_promotion_letter.visibility = View.VISIBLE*/
+                binding.promotionLetterBtnGreenView.visibility = View.GONE
+                binding.cvActivePromotionLetter.visibility = View.GONE/*binding.llActivePromotionLetterUploadprogress.visibility = View.VISIBLE
+                binding.llActivePromotionLetterPercentage.visibility = View.VISIBLE
+                binding.pbActivePromotionLetter.visibility = View.VISIBLE*/
 
 
             }
 
-            img_active_promotion_letter_close -> {
-                promotion_letter_btn_green_view.visibility = View.GONE
-                cv_active_promotion_letter.visibility = View.GONE
+            binding.imgActivePromotionLetterClose -> {
+                binding.promotionLetterBtnGreenView.visibility = View.GONE
+                binding.cvActivePromotionLetter.visibility = View.GONE
             }
 
-            ll_active_id_card_upload -> {
+            binding.llActiveIdCardUpload -> {
                 selectPdfJpegPng(IDCARD_FILE)
-                a_id_card_btn_green_view.visibility = View.GONE
-                cv_active_id_card.visibility = View.GONE/*ll_active_id_card_uploadprogress.visibility = View.VISIBLE
-                ll_active_id_card_percentage.visibility = View.VISIBLE
-                pb_active_id_card.visibility = View.VISIBLE*/
+                binding.aIdCardBtnGreenView.visibility = View.GONE
+                binding.cvActiveIdCard.visibility = View.GONE/*binding.llActiveIdCardUploadprogress.visibility = View.VISIBLE
+                binding.llActiveIdCardPercentage.visibility = View.VISIBLE
+                binding.pbActiveIdCard.visibility = View.VISIBLE*/
 
 
             }
 
-            img_active_id_card_close -> {
-                a_id_card_btn_green_view.visibility = View.GONE
-                cv_active_id_card.visibility = View.GONE
+            binding.imgActiveIdCardClose -> {
+                binding.aIdCardBtnGreenView.visibility = View.GONE
+                binding.cvActiveIdCard.visibility = View.GONE
             }
 
-            ll_active_passport_photo_upload -> {
+            binding.llActivePassportPhotoUpload -> {
                 selectPdfJpegPng(PHOTO_FILE)
-                a_passport_photo_btn_green_view.visibility = View.GONE
-                cv_active_passport_photo.visibility = View.GONE/*ll_active_passport_photo_uploadprogress.visibility = View.VISIBLE
-                ll_active_passport_photo_percentage.visibility = View.VISIBLE
-                pb_active_passport_photo.visibility = View.VISIBLE*/
+                binding.aPassportPhotoBtnGreenView.visibility = View.GONE
+                binding.cvActivePassportPhoto.visibility = View.GONE/*binding.llActivePassportPhotoUploadprogress.visibility = View.VISIBLE
+                binding.llActivePassportPhotoPercentage.visibility = View.VISIBLE
+                binding.pbActivePassportPhoto.visibility = View.VISIBLE*/
 
             }
 
-            img_active_passport_photo_close -> {
-                a_passport_photo_btn_green_view.visibility = View.GONE
-                cv_active_passport_photo.visibility = View.GONE
+            binding.imgActivePassportPhotoClose -> {
+                binding.aPassportPhotoBtnGreenView.visibility = View.GONE
+                binding.cvActivePassportPhoto.visibility = View.GONE
             }
 
-            ll_active_clearence_form_upload -> {
+            binding.llActiveClearenceFormUpload -> {
                 selectPdfJpegPng(CLEARANCE_FORM_FILE)
-                a_clearence_form_btn_green_view.visibility = View.GONE
-                cv_active_clearence_form.visibility = View.GONE/*ll_active_clearence_form_uploadprogress.visibility = View.VISIBLE
-                ll_active_clearence_form_percentage.visibility = View.VISIBLE
-                pb_active_clearence_form.visibility = View.VISIBLE*/
+                binding.aClearenceFormBtnGreenView.visibility = View.GONE
+                binding.cvActiveClearenceForm.visibility = View.GONE/*binding.llActiveClearenceFormUploadprogress.visibility = View.VISIBLE
+                binding.llActiveClearenceFormPercentage.visibility = View.VISIBLE
+                binding.pbActiveClearenceForm.visibility = View.VISIBLE*/
 
 
             }
 
-            img_active_clearence_form_close -> {
-                a_clearence_form_btn_green_view.visibility = View.GONE
-                cv_active_clearence_form.visibility = View.GONE
+            binding.imgActiveClearenceFormClose -> {
+                binding.aClearenceFormBtnGreenView.visibility = View.GONE
+                binding.cvActiveClearenceForm.visibility = View.GONE
             }
 
-            ll_activedoc_next -> {
+            binding.llActivedocNext -> {
                 if (!ActiveUserDocRetrive?.idCardFileUrl.isNullOrEmpty()) {
                     if (prefs.onboardingStage == OnboardingStage.ACTIVE_DOCUMENTS)
                         prefs.onboardingStage = OnboardingStage.ACTIVE_BANK_INFO
@@ -302,7 +302,7 @@ class ActiveDocumentsFragment(
 
             /*
             //from device or web view when view button clicked
-            a_id_card_btn_green_view ->
+            binding.aIdCardBtnGreenView ->
                 if(!ActiveUserDocRetrive?.idCardFileUrl.isNullOrEmpty()){
 
                     Log.d("viewbutton", " id cardurl ${ActiveUserDocRetrive?.idCardFileUrl}")
@@ -312,7 +312,7 @@ class ActiveDocumentsFragment(
                     Log.d("viewbutton", " id card url ${ActiveUserDocRetrive?.idCardFileUrl}")
                     idCardUri?.let { it1 -> startActivityFromUri(it1) }
                 }
-            a_passport_photo_btn_green_view ->
+            binding.aPassportPhotoBtnGreenView ->
                 if(!ActiveUserDocRetrive?.passportPhotoFileUrl.isNullOrEmpty()){
                     Log.d("viewbutton", " passport url ${ActiveUserDocRetrive?.passportPhotoFileUrl}")
                     startActivityWebViewFromUrl(ActiveUserDocRetrive?.passportPhotoFileUrl)
@@ -322,26 +322,26 @@ class ActiveDocumentsFragment(
                     PhotoUri?.let { it1 -> startActivityFromUri(it1) }
                 }
 
-            app_form_btn_green_view ->
+            binding.appFormBtnGreenView ->
                 if(!ActiveUserDocRetrive?.applicationFormFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(ActiveUserDocRetrive?.applicationFormFileUrl)
                 }else{
                 applicationFormUri?.let { it1 -> startActivityFromUri(it1) }
                 }
-            promotion_letter_btn_green_view ->
+            binding.promotionLetterBtnGreenView ->
                 if(!ActiveUserDocRetrive?.promotionLetterTransferLetterFileUrl.isNullOrEmpty()){
                     startActivityWebViewFromUrl(ActiveUserDocRetrive?.promotionLetterTransferLetterFileUrl)
                 }else{
                     letterFileUri?.let { it1 -> startActivityFromUri(it1) }
                 }
 
-            a_clearence_form_btn_green_view ->
+            binding.aClearenceFormBtnGreenView ->
                 if(!ActiveUserDocRetrive?.clearanceFormFileUrl.isNullOrEmpty()){
                 startActivityWebViewFromUrl(ActiveUserDocRetrive?.clearanceFormFileUrl)
             }else{
                 ClearanceUri?.let { it1 -> startActivityFromUri(it1) }
             }*/
-            a_id_card_btn_green_view -> {
+            binding.aIdCardBtnGreenView -> {
                 if (idCardUri != null) {
                     Log.d("viewbutton", "id card uri ${idCardUri}")
                     startActivityFromUri(idCardUri!!)
@@ -351,7 +351,7 @@ class ActiveDocumentsFragment(
                 }
             }
 
-            a_passport_photo_btn_green_view -> {
+            binding.aPassportPhotoBtnGreenView -> {
                 if (PhotoUri != null) {
                     Log.d("viewbutton", "passport uri ${PhotoUri}")
                     startActivityFromUri(PhotoUri!!)
@@ -361,7 +361,7 @@ class ActiveDocumentsFragment(
                 }
             }
 
-            app_form_btn_green_view -> {
+            binding.appFormBtnGreenView -> {
                 if (applicationFormUri != null) {
                     startActivityFromUri(applicationFormUri!!)
                 } else if (!ActiveUserDocRetrive?.applicationFormFileUrl.isNullOrEmpty()) {
@@ -369,7 +369,7 @@ class ActiveDocumentsFragment(
                 }
             }
 
-            promotion_letter_btn_green_view -> {
+            binding.promotionLetterBtnGreenView -> {
                 if (letterFileUri != null) {
                     startActivityFromUri(letterFileUri!!)
                 } else if (!ActiveUserDocRetrive?.promotionLetterTransferLetterFileUrl.isNullOrEmpty()) {
@@ -377,7 +377,7 @@ class ActiveDocumentsFragment(
                 }
             }
 
-            a_clearence_form_btn_green_view -> {
+            binding.aClearenceFormBtnGreenView -> {
                 if (ClearanceUri != null) {
                     startActivityFromUri(ClearanceUri!!)
                 } else if (!ActiveUserDocRetrive?.clearanceFormFileUrl.isNullOrEmpty()) {
@@ -389,7 +389,7 @@ class ActiveDocumentsFragment(
 //viewPageCallBack.onViewMoveNext()
 
 
-            //ll_activedoc_next -> navigate(R.id.action_login_to_signup)
+            //binding.llActivedocNext -> navigate(R.id.action_login_to_signup)
 
         }
     }
@@ -454,11 +454,11 @@ class ActiveDocumentsFragment(
 
     private fun isAllViewBtnEnabled(): Boolean {
 
-        /*if (app_form_btn_green_view.visibility == View.VISIBLE && promotion_letter_btn_green_view.visibility == View.VISIBLE && a_id_card_btn_green_view.visibility == View.VISIBLE && a_passport_photo_btn_green_view.visibility == View.VISIBLE ) {
+        /*if (binding.appFormBtnGreenView.visibility == View.VISIBLE && binding.promotionLetterBtnGreenView.visibility == View.VISIBLE && binding.aIdCardBtnGreenView.visibility == View.VISIBLE && binding.aPassportPhotoBtnGreenView.visibility == View.VISIBLE ) {
             return true
         }*/
 
-        if (a_id_card_btn_green_view.visibility == View.VISIBLE && a_passport_photo_btn_green_view.visibility == View.VISIBLE) {
+        if (binding.aIdCardBtnGreenView.visibility == View.VISIBLE && binding.aPassportPhotoBtnGreenView.visibility == View.VISIBLE) {
             return true
         }
         return false
@@ -479,19 +479,19 @@ class ActiveDocumentsFragment(
         // Do similar validation for all document
 
 
-        /*if (TextUtils.isEmpty(tv_active_app_form_filename.text) || cv_active_app_form.visibility == View.GONE ||app_form_btn_green_view.visibility == View.VISIBLE) {
+        /*if (TextUtils.isEmpty(binding.tvActiveAppFormFilename.text) || binding.cvActiveAppForm.visibility == View.GONE ||binding.appFormBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Application Form File", Toast.LENGTH_LONG).show()
             return false
-        } else if (TextUtils.isEmpty(tv_active_promotion_letter_filename.text) || cv_active_promotion_letter.visibility == View.GONE || promotion_letter_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvActivePromotionLetterFilename.text) || binding.cvActivePromotionLetter.visibility == View.GONE || binding.promotionLetterBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Promotion Letter File", Toast.LENGTH_LONG).show()
             return false
-        } else if (TextUtils.isEmpty(tv_active_id_card_filename.text) || cv_active_id_card.visibility == View.GONE || a_id_card_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvActiveIdCardFilename.text) || binding.cvActiveIdCard.visibility == View.GONE || binding.aIdCardBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Id Card", Toast.LENGTH_LONG).show()
             return false
-        } else if (TextUtils.isEmpty(tv_active_passport_photo_filename.text) || cv_active_passport_photo.visibility == View.GONE || a_passport_photo_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvActivePassportPhotoFilename.text) || binding.cvActivePassportPhoto.visibility == View.GONE || binding.aPassportPhotoBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select PassPort Photo", Toast.LENGTH_LONG).show()
             return false
-        } else if (TextUtils.isEmpty(tv_active_clearence_form_filename.text) || cv_active_clearence_form.visibility == View.GONE || a_clearence_form_btn_green_view.visibility == View.VISIBLE) {
+        } else if (TextUtils.isEmpty(binding.tvActiveClearenceFormFilename.text) || binding.cvActiveClearenceForm.visibility == View.GONE || binding.aClearenceFormBtnGreenView.visibility == View.VISIBLE) {
             Toast.makeText(context, "Please select Clearence Form File", Toast.LENGTH_LONG).show()
             return false
         }*/
@@ -568,10 +568,10 @@ class ActiveDocumentsFragment(
         }
         */
 
-        if (TextUtils.isEmpty(tv_active_id_card_filename.text) || cv_active_id_card.visibility == View.GONE) {
+        if (TextUtils.isEmpty(binding.tvActiveIdCardFilename.text) || binding.cvActiveIdCard.visibility == View.GONE) {
             Toast.makeText(context, "Please select Id Card", Toast.LENGTH_LONG).show()
             return false
-        } /*else if (TextUtils.isEmpty(tv_active_passport_photo_filename.text) || cv_active_passport_photo.visibility == View.GONE) {
+        } /*else if (TextUtils.isEmpty(binding.tvActivePassportPhotoFilename.text) || binding.cvActivePassportPhoto.visibility == View.GONE) {
             Toast.makeText(context, "Please select PassPort Photo", Toast.LENGTH_LONG).show()
             return false
         }*/
@@ -799,7 +799,7 @@ class ActiveDocumentsFragment(
 
         when (requestCode) {
             APPLICATION_FORM_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_active_app_form.visibility = View.VISIBLE
+                binding.cvActiveAppForm.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val form_uri: Uri = data?.data!!
 
@@ -838,13 +838,13 @@ class ActiveDocumentsFragment(
 
                 if (fileSizeInMB > 2000) { //2000 kb = 2 mb
 
-                    cv_active_app_form.visibility = View.GONE
+                    binding.cvActiveAppForm.visibility = View.GONE
                     Toast.makeText(
                         requireContext(), "Can't Upload file larger than 2mb", Toast.LENGTH_LONG
                     ).show()
                 } else {
 
-                    tv_active_app_form_filename.text = file.name
+                    binding.tvActiveAppFormFilename.text = file.name
 
                     applicationform_file = file
 
@@ -895,7 +895,7 @@ class ActiveDocumentsFragment(
                               applicationFormUri = form_uri
                               *//*    applicationform_files = File(form_myCursor.getString(form_sizeIndex))*//*
 
-                            tv_active_app_form_filename.text = form_pdfName
+                            binding.tvActiveAppFormFilename.text = form_pdfName
                             applicationform_filename = form_pdfName
 
                             updateProgressBar(form_size, form_pdfSize, APPLICATION_FORM_FILE)
@@ -908,7 +908,7 @@ class ActiveDocumentsFragment(
             }
 
             LETTER_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_active_promotion_letter.visibility = View.VISIBLE
+                binding.cvActivePromotionLetter.visibility = View.VISIBLE
                 val letter_uri: Uri = data?.data!!
 
                 letterFileUri = letter_uri
@@ -953,13 +953,13 @@ class ActiveDocumentsFragment(
 
                 if (fileSizeInMB > 2000) {  //2000 kb = 2 mb
 
-                    cv_active_promotion_letter.visibility = View.GONE
+                    binding.cvActivePromotionLetter.visibility = View.GONE
                     Toast.makeText(
                         requireContext(), "Can't Upload file larger than 2mb", Toast.LENGTH_LONG
                     ).show()
                 } else {
 
-                    tv_active_promotion_letter_filename.text = file.name
+                    binding.tvActivePromotionLetterFilename.text = file.name
                     promotion_letter_file = file
                     promotion_letter_fileMIME = getMimeType(promotion_letter_file.toString())
                     promotion_letter_filename = file.name
@@ -976,7 +976,7 @@ class ActiveDocumentsFragment(
             IDCARD_FILE -> if (resultCode == Activity.RESULT_OK) {
 
 
-                cv_active_id_card.visibility = View.VISIBLE
+                binding.cvActiveIdCard.visibility = View.VISIBLE
                 val idcard_uri: Uri = data?.data!!
 
                 idCardUri = idcard_uri
@@ -1017,13 +1017,13 @@ class ActiveDocumentsFragment(
 
                 if (fileSizeInMB > 2000) {  //2000 kb = 2 mb
 
-                    cv_active_id_card.visibility = View.GONE
+                    binding.cvActiveIdCard.visibility = View.GONE
                     Toast.makeText(
                         requireContext(), "Can't Upload file larger than 2mb", Toast.LENGTH_LONG
                     ).show()
                 } else {
 
-                    tv_active_id_card_filename.text = file.name
+                    binding.tvActiveIdCardFilename.text = file.name
                     id_card_file = file
                     id_card_fileMIME = getMimeType(id_card_file.toString())
                     id_card_filename = file.name
@@ -1038,7 +1038,7 @@ class ActiveDocumentsFragment(
             }
 
             PHOTO_FILE -> if (resultCode == Activity.RESULT_OK) {
-                cv_active_passport_photo.visibility = View.VISIBLE
+                binding.cvActivePassportPhoto.visibility = View.VISIBLE
 
                 val photo_uri: Uri = data?.data!!
 
@@ -1080,13 +1080,13 @@ class ActiveDocumentsFragment(
 
                 if (fileSizeInMB > 2000) {  //2000 kb = 2 mb
 
-                    cv_active_passport_photo.visibility = View.GONE
+                    binding.cvActivePassportPhoto.visibility = View.GONE
                     Toast.makeText(
                         requireContext(), "Can't Upload file larger than 2mb", Toast.LENGTH_LONG
                     ).show()
                 } else {
 
-                    tv_active_passport_photo_filename.text = file.name
+                    binding.tvActivePassportPhotoFilename.text = file.name
                     passport_photo_file = file
                     passport_photo_fileMIME = getMimeType(passport_photo_file.toString())
                     passport_photo_filename = file.name
@@ -1100,7 +1100,7 @@ class ActiveDocumentsFragment(
 
             CLEARANCE_FORM_FILE -> if (resultCode == Activity.RESULT_OK) {
 
-                cv_active_clearence_form.visibility = View.VISIBLE
+                binding.cvActiveClearenceForm.visibility = View.VISIBLE
                 //pdfUri = data?.data!!
                 val clear_uri: Uri = data?.data!!
 
@@ -1144,14 +1144,14 @@ class ActiveDocumentsFragment(
                 if (fileSizeInMB > 2000) {  //2000 kb = 2 mb
 
 
-                    cv_active_clearence_form.visibility = View.GONE
+                    binding.cvActiveClearenceForm.visibility = View.GONE
 
                     Toast.makeText(
                         requireContext(), "Can't Upload file larger than 2mb", Toast.LENGTH_LONG
                     ).show()
                 } else {
 
-                    tv_active_clearence_form_filename.text = file.name
+                    binding.tvActiveClearenceFormFilename.text = file.name
                     clearance_form_file = file
 
                     clearance_form_fileMIME = getMimeType(clearance_form_file.toString())
@@ -1208,13 +1208,13 @@ class ActiveDocumentsFragment(
                 var form_status = 0
                 val form_handler: Handler = Handler()
 
-                cv_active_app_form.visibility = View.VISIBLE
-                img_active_app_form_close.visibility = View.VISIBLE
+                binding.cvActiveAppForm.visibility = View.VISIBLE
+                binding.imgActiveAppFormClose.visibility = View.VISIBLE
 
-                ll_active_app_form_uploadprogress.visibility = View.VISIBLE
-                ll_active_app_form_percentage.visibility = View.VISIBLE
-                pb_active_app_form.visibility = View.VISIBLE
-                ll_active_form_size.visibility = View.GONE
+                binding.llActiveAppFormUploadprogress.visibility = View.VISIBLE
+                binding.llActiveAppFormPercentage.visibility = View.VISIBLE
+                binding.pbActiveAppForm.visibility = View.VISIBLE
+                binding.llActiveFormSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (form_status < 100) {
@@ -1227,15 +1227,15 @@ class ActiveDocumentsFragment(
                         form_handler.post(Runnable {
 
 
-                            pb_active_app_form?.setProgress(form_status)
+                            binding.pbActiveAppForm?.setProgress(form_status)
 
-                            tv_percent_active_doc.text = form_status.toString() + " %"
+                            binding.tvPercentActiveDoc.text = form_status.toString() + " %"
                             if (form_status == 100) {
 
-                                app_form_btn_green_view.visibility = View.VISIBLE
-                                ll_active_app_form_uploadprogress.visibility = View.GONE
-                                ll_active_form_size.visibility = View.VISIBLE
-                                txt_filesize.text = pdfSize
+                                binding.appFormBtnGreenView.visibility = View.VISIBLE
+                                binding.llActiveAppFormUploadprogress.visibility = View.GONE
+                                binding.llActiveFormSize.visibility = View.VISIBLE
+                                binding.txtFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1248,13 +1248,13 @@ class ActiveDocumentsFragment(
                 var letter_status = 0
                 val letter_handler: Handler = Handler()
 
-                cv_active_promotion_letter.visibility = View.VISIBLE
-                img_active_promotion_letter_close.visibility = View.VISIBLE
+                binding.cvActivePromotionLetter.visibility = View.VISIBLE
+                binding.imgActivePromotionLetterClose.visibility = View.VISIBLE
 
-                ll_active_promotion_letter_uploadprogress.visibility = View.VISIBLE
-                ll_active_promotion_letter_percentage.visibility = View.VISIBLE
-                pb_active_promotion_letter.visibility = View.VISIBLE
-                ll_active_promotion_letter_size.visibility = View.GONE
+                binding.llActivePromotionLetterUploadprogress.visibility = View.VISIBLE
+                binding.llActivePromotionLetterPercentage.visibility = View.VISIBLE
+                binding.pbActivePromotionLetter.visibility = View.VISIBLE
+                binding.llActivePromotionLetterSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (letter_status < 100) {
@@ -1265,14 +1265,14 @@ class ActiveDocumentsFragment(
                             e.printStackTrace()
                         }
                         letter_handler.post(Runnable {
-                            pb_active_promotion_letter?.setProgress(letter_status)
+                            binding.pbActivePromotionLetter?.setProgress(letter_status)
 
-                            tv_active_promotion_letter_doc.text = letter_status.toString() + " %"
+                            binding.tvActivePromotionLetterDoc.text = letter_status.toString() + " %"
                             if (letter_status == 100) {
-                                promotion_letter_btn_green_view.visibility = View.VISIBLE
-                                ll_active_promotion_letter_uploadprogress.visibility = View.GONE
-                                ll_active_promotion_letter_size.visibility = View.VISIBLE
-                                txt_letter_filesize.text = pdfSize
+                                binding.promotionLetterBtnGreenView.visibility = View.VISIBLE
+                                binding.llActivePromotionLetterUploadprogress.visibility = View.GONE
+                                binding.llActivePromotionLetterSize.visibility = View.VISIBLE
+                                binding.txtLetterFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1284,13 +1284,13 @@ class ActiveDocumentsFragment(
                 var idcard_status = 0
                 val idcard_handler: Handler = Handler()
 
-                cv_active_id_card.visibility = View.VISIBLE
-                img_active_id_card_close.visibility = View.VISIBLE
+                binding.cvActiveIdCard.visibility = View.VISIBLE
+                binding.imgActiveIdCardClose.visibility = View.VISIBLE
 
-                ll_active_id_card_uploadprogress.visibility = View.VISIBLE
-                ll_active_id_card_percentage.visibility = View.VISIBLE
-                pb_active_id_card.visibility = View.VISIBLE
-                ll_active_id_card_size.visibility = View.GONE
+                binding.llActiveIdCardUploadprogress.visibility = View.VISIBLE
+                binding.llActiveIdCardPercentage.visibility = View.VISIBLE
+                binding.pbActiveIdCard.visibility = View.VISIBLE
+                binding.llActiveIdCardSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (idcard_status < 100) {
@@ -1301,14 +1301,14 @@ class ActiveDocumentsFragment(
                             e.printStackTrace()
                         }
                         idcard_handler.post(Runnable {
-                            pb_active_id_card?.setProgress(idcard_status)
+                            binding.pbActiveIdCard?.setProgress(idcard_status)
 
-                            tv_id_card_active_doc.text = idcard_status.toString() + " %"
+                            binding.tvIdCardActiveDoc.text = idcard_status.toString() + " %"
                             if (idcard_status == 100) {
-                                a_id_card_btn_green_view.visibility = View.VISIBLE
-                                ll_active_id_card_uploadprogress.visibility = View.GONE
-                                ll_active_id_card_size.visibility = View.VISIBLE
-                                txt_active_id_card_filesize.text = pdfSize
+                                binding.aIdCardBtnGreenView.visibility = View.VISIBLE
+                                binding.llActiveIdCardUploadprogress.visibility = View.GONE
+                                binding.llActiveIdCardSize.visibility = View.VISIBLE
+                                binding.txtActiveIdCardFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1320,13 +1320,13 @@ class ActiveDocumentsFragment(
                 var photo_status = 0
                 val photo_handler: Handler = Handler()
 
-                cv_active_passport_photo.visibility = View.VISIBLE
-                img_active_passport_photo_close.visibility = View.VISIBLE
+                binding.cvActivePassportPhoto.visibility = View.VISIBLE
+                binding.imgActivePassportPhotoClose.visibility = View.VISIBLE
 
-                ll_active_passport_photo_uploadprogress.visibility = View.VISIBLE
-                ll_active_passport_photo_percentage.visibility = View.VISIBLE
-                pb_active_passport_photo.visibility = View.VISIBLE
-                ll_active_passport_photo_size.visibility = View.GONE
+                binding.llActivePassportPhotoUploadprogress.visibility = View.VISIBLE
+                binding.llActivePassportPhotoPercentage.visibility = View.VISIBLE
+                binding.pbActivePassportPhoto.visibility = View.VISIBLE
+                binding.llActivePassportPhotoSize.visibility = View.GONE
                 Thread(Runnable {
                     while (photo_status < 100) {
                         photo_status += 10
@@ -1336,14 +1336,14 @@ class ActiveDocumentsFragment(
                             e.printStackTrace()
                         }
                         photo_handler.post(Runnable {
-                            pb_active_passport_photo?.setProgress(photo_status)
+                            binding.pbActivePassportPhoto?.setProgress(photo_status)
 
-                            tv_passport_photo_active_doc.text = photo_status.toString() + " %"
+                            binding.tvPassportPhotoActiveDoc.text = photo_status.toString() + " %"
                             if (photo_status == 100) {
-                                a_passport_photo_btn_green_view.visibility = View.VISIBLE
-                                ll_active_passport_photo_uploadprogress.visibility = View.GONE
-                                ll_active_passport_photo_size.visibility = View.VISIBLE
-                                txt_active_passport_photo_filesize.text = pdfSize
+                                binding.aPassportPhotoBtnGreenView.visibility = View.VISIBLE
+                                binding.llActivePassportPhotoUploadprogress.visibility = View.GONE
+                                binding.llActivePassportPhotoSize.visibility = View.VISIBLE
+                                binding.txtActivePassportPhotoFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1355,13 +1355,13 @@ class ActiveDocumentsFragment(
                 var clear_status = 0
                 val clear_handler: Handler = Handler()
 
-                cv_active_clearence_form.visibility = View.VISIBLE
-                img_active_clearence_form_close.visibility = View.VISIBLE
+                binding.cvActiveClearenceForm.visibility = View.VISIBLE
+                binding.imgActiveClearenceFormClose.visibility = View.VISIBLE
 
-                ll_active_clearence_form_uploadprogress.visibility = View.VISIBLE
-                ll_active_clearence_form_percentage.visibility = View.VISIBLE
-                pb_active_clearence_form.visibility = View.VISIBLE
-                ll_active_clearence_form_size.visibility = View.GONE
+                binding.llActiveClearenceFormUploadprogress.visibility = View.VISIBLE
+                binding.llActiveClearenceFormPercentage.visibility = View.VISIBLE
+                binding.pbActiveClearenceForm.visibility = View.VISIBLE
+                binding.llActiveClearenceFormSize.visibility = View.GONE
 
                 Thread(Runnable {
                     while (clear_status < 100) {
@@ -1372,14 +1372,14 @@ class ActiveDocumentsFragment(
                             e.printStackTrace()
                         }
                         clear_handler.post(Runnable {
-                            pb_active_clearence_form?.setProgress(clear_status)
+                            binding.pbActiveClearenceForm?.setProgress(clear_status)
 
-                            tv_clearence_form_active_doc.text = clear_status.toString() + " %"
+                            binding.tvClearenceFormActiveDoc.text = clear_status.toString() + " %"
                             if (clear_status == 100) {
-                                a_clearence_form_btn_green_view.visibility = View.VISIBLE
-                                ll_active_clearence_form_uploadprogress.visibility = View.GONE
-                                ll_active_clearence_form_size.visibility = View.VISIBLE
-                                txt_active_clearence_form_filesize.text = pdfSize
+                                binding.aClearenceFormBtnGreenView.visibility = View.VISIBLE
+                                binding.llActiveClearenceFormUploadprogress.visibility = View.GONE
+                                binding.llActiveClearenceFormSize.visibility = View.VISIBLE
+                                binding.txtActiveClearenceFormFilesize.text = pdfSize
                             }
                         })
                     }
@@ -1417,12 +1417,12 @@ class ActiveDocumentsFragment(
                 }
 
                 // Mandatory documents
-                setDocumentView(activeUserDoc.idCardFileUrl, a_id_card_btn_green_view, cv_active_id_card, tv_active_id_card_filename, img_active_id_card_close, ll_active_id_card_uploadprogress, ll_active_id_card_percentage, pb_active_id_card)
+                setDocumentView(activeUserDoc.idCardFileUrl, binding.aIdCardBtnGreenView, binding.cvActiveIdCard, binding.tvActiveIdCardFilename, binding.imgActiveIdCardClose, binding.llActiveIdCardUploadprogress, binding.llActiveIdCardPercentage, binding.pbActiveIdCard)
                 // Optional documents
-                setDocumentViewIfPresent(activeUserDoc.passportPhotoFileUrl, a_passport_photo_btn_green_view, cv_active_passport_photo, tv_active_passport_photo_filename, img_active_passport_photo_close, ll_active_passport_photo_uploadprogress, ll_active_passport_photo_percentage, pb_active_passport_photo)
-                setDocumentViewIfPresent(activeUserDoc.applicationFormFileUrl, app_form_btn_green_view, cv_active_app_form, tv_active_app_form_filename, img_active_app_form_close, ll_active_app_form_uploadprogress, ll_active_app_form_percentage, pb_active_app_form)
-                setDocumentViewIfPresent(activeUserDoc.promotionLetterTransferLetterFileUrl, promotion_letter_btn_green_view, cv_active_promotion_letter, tv_active_promotion_letter_filename, img_active_promotion_letter_close, ll_active_promotion_letter_uploadprogress, ll_active_promotion_letter_percentage, pb_active_promotion_letter)
-                setDocumentViewIfPresent(activeUserDoc.clearanceFormFileUrl, a_clearence_form_btn_green_view, cv_active_clearence_form, tv_active_clearence_form_filename, img_active_clearence_form_close, ll_active_clearence_form_uploadprogress, ll_active_clearence_form_percentage, pb_active_clearence_form)
+                setDocumentViewIfPresent(activeUserDoc.passportPhotoFileUrl, binding.aPassportPhotoBtnGreenView, binding.cvActivePassportPhoto, binding.tvActivePassportPhotoFilename, binding.imgActivePassportPhotoClose, binding.llActivePassportPhotoUploadprogress, binding.llActivePassportPhotoPercentage, binding.pbActivePassportPhoto)
+                setDocumentViewIfPresent(activeUserDoc.applicationFormFileUrl, binding.appFormBtnGreenView, binding.cvActiveAppForm, binding.tvActiveAppFormFilename, binding.imgActiveAppFormClose, binding.llActiveAppFormUploadprogress, binding.llActiveAppFormPercentage, binding.pbActiveAppForm)
+                setDocumentViewIfPresent(activeUserDoc.promotionLetterTransferLetterFileUrl, binding.promotionLetterBtnGreenView, binding.cvActivePromotionLetter, binding.tvActivePromotionLetterFilename, binding.imgActivePromotionLetterClose, binding.llActivePromotionLetterUploadprogress, binding.llActivePromotionLetterPercentage, binding.pbActivePromotionLetter)
+                setDocumentViewIfPresent(activeUserDoc.clearanceFormFileUrl, binding.aClearenceFormBtnGreenView, binding.cvActiveClearenceForm, binding.tvActiveClearenceFormFilename, binding.imgActiveClearenceFormClose, binding.llActiveClearenceFormUploadprogress, binding.llActiveClearenceFormPercentage, binding.pbActiveClearenceForm)
             }else{
                 //tabAccessControl.enableDisableTabs(true, true, false)
             }
@@ -1450,61 +1450,61 @@ class ActiveDocumentsFragment(
             var clearrance_url = ActiveUserDocRetrive!!.clearanceFormFileUrl
 
             //visible mandatory view buttons
-            a_id_card_btn_green_view.visibility = View.VISIBLE
-            a_passport_photo_btn_green_view.visibility = View.VISIBLE
+            binding.aIdCardBtnGreenView.visibility = View.VISIBLE
+            binding.aPassportPhotoBtnGreenView.visibility = View.VISIBLE
 
 
             //id card
-            cv_active_id_card.visibility = View.VISIBLE
-            tv_active_id_card_filename.text = idcard_url!!.substringAfterLast('/')
-            img_active_id_card_close.visibility = View.VISIBLE
-            ll_active_id_card_uploadprogress.visibility = View.GONE
-            ll_active_id_card_percentage.visibility = View.GONE
-            pb_active_id_card.visibility = View.GONE
+            binding.cvActiveIdCard.visibility = View.VISIBLE
+            binding.tvActiveIdCardFilename.text = idcard_url!!.substringAfterLast('/')
+            binding.imgActiveIdCardClose.visibility = View.VISIBLE
+            binding.llActiveIdCardUploadprogress.visibility = View.GONE
+            binding.llActiveIdCardPercentage.visibility = View.GONE
+            binding.pbActiveIdCard.visibility = View.GONE
 
             //passport
-            cv_active_passport_photo.visibility = View.VISIBLE
-            tv_active_passport_photo_filename.text = passPhoto_url!!.substringAfterLast('/')
-            img_active_passport_photo_close.visibility = View.VISIBLE
-            ll_active_passport_photo_uploadprogress.visibility = View.GONE
-            ll_active_passport_photo_percentage.visibility = View.GONE
-            pb_active_passport_photo.visibility = View.GONE
+            binding.cvActivePassportPhoto.visibility = View.VISIBLE
+            binding.tvActivePassportPhotoFilename.text = passPhoto_url!!.substringAfterLast('/')
+            binding.imgActivePassportPhotoClose.visibility = View.VISIBLE
+            binding.llActivePassportPhotoUploadprogress.visibility = View.GONE
+            binding.llActivePassportPhotoPercentage.visibility = View.GONE
+            binding.pbActivePassportPhoto.visibility = View.GONE
 
 
             //optional view btn visble
             //appform
             if (!appform_url.isNullOrEmpty()){
-                app_form_btn_green_view.visibility = View.VISIBLE
+                binding.appFormBtnGreenView.visibility = View.VISIBLE
 
-                cv_active_app_form.visibility = View.VISIBLE
-                tv_active_app_form_filename.text = appform_url!!.substringAfterLast('/')
-                Log.d("texturl", "${tv_active_clearence_form_filename.text}")
-                img_active_app_form_close.visibility = View.VISIBLE
-                ll_active_app_form_uploadprogress.visibility = View.GONE
-                ll_active_app_form_percentage.visibility = View.GONE
-                pb_active_app_form.visibility = View.GONE
+                binding.cvActiveAppForm.visibility = View.VISIBLE
+                binding.tvActiveAppFormFilename.text = appform_url!!.substringAfterLast('/')
+                Log.d("texturl", "${binding.tvActiveClearenceFormFilename.text}")
+                binding.imgActiveAppFormClose.visibility = View.VISIBLE
+                binding.llActiveAppFormUploadprogress.visibility = View.GONE
+                binding.llActiveAppFormPercentage.visibility = View.GONE
+                binding.pbActiveAppForm.visibility = View.GONE
             }
             //promotion letter
             if (!promo_url.isNullOrEmpty()){
-                promotion_letter_btn_green_view.visibility = View.VISIBLE
+                binding.promotionLetterBtnGreenView.visibility = View.VISIBLE
 
-                cv_active_promotion_letter.visibility = View.VISIBLE
-                tv_active_promotion_letter_filename.text = promo_url!!.substringAfterLast('/')
-                img_active_promotion_letter_close.visibility = View.VISIBLE
-                ll_active_promotion_letter_uploadprogress.visibility = View.GONE
-                ll_active_promotion_letter_percentage.visibility = View.GONE
-                pb_active_promotion_letter.visibility = View.GONE
+                binding.cvActivePromotionLetter.visibility = View.VISIBLE
+                binding.tvActivePromotionLetterFilename.text = promo_url!!.substringAfterLast('/')
+                binding.imgActivePromotionLetterClose.visibility = View.VISIBLE
+                binding.llActivePromotionLetterUploadprogress.visibility = View.GONE
+                binding.llActivePromotionLetterPercentage.visibility = View.GONE
+                binding.pbActivePromotionLetter.visibility = View.GONE
             }
             //clearance
             if (!clearrance_url.isNullOrEmpty()){
-                a_clearence_form_btn_green_view.visibility = View.VISIBLE
+                binding.aClearenceFormBtnGreenView.visibility = View.VISIBLE
 
-                cv_active_clearence_form.visibility = View.VISIBLE
-                tv_active_clearence_form_filename.text = clearrance_url!!.substringAfterLast('/')
-                img_active_clearence_form_close.visibility = View.VISIBLE
-                ll_active_clearence_form_uploadprogress.visibility = View.GONE
-                ll_active_clearence_form_percentage.visibility = View.GONE
-                pb_active_clearence_form.visibility = View.GONE
+                binding.cvActiveClearenceForm.visibility = View.VISIBLE
+                binding.tvActiveClearenceFormFilename.text = clearrance_url!!.substringAfterLast('/')
+                binding.imgActiveClearenceFormClose.visibility = View.VISIBLE
+                binding.llActiveClearenceFormUploadprogress.visibility = View.GONE
+                binding.llActiveClearenceFormPercentage.visibility = View.GONE
+                binding.pbActiveClearenceForm.visibility = View.GONE
             }
             //enableDisableTabs(tab_tablayout_activeservice, true, true, true)
 

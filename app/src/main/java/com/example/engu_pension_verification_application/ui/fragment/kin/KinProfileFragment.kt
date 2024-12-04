@@ -7,18 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.databinding.FragmentKinProfileBinding
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_kin_profile.*
-
 
 class KinProfileFragment : BaseFragment() {
+    private lateinit var binding:FragmentKinProfileBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_kin_profile, container, false)
+        binding = FragmentKinProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,7 +27,7 @@ class KinProfileFragment : BaseFragment() {
     }
 
     private fun onClicked() {
-        img_kinprofile_back.setOnClickListener {
+        binding.imgKinprofileBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
