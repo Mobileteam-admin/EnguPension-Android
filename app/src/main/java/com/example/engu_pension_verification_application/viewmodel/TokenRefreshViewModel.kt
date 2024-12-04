@@ -34,9 +34,9 @@ class TokenRefreshViewModel(var tokenRefreshCallBack: TokenRefreshCallBack) {
                         )
                     )
 
-                if (response.token_detail?.status.equals("success")) {
-                    prefs.access_token = response.token_detail?.access
-                    prefs.refresh_token = response.token_detail?.refresh
+                if (response.tokenDetail?.status.equals("success")) {
+                    prefs.access_token = response.tokenDetail?.accessToken
+                    prefs.refresh_token = response.tokenDetail?.refreshToken
                     //_tokenrefreshStatus.value = response
                     tokenRefreshCallBack.onTokenRefreshSuccess(response)
                 } else {

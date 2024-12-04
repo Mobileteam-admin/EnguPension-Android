@@ -5,20 +5,23 @@ import com.google.gson.annotations.SerializedName
 data class ResponseRefreshToken(
 
 	@field:SerializedName("detail")
-	val token_detail: TokenDetail? = null
+	val tokenDetail: TokenDetail? = null
 )
 
 data class TokenDetail(
 
-	@field:SerializedName("access")
-	val access: String? = null,
+	@field:SerializedName("access_token")
+	val accessToken: String? = null,
 
-	@field:SerializedName("refresh")
-	val refresh: String? = null,
+	@field:SerializedName("refresh_token")
+	val refreshToken: String? = null,
 
 	@field:SerializedName("message")
 	val message: String? = null,
 
 	@field:SerializedName("status")
-	val status: String? = null
+	val status: String? = null,
+
+	@field:SerializedName("token_status")
+	val tokenStatus: String? = null
 )
