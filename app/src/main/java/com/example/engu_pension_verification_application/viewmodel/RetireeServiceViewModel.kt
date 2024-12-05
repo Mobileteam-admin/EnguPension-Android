@@ -18,8 +18,8 @@ class RetireeServiceViewModel : ViewModel() {
 
     fun refreshTabsState() {
         val onboardingStage = SharedPref.onboardingStage
-        enableDocTab.value = onboardingStage == OnboardingStage.ACTIVE_DOCUMENTS || onboardingStage == OnboardingStage.ACTIVE_BANK_INFO
-        enableBankTab.value = onboardingStage == OnboardingStage.ACTIVE_BANK_INFO
+        enableDocTab.value = onboardingStage == OnboardingStage.RETIREE_DOCUMENTS || onboardingStage == OnboardingStage.RETIREE_BANK_INFO
+        enableBankTab.value = onboardingStage == OnboardingStage.RETIREE_BANK_INFO
     }
     fun moveToNextTab() {
         _onMoveToNextTab.value = Unit

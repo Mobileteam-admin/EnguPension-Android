@@ -42,6 +42,8 @@ class ChooseServiceFragment : BaseFragment() {
                 OnboardingStage.RETIREE_BASIC_DETAILS,
                 OnboardingStage.RETIREE_DOCUMENTS,
                 OnboardingStage.RETIREE_BANK_INFO -> navigateToRetireService(false)
+
+                else -> {}
             }
             viewModel.allowAutoNavigation = false
         }

@@ -19,8 +19,8 @@ class ActiveDocumentsViewModel(private val networkRepo: NetworkRepo) :ViewModel(
     val documentsApiResult: LiveData<ResponseActiveDocRetrive>
         get() = _documentsApiResult
 
-    private val _documentsUploadResult = MutableLiveData<Pair<RequestBody,ResponseActiveDocUpload>>()
-    val documentsUploadResult: LiveData<Pair<RequestBody,ResponseActiveDocUpload>>
+    private val _documentsUploadResult = MutableLiveData<Pair<RequestBody,ResponseActiveDocUpload>?>(null)
+    val documentsUploadResult: LiveData<Pair<RequestBody,ResponseActiveDocUpload>?>
         get() = _documentsUploadResult
     fun uploadDocuments(requestBody: RequestBody) {
         viewModelScope.launch (Dispatchers.IO){
@@ -34,6 +34,9 @@ class ActiveDocumentsViewModel(private val networkRepo: NetworkRepo) :ViewModel(
                 )
             }
         }
+    }
+    fun resetDocumentsUploadResult() {
+        _documentsUploadResult.value = null
     }
     fun fetchActiveDocuments()  {
         viewModelScope.launch (Dispatchers.IO){

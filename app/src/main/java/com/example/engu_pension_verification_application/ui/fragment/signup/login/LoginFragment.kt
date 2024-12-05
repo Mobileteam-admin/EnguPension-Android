@@ -66,10 +66,13 @@ class LoginFragment : BaseFragment() {
     }
     private fun observeData() {
         loginViewModel.loginStatus.observe(viewLifecycleOwner) { response ->
-            dismissLoader()
-            Toast.makeText(context, response.login_detail?.message, Toast.LENGTH_LONG).show()
-            if (response.login_detail?.status == AppConstants.SUCCESS) {
-                onLoginSuccess()
+            if (response != null) {
+                dismissLoader()
+                Toast.makeText(context, response.login_detail?.message, Toast.LENGTH_LONG).show()
+                if (response.login_detail?.status == AppConstants.SUCCESS) {
+                    onLoginSuccess()
+                }
+                loginViewModel.resetLoginStatus()
             }
         }
     }

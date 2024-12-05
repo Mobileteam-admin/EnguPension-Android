@@ -172,10 +172,12 @@ class WalletFragment : BaseFragment() {
             }
         }
         viewModel.paymentResult.observe(viewLifecycleOwner) { response ->
-            dismissLoader()
             if (response != null) {
+                dismissLoader()
                 showToast(response.detail?.message ?: getString(R.string.common_error_msg))
-                binding.etTopUpWalletAmount.setText("")
+                if (response.detail?.status == AppConstants.SUCCESS) {
+                    findNavController().navigateUp()
+                }
                 viewModel.resetPaymentResult()
             }
         }

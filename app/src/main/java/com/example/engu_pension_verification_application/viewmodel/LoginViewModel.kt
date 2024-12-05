@@ -16,8 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
-    private val _loginStatus = MutableLiveData<ResponseLogin>()
-    val loginStatus: LiveData<ResponseLogin>
+    private val _loginStatus = MutableLiveData<ResponseLogin?>(null)
+    val loginStatus: LiveData<ResponseLogin?>
         get() = _loginStatus
 
     fun doLogin(inputLogin: InputLogin) {
@@ -39,5 +39,9 @@ class LoginViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _loginStatus.postValue(ResponseLogin(LoginDetail(message = "Something went wrong")))
             }
         }
+    }
+
+    fun resetLoginStatus() {
+        _loginStatus.postValue(null)
     }
 }

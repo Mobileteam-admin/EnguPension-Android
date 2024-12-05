@@ -1,18 +1,11 @@
 package com.example.engu_pension_verification_application.ui.fragment.Dashboard
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
@@ -24,6 +17,7 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentDashboardBinding
 import com.example.engu_pension_verification_application.model.response.ResponseLogout
+import com.example.engu_pension_verification_application.model.response.VideoCallResponse
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.dialog.AddBankDialog
@@ -32,14 +26,15 @@ import com.example.engu_pension_verification_application.ui.dialog.LogoutConfirm
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.SharedPref
-import com.example.engu_pension_verification_application.viewmodel.AddBankViewModel
 import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.LogoutConfirmViewModel
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import org.jitsi.meet.sdk.JitsiMeetActivity
+import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
+import org.webrtc.PeerConnectionFactory
 
 class DashboardFragment : BaseFragment() {
     private lateinit var binding:FragmentDashboardBinding
@@ -86,7 +81,7 @@ class DashboardFragment : BaseFragment() {
         }
         viewModel.logoutResult.observe(viewLifecycleOwner) { response ->
             if (response.logout_detail?.status == AppConstants.SUCCESS) {
-                ondashboardLogoutSuccess(response)
+                onLogoutSuccess(response)
             } else {
                 if (response.logout_detail?.tokenStatus == AppConstants.EXPIRED) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -97,6 +92,24 @@ class DashboardFragment : BaseFragment() {
                 } else {
                     dismissLoader()
                     Toast.makeText(context, response.logout_detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        viewModel.videoCallApiResult.observe(viewLifecycleOwner) { pair ->
+            val request = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                startJitsiMeet(response)
+            } else {
+                if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            viewModel.fetchVideoCallLink(request)
+                        }
+                    }
+                } else {
+                    dismissLoader()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -114,6 +127,7 @@ class DashboardFragment : BaseFragment() {
                 } else {
                     dismissLoader()
                     showFetchErrorDialog(
+                        ::initCall,
                         response.detail?.message ?: getString(R.string.common_error_msg_2)
                     )
                 }
@@ -121,15 +135,6 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
-    private fun showFetchErrorDialog(message: String) {
-        showAlertDialog(
-            message = message,
-            positiveTextId = R.string.retry,
-            onPositiveClick = ::initCall,
-            negativeTextId = R.string.close,
-            onNegativeClick = { requireActivity().finish() }
-        )
-    }
     private fun initViews() {
         logoutConfirmDialog = LogoutConfirmDialog()
         addBankDialog = AddBankDialog()
@@ -140,12 +145,25 @@ class DashboardFragment : BaseFragment() {
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
             viewModel.fetchDashboardDetails()
         } else {
-            showFetchErrorDialog("Please connect to internet and retry")
+            showFetchErrorDialog(::initCall,R.string.no_internet_error)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun onClicked() {
+        binding.imgBell.setOnClickListener { // TODO: remove after video call api completion
+//            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+//                val videoCallRequest = VideoCallRequest(
+//                    govtOfficialEmail = "8adm3eqs29@zlorkun.com",
+//                    userEmail = "avin@techversantinfo.com",
+//                    callDay = "10/12/2024",
+//                    slotId = 33
+//                )
+//                viewModel.fetchVideoCallLink(videoCallRequest)
+//                showLoader()
+//            } else {
+//            }
+        }
         binding.tvProfile.setOnClickListener {
             navigate(R.id.action_dashboard_to_profile)
         }
@@ -197,7 +215,7 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
-    private fun ondashboardLogoutSuccess(response: ResponseLogout) {
+    private fun onLogoutSuccess(response: ResponseLogout) {
         dismissLoader()
         Toast.makeText(context, response.logout_detail?.message, Toast.LENGTH_LONG).show()
         prefs.logout()
@@ -206,6 +224,18 @@ class DashboardFragment : BaseFragment() {
         startActivity(intent)
     }
 
-
-
+    private fun startJitsiMeet(response: VideoCallResponse) {
+        dismissLoader()
+        PeerConnectionFactory.initialize(
+            PeerConnectionFactory.InitializationOptions.builder(requireContext())
+                .setEnableInternalTracer(true)
+                .createInitializationOptions())
+        val options = JitsiMeetConferenceOptions.Builder()
+            .setRoom(response.detail?.roomName)
+            .setFeatureFlag("welcomepage.enabled", false)
+            .setAudioMuted(true)
+            .setVideoMuted(true)
+            .build()
+        JitsiMeetActivity.launch(requireContext(), options)
+    }
 }

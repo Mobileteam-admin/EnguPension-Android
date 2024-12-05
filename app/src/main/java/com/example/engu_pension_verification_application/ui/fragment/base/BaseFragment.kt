@@ -1,6 +1,7 @@
 package com.example.engu_pension_verification_application.ui.fragment.base
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -19,8 +20,10 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.adapter.PopUpAdapter
 import com.example.engu_pension_verification_application.ui.dialog.LoaderDialog
+import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.LoaderViewModel
 
 open class BaseFragment : Fragment() {
@@ -54,6 +57,36 @@ open class BaseFragment : Fragment() {
         findNavController().navigate(resId, args, navOptionsBuilder.build())
     }
 
+    fun showFetchErrorDialog(
+        retry: (() -> Unit),
+        @StringRes messageResId: Int,
+    ) {
+        showFetchErrorDialog(retry, getString(messageResId))
+    }
+
+    fun showFetchErrorDialog(
+        retry: (() -> Unit),
+        message: String,
+    ) {
+        showAlertDialog(
+            message = message,
+            positiveTextId = R.string.retry,
+            onPositiveClick = retry,
+            negativeTextId = R.string.close,
+            onNegativeClick = {
+                requireActivity().finish()
+            },
+            neutralTextId = R.string.logout,
+            onNeutralClick = {
+                SharedPref.logout()
+                requireActivity().finish()
+                val intent = Intent(requireContext(), SignUpActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            },
+        )
+    }
+
     fun showAlertDialog(
         message: String,
         title: String? = null,
@@ -63,6 +96,7 @@ open class BaseFragment : Fragment() {
         onPositiveClick: (() -> Unit),
         onNegativeClick: (() -> Unit)? = null,
         onNeutralClick: (() -> Unit)? = null,
+        isCancellable: Boolean = false,
 
         ) {
         val builder = AlertDialog.Builder(requireContext()).setMessage(message)
@@ -83,6 +117,7 @@ open class BaseFragment : Fragment() {
                 onNegativeClick()
             }
         }
+        builder.setCancelable(isCancellable)
         builder.show()
     }
 

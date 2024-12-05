@@ -152,5 +152,7 @@
     <string name="slot_not_selected_msg">Please select a time slot</string>
     <string name="no_time_slots_msg">Unfortunately, there are no time slots available for the selected date.</string>
     <string name="select_date">Select Date</string>
+    <string name="logout">Logout</string>
+    <string name="no_internet_error">Please connect to internet and retry.</string>
 
 </resources>

@@ -160,7 +160,10 @@ class ActiveBankFragment: BaseFragment() {
                     }
                 } else {
                     dismissLoader()
-                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    showFetchErrorDialog(
+                        activeBankViewModel::fetchBankList,
+                        response.detail?.message ?: getString(R.string.common_error_msg_2)
+                    )
                 }
             }
         }
@@ -523,17 +526,6 @@ class ActiveBankFragment: BaseFragment() {
                Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
            }
        }*/
-
-
-    private fun clearLogin() {
-        prefs.isLogin = false
-        prefs.user_id = ""
-        prefs.user_name = ""
-        prefs.email = ""
-        prefs.access_token = ""
-        prefs.refresh_token = ""
-        //prefs.isBankVerify = false
-    }
 
     fun Context.isConnectedToNetwork(): Boolean {
         val connectivityManager =

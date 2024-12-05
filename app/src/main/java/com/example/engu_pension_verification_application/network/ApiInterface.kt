@@ -68,16 +68,16 @@ interface ApiInterface {
 
 
     @POST("/api/v1/account_completion/active")
-    suspend fun getActiveDetails(
+    fun submitActiveDetails(
         @Header("Authorization") token: String,
         @Body inputActiveBasicDetails: InputActiveBasicDetails
-    ): ResponseActiveBasicDetails
+    ): Call<ResponseActiveBasicDetails>
 
     @POST("/api/v1/account_completion/retiree")
-    suspend fun getRetireeDetails(
+    fun submitRetireeDetails(
         @Header("Authorization") token: String,
         @Body inputRetireeBasicDetail: InputRetireeBasicDetails
-    ): ResponseRetireeBasicDetails
+    ): Call<ResponseRetireeBasicDetails>
 
     @POST("/api/v1/create-or-update-bank-details")
     suspend fun submitBankInfo(
@@ -153,10 +153,10 @@ interface ApiInterface {
 
 
     @POST("/api/v1/verify_bank_account")
-    suspend fun getBankVerify(
+    fun getBankVerify(
         @Header("Authorization") token: String,
         @Body inputBankVerification: InputBankVerification
-    ): ResponseBankVerify
+    ): Call<ResponseBankVerify>
 
     @GET("/api/v1/users_account_completion_status")
     suspend fun getAccountCompletionStatus(@Header("Authorization") token: String): AccountCompletionStatusResponse
@@ -185,5 +185,10 @@ interface ApiInterface {
     @POST("/api/v1/transfer-to-final-account")
     suspend fun transferToFinalAccount(@Header("Authorization") token: String,@Body request:TransferRequest): TransferResponse
 
+    @POST("/api/v1/booking/videocall/")
+    suspend fun fetchVideoCallLink(
+        @Header("Authorization") token: String,
+        @Body request: VideoCallRequest
+    ): Call<VideoCallResponse>
 
 }
