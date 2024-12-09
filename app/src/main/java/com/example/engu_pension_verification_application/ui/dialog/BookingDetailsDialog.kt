@@ -97,7 +97,6 @@ class BookingDetailsDialog private constructor() : BaseDialog() {
                 } else {
                     dismissLoader()
                     response.detail?.message?.let { showToast(it) }
-                    dismiss()
                 }
             }
         }

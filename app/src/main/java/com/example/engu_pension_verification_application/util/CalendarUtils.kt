@@ -10,6 +10,16 @@ object CalendarUtils {
     const val DATE_FORMAT_1 = "yyyy-MM-dd"
     const val DATE_FORMAT_2 = "MMMM yyyy"
     const val DATE_FORMAT_3 = "dd/MM/yyyy"
+    const val DATE_TIME_FORMAT_1 = "yyyy-MM-dd HH:mm:ss" //"2024-12-09 05:42:11"
+    fun getFormattedString(
+        currentFormat: String,
+        requiredFormat: String,
+        dateTimeString: String
+    ): String {
+        val calendar = getCalendar(currentFormat, dateTimeString)
+        return if (calendar == null) "" else getFormattedString(requiredFormat, calendar)
+    }
+
     fun getFormattedString(format: String, calendar: Calendar): String {
         try {
             return SimpleDateFormat(format, Locale.getDefault()).format(calendar.time)

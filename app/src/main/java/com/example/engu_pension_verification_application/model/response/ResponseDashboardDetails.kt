@@ -29,7 +29,7 @@ data class DashboardDetails(
 	val walletBalanceCurrency: String? = null,
 
 	@field:SerializedName("verification_status")
-	val verificationStatus: String? = null,
+	val verificationStatus: Boolean? = null,
 
 	@field:SerializedName("wallet_balance_amount")
 	val walletBalanceAmount: Int? = null,

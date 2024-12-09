@@ -1,6 +1,7 @@
 package com.example.engu_pension_verification_application.Constants
 
 object AppConstants {
+    const val BASE_URL: String = "https://pension-distributor.demoserver.work"
     const val BEARER = "Bearer"
     const val SUCCESS = "success"
     const val FAIL = "fail"

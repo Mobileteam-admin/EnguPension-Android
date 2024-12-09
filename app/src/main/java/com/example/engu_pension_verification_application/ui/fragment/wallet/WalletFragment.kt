@@ -11,6 +11,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -27,9 +28,10 @@ import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.AppUtils.Companion.isValidNumber
 import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.viewmodel.WalletFragmentViewModel
+import com.example.engu_pension_verification_application.viewmodel.WalletViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -39,7 +41,8 @@ class WalletFragment : BaseFragment() {
         const val BANK_ITEM_SELECT_ID = -1
     }
     private lateinit var binding:FragmentWalletBinding
-    private lateinit var viewModel: WalletFragmentViewModel
+    private lateinit var dashboardViewModel: DashboardViewModel
+    private lateinit var viewModel: WalletViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private lateinit var stripeActivityResultLauncher: ActivityResultLauncher<Intent>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,9 +79,12 @@ class WalletFragment : BaseFragment() {
 
     private fun initViewModels() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        dashboardViewModel = ViewModelProviders.of(
+            requireActivity(), EnguViewModelFactory(networkRepo)
+        ).get(DashboardViewModel::class.java)
         viewModel = ViewModelProviders.of(
             this, EnguViewModelFactory(networkRepo)
-        ).get(WalletFragmentViewModel::class.java)
+        ).get(WalletViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
@@ -122,6 +128,11 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun observeLiveData() {
+        dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                populateViews()
+            }
+        }
         viewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
                 dismissLoader()
@@ -158,8 +169,8 @@ class WalletFragment : BaseFragment() {
                     stripeActivityResultLauncher.launch(intent)
                 } else {
                     if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                        showLoader()
                         lifecycleScope.launch(Dispatchers.IO) {
-                            showLoader()
                             if (tokenRefreshViewModel2.fetchRefreshToken()) {
                                 viewModel.fetchTopUp(request)
                             }
@@ -171,12 +182,25 @@ class WalletFragment : BaseFragment() {
                 viewModel.resetTopUpApiResult()
             }
         }
-        viewModel.paymentResult.observe(viewLifecycleOwner) { response ->
-            if (response != null) {
+        viewModel.paymentResult.observe(viewLifecycleOwner) { pair ->
+            if (pair != null) {
+                val sessionId = pair.first
+                val response = pair.second
                 dismissLoader()
-                showToast(response.detail?.message ?: getString(R.string.common_error_msg))
                 if (response.detail?.status == AppConstants.SUCCESS) {
+                    response.detail.message?.let { showToast(it) }
                     findNavController().navigateUp()
+                } else {
+                    if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                        showLoader()
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                viewModel.fetchPaymentStatus(sessionId)
+                            }
+                        }
+                    } else {
+                        showToast(response.detail?.message ?: getString(R.string.common_error_msg))
+                    }
                 }
                 viewModel.resetPaymentResult()
             }
@@ -209,5 +233,11 @@ class WalletFragment : BaseFragment() {
         }
         return true
     }
-
+    private fun populateViews() {
+        dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
+            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
+            binding.tvWalletAmount.text = walletText
+            binding.ivNaira.isGone = true
+        }
+    }
 }

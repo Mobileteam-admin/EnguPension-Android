@@ -154,5 +154,7 @@
     <string name="select_date">Select Date</string>
     <string name="logout">Logout</string>
     <string name="no_internet_error">Please connect to internet and retry.</string>
+    <string name="not_verified">Not Verified</string>
+    <string name="valid_till_date">Valid till %s</string>
 
 </resources>

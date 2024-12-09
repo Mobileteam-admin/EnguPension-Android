@@ -14,7 +14,7 @@ class AccountStatementAdapter(val onItemClicked: () -> Unit) :
     ): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context).inflate(
-                R.layout.card_wallet_history,
+                R.layout.item_wallet_history,
                 parent,
                 false
             )

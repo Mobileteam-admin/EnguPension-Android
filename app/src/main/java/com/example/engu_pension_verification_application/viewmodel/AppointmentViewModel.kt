@@ -6,13 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
+import com.example.engu_pension_verification_application.data.ApiResult
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.BookAppointmentRequest
 import com.example.engu_pension_verification_application.model.input.TopUpRequest
+import com.example.engu_pension_verification_application.model.response.ActiveBasicDetail
 import com.example.engu_pension_verification_application.model.response.BookAppointmentResponse
 import com.example.engu_pension_verification_application.model.response.BookingDateRangeResponse
 import com.example.engu_pension_verification_application.model.response.BookingSlotResponse
+import com.example.engu_pension_verification_application.model.response.ResponseActiveBasicDetails
 import com.example.engu_pension_verification_application.model.response.TopUpResponse
+import com.example.engu_pension_verification_application.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -59,15 +63,16 @@ class AppointmentViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
 
     fun fetchBookingDateRange() {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                _dateRangeApiResult.postValue(networkRepo.fetchBookingDateRange())
-            } catch (e: Exception) {
-                _dateRangeApiResult.postValue(
+            val unknownErrorMsg = "Something went wrong with fetching date range"
+            val call = networkRepo.fetchBookingDateRange()
+            val response = when (val apiResult = NetworkUtils.handleResponse(call,unknownErrorMsg)) {
+                is ApiResult.Success -> apiResult.data
+                is ApiResult.Error ->
                     BookingDateRangeResponse(
-                        BookingDateRangeResponse.Detail(message = "Something went wrong with fetching date range")
+                        BookingDateRangeResponse.Detail(message = apiResult.message)
                     )
-                )
             }
+            _dateRangeApiResult.postValue(response)
         }
     }
 

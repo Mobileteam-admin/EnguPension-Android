@@ -1,6 +1,5 @@
 package com.example.engu_pension_verification_application.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,7 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class WalletFragmentViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+class WalletViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val bankItems = mutableListOf<ListBanksItem?>()
 
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()
@@ -32,8 +31,8 @@ class WalletFragmentViewModel(private val networkRepo: NetworkRepo) : ViewModel(
     val topUpApiResult: LiveData<Pair<TopUpRequest, TopUpResponse>?>
         get() = _topUpApiResult
 
-    private val _paymentResult = MutableLiveData<PaymentStatusResponse?>(null)
-    val paymentResult: LiveData<PaymentStatusResponse?>
+    private val _paymentResult = MutableLiveData<Pair<String,PaymentStatusResponse>?>(null)
+    val paymentResult: LiveData<Pair<String,PaymentStatusResponse>?>
         get() = _paymentResult
 
     fun resetTopUpApiResult() {
@@ -101,16 +100,15 @@ class WalletFragmentViewModel(private val networkRepo: NetworkRepo) : ViewModel(
     fun fetchPaymentStatus(sessionId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _paymentResult.postValue(networkRepo.getPaymentStatus(sessionId))
+                _paymentResult.postValue(Pair(sessionId, networkRepo.getPaymentStatus(sessionId)))
             } catch (e: Exception) {
-                _paymentResult.postValue(
-                    PaymentStatusResponse(
-                        PaymentStatusResponse.Detail(
-                            status = AppConstants.FAIL,
-                            message = "Failed to fetch payment result"
-                        )
+                val errorResponse = PaymentStatusResponse(
+                    PaymentStatusResponse.Detail(
+                        status = AppConstants.FAIL,
+                        message = "Failed to fetch payment result"
                     )
                 )
+                _paymentResult.postValue(Pair(sessionId, errorResponse))
             }
         }
     }

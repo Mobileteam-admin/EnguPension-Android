@@ -16,7 +16,7 @@
         android:padding="@dimen/dp_16">
 
         <TextView
-            android:id="@+id/txt_date"
+            android:id="@+id/tv_date"
             style="@style/Style_text_title_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         <TextView
-            android:id="@+id/txt_topupnote"
+            android:id="@+id/tv_transaction_id"
             style="@style/Style_text_title_1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -32,26 +32,33 @@
             android:text="UPI/255415454545154/@chidi/Wallet Top up"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_date"
-            app:layout_constraintEnd_toStartOf="@+id/txt_topup_status"/>
+            app:layout_constraintTop_toBottomOf="@+id/tv_date"
+            app:layout_constraintEnd_toStartOf="@+id/tv_transaction_type"/>
 
+        <ImageView
+            android:id="@+id/iv_naira"
+            app:layout_constraintTop_toTopOf="@id/tv_amount"
+            app:layout_constraintEnd_toStartOf="@id/tv_amount"
+            app:layout_constraintBottom_toBottomOf="@id/tv_amount"
+            android:layout_width="@dimen/dp_12"
+            android:layout_height="@dimen/dp_12"
+            app:tint="@color/colorPrimary"
+            android:layout_marginEnd="@dimen/dp_3"
+            android:src="@drawable/ic_naira"/>
         <TextView
-            android:id="@+id/txt_topup_amount"
+            android:id="@+id/tv_amount"
             android:fontFamily="@font/nunito_sans_regular"
             android:textColor="@color/green_theme"
             android:textSize="@dimen/dp_16"
             android:text="100"
-            android:drawableStart="@drawable/ic_naira"
-            android:drawableTint="@color/green_dark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp_8"
             android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/txt_topup_status"/>
+            app:layout_constraintBottom_toTopOf="@+id/tv_transaction_type"/>
         <TextView
-            android:id="@+id/txt_topup_status"
+            android:id="@+id/tv_transaction_type"
             style="@style/Style_text_title_2"
             android:text="Credit"
             android:layout_width="wrap_content"
@@ -60,7 +67,7 @@
             android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_topup_amount"/>
+            app:layout_constraintTop_toBottomOf="@+id/tv_amount"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

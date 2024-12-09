@@ -8,6 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +39,8 @@ import kotlinx.coroutines.launch
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
 import org.webrtc.PeerConnectionFactory
+import java.net.URL
+
 
 class DashboardFragment : BaseFragment() {
     private lateinit var binding:FragmentDashboardBinding
@@ -143,6 +149,7 @@ class DashboardFragment : BaseFragment() {
 
     private fun initCall() {
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+            showLoader()
             viewModel.fetchDashboardDetails()
         } else {
             showFetchErrorDialog(::initCall,R.string.no_internet_error)
@@ -152,6 +159,10 @@ class DashboardFragment : BaseFragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun onClicked() {
         binding.imgBell.setOnClickListener { // TODO: remove after video call api completion
+//            val callLink =
+//                "https://project-one.org/v_call_ser/meeting_6c91334d-5a44-4e79-8a23-599458093cd6?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6InByb2plY3Qtb25lIiwic3ViIjoicHJvamVjdC1vbmUub3JnIiwicm9vbSI6Im1lZXRpbmdfNmM5MTMzNGQtNWE0NC00ZTc5LThhMjMtNTk5NDU4MDkzY2Q2IiwiZXhwIjoxNzMzNzI5ODEwLCJjb250ZXh0Ijp7InVzZXIiOnsiZW1haWwiOiJtdWhhbW1hZC5mYWlzYWxAdGVjaHZlcnNhbnRpbmZvdGVjaC5jb20iLCJuYW1lIjoibXVoYW1tYWQuZmFpc2FsIiwibW9kZXJhdG9yIjp0cnVlfX19.WAyx2DjNui38M3Sh2plLI2HphzqLUIElMnV3QrfF-r8"
+//
+//            startJitsiMeetCall(callLink)
 //            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 //                val videoCallRequest = VideoCallRequest(
 //                    govtOfficialEmail = "8adm3eqs29@zlorkun.com",
@@ -200,8 +211,27 @@ class DashboardFragment : BaseFragment() {
                 .load(it.profilePic)
                 .into(binding.imgProfile)
             binding.tvPersonName.text = it.fullName
-            binding.tvWalletAmountDigits.text = it.walletBalanceAmount.toString()
-            binding.tvWalletSymbolSign.text = it.walletBalanceCurrency
+            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
+            binding.tvWalletAmount.text = walletText
+            binding.ivNaira.isGone = true
+            if (it.verificationStatus == true) {
+                binding.tvVerificationStatus.text = getString(R.string.verified)
+                binding.tvVerificationStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.green_dark))
+                binding.ivVerificationStatus.setImageResource(R.drawable.ic_tick_green)
+            } else {
+                binding.tvVerificationStatus.text = getString(R.string.not_verified)
+                binding.tvVerificationStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                binding.ivVerificationStatus.setImageResource(R.drawable.ic_not_verified_red)
+            }
+            if (true == true) { // TODO: Modify this whenever update the API and the response includes status
+                binding.tvBookAppointment.text = getString(R.string.book_appointment)
+                binding.tvBookAppointment.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_500))
+                binding.ivBookAppointment.setImageResource(R.drawable.ic_schedule)
+            } else {
+                binding.tvBookAppointment.text = getString(R.string.valid_till_date, "01/01/2025")
+                binding.tvBookAppointment.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                binding.ivBookAppointment.setImageResource(R.drawable.ic_not_verified_red)
+            }
             it.bankDetail?.let { bankDetail ->
                 binding.noBankMsg.visibility = View.GONE
                 binding.clDashboardBank.visibility = View.VISIBLE
@@ -237,5 +267,19 @@ class DashboardFragment : BaseFragment() {
             .setVideoMuted(true)
             .build()
         JitsiMeetActivity.launch(requireContext(), options)
+    }
+
+    private fun startJitsiMeetCall(callLink: String) {
+        try {
+            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
+                .setServerURL(URL(callLink))
+                .setRoom(callLink)
+                .setAudioOnly(false)
+                .build()
+
+            JitsiMeetActivity.launch(requireContext(), options)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

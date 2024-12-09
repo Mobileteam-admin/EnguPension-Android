@@ -114,8 +114,7 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchBookingSlots(selectedDay: String) =
         apiInterface.fetchBookingSlots(NetworkUtils.getAccessToken(), selectedDay)
 
-    suspend fun fetchBookingDateRange() =
-        apiInterface.fetchBookingDateRange(NetworkUtils.getAccessToken())
+    fun fetchBookingDateRange() = apiInterface.fetchBookingDateRange()
 
     suspend fun bookAppointment(request: BookAppointmentRequest) =
         apiInterface.bookAppointment(NetworkUtils.getAccessToken(), request)
@@ -123,9 +122,12 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     fun bookAppointmentCall(request: BookAppointmentRequest) =
         apiInterface.bookAppointmentCall(NetworkUtils.getAccessToken(), request)
 
-    suspend fun transferToFinalAccount(request: TransferRequest) =
+    fun transferToFinalAccount(request: TransferRequest) =
         apiInterface.transferToFinalAccount(NetworkUtils.getAccessToken(), request)
 
     suspend fun fetchVideoCallLink(request: VideoCallRequest) =
         apiInterface.fetchVideoCallLink(NetworkUtils.getAccessToken(), request)
+
+    suspend fun fetchTransactionHistory(page: Int, limit: Int) =
+        apiInterface.fetchTransactionHistory(NetworkUtils.getAccessToken(), page, limit)
 }
