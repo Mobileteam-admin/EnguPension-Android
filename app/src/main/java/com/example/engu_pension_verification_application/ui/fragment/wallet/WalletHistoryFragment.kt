@@ -22,16 +22,22 @@ import com.example.engu_pension_verification_application.viewmodel.DashboardView
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import com.example.engu_pension_verification_application.viewmodel.WalletHistoryViewModel
-import com.example.engu_pension_verification_application.viewmodel.WalletViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class WalletHistoryFragment : BaseFragment() {
-    private lateinit var binding:FragmentWalletHistoryBinding
+    private lateinit var binding: FragmentWalletHistoryBinding
     private lateinit var viewModel: WalletHistoryViewModel
     private lateinit var dashboardViewModel: DashboardViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private val adapter = WalletHistoryAdapter()
+    private var retryCount = 0
+
+    companion object {
+        private const val MAX_RETRY = 3
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,21 +75,37 @@ class WalletHistoryFragment : BaseFragment() {
         binding.rvWalletHistory.adapter = adapter
 
     }
+
     private fun observeLiveData() {
         lifecycleScope.launch {
             viewModel.transactionFlow.collectLatest { pagingData ->
+                retryCount = 0
                 adapter.submitData(pagingData)
             }
         }
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest { loadStates ->
-                binding.progressBar.visibility =
-                    if (loadStates.refresh is LoadState.Loading) View.VISIBLE else View.GONE
                 val errorState = loadStates.refresh as? LoadState.Error
                     ?: loadStates.append as? LoadState.Error
                     ?: loadStates.prepend as? LoadState.Error
-                errorState?.error?.localizedMessage?.let {
-                    showToast(it)
+                if (errorState?.error?.message == AppConstants.TOKEN_EXPIRED) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            withContext(Dispatchers.Main) {
+                                if (retryCount < MAX_RETRY) {
+                                    retryCount++
+                                    adapter.retry()
+                                } else {
+                                    showToast(R.string.common_error_msg_2)
+                                    findNavController().navigateUp()
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (errorState?.error != null) showToast(R.string.common_error_msg_2)
+                    binding.progressBar.visibility =
+                        if (loadStates.refresh is LoadState.Loading) View.VISIBLE else View.GONE
                 }
             }
         }
@@ -93,10 +115,6 @@ class WalletHistoryFragment : BaseFragment() {
             }
         }
     }
-
-
-
-
 
     private fun populateViews() {
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {

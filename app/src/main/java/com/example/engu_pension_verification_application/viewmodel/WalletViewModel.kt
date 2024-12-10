@@ -21,6 +21,7 @@ import retrofit2.Response
 
 
 class WalletViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    var selectedBankItemPosition: Int? = null
     val bankItems = mutableListOf<ListBanksItem?>()
 
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()
