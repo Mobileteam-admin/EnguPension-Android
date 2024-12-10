@@ -5,30 +5,47 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.data.ApiResult
-import retrofit2.Response
+import org.json.JSONObject
+import retrofit2.Call
 
 object NetworkUtils {
-    fun getAccessToken(): String {
-        if (AppConstants.ACCESS_TOKEN.isEmpty())
-            AppConstants.ACCESS_TOKEN = SharedPref.access_token ?: ""
-        return "${AppConstants.BEARER} ${AppConstants.ACCESS_TOKEN}"
-    }
+    fun getAccessToken() =
+        "${AppConstants.BEARER} ${SharedPref.access_token ?: ""}"
 
     fun isConnectedToNetwork(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            ?: false
     }
 
-    fun <T> handleResponse(response: Response<T>): ApiResult<T> {
+    fun <T> handleResponse(
+        call: Call<T>,
+        unknownErrorMsg: String? = null,
+        detailKey: String = "detail",
+        messageKey: String = "message"
+    ): ApiResult<T> {
+        var errorMessage = unknownErrorMsg ?: "Something went wrong"
         return try {
+            val response = call.execute()
             if (response.isSuccessful && response.body() != null) {
                 ApiResult.Success(response.body()!!)
             } else {
-                ApiResult.Error("An error occurred")
+                response.errorBody()?.let {
+                    try {
+                        val jsonObject = JSONObject(it.string())
+                        errorMessage = jsonObject.getJSONObject(detailKey).getString(messageKey)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                ApiResult.Error(errorMessage)
             }
         } catch (e: Exception) {
-            ApiResult.Error("An error occurred")
+            e.printStackTrace()
+            ApiResult.Error(errorMessage)
         }
     }
 }

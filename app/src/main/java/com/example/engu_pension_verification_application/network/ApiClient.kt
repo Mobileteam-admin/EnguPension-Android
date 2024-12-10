@@ -2,6 +2,7 @@ package com.example.engu_pension_verification_application.network
 
 
 
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.util.SharedPref
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -13,8 +14,6 @@ import java.util.concurrent.TimeUnit
 
 object ApiClient {
     var prefs = SharedPref
-
-    var BASE_URL: String = "https://pension-distributor.demoserver.work"
     @Volatile private var apiInterface:ApiInterface? =null
 
     fun getApiInterface(): ApiInterface {
@@ -44,7 +43,7 @@ object ApiClient {
 
 
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(AppConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(ScalarsConverterFactory.create())
             .client(client)

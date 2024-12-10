@@ -19,8 +19,8 @@ class RetireeDocumentsViewModel(private val networkRepo: NetworkRepo) : ViewMode
         get() = _documentsFetchResult
 
     private val _documentsUploadResult =
-        MutableLiveData<Pair<RequestBody, ResponseRetireeDocUpload>>()
-    val documentsUploadResult: LiveData<Pair<RequestBody, ResponseRetireeDocUpload>>
+        MutableLiveData<Pair<RequestBody, ResponseRetireeDocUpload>?>(null)
+    val documentsUploadResult: LiveData<Pair<RequestBody, ResponseRetireeDocUpload>?>
         get() = _documentsUploadResult
 
     fun uploadDocuments(requestBody: RequestBody) {
@@ -38,6 +38,10 @@ class RetireeDocumentsViewModel(private val networkRepo: NetworkRepo) : ViewMode
                 )
             }
         }
+    }
+
+    fun resetDocumentsUploadResult() {
+        _documentsUploadResult.value = null
     }
 
     fun fetchDocuments() {

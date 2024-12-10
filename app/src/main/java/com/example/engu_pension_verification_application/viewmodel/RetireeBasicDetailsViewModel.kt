@@ -4,10 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.engu_pension_verification_application.data.ApiResult
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputLGAList
 import com.example.engu_pension_verification_application.model.input.InputRetireeBasicDetails
 import com.example.engu_pension_verification_application.model.response.*
+import com.example.engu_pension_verification_application.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -21,8 +23,8 @@ class RetireeBasicDetailsViewModel(private val networkRepo: NetworkRepo) :ViewMo
         get() = _basicDetailsApiResult
 
     private val _basicDetailsSubmissionResult =
-        MutableLiveData<Pair<InputRetireeBasicDetails, ResponseRetireeBasicDetails>>()
-    val basicDetailsSubmissionResult: LiveData<Pair<InputRetireeBasicDetails, ResponseRetireeBasicDetails>>
+        MutableLiveData<Pair<InputRetireeBasicDetails, ResponseRetireeBasicDetails>?>(null)
+    val basicDetailsSubmissionResult: LiveData<Pair<InputRetireeBasicDetails, ResponseRetireeBasicDetails>?>
         get() = _basicDetailsSubmissionResult
 
     suspend fun fetchCombinedDetails(country: String): Boolean {
@@ -52,24 +54,28 @@ class RetireeBasicDetailsViewModel(private val networkRepo: NetworkRepo) :ViewMo
             }
         }
     }
+
     fun submitBasicDetails(inputRetireeBasicDetails: InputRetireeBasicDetails) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                _basicDetailsSubmissionResult.postValue(
-                    Pair(
-                        inputRetireeBasicDetails,
-                        networkRepo.submitRetireeBasicDetails(inputRetireeBasicDetails)
+            val unknownErrorMsg = "Something went wrong with basic details submission"
+            val call = networkRepo.submitRetireeBasicDetails(inputRetireeBasicDetails)
+            val response = when (val apiResult = NetworkUtils.handleResponse(call,unknownErrorMsg)) {
+                is ApiResult.Success -> apiResult.data
+                is ApiResult.Error ->
+                    ResponseRetireeBasicDetails(
+                        RetireeBasicDetail(message = apiResult.message)
                     )
-                )
-            } catch (e: Exception) {
-                _basicDetailsSubmissionResult.postValue(
-                    Pair(
-                        inputRetireeBasicDetails, ResponseRetireeBasicDetails(
-                            RetireeBasicDetail(message = "Something went wrong with basic details submission")
-                        )
-                    )
-                )
             }
+            _basicDetailsSubmissionResult.postValue(
+                Pair(
+                    inputRetireeBasicDetails,
+                    response
+                )
+            )
         }
+    }
+
+    fun resetBasicDetailsSubmissionResult() {
+        _basicDetailsSubmissionResult.value = null
     }
 }

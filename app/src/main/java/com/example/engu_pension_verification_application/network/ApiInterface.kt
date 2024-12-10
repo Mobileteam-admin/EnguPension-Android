@@ -68,16 +68,16 @@ interface ApiInterface {
 
 
     @POST("/api/v1/account_completion/active")
-    suspend fun getActiveDetails(
+    fun submitActiveDetails(
         @Header("Authorization") token: String,
         @Body inputActiveBasicDetails: InputActiveBasicDetails
-    ): ResponseActiveBasicDetails
+    ): Call<ResponseActiveBasicDetails>
 
     @POST("/api/v1/account_completion/retiree")
-    suspend fun getRetireeDetails(
+    fun submitRetireeDetails(
         @Header("Authorization") token: String,
         @Body inputRetireeBasicDetail: InputRetireeBasicDetails
-    ): ResponseRetireeBasicDetails
+    ): Call<ResponseRetireeBasicDetails>
 
     @POST("/api/v1/create-or-update-bank-details")
     suspend fun submitBankInfo(
@@ -153,10 +153,10 @@ interface ApiInterface {
 
 
     @POST("/api/v1/verify_bank_account")
-    suspend fun getBankVerify(
+    fun getBankVerify(
         @Header("Authorization") token: String,
         @Body inputBankVerification: InputBankVerification
-    ): ResponseBankVerify
+    ): Call<ResponseBankVerify>
 
     @GET("/api/v1/users_account_completion_status")
     suspend fun getAccountCompletionStatus(@Header("Authorization") token: String): AccountCompletionStatusResponse
@@ -174,7 +174,7 @@ interface ApiInterface {
     suspend fun fetchBookingSlots(@Header("Authorization") token: String, @Query("selected_day") selectedDay: String): BookingSlotResponse
 
     @GET("/api/v1/booking/booking-date-range/")
-    suspend fun fetchBookingDateRange(@Header("Authorization") token: String): BookingDateRangeResponse
+    fun fetchBookingDateRange(): Call<BookingDateRangeResponse>
 
     @POST("/api/v1/booking/create-booking/")
     suspend fun bookAppointment(@Header("Authorization") token: String,@Body request:BookAppointmentRequest): BookAppointmentResponse
@@ -183,7 +183,20 @@ interface ApiInterface {
     fun bookAppointmentCall(@Header("Authorization") token: String,@Body request:BookAppointmentRequest): Call<BookAppointmentResponse>
 
     @POST("/api/v1/transfer-to-final-account")
-    suspend fun transferToFinalAccount(@Header("Authorization") token: String,@Body request:TransferRequest): TransferResponse
+    fun transferToFinalAccount(@Header("Authorization") token: String,@Body request:TransferRequest): Call<TransferResponse>
 
+    @POST("/api/v1/booking/videocall/")
+    suspend fun fetchVideoCallLink(
+        @Header("Authorization") token: String,
+        @Body request: VideoCallRequest
+    ): Call<VideoCallResponse>
+
+
+    @GET("/api/v1/transaction-details")
+    suspend fun fetchTransactionHistory(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): TransactionHistoryResponse
 
 }

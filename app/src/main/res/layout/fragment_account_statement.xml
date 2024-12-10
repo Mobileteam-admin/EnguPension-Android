@@ -145,7 +145,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/ll_download"
-            tools:listitem="@layout/card_wallet_history"
+            tools:listitem="@layout/item_wallet_history"
             />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ll_download"

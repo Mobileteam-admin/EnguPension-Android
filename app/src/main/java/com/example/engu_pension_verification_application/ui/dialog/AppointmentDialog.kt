@@ -148,7 +148,6 @@ class AppointmentDialog : BaseDialog() {
                 } else {
                     dismissLoader()
                     response.detail?.message?.let { showToast(it) }
-                    dismiss()
                 }
             }
         }

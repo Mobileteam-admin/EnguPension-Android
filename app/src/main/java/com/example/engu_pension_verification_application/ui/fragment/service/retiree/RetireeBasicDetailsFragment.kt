@@ -141,8 +141,10 @@ class RetireeBasicDetailsFragment : BaseFragment() {
             if (response.combinedetails?.status == AppConstants.SUCCESS) {
                 onRcombinedDetailSuccess(response)
             } else {
-                Toast.makeText(context, response.combinedetails?.message, Toast.LENGTH_LONG).show()
-                findNavController().popBackStack()
+                showFetchErrorDialog(
+                    ::initcall,
+                    response.combinedetails?.message ?: getString(R.string.common_error_msg_2)
+                )
             }
         }
         retireeBasicDetailsViewModel.basicDetailsApiResult.observe(viewLifecycleOwner) { response ->
@@ -166,21 +168,24 @@ class RetireeBasicDetailsFragment : BaseFragment() {
             }
         }
         retireeBasicDetailsViewModel.basicDetailsSubmissionResult.observe(viewLifecycleOwner) { pair ->
-            dismissLoader()
-            val request = pair.first
-            val response = pair.second
-            if (response.detail?.status == AppConstants.SUCCESS) {
-                onRetireeBasicDetailSuccess(response)
-            } else {
-                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            retireeBasicDetailsViewModel.submitBasicDetails(request)
-                        }
-                    }
+            if (pair != null) {
+                dismissLoader()
+                val request = pair.first
+                val response = pair.second
+                if (response.detail?.status == AppConstants.SUCCESS) {
+                    onRetireeBasicDetailSuccess(response)
                 } else {
-                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                retireeBasicDetailsViewModel.submitBasicDetails(request)
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    }
                 }
+                retireeBasicDetailsViewModel.resetBasicDetailsSubmissionResult()
             }
         }
     }
@@ -860,16 +865,6 @@ class RetireeBasicDetailsFragment : BaseFragment() {
     }
 
 
-    private fun clearLogin() {
-        prefs.isLogin = false
-        prefs.user_id = ""
-        prefs.user_name = ""
-        prefs.email = ""
-        prefs.access_token = ""
-        prefs.refresh_token = ""
-    }
-
-
     private fun nextButtonCall() {
         showLoader()
         if (NetworkUtils.isConnectedToNetwork(requireContext())) {
@@ -1035,7 +1030,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
                     " - Select LastPosition - ", 0
                 )
             )
-            combinationdetailsdata.combinedetails?.combinelocalGovenmentPensionBoards.forEach {
+            combinationdetailsdata.combinedetails?.combinelocalGovenmentPensionBoards?.forEach {
                 localGovPensionList.add(
                     CombineLocalGovenmentPensionBoardsItem(
                         it?.positionName, it?.id

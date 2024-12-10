@@ -87,7 +87,7 @@
             android:paddingVertical="@dimen/dp_4">
 
             <ImageView
-                android:id="@+id/img_wallethistory_icon"
+                android:id="@+id/iv_wallet_icon"
                 android:layout_width="@dimen/dp_50"
                 android:layout_height="@dimen/dp_50"
                 android:layout_margin="@dimen/dp_6"
@@ -96,28 +96,47 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="iv_wallet_icon"
+                app:barrierMargin="@dimen/dp_12"/>
+
+            <ImageView
+                android:id="@+id/iv_naira"
+                style="@style/Style_text_title_1"
+                android:layout_width="12dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_naira"
+                app:layout_constraintStart_toEndOf="@+id/barrier"
+                app:layout_constraintTop_toTopOf="@+id/tv_wallet_amount"
+                app:layout_constraintEnd_toStartOf="@+id/tv_wallet_amount"
+                android:layout_marginEnd="@dimen/dp_3"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_wallet_amount" />
+
             <TextView
-                android:id="@+id/tv_wallethistory_amount"
+                android:id="@+id/tv_wallet_amount"
                 style="@style/Style_text_title_Middle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/dp_12"
-                android:drawableStart="@drawable/ic_naira"
-                android:drawablePadding="@dimen/dp_6"
-                android:text="1245"
+                android:text="0"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/img_wallethistory_icon"
-                app:layout_constraintTop_toTopOf="@+id/img_wallethistory_icon" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_naira"
+                app:layout_constraintTop_toTopOf="@+id/iv_wallet_icon" />
 
             <TextView
-                android:id="@+id/tv_wallethistory_"
+                android:id="@+id/tv_wallet_"
                 style="@style/Style_text_title_2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/wallet_balance"
-                app:layout_constraintBottom_toBottomOf="@+id/img_wallethistory_icon"
-                app:layout_constraintStart_toStartOf="@+id/tv_wallethistory_amount"
-                app:layout_constraintTop_toBottomOf="@+id/tv_wallethistory_amount" />
+                app:layout_constraintBottom_toBottomOf="@+id/iv_wallet_icon"
+                app:layout_constraintStart_toStartOf="@+id/barrier"
+                app:layout_constraintTop_toBottomOf="@+id/tv_wallet_amount" />
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -133,29 +152,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingBottom="@dimen/dp_80"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rl_wallethistory_header">
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_wallethistory"
+            android:id="@+id/rv_wallet_history"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:background="@color/white"
             android:layout_marginHorizontal="@dimen/dp_12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/card_wallet_history" />
+            app:layout_constraintTop_toBottomOf="@+id/rl_wallethistory_header"
+            tools:listitem="@layout/item_wallet_history" />
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--
     </androidx.core.widget.NestedScrollView>-->

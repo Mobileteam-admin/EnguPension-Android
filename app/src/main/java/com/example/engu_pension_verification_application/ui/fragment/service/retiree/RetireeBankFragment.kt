@@ -144,7 +144,10 @@ class RetireeBankFragment : BaseFragment() {
                     }
                 } else {
                     dismissLoader()
-                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    showFetchErrorDialog(
+                        bankViewModel::fetchBankList,
+                        response.detail?.message ?: getString(R.string.common_error_msg_2)
+                    )
                 }
             }
         }
@@ -437,6 +440,7 @@ class RetireeBankFragment : BaseFragment() {
     }
 
     private fun BankVerifyApiCall(etAccNum: EditText?, etBankCode: EditText?) {
+        showLoader()
         bankViewModel.verifyBankAccount(
             InputBankVerification(
                 accountNumber = etAccNum?.text.toString(),

@@ -1,6 +1,5 @@
 package com.example.engu_pension_verification_application.data
 
-import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.model.input.BookAppointmentRequest
 import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
 import com.example.engu_pension_verification_application.model.input.InputActiveBasicDetails
@@ -19,8 +18,10 @@ import com.example.engu_pension_verification_application.model.input.InputSignup
 import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
 import com.example.engu_pension_verification_application.model.input.TopUpRequest
 import com.example.engu_pension_verification_application.model.input.TransferRequest
+import com.example.engu_pension_verification_application.model.input.VideoCallRequest
 import com.example.engu_pension_verification_application.network.ApiInterface
 import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.util.SharedPref
 import okhttp3.RequestBody
 
 class NetworkRepo(private val apiInterface: ApiInterface) {
@@ -51,8 +52,8 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchActiveBasicDetails() =
         apiInterface.getActiveBasicRetrive(NetworkUtils.getAccessToken())
 
-    suspend fun uploadAccountDetails(inputActiveBasicDetails: InputActiveBasicDetails) =
-        apiInterface.getActiveDetails(NetworkUtils.getAccessToken(), inputActiveBasicDetails)
+    fun submitActiveBasicDetails(inputActiveBasicDetails: InputActiveBasicDetails) =
+        apiInterface.submitActiveDetails(NetworkUtils.getAccessToken(), inputActiveBasicDetails)
 
     suspend fun fetchActiveDocuments() =
         apiInterface.getActiveDocRetrive(NetworkUtils.getAccessToken())
@@ -66,14 +67,14 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun submitBankInfo(inputActiveBankInfo: InputActiveBankInfo) =
         apiInterface.submitBankInfo(NetworkUtils.getAccessToken(), inputActiveBankInfo)
 
-    suspend fun verifyBankAccount(inputBankVerification: InputBankVerification) =
+    fun verifyBankAccount(inputBankVerification: InputBankVerification) =
         apiInterface.getBankVerify(NetworkUtils.getAccessToken(), inputBankVerification)
 
     suspend fun submitEin(ein: String) =
         apiInterface.getEinNumber(NetworkUtils.getAccessToken(), InputEinNumber(ein))
 
     suspend fun fetchRefreshToken() =
-        apiInterface.getRefreshToken(InputRefreshToken(AppConstants.REFRESH_TOKEN))
+        apiInterface.getRefreshToken(InputRefreshToken(SharedPref.refresh_token))
 
     suspend fun uploadActiveDocuments(requestBody: RequestBody) =
         apiInterface.upLoadActiveUserDocuments(
@@ -91,8 +92,8 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchRetireeBasicDetails() =
         apiInterface.getRetireeBasicRetrive(NetworkUtils.getAccessToken())
 
-    suspend fun submitRetireeBasicDetails(inputRetireeBasicDetail: InputRetireeBasicDetails) =
-        apiInterface.getRetireeDetails(NetworkUtils.getAccessToken(), inputRetireeBasicDetail)
+    fun submitRetireeBasicDetails(inputRetireeBasicDetail: InputRetireeBasicDetails) =
+        apiInterface.submitRetireeDetails(NetworkUtils.getAccessToken(), inputRetireeBasicDetail)
 
     suspend fun logout() = apiInterface.getLogout(NetworkUtils.getAccessToken())
     suspend fun fetchDashboardDetails() =
@@ -113,8 +114,7 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchBookingSlots(selectedDay: String) =
         apiInterface.fetchBookingSlots(NetworkUtils.getAccessToken(), selectedDay)
 
-    suspend fun fetchBookingDateRange() =
-        apiInterface.fetchBookingDateRange(NetworkUtils.getAccessToken())
+    fun fetchBookingDateRange() = apiInterface.fetchBookingDateRange()
 
     suspend fun bookAppointment(request: BookAppointmentRequest) =
         apiInterface.bookAppointment(NetworkUtils.getAccessToken(), request)
@@ -122,6 +122,12 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     fun bookAppointmentCall(request: BookAppointmentRequest) =
         apiInterface.bookAppointmentCall(NetworkUtils.getAccessToken(), request)
 
-    suspend fun transferToFinalAccount(request: TransferRequest) =
+    fun transferToFinalAccount(request: TransferRequest) =
         apiInterface.transferToFinalAccount(NetworkUtils.getAccessToken(), request)
+
+    suspend fun fetchVideoCallLink(request: VideoCallRequest) =
+        apiInterface.fetchVideoCallLink(NetworkUtils.getAccessToken(), request)
+
+    suspend fun fetchTransactionHistory(page: Int, limit: Int) =
+        apiInterface.fetchTransactionHistory(NetworkUtils.getAccessToken(), page, limit)
 }

@@ -129,29 +129,37 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/tv_wallet_symbol_sign"
-                        style="@style/Style_text_title_1"
-                        android:layout_width="0dp"
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/barrier"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/dp_12"
-                        android:text="$"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/img_wallet_icon"
-                        app:layout_constraintTop_toTopOf="@+id/img_wallet_icon" />
+                        app:barrierDirection="end"
+                        app:constraint_referenced_ids="img_wallet_icon"
+                        app:barrierMargin="@dimen/dp_12"/>
+
+                    <ImageView
+                        android:id="@+id/iv_naira"
+                        style="@style/Style_text_title_1"
+                        android:layout_width="12dp"
+                        android:layout_height="0dp"
+                        android:src="@drawable/ic_naira"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_wallet_amount"
+                        android:layout_marginEnd="@dimen/dp_3"
+                        app:layout_constraintStart_toEndOf="@+id/barrier"
+                        app:layout_constraintTop_toTopOf="@+id/tv_wallet_amount"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_wallet_amount" />
 
                     <TextView
-                        android:id="@+id/tv_wallet_amount_digits"
-                        style="@style/Style_text_title_1"
+                        android:id="@+id/tv_wallet_amount"
+                        style="@style/Style_text_title_Middle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/dp_2"
                         android:text="0"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toTopOf="@+id/tv_wallet_"
                         app:layout_constraintEnd_toStartOf="@+id/img_add_amount"
-                        app:layout_constraintStart_toEndOf="@+id/tv_wallet_symbol_sign"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintStart_toEndOf="@+id/iv_naira"
+                        app:layout_constraintTop_toTopOf="@+id/img_wallet_icon"/>
 
 
 
@@ -163,8 +171,8 @@
                         android:text="Wallet"
                         app:layout_constraintBottom_toBottomOf="@+id/img_wallet_icon"
                         app:layout_constraintEnd_toStartOf="@+id/img_add_amount"
-                        app:layout_constraintStart_toStartOf="@+id/tv_wallet_symbol_sign"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_wallet_symbol_sign" />
+                        app:layout_constraintStart_toEndOf="@+id/barrier"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_wallet_amount" />
 
                     <ImageView
                         android:id="@+id/img_refresh"
@@ -429,15 +437,25 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
-                            <TextView
-                                android:id="@+id/txt_status_notverified"
+                            <ImageView
+                                android:id="@+id/iv_verification_status"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:drawableStart="@drawable/ic_verify_red"
+                                android:src="@drawable/ic_not_verified_red"
+                                android:layout_marginEnd="6dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/tv_verification_status"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/tv_verification_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
                                 android:drawablePadding="@dimen/dp_6"
                                 android:fontFamily="@font/nunito_sans_semibold"
-                                android:text="Not Verified"
+                                android:text="@string/not_verified"
                                 android:textColor="@color/red"
                                 android:textSize="@dimen/dp_14"
                                 app:layout_constraintBottom_toBottomOf="parent"
@@ -462,16 +480,18 @@
                             android:visibility="visible">
 
                             <ImageView
+                                android:id="@+id/iv_book_appointment"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_schedule" />
 
                             <TextView
+                                android:id="@+id/tv_book_appointment"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/dp_10"
                                 android:fontFamily="@font/nunito_sans_semibold"
-                                android:text="Book Appointment"
+                                android:text="@string/book_appointment"
                                 android:textColor="@color/grey_500"
                                 android:textSize="@dimen/dp_14" />
 
@@ -488,7 +508,7 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/ic_verify_red" />
+                                android:src="@drawable/ic_not_verified_red" />
 
                             <TextView
                                 android:layout_width="wrap_content"

@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.engu_pension_verification_application.data.ApiResult
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
 import com.example.engu_pension_verification_application.model.input.InputBankVerification
 import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
 import com.example.engu_pension_verification_application.model.response.*
+import com.example.engu_pension_verification_application.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -89,23 +91,20 @@ class RetireeBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     }
     fun verifyBankAccount(inputBankVerification: InputBankVerification) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                _bankVerificationResult.postValue(
-                    Pair(
-                        inputBankVerification,
-                        networkRepo.verifyBankAccount(inputBankVerification)
+            val call = networkRepo.verifyBankAccount(inputBankVerification)
+            val response = when (val apiResult = NetworkUtils.handleResponse(call)) {
+                is ApiResult.Success -> apiResult.data
+                is ApiResult.Error ->
+                    ResponseBankVerify(
+                        BankVerifyDetail(message = apiResult.message)
                     )
-                )
-            } catch (e: Exception) {
-                _bankVerificationResult.postValue(
-                    Pair(
-                        inputBankVerification,
-                        ResponseBankVerify(
-                            BankVerifyDetail(message = "Something went wrong with bank verification")
-                        )
-                    )
-                )
             }
+            _bankVerificationResult.postValue(
+                Pair(
+                    inputBankVerification,
+                    response
+                )
+            )
         }
     }
 

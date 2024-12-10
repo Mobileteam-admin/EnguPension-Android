@@ -182,26 +182,32 @@ class ActiveDocumentsFragment(
                     }
                 } else {
                     dismissLoader()
-                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    showFetchErrorDialog(
+                        ::DocRetrivecall,
+                        response.detail?.message ?: getString(R.string.common_error_msg_2)
+                    )
                 }
             }
         }
         activeDocumentsViewModel.documentsUploadResult.observe(viewLifecycleOwner) { pair ->
-            dismissLoader()
-            val request = pair.first
-            val response = pair.second
-            if (response.detail?.status == AppConstants.SUCCESS) {
-                onDocUploadSuccess(response) //
-            } else {
-                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            activeDocumentsViewModel.uploadDocuments(request)
-                        }
-                    }
+            if (pair != null) {
+                dismissLoader()
+                val request = pair.first
+                val response = pair.second
+                if (response.detail?.status == AppConstants.SUCCESS) {
+                    onDocUploadSuccess(response)
                 } else {
-                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                activeDocumentsViewModel.uploadDocuments(request)
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    }
                 }
+                activeDocumentsViewModel.resetDocumentsUploadResult()
             }
         }
     }

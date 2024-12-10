@@ -13,7 +13,6 @@ import android.widget.AdapterView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isEmpty
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -154,8 +153,10 @@ class ActiveBasicDetailsFragment : BaseFragment()
             if (response.combinedetails?.status == AppConstants.SUCCESS) {
                 onAcombinedDetailSuccess(response)
             } else {
-                Toast.makeText(context, response.combinedetails?.message, Toast.LENGTH_LONG).show()
-                findNavController().popBackStack()
+                showFetchErrorDialog(
+                    ::initcall,
+                    response.combinedetails?.message ?: getString(R.string.common_error_msg_2)
+                )
             }
         }
         activeBasicDetailViewModel.basicDetailsApiResult.observe(viewLifecycleOwner) { response ->
@@ -179,25 +180,27 @@ class ActiveBasicDetailsFragment : BaseFragment()
             }
         }
         activeBasicDetailViewModel.basicDetailsSubmissionResult.observe(viewLifecycleOwner) { pair ->
-            dismissLoader()
-            val request = pair.first
-            val response = pair.second
-            if (response.detail?.status == AppConstants.SUCCESS) {
-                onActiveBasicDetailSuccess(response)
-            } else {
-                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            activeBasicDetailViewModel.submitAccountDetails(request)
-                        }
-                    }
+            if (pair != null) {
+                dismissLoader()
+                val request = pair.first
+                val response = pair.second
+                if (response.detail?.status == AppConstants.SUCCESS) {
+                    onActiveBasicDetailSuccess(response)
                 } else {
-                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                activeBasicDetailViewModel.submitActiveBasicDetails(request)
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                    }
                 }
+                activeBasicDetailViewModel.resetBasicDetailsSubmissionResult()
             }
         }
     }
-
     private fun initViews() {
         lgaSpinnerAdapter = LGASpinnerAdapter(context, LGAList)
         binding.spActiveLga.adapter = lgaSpinnerAdapter
@@ -958,7 +961,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
 
-        activeBasicDetailViewModel.submitAccountDetails(
+        activeBasicDetailViewModel.submitActiveBasicDetails(
             InputActiveBasicDetails(
                 pincode = binding.etActivePincode.text.toString(),
                 kinPincode = binding.etActiveKinPincode.text.toString(),
