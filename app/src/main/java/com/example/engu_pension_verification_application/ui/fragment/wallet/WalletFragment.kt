@@ -62,10 +62,15 @@ class WalletFragment : BaseFragment() {
         initViewModels()
         initViews()
         observeLiveData()
-        showLoader()
-        viewModel.fetchBankList()
+        initApiCall()
     }
 
+    private fun initApiCall() {
+        if (viewModel.bankListApiResult.value == null) {
+            showLoader()
+            viewModel.fetchBankList()
+        }
+    }
     private fun initVars() {
         stripeActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -119,6 +124,7 @@ class WalletFragment : BaseFragment() {
                 position: Int,
                 id: Long
             ) {
+                viewModel.selectedBankItemPosition = position
                 refreshBankImage(position)
             }
 
@@ -145,6 +151,9 @@ class WalletFragment : BaseFragment() {
                 )
                 response.detail.banks?.let { viewModel.bankItems.addAll(it) }
                 binding.spWalletBank.adapter = BankAdapter(context, viewModel.bankItems)
+                viewModel.selectedBankItemPosition?.let {
+                    binding.spWalletBank.setSelection(it)
+                }
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {

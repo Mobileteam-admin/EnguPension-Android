@@ -13,7 +13,10 @@ import kotlinx.coroutines.flow.Flow
 
 class WalletHistoryViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val transactionFlow: Flow<PagingData<TransactionHistoryResponse.Detail.Data.Transaction>> = Pager(
-        config = PagingConfig(pageSize = 10),
+        config = PagingConfig(
+            pageSize = 10,
+            prefetchDistance = 6,
+        ),
         pagingSourceFactory = { TransactionHistoryPagingSource(networkRepo) }
     ).flow.cachedIn(viewModelScope)
 }
