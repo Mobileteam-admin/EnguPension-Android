@@ -1,5 +1,7 @@
 package com.example.engu_pension_verification_application.util
 
+import com.example.engu_pension_verification_application.model.dto.EnguCalendarRange
+import com.example.engu_pension_verification_application.model.response.BookingDateRangeResponse.Detail.BookingDateRange
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -39,6 +41,15 @@ object CalendarUtils {
         return null
     }
 
+    fun geMinCalendar(): Calendar {
+        val calendar = Calendar.getInstance()
+        setDayBegin(calendar)
+        return calendar.apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.MONTH, 0)
+            set(Calendar.YEAR, 1900)
+        }
+    }
     fun getCalendar(format: String, dateString: String): Calendar? {
         val dateFormat = SimpleDateFormat(format, Locale.getDefault())
         return try {
@@ -84,5 +95,30 @@ object CalendarUtils {
             set(Calendar.SECOND, tempCalendar.getActualMaximum(Calendar.SECOND))
             set(Calendar.MILLISECOND, tempCalendar.getActualMaximum(Calendar.MILLISECOND))
         }
+    }
+
+    fun getEnguCalendarRange(dateRange: List<BookingDateRange>): EnguCalendarRange {
+        val ranges = mutableListOf<Pair<Calendar, Calendar>>()
+        val holidays = mutableListOf<Calendar>()
+        dateRange.forEach {
+            var calendarStart =
+                getCalendar(DATE_FORMAT_1, it.startDay!!)
+            var calendarEnd =
+                getCalendar(DATE_FORMAT_1, it.endDay!!)
+            if (calendarStart != null && calendarEnd != null) {
+                if (calendarStart.after(calendarEnd))
+                    calendarStart = calendarEnd.also { calendarEnd = calendarStart }
+                ranges.add(Pair(calendarStart!!, calendarEnd!!))
+            }
+
+            it.holidays.forEach { holiday ->
+                if (holiday.date != null) {
+                    getCalendar(DATE_FORMAT_1, holiday.date!!)?.let { calendar ->
+                        holidays.add(calendar)
+                    }
+                }
+            }
+        }
+        return EnguCalendarRange(ranges, holidays)
     }
 }

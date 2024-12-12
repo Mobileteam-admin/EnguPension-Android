@@ -70,8 +70,8 @@ data class ActiveRetriveUserProfileDetails(
 	@field:SerializedName("grade_level")
 	val gradeLevel: String? = null,
 
-	@field:SerializedName("user_id")
-	val userId: Int? = null,
+//	@field:SerializedName("user_id")
+//	val userId: Int? = null,
 
 	@field:SerializedName("dob")
 	val dob: String? = null,

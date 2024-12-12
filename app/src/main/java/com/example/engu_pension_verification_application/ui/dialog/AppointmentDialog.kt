@@ -15,8 +15,7 @@ import com.example.engu_pension_verification_application.model.input.BookAppoint
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.util.CalendarUtils
 import com.example.engu_pension_verification_application.viewmodel.AppointmentViewModel
-import com.example.engu_pension_verification_application.viewmodel.CalendarResultViewModel
-import com.example.engu_pension_verification_application.viewmodel.CalendarViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguCalendarHandlerViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
@@ -27,8 +26,8 @@ class AppointmentDialog : BaseDialog() {
     private lateinit var binding:DialogAppointmentBinding
     private lateinit var viewModel: AppointmentViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
-    private val calendarResultViewModel by activityViewModels<CalendarResultViewModel>()
-    private lateinit var calendarDialog: CalendarDialog
+    private val enguCalendarHandlerViewModel by activityViewModels<EnguCalendarHandlerViewModel>()
+    private lateinit var enguCalendarDialog: EnguCalendarDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -69,7 +68,7 @@ class AppointmentDialog : BaseDialog() {
     }
 
     private fun observeLiveData() {
-        calendarResultViewModel.onDateSelect.observe(viewLifecycleOwner) { calendar ->
+        enguCalendarHandlerViewModel.onDateSelect.observe(viewLifecycleOwner) { calendar ->
             if (calendar != null) {
                 val selectedDay = CalendarUtils.getFormattedString(
                     CalendarUtils.DATE_FORMAT_3,
@@ -81,7 +80,7 @@ class AppointmentDialog : BaseDialog() {
                 viewModel.selectedTimeSlotId = null
                 showLoader()
                 viewModel.fetchBookingSlots(selectedDay)
-                calendarResultViewModel.onDateSelect.value = null
+                enguCalendarHandlerViewModel.onDateSelect.value = null
             }
         }
         viewModel.slotApiResult.observe(viewLifecycleOwner) { pair ->
@@ -92,8 +91,8 @@ class AppointmentDialog : BaseDialog() {
                 if (response.detail!!.slots.isEmpty()){
                     response.detail?.message?.let { showToast(it) }
                 } else {
-                    if (calendarDialog.isAdded)
-                        calendarDialog.dismiss()
+                    if (enguCalendarDialog.isAdded)
+                        enguCalendarDialog.dismiss()
                 }
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -113,7 +112,7 @@ class AppointmentDialog : BaseDialog() {
             if (response.detail?.status == AppConstants.SUCCESS) {
                 dismissLoader()
                 response.detail?.bookingDateRange?.let {
-                    calendarResultViewModel.dateRange = it
+                    enguCalendarHandlerViewModel.enguCalendarRange = CalendarUtils.getEnguCalendarRange(it)
                 }
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -154,9 +153,11 @@ class AppointmentDialog : BaseDialog() {
     }
 
     private fun initViews() {
-        calendarDialog = CalendarDialog()
+        enguCalendarDialog = EnguCalendarDialog()
         binding.tvDate.setOnClickListener {
-            showDialog(calendarDialog)
+            val date = binding.tvDate.text.toString()
+            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, date)
+            showDialog(enguCalendarDialog)
         }
         binding.tvTime.setOnClickListener { showTimeSlotPopUp() }
         binding.llBack.setOnClickListener { dismiss() }

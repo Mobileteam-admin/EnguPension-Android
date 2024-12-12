@@ -31,11 +31,16 @@ import com.example.engu_pension_verification_application.ui.adapter.LastPosition
 import com.example.engu_pension_verification_application.ui.adapter.LGASpinnerAdapter
 import com.example.engu_pension_verification_application.ui.adapter.LocalGovPensionAdapter
 import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
+import com.example.engu_pension_verification_application.ui.dialog.EnguCalendarDialog
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
+import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBasicDetailsFragment
+import com.example.engu_pension_verification_application.ui.fragment.service.active.ActiveBasicDetailsFragment.Companion
 import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
+import com.example.engu_pension_verification_application.util.CalendarUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.EnguCalendarHandlerViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.RetireeBasicDetailsViewModel
 import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
@@ -51,11 +56,15 @@ import java.util.regex.Pattern
 class RetireeBasicDetailsFragment : BaseFragment() {
     companion object {
         const val TAB_POSITION = 0
+        private const val CALENDAR_ACTION_DOB = 0
+        private const val CALENDAR_ACTION_JOINING = 1
+        private const val CALENDAR_ACTION_RETIREMENT = 2
     }
     private lateinit var binding:FragmentRetireeBasicDetailsBinding
     private lateinit var retireeBasicDetailsViewModel: RetireeBasicDetailsViewModel
     private val retireeServiceViewModel by activityViewModels<RetireeServiceViewModel>()
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
+    private val enguCalendarHandlerViewModel by activityViewModels<EnguCalendarHandlerViewModel>()
 
     // previuos name NAME_PATTERN = Pattern.compile("^[a-zA-Z]+$")
 
@@ -73,9 +82,6 @@ class RetireeBasicDetailsFragment : BaseFragment() {
     var Ph_no = ""
     var sex = ""
     var selected_country = ""
-    private var dateBirth = StringBuilder()
-    private var dateAppointment = StringBuilder()
-    private var dateRetirement = StringBuilder()
 
 
 
@@ -186,6 +192,23 @@ class RetireeBasicDetailsFragment : BaseFragment() {
                     }
                 }
                 retireeBasicDetailsViewModel.resetBasicDetailsSubmissionResult()
+            }
+        }
+        enguCalendarHandlerViewModel.onDateSelect.observe(viewLifecycleOwner) { calendar ->
+            if (calendar != null) {
+                enguCalendarHandlerViewModel.dismiss()
+                val selectedDay = CalendarUtils.getFormattedString(
+                    CalendarUtils.DATE_FORMAT_3,
+                    calendar
+                )
+                if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_DOB)
+                    binding.etRetireeDOB.text = selectedDay
+                else if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_JOINING)
+                    binding.etRetireeDateAppointment.text = selectedDay
+                else if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_RETIREMENT)
+                    binding.etRetireeDateRetirement.text = selectedDay
+
+                enguCalendarHandlerViewModel.onDateSelect.value = null
             }
         }
     }
@@ -526,15 +549,24 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         }
 
         binding.etRetireeDOB.setOnClickListener {
-            showDatePickerPresentToPast(binding.etRetireeDOB, dateBirth)
+            enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_DOB
+            val selectedDay = binding.etRetireeDOB.text.toString()
+            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, selectedDay)
+            showDialog(EnguCalendarDialog())
         }
 
         binding.etRetireeDateAppointment.setOnClickListener {
-            showDatePickerPresentToPast(binding.etRetireeDateAppointment, dateAppointment)
+            enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_JOINING
+            val selectedDay = binding.etRetireeDateAppointment.text.toString()
+            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, selectedDay)
+            showDialog(EnguCalendarDialog())
         }
 
         binding.etRetireeDateRetirement.setOnClickListener {
-            showDatePickerPresentToPast(binding.etRetireeDateRetirement, dateRetirement)
+            enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_RETIREMENT
+            val selectedDay = binding.etRetireeDateRetirement.text.toString()
+            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, selectedDay)
+            showDialog(EnguCalendarDialog())
         }
 
 
@@ -746,103 +778,6 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         }
     }
 
-    private fun showDatePicker(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        datePickerDialog.show()
-    }
-
-    private fun showDatePickerDOB(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-
-        // Subtract 18 years from the current date to set the minimum date
-        calendar.add(Calendar.YEAR, -18)
-        val eighteenYearsAgo = calendar.timeInMillis
-
-        // Set the DatePickerDialog to show 18 years back dates when opened
-        val datePickerDialog = DatePickerDialog(
-            requireContext(), // context
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                // Handle the date selected by the user
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR), // Set to 18 years ago
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        // Set the maximum date to 18 years back to disable future dates
-        datePickerDialog.datePicker.maxDate = eighteenYearsAgo
-
-        // Set the minimum date to 18 years ago from today
-        //datePickerDialog.datePicker.minDate = eighteenYearsAgo
-
-        datePickerDialog.show()
-    }
-
-    private fun showDatePickerPresentToPast(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-
-        // Get the current date
-        val currentDate = calendar.timeInMillis
-
-        // Set the DatePickerDialog to show current and past dates when opened
-        val datePickerDialog = DatePickerDialog(
-            requireContext(), // context
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-        // Handle the date selected by the user
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-
-
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-// Set the maximum date to the current date to disable future dates
-        datePickerDialog.datePicker.maxDate = currentDate
-
-// The minimum date is not set, allowing all past dates
-
-        datePickerDialog.show()
-    }
-
-
-
     private fun LastPositionspinnerfun() {
         lastPositionAdapter.changeList(lastPositionList)
     }
@@ -884,32 +819,10 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
     private fun accountDetailCall() {
 
-        val doa: String
-        val dob: String
-        val dor: String
+        val doa = binding.etRetireeDateAppointment.text.toString()
+        val dob = binding.etRetireeDOB.text.toString()
+        val dor = binding.etRetireeDateRetirement.text.toString()
 
-        if (dateAppointment.toString() == "") {
-            doa = binding.etRetireeDateAppointment.text.toString()
-        } else {
-            doa = dateAppointment.toString()
-        }
-
-        if (dateBirth.toString() == "") {
-            dob = binding.etRetireeDOB.text.toString()
-        } else {
-            dob = dateBirth.toString()
-        }
-
-        if (dateRetirement.toString() == "") {
-            dor = binding.etRetireeDateRetirement.text.toString()
-        } else {
-            dor = dateRetirement.toString()
-        }
-
-
-
-
-//        retireeBasicDetailsViewModel.getAccountDetails(
         retireeBasicDetailsViewModel.submitBasicDetails(
             InputRetireeBasicDetails(
                 positionHeldLastId = lastPosition, //lastPositionHeld.toString(),

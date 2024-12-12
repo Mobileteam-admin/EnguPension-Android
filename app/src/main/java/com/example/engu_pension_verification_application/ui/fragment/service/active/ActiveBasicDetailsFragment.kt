@@ -16,12 +16,12 @@ import androidx.core.view.isEmpty
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentActiveBasicDetailsBinding
+import com.example.engu_pension_verification_application.model.dto.EnguCalendarRange
 import com.example.engu_pension_verification_application.model.input.InputActiveBasicDetails
 import com.example.engu_pension_verification_application.model.response.ActiveRetriveUserProfileDetails
 import com.example.engu_pension_verification_application.model.response.GradeLevelsItem
@@ -35,12 +35,15 @@ import com.example.engu_pension_verification_application.ui.adapter.GradeLevelAd
 import com.example.engu_pension_verification_application.ui.adapter.LGASpinnerAdapter
 import com.example.engu_pension_verification_application.ui.adapter.OccupationsAdapter
 import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
+import com.example.engu_pension_verification_application.ui.dialog.EnguCalendarDialog
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
+import com.example.engu_pension_verification_application.util.CalendarUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.ActiveBasicDetailViewModel
 import com.example.engu_pension_verification_application.viewmodel.ActiveServiceViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguCalendarHandlerViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
@@ -63,9 +66,11 @@ class ActiveBasicDetailsFragment : BaseFragment()
 {
     private lateinit var binding:FragmentActiveBasicDetailsBinding
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
-
+    private val enguCalendarHandlerViewModel by activityViewModels<EnguCalendarHandlerViewModel>()
     companion object {
         const val TAB_POSITION = 0
+        private const val CALENDAR_ACTION_DOB = 0
+        private const val CALENDAR_ACTION_JOINING = 1
     }
 
     // previous name pattern ^[a-zA-Z\s]+$
@@ -86,12 +91,6 @@ class ActiveBasicDetailsFragment : BaseFragment()
     var Ph_no = ""
     var sex = ""
     var selected_country = ""
-
-   // var doa = ""
-    //var dob = ""
-    private var dateBirth = StringBuilder()
-    private var dateAppointment = StringBuilder()
-
     val prefs = SharedPref
 
     private lateinit var activeBasicDetailViewModel: ActiveBasicDetailViewModel
@@ -140,7 +139,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
             EnguViewModelFactory(networkRepo)
         ).get(ActiveBasicDetailViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
-            requireActivity(), 
+            requireActivity(),
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
     }
@@ -200,8 +199,26 @@ class ActiveBasicDetailsFragment : BaseFragment()
                 activeBasicDetailViewModel.resetBasicDetailsSubmissionResult()
             }
         }
+        enguCalendarHandlerViewModel.onDateSelect.observe(viewLifecycleOwner) { calendar ->
+            if (calendar != null) {
+                enguCalendarHandlerViewModel.dismiss()
+                val selectedDay = CalendarUtils.getFormattedString(
+                    CalendarUtils.DATE_FORMAT_3,
+                    calendar
+                )
+                if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_DOB)
+                    binding.etActiveDOB.text = selectedDay
+                else if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_JOINING)
+                    binding.etActiveDateAppointment.text = selectedDay
+
+                enguCalendarHandlerViewModel.onDateSelect.value = null
+            }
+        }
     }
     private fun initViews() {
+        enguCalendarHandlerViewModel.enguCalendarRange = EnguCalendarRange(
+            listOf(Pair(CalendarUtils.geMinCalendar(),Calendar.getInstance()))
+        )
         lgaSpinnerAdapter = LGASpinnerAdapter(context, LGAList)
         binding.spActiveLga.adapter = lgaSpinnerAdapter
 
@@ -583,53 +600,17 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
         binding.etActiveDOB.setOnClickListener {
-            showDatePickerPresentToPast(binding.etActiveDOB, dateBirth)
-
-            //dob = dateBirth.toString()
-
-            /*try {
-
-                val today = MaterialDatePicker.todayInUtcMilliseconds()
-                val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                calendar.timeInMillis = today
-                calendar[Calendar.YEAR] = 1950
-                val startDate = calendar.timeInMillis
-
-                calendar.timeInMillis = today
-                calendar[Calendar.YEAR] = 2003
-                val endDate = calendar.timeInMillis
-
-                val constraints: CalendarConstraints = CalendarConstraints.Builder()
-                    .setOpenAt(endDate)
-                    .setStart(startDate)
-                    .setEnd(endDate)
-                    .build()
-
-                val datePickerBuilder: MaterialDatePicker.Builder<Long> = MaterialDatePicker
-                    .Builder
-                    .datePicker()
-                    .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
-                //.setTitleText("Select Business Start Date")
-                // .setTheme(R.style.MaterialCalendarTheme)
-                //.setCalendarConstraints(constraints)
-                val datePicker = datePickerBuilder.build()
-                datePicker.show(requireActivity().supportFragmentManager, "DATE_PICKER")
-
-
-                datePicker.addOnPositiveButtonClickListener {
-                    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    val date = sdf.format(it)
-                    binding.etActiveDOB.text = date
-                }
-            }catch (e:java.lang.Exception){
-                Log.d("Exception", "onClicks: "+e.localizedMessage)
-            }*/
-
+            enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_DOB
+            val selectedDay = binding.etActiveDOB.text.toString()
+            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, selectedDay)
+            showDialog(EnguCalendarDialog())
         }
 
         binding.etActiveDateAppointment.setOnClickListener {
-            showDatePickerPresentToPast(binding.etActiveDateAppointment, dateAppointment)
-            //doa = dateAppointment.toString()
+            enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_JOINING
+            val selectedDay = binding.etActiveDateAppointment.text.toString()
+            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, selectedDay)
+            showDialog(EnguCalendarDialog())
         }
 
 
@@ -642,283 +623,21 @@ class ActiveBasicDetailsFragment : BaseFragment()
         }
     }
 
-    /*private fun showDatePickerr(textView: TextView) {
-        calendar = Calendar.getInstance()
-        dob_year = calendar.get(Calendar.YEAR)
-        dob_month = calendar.get(Calendar.MONTH)
-        dob_dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-
-        datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { view, selectedYear, selectedMonth, selectedDayOfMonth ->
-                var doDate =
-                    String.format("%02d/%02d/%d", selectedDayOfMonth, selectedMonth, selectedYear)
-                //binding.etActiveDOB.text = doDate
-                textView.text = doDate
-            }, dob_year, dob_month, dob_dayOfMonth
-        )
-        datePickerDialog.show()
-
-
-    }*/
-
-    private fun showDatePicker(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-
-
-        datePickerDialog.show()
-    }
-
-
-    private fun showDatePickerDOB(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-
-        // Subtract 18 years from the current date to set the minimum date
-        calendar.add(Calendar.YEAR, -18)
-        val eighteenYearsAgo = calendar.timeInMillis
-
-        // Set the DatePickerDialog to show 18 years back dates when opened
-        val datePickerDialog = DatePickerDialog(
-            requireContext(), // context
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                // Handle the date selected by the user
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR), // Set to 18 years ago
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        // Set the maximum date to 18 years back to disable future dates
-        datePickerDialog.datePicker.maxDate = eighteenYearsAgo
-
-        // Set the minimum date to 18 years ago from today
-        //datePickerDialog.datePicker.minDate = eighteenYearsAgo
-
-        datePickerDialog.show()
-    }
-
-    private fun showDatePickerPresentToPast(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-
-// Get the current date
-        val currentDate = calendar.timeInMillis
-
-// Set the DatePickerDialog to show current and past dates when opened
-        val datePickerDialog = DatePickerDialog(
-            requireContext(), // context
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-// Handle the date selected by the user
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-
-
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-// Set the maximum date to the current date to disable future dates
-        datePickerDialog.datePicker.maxDate = currentDate
-
-// The minimum date is not set, allowing all past dates
-
-        datePickerDialog.show()
-    }
-    private fun showDatePickerPresentToPastDOB(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-
-        // Get the current date
-        val currentDate = calendar.timeInMillis
-
-        // Set the DatePickerDialog to show current and past dates when opened
-        val datePickerDialog = DatePickerDialog(
-            requireContext(), // context
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                // Calculate the age
-                val selectedDateInMillis = calendar.timeInMillis
-                val ageInMillis = currentDate - selectedDateInMillis
-                val ageInYears = TimeUnit.MILLISECONDS.toDays(ageInMillis) / 365
-                if (ageInYears < 18) {
-                // Display a toast message if age is less than 18
-                    Toast.makeText(
-                        requireContext(),
-                        "You must be at least 18 years old.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                // Handle the date selected by the user
-                    dateBuilder.apply {
-                        setLength(0)
-                        append(
-                            String.format(
-                                "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                            )
-                        )
-                    }
-                    textView.text = dateBuilder.toString()
-                }
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-// Set the maximum date to the current date to disable future dates
-        datePickerDialog.datePicker.maxDate = currentDate
-
-// The minimum date is not set, allowing all past dates
-        datePickerDialog.show()
-    }
-
-
-
-
-
     private fun GradeLevelspinnerfun() {
         gradeLevelAdapter.changeList(GradeLevelsList)
-        //binding.spActiveLastGrade.setSelection(prefs.grade!!.toInt())
-/*
-        gradelvlS = ActiveUserRetrive.gradeLevel.toString()
-
-        if (!gradelvlS.isNullOrEmpty()) {
-
-            val pos = gradeLevelAdapter.getPositionByName(gradelvlS)
-
-            binding.spActiveLastGrade.setSelection(pos)
-        }*/
-
-
     }
 
 
     private fun LGAspinnerfun() {
         lgaSpinnerAdapter.changeList(LGAList)
-        // binding.spActiveLga.setSelection(prefs.lga!!.toInt())
-
-        Log.d("LogLGA", "LGAList: LGAspinnerfun() $LGAList")
-
-
-        /*LGAList.forEachIndexed { index, element ->
-            *//*Log.d("business_type", "business_type: " + bd_fundingModel.f_business_type)
-            Log.d("element", "element: " + element)
-            Log.d("index", "index: " + index)*//*
-
-            var lgaSelect =  ActiveUserRetrive.lga.toString() //response.detail.userProfileDetails?.lga.toString()
-            Log.d("retrive", "$lgaSelect")
-            if (lgaSelect.equals(element)) {
-                val updateIndex = index
-                Log.d("Test", "selectedIndex: " + updateIndex)
-
-                binding.spActiveLga.setSelection(updateIndex)
-            }
-        }*/
-
-
-        /*lgaS = ActiveUserRetrive.lga.toString()
-
-        Log.d("spinner", "LGAspinner: $lgaS")
-
-        if (!lgaS.isNullOrEmpty()) {
-
-            val pos = lgaSpinnerAdapter.getPositionByName(lgaS)
-
-            Log.d("spinner", "LGAspinner: $pos")
-
-            binding.spActiveLga.setSelection(pos)
-        }*/
-
     }
 
     private fun SubTreasuryspinnerfun() {
         subTreasuryAdapter.changeList(subtreasuryList)
-        //binding.spActiveSubTreasury.setSelection(prefs.sub!!.toInt())
-
-        /*subS = ActiveUserRetrive.subTreasury.toString()
-
-
-        if (!subS.isNullOrEmpty()) {
-
-            val pos = subTreasuryAdapter.getPositionByName(subS)
-
-            binding.spActiveSubTreasury.setSelection(pos)
-        }*/
-
-
     }
 
     private fun Occupationspinnerfun() {
         occupationsAdapter.changeList(occupationsList)
-        // binding.spActiveOccupationType.setSelection(prefs.Occupation!!.toInt())
-        /*occupationS = ActiveUserRetrive.occupation.toString()
-
-        if (!occupationS.isNullOrEmpty()) {
-
-            val pos = occupationsAdapter.getPositionByName(occupationS)
-            if (pos != -1) {
-                binding.spActiveOccupationType.setSelection(pos)
-            }
-            else{
-                binding.etActiveOccupationOther.visibility = View.VISIBLE
-                binding.etActiveOccupationOther.setText(occupationS)
-
-
-                *//*binding.etActiveOccupationOther.inputType = InputType.TYPE_NULL
-                binding.etActiveOccupationOther.isFocusable = false
-                binding.etActiveOccupationOther.isFocusableInTouchMode = false // This will prevent the EditText from gaining focus
-                binding.etActiveOccupationOther.setText(occupationS)*//*
-
-            }
-
-
-           *//* occupationsList.forEachIndexed { index, element ->
-                if (occupationS.equals(element)) {
-                    val updateIndex = index
-                    Log.d("Test", "selectedIndex: " + updateIndex)
-                    binding.spActiveOccupationType.setSelection(updateIndex)
-
-                } else {
-                    binding.etActiveOccupationOther.visibility = View.VISIBLE
-                    binding.etActiveOccupationOther.setText(occupationS)
-                }
-            }*//*
-
-        }*/
-
     }
 
 
@@ -941,26 +660,8 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
     private fun accountdetailCalll() {
-
-        val doa : String
-        val dob : String
-
-        if(dateAppointment.toString() == ""){
-            doa = binding.etActiveDateAppointment.text.toString()
-        }
-        else{
-            doa = dateAppointment.toString()
-        }
-
-        if (dateBirth.toString() == ""){
-            dob = binding.etActiveDOB.text.toString()
-        }
-        else{
-            dob = dateBirth.toString()
-        }
-
-
-
+        val doa = binding.etActiveDateAppointment.text.toString()
+        val dob = binding.etActiveDOB.text.toString()
         activeBasicDetailViewModel.submitActiveBasicDetails(
             InputActiveBasicDetails(
                 pincode = binding.etActivePincode.text.toString(),

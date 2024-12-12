@@ -1,6 +1,7 @@
 package com.example.engu_pension_verification_application.ui.fragment.base
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
@@ -23,18 +24,17 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.adapter.PopUpAdapter
 import com.example.engu_pension_verification_application.ui.dialog.LoaderDialog
+import com.example.engu_pension_verification_application.util.BaseUtils
 import com.example.engu_pension_verification_application.util.SharedPref
 import com.example.engu_pension_verification_application.viewmodel.LoaderViewModel
 
-open class BaseFragment : Fragment() {
+open class BaseFragment : Fragment(), BaseUtils {
     private val loaderViewModel by activityViewModels<LoaderViewModel>()
-    fun showLoader() {
-        loaderViewModel.show()
-    }
+    override fun provideContext() = requireContext()
+    override fun provideActivity() = requireActivity()
+    override fun provideFragmentManager() = parentFragmentManager
+    override fun provideLoaderViewModel() = loaderViewModel
 
-    fun dismissLoader() {
-        loaderViewModel.dismiss()
-    }
 
     fun navigate(
         @IdRes resId: Int,
@@ -57,100 +57,5 @@ open class BaseFragment : Fragment() {
         findNavController().navigate(resId, args, navOptionsBuilder.build())
     }
 
-    fun showFetchErrorDialog(
-        retry: (() -> Unit),
-        @StringRes messageResId: Int,
-    ) {
-        showFetchErrorDialog(retry, getString(messageResId))
-    }
 
-    fun showFetchErrorDialog(
-        retry: (() -> Unit),
-        message: String,
-    ) {
-        showAlertDialog(
-            message = message,
-            positiveTextId = R.string.retry,
-            onPositiveClick = retry,
-            negativeTextId = R.string.close,
-            onNegativeClick = {
-                requireActivity().finish()
-            },
-            neutralTextId = R.string.logout,
-            onNeutralClick = {
-                SharedPref.logout()
-                requireActivity().finish()
-                val intent = Intent(requireContext(), SignUpActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-            },
-        )
-    }
-
-    fun showAlertDialog(
-        message: String,
-        title: String? = null,
-        positiveTextId: Int,
-        negativeTextId: Int? = null,
-        neutralTextId: Int? = null,
-        onPositiveClick: (() -> Unit),
-        onNegativeClick: (() -> Unit)? = null,
-        onNeutralClick: (() -> Unit)? = null,
-        isCancellable: Boolean = false,
-
-        ) {
-        val builder = AlertDialog.Builder(requireContext()).setMessage(message)
-        title?.let { builder.setTitle(it) }
-        builder.setPositiveButton(positiveTextId) { dialogInterface, _ ->
-            dialogInterface.dismiss()
-            onPositiveClick()
-        }
-        if (neutralTextId != null && onNeutralClick != null) {
-            builder.setNeutralButton(neutralTextId) { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                onNeutralClick()
-            }
-        }
-        if (negativeTextId != null && onNegativeClick != null) {
-            builder.setNegativeButton(negativeTextId) { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                onNegativeClick()
-            }
-        }
-        builder.setCancelable(isCancellable)
-        builder.show()
-    }
-
-    fun showDialog(dialog: DialogFragment) {
-        if (!dialog.isAdded) {
-            dialog.show(parentFragmentManager, null)
-        }
-    }
-
-    fun showToast(message: String, duration: Int = Toast.LENGTH_LONG) {
-        Toast.makeText(requireContext(), message, duration).show()
-    }
-
-    fun showToast(@StringRes messageResId: Int, duration: Int = Toast.LENGTH_LONG) {
-        showToast(getString(messageResId), duration)
-    }
-
-    fun showListPopUp(anchor: View, items: List<String>, onItemClick: (Int,String) -> Unit) {
-        val popupView = LayoutInflater.from(requireContext()).inflate(
-            R.layout.popup_list_layout, null
-        )
-        val listView: ListView = popupView.findViewById(R.id.listView_1)
-        val popupWindow = PopupWindow(
-            popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
-        )
-        val adapter = PopUpAdapter(requireContext(), items, { position,text ->
-            popupWindow.dismiss()
-            onItemClick(position,text)
-        })
-        listView.adapter = adapter
-        PopupWindowCompat.showAsDropDown(popupWindow, anchor, 0, 0, Gravity.BOTTOM)
-    }
 }
