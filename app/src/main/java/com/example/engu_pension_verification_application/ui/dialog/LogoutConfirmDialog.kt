@@ -10,8 +10,6 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import com.example.engu_pension_verification_application.R
-import com.example.engu_pension_verification_application.databinding.DialogCalendarBinding
 import com.example.engu_pension_verification_application.databinding.LogoutDialogBinding
 import com.example.engu_pension_verification_application.viewmodel.LogoutConfirmViewModel
 

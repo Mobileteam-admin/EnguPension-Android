@@ -68,7 +68,9 @@
     <string name="enter_phone_number_of_next_of_kin">Enter phone number of next of kin</string>
     <string name="next_of_kin_phone">Next of kin Phone</string>
     <string name="next_of_kin_address">Next of kin Address</string>
+    <string name="next_of_kin_pincode">Next of kin Pincode</string>
     <string name="enter_address_of_next_of_kin">Enter address of next of kin</string>
+    <string name="enter_pincode_of_next_of_kin">Enter pincode of next of kin</string>
     <string name="sub_treasury">Sub Treasury</string>
     <string name="enter_your_sub_treasury">Enter your sub treasury</string>
     <string name="date_of_appointment">Date Of Joining</string>
@@ -156,5 +158,21 @@
     <string name="no_internet_error">Please connect to internet and retry.</string>
     <string name="not_verified">Not Verified</string>
     <string name="valid_till_date">Valid till %s</string>
+    <string name="ok">OK</string>
+    <string name="choose_year">Choose year</string>
+    <string name="choose_month">Choose month</string>
+    <string name="select_input_msg">Please select %s</string>
+    <string name="year_error_msg">Please select a valid year</string>
+    <string name="enter_input_msg">Please enter a valid %s</string>
+    <string name="date_of_birth">date of birth</string>
+    <string name="gender">gender</string>
+    <string name="name_of_next_kin">name of next kin</string>
+    <string name="email_id_of_next_kin">email id of next kin</string>
+    <string name="phone_num_of_next_kin">phone number of next kin</string>
+    <string name="address_of_next_kin">address of next kin</string>
+    <string name="pincode_of_next_kin">pincode of next kin</string>
+    <string name="local_pension_board">local pension board</string>
+    <string name="other_position">other position</string>
+    <string name="other_occupation">other occupation</string>
 
 </resources>

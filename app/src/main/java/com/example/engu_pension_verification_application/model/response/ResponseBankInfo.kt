@@ -24,8 +24,8 @@ data class BankUserDetail(
 	@field:SerializedName("bank_id")
 	val bankId: Int? = null,
 
-	@field:SerializedName("user_id")
-	val userId: Int? = null,
+//	@field:SerializedName("user_id")
+//	val userId: Int? = null,
 
 	@field:SerializedName("auto_renewal")
 	val autoRenewal: Boolean? = null,

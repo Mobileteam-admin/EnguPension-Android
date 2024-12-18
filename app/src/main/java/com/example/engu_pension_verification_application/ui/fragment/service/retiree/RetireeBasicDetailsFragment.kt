@@ -1,27 +1,26 @@
 package com.example.engu_pension_verification_application.ui.fragment.service.retiree
 
-import android.app.DatePickerDialog
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isEmpty
+import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentRetireeBasicDetailsBinding
+import com.example.engu_pension_verification_application.model.dto.EnguCalendarRange
 import com.example.engu_pension_verification_application.model.input.InputRetireeBasicDetails
 import com.example.engu_pension_verification_application.model.response.*
 import com.example.engu_pension_verification_application.network.ApiClient
@@ -31,11 +30,14 @@ import com.example.engu_pension_verification_application.ui.adapter.LastPosition
 import com.example.engu_pension_verification_application.ui.adapter.LGASpinnerAdapter
 import com.example.engu_pension_verification_application.ui.adapter.LocalGovPensionAdapter
 import com.example.engu_pension_verification_application.ui.adapter.SubTreasuryAdapter
+import com.example.engu_pension_verification_application.ui.dialog.EnguCalendarDialog
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.AlphabeticTextWatcher
+import com.example.engu_pension_verification_application.util.CalendarUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.OnboardingStage
 import com.example.engu_pension_verification_application.util.SharedPref
+import com.example.engu_pension_verification_application.viewmodel.EnguCalendarHandlerViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.RetireeBasicDetailsViewModel
 import com.example.engu_pension_verification_application.viewmodel.RetireeServiceViewModel
@@ -51,11 +53,16 @@ import java.util.regex.Pattern
 class RetireeBasicDetailsFragment : BaseFragment() {
     companion object {
         const val TAB_POSITION = 0
+        private const val CALENDAR_ACTION_DOB = 0
+        private const val CALENDAR_ACTION_JOINING = 1
+        private const val CALENDAR_ACTION_RETIREMENT = 2
+        private const val MINIMUM_AGE = 18
     }
     private lateinit var binding:FragmentRetireeBasicDetailsBinding
     private lateinit var retireeBasicDetailsViewModel: RetireeBasicDetailsViewModel
     private val retireeServiceViewModel by activityViewModels<RetireeServiceViewModel>()
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
+    private val enguCalendarHandlerViewModel by activityViewModels<EnguCalendarHandlerViewModel>()
 
     // previuos name NAME_PATTERN = Pattern.compile("^[a-zA-Z]+$")
 
@@ -73,9 +80,6 @@ class RetireeBasicDetailsFragment : BaseFragment() {
     var Ph_no = ""
     var sex = ""
     var selected_country = ""
-    private var dateBirth = StringBuilder()
-    private var dateAppointment = StringBuilder()
-    private var dateRetirement = StringBuilder()
 
 
 
@@ -188,6 +192,26 @@ class RetireeBasicDetailsFragment : BaseFragment() {
                 retireeBasicDetailsViewModel.resetBasicDetailsSubmissionResult()
             }
         }
+        enguCalendarHandlerViewModel.onDateSelect.observe(viewLifecycleOwner) { calendar ->
+            if (calendar != null) {
+                enguCalendarHandlerViewModel.dismiss()
+                val selectedDay = CalendarUtils.getFormattedString(
+                    CalendarUtils.DATE_FORMAT_3,
+                    calendar
+                )
+                if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_DOB)
+                    binding.etRetireeDOB.text = selectedDay
+                else if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_JOINING) {
+                    binding.etRetireeDateAppointment.text = selectedDay
+                    validateLastPromotionYear()
+                } else if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_RETIREMENT) {
+                    binding.etRetireeDateRetirement.text = selectedDay
+                    validateLastPromotionYear()
+                }
+
+                enguCalendarHandlerViewModel.onDateSelect.value = null
+            }
+        }
     }
     private fun initViews() {
         lastPositionAdapter = LastPositionAdapter(context, lastPositionList)
@@ -289,7 +313,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
             binding.etRetireeDateAppointment.setText(RetireeUserRetrive.dateOfAppointment) //11
 
-            binding.etRetireeLastPromotion.setText(RetireeUserRetrive.lastPromotionYear) //12
+            binding.tvLastPromotionYear.setText(RetireeUserRetrive.lastPromotionYear) //12
 
             binding.etRetireeDateRetirement.setText(RetireeUserRetrive.dateOfRetirement)  //13
 
@@ -526,23 +550,97 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         }
 
         binding.etRetireeDOB.setOnClickListener {
-            showDatePickerPresentToPast(binding.etRetireeDOB, dateBirth)
+            val startCalendar = CalendarUtils.getMinCalendar()
+            var endCalendar = Calendar.getInstance()
+            val doj = binding.etRetireeDateAppointment.text.toString()
+            if (doj.isEmpty()) {
+                val dor = binding.etRetireeDateRetirement.text.toString()
+                if (dor.isNotEmpty()) {
+                    endCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, dor)!!
+                }
+            } else {
+                endCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, doj)!!
+            }
+            if (CalendarUtils.getYearDifference(endCalendar, Calendar.getInstance()) < MINIMUM_AGE) {
+                endCalendar = Calendar.getInstance()
+                endCalendar.add(Calendar.YEAR, -MINIMUM_AGE)
+            }
+            enguCalendarHandlerViewModel.minYear = startCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.maxYear = endCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.enguCalendarRange = EnguCalendarRange(
+                listOf(Pair(startCalendar, endCalendar))
+            )
+            enguCalendarHandlerViewModel.setInitSelectedDay(binding.etRetireeDOB.text.toString(), CalendarUtils.DATE_FORMAT_3)
+            enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_DOB
+            showDialog(EnguCalendarDialog())
         }
 
         binding.etRetireeDateAppointment.setOnClickListener {
-            showDatePickerPresentToPast(binding.etRetireeDateAppointment, dateAppointment)
+            val dob = binding.etRetireeDOB.text.toString()
+            val dor = binding.etRetireeDateRetirement.text.toString()
+            var startCalendar = CalendarUtils.getMinCalendar()
+            var endCalendar = Calendar.getInstance()
+            if (dob.isNotEmpty()) {
+                startCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, dob)!!
+            }
+            if (dor.isNotEmpty()) {
+                endCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, dor)!!
+            }
+            enguCalendarHandlerViewModel.minYear = startCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.maxYear = endCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.enguCalendarRange = EnguCalendarRange(
+                listOf(Pair(startCalendar, endCalendar))
+            )
+            enguCalendarHandlerViewModel.setInitSelectedDay(binding.etRetireeDateAppointment.text.toString(), CalendarUtils.DATE_FORMAT_3)
+            enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_JOINING
+            showDialog(EnguCalendarDialog())
         }
 
         binding.etRetireeDateRetirement.setOnClickListener {
-            showDatePickerPresentToPast(binding.etRetireeDateRetirement, dateRetirement)
+            var startCalendar = CalendarUtils.getMinCalendar()
+            val endCalendar = Calendar.getInstance()
+            val doj = binding.etRetireeDateAppointment.text.toString()
+            if (doj.isEmpty()) {
+                val dob = binding.etRetireeDOB.text.toString()
+                if (dob.isNotEmpty())
+                    startCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, dob)!!
+            } else {
+                startCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, doj)!!
+            }
+            enguCalendarHandlerViewModel.minYear = startCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.maxYear = endCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.enguCalendarRange = EnguCalendarRange(
+                listOf(Pair(startCalendar, endCalendar))
+            )
+            enguCalendarHandlerViewModel.setInitSelectedDay(binding.etRetireeDateRetirement.text.toString(), CalendarUtils.DATE_FORMAT_3)
+            enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_RETIREMENT
+            showDialog(EnguCalendarDialog())
         }
 
-
+        binding.tvLastPromotionYear.setOnClickListener {
+            val doj = binding.etRetireeDateAppointment.text.toString()
+            val dor = binding.etRetireeDateRetirement.text.toString()
+            val minYear = if (doj.isNotEmpty())
+                 CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, doj)!!.get(Calendar.YEAR)
+                else 1900
+            val maxYear = if (dor.isNotEmpty())
+                 CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, dor)!!.get(Calendar.YEAR)
+                else Calendar.getInstance().get(Calendar.YEAR)
+            val years = mutableListOf<String>()
+            for (i in maxYear downTo minYear)
+                years.add(i.toString())
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.choose_year)
+                .setItems(years.toTypedArray()) { _, i ->
+                    binding.tvLastPromotionYear.text = years[i]
+                    validateLastPromotionYear()
+                }.show()
+        }
         binding.llRetireeBasicdetailsNext.setOnClickListener {
 
             //nextButtonCall()
             if (isValidRetireeBasicDetails()) {
-
+                Ph_no = "+" + binding.retireeNextKinPhoneCcp.fullNumber
                 nextButtonCall()
             }
         }
@@ -550,186 +648,81 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
     }
 
+    private fun validateLastPromotionYear() {
+        if (!binding.tvLastPromotionYear.text.isNullOrEmpty())
+            binding.tvLastPromotionError.isGone = isValidLastPromotionYear()
+    }
+
+    private fun isValidLastPromotionYear(): Boolean {
+        if (binding.tvLastPromotionYear.text.isNullOrEmpty())
+            return false
+        else {
+            val lastPromotionYear = binding.tvLastPromotionYear.text.toString().toInt()
+            val doj = binding.etRetireeDateAppointment.text.toString()
+            if (doj.isNotEmpty()) {
+                val joiningYear = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, doj)!!.get(Calendar.YEAR)
+                if (lastPromotionYear < joiningYear) return false
+            }
+
+            val dor = binding.etRetireeDateRetirement.text.toString()
+            if (dor.isNotEmpty()) {
+                val retirementYear = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, dor)!!.get(Calendar.YEAR)
+                if (lastPromotionYear > retirementYear) return false
+            }
+        }
+        return true
+    }
 
     private fun isValidRetireeBasicDetails(): Boolean {
-
-        //firstname
-        if (TextUtils.isEmpty(binding.etRetireeFirstName.text.trim())) {
-            Toast.makeText(context, "Empty FirstName", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        if (!NAME_PATTERN.matcher(binding.etRetireeFirstName.text.trim()).matches()) {
-
-            Toast.makeText(context, "first name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        //middlename
-        /*if (TextUtils.isEmpty(binding.etRetireeMiddleName.text)) {
-            Toast.makeText(context, "Empty Middle name", Toast.LENGTH_SHORT).show()
-            return false
-        }*/
-
-
-        if (!NAME_PATTERN_OR_NULL.matcher(binding.etRetireeMiddleName.text.trim()).matches()) {
-
-            Toast.makeText(context, "middle name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //lastname
-        if (TextUtils.isEmpty(binding.etRetireeLastName.text.trim())) {
-            Toast.makeText(context, "Empty Last name", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        if (!NAME_PATTERN.matcher(binding.etRetireeLastName.text.trim()).matches()) {
-
-            Toast.makeText(context, "last name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //dob
-        if (TextUtils.isEmpty(binding.etRetireeDOB.text)) {
-            Toast.makeText(context, "select dob", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //sex
-        if (binding.radioGroupRetiree.checkedRadioButtonId <= 0) {
-            Toast.makeText(context, "Select Gender", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //address
-        if (TextUtils.isEmpty(binding.etRetireeAddress.text)) {
-            Toast.makeText(context, "Empty Address", Toast.LENGTH_SHORT).show()
-            return false
-        }
-       //pincode
-        if (TextUtils.isEmpty(binding.etRetireePincode.text)) {
-            Toast.makeText(context, "Empty Pincode", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //country spinner default nigeria selected, no condition check
-
-        //LGA
-        if (binding.spRetireeLga.selectedItemPosition == 0 || (binding.spRetireeLga.isEmpty())) {
-            Toast.makeText(context, "Select valid lga item", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //kin name
-        if (TextUtils.isEmpty(binding.etRetireeNextKin.text)) {
-            Toast.makeText(context, "Empty kin name", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        if (!NAME_PATTERN.matcher(binding.etRetireeNextKin.text.trim()).matches()) {
-
-            Toast.makeText(context, "kin name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //kin email
-        if (!binding.etRetireeNextKinEmail.text.toString().isValidOptionalEmail()) {
-            Toast.makeText(context, "kin email not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-    /*    if (!EMAIL_ADDRESS_PATTERN.matcher(binding.etRetireeNextKinEmail.text.toString()).matches()) {
-
-            Toast.makeText(context, "not valid kin email", Toast.LENGTH_SHORT).show()
-            return false
-        }*/
-
-
-        //kin phone
-        if (TextUtils.isEmpty(binding.etRetireeNextKinPhone.text)) {
-            Toast.makeText(context, "Empty phone number", Toast.LENGTH_LONG).show()
-            return false
-        } else if ((!binding.retireeNextKinPhoneCcp.isValid)) {
-            Toast.makeText(context, "Phone Number not valid", Toast.LENGTH_LONG).show()
-            return false
-        } else {
-            //80655707
-            Ph_no = "+" + binding.retireeNextKinPhoneCcp.fullNumber
-            Log.d("retire_phn", "$Ph_no")
-        }
-
-        //kin address
-        if (TextUtils.isEmpty(binding.etRetireeNextKinAddress.text)) {
-            Toast.makeText(context, "Empty kin Address", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        //kin Pincode
-        if (TextUtils.isEmpty(binding.etRetireeKinPincode.text)) {
-            Toast.makeText(context, "Empty kin Pincode", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //local pension board
-        if (binding.spRetireePensionBoard.selectedItemPosition == 0 || (binding.spRetireePensionBoard.isEmpty())) {
-            Toast.makeText(context, "Select valid local pension board", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //sub tressury
-        if (binding.spRetireeSubTreasury.selectedItemPosition == 0 || (binding.spRetireeSubTreasury.isEmpty())) {
-            Toast.makeText(context, "Select valid sub treasury item", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //date of appointment
-        if (TextUtils.isEmpty(binding.etRetireeDateAppointment.text)) {
-            Toast.makeText(context, "select date appointment", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //last promotion year
-        if ((TextUtils.isEmpty(binding.etRetireeLastPromotion.text)) || (binding.etRetireeLastPromotion.text.length != 4)) {
-            Log.d("yearlength", "${binding.etRetireeLastPromotion.text.length} ")
-            Toast.makeText(context, "last promotion year not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //grade level
-        if (binding.spRetireeGradeLevel.selectedItemPosition == 0 || (binding.spRetireeGradeLevel.isEmpty())) {
-            Toast.makeText(context, "select valid grade level item", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //date of retirement
-        if (TextUtils.isEmpty(binding.etRetireeDateRetirement.text)) {
-            Toast.makeText(context, "select date retirement", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //postion last
-        if (binding.spRetireePositionLast.selectedItemPosition == 0 || (binding.spRetireePositionLast.isEmpty())) {
-            Toast.makeText(context, "select valid position last held", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //postion last other
-        if (binding.etRetireePositionOther.visibility == View.VISIBLE && ((!NAME_PATTERN.matcher(
+        var errorMessage:String? = null
+        if (TextUtils.isEmpty(binding.etRetireeFirstName.text.trim()) || !NAME_PATTERN.matcher(binding.etRetireeFirstName.text.trim()).matches()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.first_name).lowercase())
+        } else if (!NAME_PATTERN_OR_NULL.matcher(binding.etRetireeMiddleName.text.trim()).matches()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.middle_name).lowercase())
+        } else if (TextUtils.isEmpty(binding.etRetireeLastName.text.trim()) || !NAME_PATTERN.matcher(binding.etRetireeLastName.text.trim()).matches()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.last_name).lowercase())
+        } else if (TextUtils.isEmpty(binding.etRetireeDOB.text)) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.date_of_birth))
+        } else if (binding.radioGroupRetiree.checkedRadioButtonId <= 0) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.gender))
+        } else if (TextUtils.isEmpty(binding.etRetireeAddress.text)) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.address).lowercase())
+        } else if (TextUtils.isEmpty(binding.etRetireePincode.text)) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.pincode).lowercase())
+        } else if (binding.spRetireeLga.selectedItemPosition == 0 || (binding.spRetireeLga.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.lga))
+        } else if (TextUtils.isEmpty(binding.etRetireeNextKin.text) || !NAME_PATTERN.matcher(binding.etRetireeNextKin.text.trim()).matches()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.name_of_next_kin))
+        } else if (!binding.etRetireeNextKinEmail.text.toString().isValidOptionalEmail()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.email_id_of_next_kin))
+        } else if (TextUtils.isEmpty(binding.etRetireeNextKinPhone.text) || !binding.retireeNextKinPhoneCcp.isValid) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.phone_num_of_next_kin))
+        } else if (TextUtils.isEmpty(binding.etRetireeNextKinAddress.text)) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.address_of_next_kin))
+        } else if (TextUtils.isEmpty(binding.etRetireeKinPincode.text)) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.pincode_of_next_kin))
+        } else if (binding.spRetireePensionBoard.selectedItemPosition == 0 || (binding.spRetireePensionBoard.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.local_pension_board))
+        } else if (binding.spRetireeSubTreasury.selectedItemPosition == 0 || (binding.spRetireeSubTreasury.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.sub_treasury).lowercase())
+        } else if (TextUtils.isEmpty(binding.etRetireeDateAppointment.text)) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.date_of_appointment).lowercase())
+        } else if ((TextUtils.isEmpty(binding.tvLastPromotionYear.text)) || (binding.tvLastPromotionYear.text.length != 4) || !isValidLastPromotionYear()) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.last_promotion_year).lowercase())
+        } else if (binding.spRetireeGradeLevel.selectedItemPosition == 0 || (binding.spRetireeGradeLevel.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.grade_level).lowercase())
+        } else if (TextUtils.isEmpty(binding.etRetireeDateRetirement.text)) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.date_of_retirement).lowercase())
+        } else if (binding.spRetireePositionLast.selectedItemPosition == 0 || (binding.spRetireePositionLast.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.position_last_held).lowercase())
+        } else if (binding.etRetireePositionOther.visibility == View.VISIBLE && ((!NAME_PATTERN.matcher(
                 binding.etRetireePositionOther.text.toString()
             ).matches() || (TextUtils.isEmpty(binding.etRetireePositionOther.text))))
         ) {
-            Toast.makeText(context, "Enter other Position", Toast.LENGTH_SHORT).show()
-            return false
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.other_position))
         }
-
-        return true
-
+        errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+        return errorMessage == null
     }
 
 
@@ -745,103 +738,6 @@ class RetireeBasicDetailsFragment : BaseFragment() {
             Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
         }
     }
-
-    private fun showDatePicker(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        datePickerDialog.show()
-    }
-
-    private fun showDatePickerDOB(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-
-        // Subtract 18 years from the current date to set the minimum date
-        calendar.add(Calendar.YEAR, -18)
-        val eighteenYearsAgo = calendar.timeInMillis
-
-        // Set the DatePickerDialog to show 18 years back dates when opened
-        val datePickerDialog = DatePickerDialog(
-            requireContext(), // context
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-                // Handle the date selected by the user
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR), // Set to 18 years ago
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        // Set the maximum date to 18 years back to disable future dates
-        datePickerDialog.datePicker.maxDate = eighteenYearsAgo
-
-        // Set the minimum date to 18 years ago from today
-        //datePickerDialog.datePicker.minDate = eighteenYearsAgo
-
-        datePickerDialog.show()
-    }
-
-    private fun showDatePickerPresentToPast(textView: TextView, dateBuilder: StringBuilder) {
-        val calendar = Calendar.getInstance()
-
-        // Get the current date
-        val currentDate = calendar.timeInMillis
-
-        // Set the DatePickerDialog to show current and past dates when opened
-        val datePickerDialog = DatePickerDialog(
-            requireContext(), // context
-            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
-        // Handle the date selected by the user
-                dateBuilder.apply {
-                    setLength(0)
-                    append(
-                        String.format(
-                            "%02d/%02d/%d", selectedDayOfMonth, selectedMonth + 1, selectedYear
-                        )
-                    )
-                }
-
-
-                textView.text = dateBuilder.toString()
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-// Set the maximum date to the current date to disable future dates
-        datePickerDialog.datePicker.maxDate = currentDate
-
-// The minimum date is not set, allowing all past dates
-
-        datePickerDialog.show()
-    }
-
-
 
     private fun LastPositionspinnerfun() {
         lastPositionAdapter.changeList(lastPositionList)
@@ -884,32 +780,10 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
     private fun accountDetailCall() {
 
-        val doa: String
-        val dob: String
-        val dor: String
+        val doa = binding.etRetireeDateAppointment.text.toString()
+        val dob = binding.etRetireeDOB.text.toString()
+        val dor = binding.etRetireeDateRetirement.text.toString()
 
-        if (dateAppointment.toString() == "") {
-            doa = binding.etRetireeDateAppointment.text.toString()
-        } else {
-            doa = dateAppointment.toString()
-        }
-
-        if (dateBirth.toString() == "") {
-            dob = binding.etRetireeDOB.text.toString()
-        } else {
-            dob = dateBirth.toString()
-        }
-
-        if (dateRetirement.toString() == "") {
-            dor = binding.etRetireeDateRetirement.text.toString()
-        } else {
-            dor = dateRetirement.toString()
-        }
-
-
-
-
-//        retireeBasicDetailsViewModel.getAccountDetails(
         retireeBasicDetailsViewModel.submitBasicDetails(
             InputRetireeBasicDetails(
                 positionHeldLastId = lastPosition, //lastPositionHeld.toString(),
@@ -929,7 +803,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
                 dob = dob,
                 nextOfKinName = binding.etRetireeNextKin.text.trim().toString(),
                 localGovernmentPensionBoardId = localGovernmentPensionBoardId ,
-                lastPromotionYear = binding.etRetireeLastPromotion.text.toString().toInt(),
+                lastPromotionYear = binding.tvLastPromotionYear.text.toString().toInt(),
                 nextOfKinEmail = binding.etRetireeNextKinEmail.text.toString(),
                 firstName = binding.etRetireeFirstName.text.trim().toString(),
                 pincode = binding.etRetireePincode.text.toString(),

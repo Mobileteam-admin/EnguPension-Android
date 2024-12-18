@@ -70,8 +70,8 @@ data class RetireeBasicUserProfileDetails(
 	@field:SerializedName("grade_level")
 	val gradeLevel: String? = null,
 
-	@field:SerializedName("user_id")
-	val userId: Int? = null,
+//	@field:SerializedName("user_id")
+//	val userId: Int? = null,
 
 	@field:SerializedName("user_type")
 	val userType: String? = null,

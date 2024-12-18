@@ -45,8 +45,8 @@ data class ActiveBasicUserProfileDetails(
 	@field:SerializedName("user_type")
 	val userType: String? = null,
 
-	@field:SerializedName("user_id")
-	val userId: Int? = null,
+//	@field:SerializedName("user_id")
+//	val userId: Int? = null,
 
 	@field:SerializedName("next_of_kin_phone_number")
 	val nextOfKinPhoneNumber: String? = null,

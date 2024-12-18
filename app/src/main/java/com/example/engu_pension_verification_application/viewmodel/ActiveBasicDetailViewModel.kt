@@ -49,6 +49,7 @@ class ActiveBasicDetailViewModel(
             try {
                 _basicDetailsApiResult.postValue(networkRepo.fetchActiveBasicDetails())
             } catch (e: Exception) {
+                e.printStackTrace()
                 _basicDetailsApiResult.postValue(
                     ResponseActiveBasicRetrive(
                         ActiveRetriveDetail(message = "Something went wrong with fetching basic details")

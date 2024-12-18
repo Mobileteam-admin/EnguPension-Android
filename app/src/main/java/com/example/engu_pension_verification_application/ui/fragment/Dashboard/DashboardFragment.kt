@@ -26,6 +26,7 @@ import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.dialog.AddBankDialog
 import com.example.engu_pension_verification_application.ui.dialog.AppointmentDialog
+import com.example.engu_pension_verification_application.ui.dialog.EnguDialog
 import com.example.engu_pension_verification_application.ui.dialog.LogoutConfirmDialog
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils

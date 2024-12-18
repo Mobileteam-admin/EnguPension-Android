@@ -1,14 +1,12 @@
 package com.example.engu_pension_verification_application.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.engu_pension_verification_application.model.response.BookingDateRangeResponse.Detail.BookingDateRange
 import java.util.Calendar
 
-class CalendarViewModel : ViewModel() {
+class EnguCalendarViewModel : ViewModel() {
     enum class DayType { SELECTABLE, INVALID, HOLIDAY }
 
-    val calendar = Calendar.getInstance()
+    val calendar: Calendar = Calendar.getInstance()
     var selectedDateRow = -1
     var selectedDateColumn = -1
 

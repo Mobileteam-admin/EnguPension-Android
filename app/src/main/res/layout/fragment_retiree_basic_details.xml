@@ -508,7 +508,7 @@
              android:layout_height="wrap_content"
              android:layout_marginVertical="@dimen/dp_8"
              android:paddingTop="@dimen/dp_12"
-             android:text="@string/pincode"
+             android:text="@string/next_of_kin_pincode"
              />
 
          <EditText
@@ -519,7 +519,7 @@
              android:background="@drawable/custom_squarebox"
              android:drawableStart="@drawable/ic_location"
              android:drawablePadding="@dimen/dp_16"
-             android:hint="@string/enter_your_pin"
+             android:hint="@string/enter_pincode_of_next_of_kin"
              android:inputType="number"
              android:padding="@dimen/dp_12" />
          <TextView
@@ -683,7 +683,6 @@
              />
 
          <TextView
-             android:id="@+id/tv_retiree_last_promotion"
              style="@style/Style_text_title_1"
              android:layout_width="wrap_content"
              app:drawableRightCompat="@drawable/asterisk_8"
@@ -693,8 +692,8 @@
              android:text="@string/last_promotion_year"
             />
 
-         <EditText
-             android:id="@+id/et_retiree_last_promotion"
+         <TextView
+             android:id="@+id/tv_last_promotion_year"
              style="@style/Style_text_title_2"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
@@ -702,10 +701,17 @@
              android:drawableStart="@drawable/ic_calander"
              android:drawablePadding="@dimen/dp_16"
              android:hint="@string/yyyy"
-             android:maxLength="4"
-             android:inputType="number"
-             android:padding="@dimen/dp_12"
-            />
+             android:padding="@dimen/dp_12" />
+         <TextView
+             android:id="@+id/tv_last_promotion_error"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:fontFamily="@font/nunito_sans_semibold"
+             android:gravity="start"
+             android:text="@string/year_error_msg"
+             android:textColor="@color/red"
+             android:textSize="@dimen/dp_11"
+             android:visibility="gone" />
 
 
          <TextView
