@@ -3,6 +3,7 @@ package com.example.engu_pension_verification_application.util
 import com.example.engu_pension_verification_application.model.dto.EnguCalendarRange
 import com.example.engu_pension_verification_application.model.response.BookingDateRangeResponse.Detail.BookingDateRange
 import java.text.SimpleDateFormat
+import java.time.Month
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -13,6 +14,7 @@ object CalendarUtils {
     const val DATE_FORMAT_2 = "MMMM yyyy"
     const val DATE_FORMAT_3 = "dd/MM/yyyy"
     const val DATE_TIME_FORMAT_1 = "yyyy-MM-dd HH:mm:ss" //"2024-12-09 05:42:11"
+    const val MONTH_FORMAT_1 = "MMMM" //December
     fun getFormattedString(
         currentFormat: String,
         requiredFormat: String,
@@ -41,7 +43,7 @@ object CalendarUtils {
         return null
     }
 
-    fun geMinCalendar(): Calendar {
+    fun getMinCalendar(): Calendar {
         val calendar = Calendar.getInstance()
         setDayBegin(calendar)
         return calendar.apply {
@@ -120,5 +122,17 @@ object CalendarUtils {
             }
         }
         return EnguCalendarRange(ranges, holidays)
+    }
+
+    fun getMonthsList(): List<String> {
+        return Month.entries.map { it.name.lowercase().replaceFirstChar { char -> char.uppercase() } }
+    }
+
+    fun getYearDifference(startDate: Calendar, endDate: Calendar): Int {
+        var yearDifference = endDate.get(Calendar.YEAR) - startDate.get(Calendar.YEAR)
+        if (endDate.get(Calendar.DAY_OF_YEAR) < startDate.get(Calendar.DAY_OF_YEAR)) {
+            yearDifference -= 1
+        }
+        return yearDifference
     }
 }

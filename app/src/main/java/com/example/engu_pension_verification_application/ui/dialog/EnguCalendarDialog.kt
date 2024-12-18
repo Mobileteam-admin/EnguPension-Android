@@ -1,5 +1,6 @@
 package com.example.engu_pension_verification_application.ui.dialog
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,7 @@ import java.util.Locale
 
 
 class EnguCalendarDialog : BaseDialog() {
-    private lateinit var binding:DialogEnguCalendarBinding
+    private lateinit var binding: DialogEnguCalendarBinding
     private val viewModel by viewModels<EnguCalendarViewModel>()
     private val handlerViewModel by activityViewModels<EnguCalendarHandlerViewModel>()
     private val labels = mutableListOf<MutableList<CalendarLabelView>>()
@@ -53,14 +54,33 @@ class EnguCalendarDialog : BaseDialog() {
     }
 
     private fun initValues() {
-        handlerViewModel.initSelectedDay?.let {
-            viewModel.calendar.time = it.time
+        if (handlerViewModel.initSelectedDay == null) {
+            if (handlerViewModel.enguCalendarRange == null) {
+                viewModel.calendar.set(
+                    Calendar.YEAR,
+                    minOf(handlerViewModel.maxYear, Calendar.getInstance().get(Calendar.YEAR))
+                )
+            } else {
+                viewModel.calendar.time = handlerViewModel.enguCalendarRange!!.ranges.last().second.time
+            }
+        } else {
+            viewModel.calendar.time = handlerViewModel.initSelectedDay!!.time
+            viewModel.selectedDay = viewModel.calendar.get(Calendar.DAY_OF_MONTH)
+            viewModel.selectedMonth = viewModel.calendar.get(Calendar.MONTH)
+            viewModel.selectedYear = viewModel.calendar.get(Calendar.YEAR)
         }
     }
 
     private fun initViews() {
         initCalendarItems()
         refreshCalendar()
+        binding.tvYear.setOnClickListener {
+            showYearPickDialog()
+        }
+        binding.tvMonth.setOnClickListener {
+            showMonthPickDialog()
+        }
+
         binding.btnPrev.setOnClickListener {
             viewModel.calendar.add(Calendar.MONTH, -1)
             refreshCalendar()
@@ -73,11 +93,12 @@ class EnguCalendarDialog : BaseDialog() {
 
         binding.llClose.setOnClickListener { dismiss() }
         binding.llSubmit.setOnClickListener {
-            if (viewModel.getSelectedDate() == null)
+            val selectedDate = viewModel.getSelectedDate()
+            if (selectedDate == null)
                 showToast(R.string.date_not_selected_msg)
             else {
 //                dismiss()
-                handlerViewModel.onDateSelect.value = viewModel.getSelectedDate()
+                handlerViewModel.onDateSelect.value = selectedDate
             }
         }
     }
@@ -85,8 +106,7 @@ class EnguCalendarDialog : BaseDialog() {
     private fun initCalendarItems() {
         labels.clear()
         dayTypes.clear()
-        val monthFormat = SimpleDateFormat(CalendarUtils.DATE_FORMAT_2, Locale.getDefault())
-        binding.txtMonthYear.text = monthFormat.format(viewModel.calendar.time)
+        refreshMonthYearTexts()
         val dayLabels = arrayOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")
         for (dayLabel in dayLabels) {
             val label = CalendarLabelView(requireContext())
@@ -134,8 +154,7 @@ class EnguCalendarDialog : BaseDialog() {
     private fun refreshCalendar() {
         viewModel.selectedDateRow = -1
         viewModel.selectedDateColumn = -1
-        val monthFormat = SimpleDateFormat(CalendarUtils.DATE_FORMAT_2, Locale.getDefault())
-        binding.txtMonthYear.text = monthFormat.format(viewModel.calendar.time)
+        refreshMonthYearTexts()
         val dayMax = viewModel.calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
         val startDay = getStartDay()
         repeat(6) { row ->
@@ -150,7 +169,7 @@ class EnguCalendarDialog : BaseDialog() {
                     dayTypes[row][column] = getDayType(date)
                     val isInitSelectedDay =
                         viewModel.selectedDay == -1 && handlerViewModel.initSelectedDay?.let {
-                                    it.get(Calendar.DAY_OF_MONTH) == date &&
+                            it.get(Calendar.DAY_OF_MONTH) == date &&
                                     it.get(Calendar.MONTH) == viewModel.calendar.get(Calendar.MONTH) &&
                                     it.get(Calendar.YEAR) == viewModel.calendar.get(Calendar.YEAR)
                         } == true
@@ -170,6 +189,11 @@ class EnguCalendarDialog : BaseDialog() {
                 labels[row][column].fadeIn()
             }
         }
+    }
+    private fun refreshMonthYearTexts() {
+        val monthFormat = SimpleDateFormat(CalendarUtils.MONTH_FORMAT_1, Locale.getDefault())
+        binding.tvMonth.text = monthFormat.format(viewModel.calendar.time)
+        viewModel.calendar.get(Calendar.YEAR).toString().also { binding.tvYear.text = it }
     }
 
     private fun getDateColor(dayType: DayType) =
@@ -201,5 +225,25 @@ class EnguCalendarDialog : BaseDialog() {
         var startDay = calendar.get(Calendar.DAY_OF_WEEK) - 2
         startDay = if (startDay == -1) 6 else startDay
         return startDay
+    }
+    private fun showYearPickDialog() {
+        val years = mutableListOf<String>()
+        for (i in handlerViewModel.maxYear downTo handlerViewModel.minYear)
+            years.add(i.toString())
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.choose_year)
+            .setItems(years.toTypedArray()) { _, i ->
+                viewModel.calendar.set(Calendar.YEAR, years[i].toInt())
+                refreshCalendar()
+            }.show()
+    }
+    private fun showMonthPickDialog() {
+        val months = CalendarUtils.getMonthsList()
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.choose_month)
+            .setItems(months.toTypedArray()) { _, i ->
+                viewModel.calendar.set(Calendar.MONTH, i)
+                refreshCalendar()
+            }.show()
     }
 }

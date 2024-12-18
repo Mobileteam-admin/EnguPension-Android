@@ -6,7 +6,7 @@ import java.util.Calendar
 class EnguCalendarViewModel : ViewModel() {
     enum class DayType { SELECTABLE, INVALID, HOLIDAY }
 
-    val calendar = Calendar.getInstance()
+    val calendar: Calendar = Calendar.getInstance()
     var selectedDateRow = -1
     var selectedDateColumn = -1
 

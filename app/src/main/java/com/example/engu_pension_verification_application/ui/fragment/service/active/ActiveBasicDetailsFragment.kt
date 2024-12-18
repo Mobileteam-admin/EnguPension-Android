@@ -1,6 +1,5 @@
 package com.example.engu_pension_verification_application.ui.fragment.service.active
 
-import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -10,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isEmpty
 import androidx.fragment.app.activityViewModels
@@ -49,7 +47,6 @@ import com.example.engu_pension_verification_application.viewmodel.TokenRefreshV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
@@ -71,6 +68,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
         const val TAB_POSITION = 0
         private const val CALENDAR_ACTION_DOB = 0
         private const val CALENDAR_ACTION_JOINING = 1
+        private const val MINIMUM_AGE = 18
     }
 
     // previous name pattern ^[a-zA-Z\s]+$
@@ -216,9 +214,6 @@ class ActiveBasicDetailsFragment : BaseFragment()
         }
     }
     private fun initViews() {
-        enguCalendarHandlerViewModel.enguCalendarRange = EnguCalendarRange(
-            listOf(Pair(CalendarUtils.geMinCalendar(),Calendar.getInstance()))
-        )
         lgaSpinnerAdapter = LGASpinnerAdapter(context, LGAList)
         binding.spActiveLga.adapter = lgaSpinnerAdapter
 
@@ -600,24 +595,47 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
 
         binding.etActiveDOB.setOnClickListener {
+            val startCalendar = CalendarUtils.getMinCalendar()
+            var endCalendar = Calendar.getInstance()
+            val doj = binding.etActiveDateAppointment.text.toString()
+            if (doj.isNotEmpty()) {
+                endCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, doj)!!
+            }
+            if (CalendarUtils.getYearDifference(endCalendar, Calendar.getInstance()) < MINIMUM_AGE) {
+                endCalendar = Calendar.getInstance()
+                endCalendar.add(Calendar.YEAR, -MINIMUM_AGE)
+            }
+            enguCalendarHandlerViewModel.minYear = startCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.maxYear = endCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.enguCalendarRange = EnguCalendarRange(
+                listOf(Pair(startCalendar, endCalendar))
+            )
+            enguCalendarHandlerViewModel.setInitSelectedDay(binding.etActiveDOB.text.toString(), CalendarUtils.DATE_FORMAT_3)
             enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_DOB
-            val selectedDay = binding.etActiveDOB.text.toString()
-            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, selectedDay)
             showDialog(EnguCalendarDialog())
         }
 
         binding.etActiveDateAppointment.setOnClickListener {
+            val dob = binding.etActiveDOB.text.toString()
+            var startCalendar = CalendarUtils.getMinCalendar()
+            val endCalendar = Calendar.getInstance()
+            if (dob.isNotEmpty()) {
+                startCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, dob)!!
+            }
+            enguCalendarHandlerViewModel.minYear = startCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.maxYear = endCalendar.get(Calendar.YEAR)
+            enguCalendarHandlerViewModel.enguCalendarRange = EnguCalendarRange(
+                listOf(Pair(startCalendar, endCalendar))
+            )
+            enguCalendarHandlerViewModel.setInitSelectedDay(binding.etActiveDateAppointment.text.toString(), CalendarUtils.DATE_FORMAT_3)
             enguCalendarHandlerViewModel.actionId = CALENDAR_ACTION_JOINING
-            val selectedDay = binding.etActiveDateAppointment.text.toString()
-            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, selectedDay)
             showDialog(EnguCalendarDialog())
         }
-
-
 
         binding.llActivebasicdetailsNext.setOnClickListener {
             //nextButtonCall()
             if (isValidActiveBasicDetails()) {
+                Ph_no = "+" + binding.activeNextKinPhoneCcp.fullNumber
                 nextButtonCall()
             }
         }
@@ -708,198 +726,49 @@ class ActiveBasicDetailsFragment : BaseFragment()
     }
 
     private fun isValidActiveBasicDetails(): Boolean {
-        //firstname
-        /*if (TextUtils.isEmpty(binding.etActiveFirstName.text)) {
-            Toast.makeText(context, "Empty FirstName", Toast.LENGTH_SHORT).show()
-            return false
-        } else {
-
-        }
-        if (binding.etActiveFirstName.text.toString().contains(" ")) {
-            Toast.makeText(context, "Enter  Firstname, No whitespace", Toast.LENGTH_SHORT).show()
-            return false
-        }*/
-
-        if (TextUtils.isEmpty(binding.etActiveFirstName.text.trim())) {
-            Toast.makeText(context, "Empty FirstName", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        if (!NAME_PATTERN.matcher(binding.etActiveFirstName.text.trim()).matches()) {
-
-            Toast.makeText(context, "first name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //middlename
-        /*if (TextUtils.isEmpty(binding.etActiveMiddleName.text)) {
-            Toast.makeText(context, "Empty Middle name", Toast.LENGTH_SHORT).show()
-            return false
-        }*/
-
-        if (!NAME_PATTERN_OR_NULL.matcher(binding.etActiveMiddleName.text.trim()).matches()) {
-
-            Toast.makeText(context, "middle name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //lastname
-        if (TextUtils.isEmpty(binding.etActiveLastName.text.trim())) {
-            Toast.makeText(context, "Empty Last name", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        if (!NAME_PATTERN.matcher(binding.etActiveLastName.text.trim()).matches()) {
-
-            Toast.makeText(context, "last name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //dob
-        if (TextUtils.isEmpty(binding.etActiveDOB.text)) {
-            Toast.makeText(context, "select dob", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //sex
-        /*if (!(rb_active_male.isChecked || rb_active_female.isChecked)) {
-
-            Toast.makeText(context, "Select gender", Toast.LENGTH_SHORT).show()
-
-        }*/
-        if (binding.radioGroupActive.checkedRadioButtonId <= 0) {
-            Toast.makeText(context, "Select Gender", Toast.LENGTH_SHORT).show()
-            return false
-        }/*else {
-            binding.radioGroupActive.setOnCheckedChangeListener { group, checkedId ->
-                //sex = "You selected: " + if (R.id.rb_active_male == checkedId) "male" else "female"
-                sex = if (R.id.rb_active_male == checkedId) "male" else "female"
-                Toast.makeText(context, sex, Toast.LENGTH_SHORT).show()
-            }
-        }*/
-
-        //address
-        if (TextUtils.isEmpty(binding.etActiveAddress.text)) {
-            Toast.makeText(context, "Empty Address", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        //pincode
-
-        if (TextUtils.isEmpty(binding.etActivePincode.text)) {
-            Toast.makeText(context, "Empty Pincode", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //country spinner default nigeria selected, no condition check
-
-        //LGA
-        if (binding.spActiveLga.selectedItemPosition == 0 || (binding.spActiveLga.isEmpty())) {
-            Toast.makeText(context, "Select valid lga item", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //kin name
-        if (TextUtils.isEmpty(binding.etActiveNextKin.text.trim())) {
-            Toast.makeText(context, "Empty kin name", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        if (!NAME_PATTERN.matcher(binding.etActiveNextKin.text.trim()).matches()) {
-
-            Toast.makeText(context, "kin name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //kin email
-        if (!binding.etActiveNextKinEmail.text.toString().isValidOptionalEmail()) {
-            Toast.makeText(context, "kin email not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        /*if (TextUtils.isEmpty(binding.etActiveNextKinEmail.text)){
-                Toast.makeText(context, " Empty kin email address", Toast.LENGTH_SHORT).show()
-            }*/
- /*       if (!EMAIL_ADDRESS_PATTERN.matcher(binding.etActiveNextKinEmail.text.toString()).matches()) {
-
-            Toast.makeText(context, " kin email not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }*/
-
-
-        //kin phone
-        if (TextUtils.isEmpty(binding.etActiveNextKinPhone.text)) {
-            Toast.makeText(context, "Empty phone number", Toast.LENGTH_LONG).show()
-            return false
-        } else if ((!binding.activeNextKinPhoneCcp.isValid)) {
-            Toast.makeText(context, "Phone Number not valid", Toast.LENGTH_LONG).show()
-            return false
-        } else {
-            //80655707
-            Ph_no = "+" + binding.activeNextKinPhoneCcp.fullNumber
-            Log.d("active_phn", "$Ph_no")
-        }
-
-        //kin address
-        if (TextUtils.isEmpty(binding.etActiveNextKinAddress.text)) {
-            Toast.makeText(context, "Empty kin Address", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        //kin pincode
-        if (TextUtils.isEmpty(binding.etActiveKinPincode.text)) {
-            Toast.makeText(context, "Empty kin Pincode", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //sub tressury
-        if ((binding.spActiveSubTreasury.selectedItemPosition == 0) || (binding.spActiveSubTreasury.isEmpty())) {
-            Toast.makeText(context, "Select valid sub treasury item", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //date of appointment
-        if (TextUtils.isEmpty(binding.etActiveDateAppointment.text)) {
-            Toast.makeText(context, "select date appointment", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //last grade
-        if ((binding.spActiveLastGrade.selectedItemPosition == 0) || (binding.spActiveLastGrade.isEmpty())) {
-            Toast.makeText(context, "select valid grade level item", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //occupation type
-        /*if (binding.spActiveOccupationType.selectedItemPosition == 0|| (occupation.isEmpty())) {
-            Toast.makeText(context, "select valid occupation item", Toast.LENGTH_SHORT).show()
-            return false
-        }*/
-
-        //occupation
-        if ((binding.spActiveOccupationType.selectedItemPosition == 0) || (binding.spActiveOccupationType.isEmpty())) {
-            Toast.makeText(context, "select valid occupation item", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-
-        //occupation other
-        if (binding.etActiveOccupationOther.visibility == View.VISIBLE && ((!NAME_PATTERN.matcher(
+        var errorMessage:String? = null
+        if (TextUtils.isEmpty(binding.etActiveFirstName.text.trim()) || !NAME_PATTERN.matcher(binding.etActiveFirstName.text.trim()).matches()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.first_name).lowercase())
+        } else if (!NAME_PATTERN_OR_NULL.matcher(binding.etActiveMiddleName.text.trim()).matches()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.middle_name).lowercase())
+        } else if (TextUtils.isEmpty(binding.etActiveLastName.text.trim()) || !NAME_PATTERN.matcher(binding.etActiveLastName.text.trim()).matches()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.last_name).lowercase())
+        } else if (TextUtils.isEmpty(binding.etActiveDOB.text)) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.date_of_birth).lowercase())
+        } else if (binding.radioGroupActive.checkedRadioButtonId <= 0) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.gender).lowercase())
+        } else if (TextUtils.isEmpty(binding.etActiveAddress.text)) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.address).lowercase())
+        } else if (TextUtils.isEmpty(binding.etActivePincode.text)) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.pincode).lowercase())
+        } else if (binding.spActiveLga.selectedItemPosition == 0 || (binding.spActiveLga.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.lga))
+        } else if (TextUtils.isEmpty(binding.etActiveNextKin.text.trim()) || !NAME_PATTERN.matcher(binding.etActiveNextKin.text.trim()).matches()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.name_of_next_kin))
+        } else if (!binding.etActiveNextKinEmail.text.toString().isValidOptionalEmail()) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.email_id_of_next_kin))
+        } else if (TextUtils.isEmpty(binding.etActiveNextKinPhone.text) || !binding.activeNextKinPhoneCcp.isValid) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.phone_num_of_next_kin))
+        } else if (TextUtils.isEmpty(binding.etActiveNextKinAddress.text)) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.address_of_next_kin))
+        } else if (TextUtils.isEmpty(binding.etActiveKinPincode.text)) {
+            errorMessage = getString(R.string.enter_input_msg, getString(R.string.pincode_of_next_kin))
+        } else if ((binding.spActiveSubTreasury.selectedItemPosition == 0) || (binding.spActiveSubTreasury.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.sub_treasury).lowercase())
+        } else if (TextUtils.isEmpty(binding.etActiveDateAppointment.text)) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.date_of_appointment).lowercase())
+        } else if ((binding.spActiveLastGrade.selectedItemPosition == 0) || (binding.spActiveLastGrade.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.grade_level).lowercase())
+        } else if ((binding.spActiveOccupationType.selectedItemPosition == 0) || (binding.spActiveOccupationType.isEmpty())) {
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.occupation_type).lowercase())
+        } else if (binding.etActiveOccupationOther.visibility == View.VISIBLE && ((!NAME_PATTERN.matcher(
                 binding.etActiveOccupationOther.text.toString()
             ).matches() || (TextUtils.isEmpty(binding.etActiveOccupationOther.text))))
         ) {
-            Toast.makeText(context, "Enter other occupation", Toast.LENGTH_SHORT).show()
-            return false
-        } /*else if (binding.etActiveOccupationOther.visibility == View.GONE) {
-            onTextOccupationWatcher()
-        } else {
-            occupation = binding.etActiveOccupationOther.text.toString()
-        }*/
-
-        return true
-
+            errorMessage = getString(R.string.select_input_msg, getString(R.string.other_occupation))
+        }
+        errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+        return errorMessage == null
     }
 
     private fun onActiveBasicDetailSuccess(response: ResponseActiveBasicDetails) {

@@ -3,6 +3,7 @@ package com.example.engu_pension_verification_application.util
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.data.ApiResult
 import org.json.JSONObject
@@ -35,6 +36,7 @@ object NetworkUtils {
             } else {
                 response.errorBody()?.let {
                     try {
+                        Log.i("NetworkUtils", "Error body : ${it.string()}")
                         val jsonObject = JSONObject(it.string())
                         errorMessage = jsonObject.getJSONObject(detailKey).getString(messageKey)
                     } catch (e: Exception) {
