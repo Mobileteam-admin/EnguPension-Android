@@ -3,12 +3,14 @@ package com.example.engu_pension_verification_application.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.databinding.ItemWalletHistoryBinding
 import com.example.engu_pension_verification_application.model.response.TransactionHistoryResponse
+import com.example.engu_pension_verification_application.util.AppUtils.Companion.capitalizeFirstLetter
 import com.example.engu_pension_verification_application.util.CalendarUtils
 
 
@@ -22,7 +24,10 @@ class WalletHistoryAdapter :
         fun bind(transaction: TransactionHistoryResponse.Detail.Data.Transaction) {
             binding.apply {
                 tvTransactionId.text = transaction.stripeTransactionId
+                tvTransactionId.isGone = true
                 tvAmount.text = "${transaction.amount}"
+                tvTransactionType.text = transaction.type.capitalizeFirstLetter()
+                tvDescription.text = transaction.description
                 tvDate.text =
                     CalendarUtils.getFormattedString(
                         CalendarUtils.DATE_TIME_FORMAT_1,

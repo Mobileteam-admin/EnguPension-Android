@@ -37,9 +37,9 @@ import com.example.engu_pension_verification_application.viewmodel.LogoutConfirm
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jitsi.meet.sdk.JitsiMeetActivity
-import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
-import org.webrtc.PeerConnectionFactory
+//import org.jitsi.meet.sdk.JitsiMeetActivity
+//import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
+//import org.webrtc.PeerConnectionFactory
 import java.net.URL
 
 
@@ -106,7 +106,7 @@ class DashboardFragment : BaseFragment() {
             val request = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
-                startJitsiMeet(response)
+//                startJitsiMeet(response)
             } else {
                 if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -256,31 +256,31 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun startJitsiMeet(response: VideoCallResponse) {
-        dismissLoader()
-        PeerConnectionFactory.initialize(
-            PeerConnectionFactory.InitializationOptions.builder(requireContext())
-                .setEnableInternalTracer(true)
-                .createInitializationOptions())
-        val options = JitsiMeetConferenceOptions.Builder()
-            .setRoom(response.detail?.roomName)
-            .setFeatureFlag("welcomepage.enabled", false)
-            .setAudioMuted(true)
-            .setVideoMuted(true)
-            .build()
-        JitsiMeetActivity.launch(requireContext(), options)
+//        dismissLoader()
+//        PeerConnectionFactory.initialize(
+//            PeerConnectionFactory.InitializationOptions.builder(requireContext())
+//                .setEnableInternalTracer(true)
+//                .createInitializationOptions())
+//        val options = JitsiMeetConferenceOptions.Builder()
+//            .setRoom(response.detail?.roomName)
+//            .setFeatureFlag("welcomepage.enabled", false)
+//            .setAudioMuted(true)
+//            .setVideoMuted(true)
+//            .build()
+//        JitsiMeetActivity.launch(requireContext(), options)
     }
 
     private fun startJitsiMeetCall(callLink: String) {
-        try {
-            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
-                .setServerURL(URL(callLink))
-                .setRoom(callLink)
-                .setAudioOnly(false)
-                .build()
-
-            JitsiMeetActivity.launch(requireContext(), options)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        try {
+//            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
+//                .setServerURL(URL(callLink))
+//                .setRoom(callLink)
+//                .setAudioOnly(false)
+//                .build()
+//
+//            JitsiMeetActivity.launch(requireContext(), options)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
     }
 }
