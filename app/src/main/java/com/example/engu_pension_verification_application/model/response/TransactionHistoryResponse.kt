@@ -22,7 +22,9 @@ data class TransactionHistoryResponse(
                 @field:SerializedName("amount") val amount: Double,
                 @field:SerializedName("transaction_date") val transactionDate: String,
                 @field:SerializedName("description") val description: String,
-                @field:SerializedName("stripe_transaction_id") val stripeTransactionId: String
+                @field:SerializedName("stripe_transaction_id") val stripeTransactionId: String,
+                @field:SerializedName("type") val type: String,
+                @field:SerializedName("status") val status: String,
             )
         }
     }
