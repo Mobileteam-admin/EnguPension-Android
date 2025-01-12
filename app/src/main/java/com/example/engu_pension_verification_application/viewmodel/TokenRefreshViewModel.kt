@@ -2,7 +2,7 @@ package com.example.engu_pension_verification_application.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.engu_pension_verification_application.model.input.InputRefreshToken
+import com.example.engu_pension_verification_application.model.request.InputRefreshToken
 import com.example.engu_pension_verification_application.model.response.ResponseRefreshToken
 import com.example.engu_pension_verification_application.model.response.TokenDetail
 import com.example.engu_pension_verification_application.network.ApiClient

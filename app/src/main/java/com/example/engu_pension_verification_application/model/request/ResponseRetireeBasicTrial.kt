@@ -1,18 +1,11 @@
-package com.example.engu_pension_verification_application.model.input
+package com.example.engu_pension_verification_application.model.request
 
 import com.google.gson.annotations.SerializedName
-import retrofit2.http.Field
 
-data class InputActiveBasicDetails(
+data class ResponseRetireeBasicTrial(
 
-	@field:SerializedName("pincode")
-	val pincode: String? = null,
-
-	@field:SerializedName("next_of_kin_pincode")
-	val kinPincode: String? = null,
-
-	@field:SerializedName("user_type")
-	val userType: String? = null,
+	@field:SerializedName("position_held_last_id")
+	val positionHeldLastId: Int? = null,
 
 	@field:SerializedName("country")
 	val country: String? = null,
@@ -32,6 +25,9 @@ data class InputActiveBasicDetails(
 	@field:SerializedName("middle_name")
 	val middleName: String? = null,
 
+	@field:SerializedName("date_of_retirement")
+	val dateOfRetirement: String? = null,
+
 	@field:SerializedName("date_of_appointment")
 	val dateOfAppointment: String? = null,
 
@@ -40,6 +36,9 @@ data class InputActiveBasicDetails(
 
 	@field:SerializedName("next_of_kin_address")
 	val nextOfKinAddress: String? = null,
+
+	@field:SerializedName("user_type")
+	val userType: String? = null,
 
 	@field:SerializedName("next_of_kin_phone_number")
 	val nextOfKinPhoneNumber: String? = null,
@@ -53,13 +52,15 @@ data class InputActiveBasicDetails(
 	@field:SerializedName("next_of_kin_name")
 	val nextOfKinName: String? = null,
 
-	@field:SerializedName("occupation_id_or_other")
-	val occupationIdString: String? = null,
+	@field:SerializedName("local_government_pension_board_id")
+	val localGovernmentPensionBoardId: Int? = null,
+
+	@field:SerializedName("last_promotion_year")
+	val lastPromotionYear: Int? = null,
 
 	@field:SerializedName("next_of_kin_email")
 	val nextOfKinEmail: String? = null,
 
 	@field:SerializedName("first_name")
 	val firstName: String? = null
-
 )

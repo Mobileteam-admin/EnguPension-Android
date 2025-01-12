@@ -1,7 +1,7 @@
 package com.example.engu_pension_verification_application.network
 
 
-import com.example.engu_pension_verification_application.model.input.*
+import com.example.engu_pension_verification_application.model.request.*
 import com.example.engu_pension_verification_application.model.response.*
 import okhttp3.RequestBody
 import retrofit2.Call

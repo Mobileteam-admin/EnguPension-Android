@@ -6,30 +6,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.data.ApiResult
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
-import com.example.engu_pension_verification_application.model.input.InputBankVerification
-import com.example.engu_pension_verification_application.model.input.InputLogin
-import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
+import com.example.engu_pension_verification_application.model.request.InputActiveBankInfo
+import com.example.engu_pension_verification_application.model.request.InputBankVerification
+import com.example.engu_pension_verification_application.model.request.InputSwiftBankCode
 import com.example.engu_pension_verification_application.model.response.AccountTypeItem
 import com.example.engu_pension_verification_application.model.response.BankDetail
 import com.example.engu_pension_verification_application.model.response.BankVerifyDetail
 import com.example.engu_pension_verification_application.model.response.BanksDetail
 import com.example.engu_pension_verification_application.model.response.EinNumberDetail
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
-import com.example.engu_pension_verification_application.model.response.LoginDetail
 import com.example.engu_pension_verification_application.model.response.ResponseBankInfo
 import com.example.engu_pension_verification_application.model.response.ResponseBankList
 import com.example.engu_pension_verification_application.model.response.ResponseBankVerify
 import com.example.engu_pension_verification_application.model.response.ResponseEinNumber
-import com.example.engu_pension_verification_application.model.response.ResponseLogin
 import com.example.engu_pension_verification_application.model.response.ResponseSwiftBankCode
 import com.example.engu_pension_verification_application.model.response.SwiftBankDetail
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AddBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    companion object {
+        const val BANK_ITEM_SELECT_ID = -1
+        const val ACC_TYPE_ITEM_SELECT_ID = -1
+    }
+    var selectedBankId = BANK_ITEM_SELECT_ID
+    var selectedAccountTypeId = ACC_TYPE_ITEM_SELECT_ID
     val bankItems = ArrayList<ListBanksItem?>()
     val accountTypeItems = ArrayList<AccountTypeItem?>()
 

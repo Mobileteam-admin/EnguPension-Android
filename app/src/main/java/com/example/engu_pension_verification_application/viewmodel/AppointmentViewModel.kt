@@ -1,21 +1,15 @@
 package com.example.engu_pension_verification_application.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.data.ApiResult
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.input.BookAppointmentRequest
-import com.example.engu_pension_verification_application.model.input.TopUpRequest
-import com.example.engu_pension_verification_application.model.response.ActiveBasicDetail
+import com.example.engu_pension_verification_application.model.request.BookAppointmentRequest
 import com.example.engu_pension_verification_application.model.response.BookAppointmentResponse
 import com.example.engu_pension_verification_application.model.response.BookingDateRangeResponse
 import com.example.engu_pension_verification_application.model.response.BookingSlotResponse
-import com.example.engu_pension_verification_application.model.response.ResponseActiveBasicDetails
-import com.example.engu_pension_verification_application.model.response.TopUpResponse
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

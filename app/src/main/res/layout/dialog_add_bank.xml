@@ -15,18 +15,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_sans_semibold"
-            android:textSize="@dimen/dp_24"
-            android:textColor="@color/grey_900"
             android:layout_gravity="center"
             android:layout_margin="@dimen/dp_20"
-            android:text="Add Bank Details" />
+            android:fontFamily="@font/nunito_sans_semibold"
+            android:text="Add Bank Details"
+            android:textColor="@color/grey_900"
+            android:textSize="@dimen/sp_24" />
 
         <TextView
-            android:id="@+id/txt_retiree_bank"
             style="@style/Style_text_title_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:padding="@dimen/dp_6">
 
             <ImageView
-                android:id="@+id/img_bank"
+                android:id="@+id/iv_bank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_4"
@@ -54,18 +54,17 @@
                 android:id="@+id/sp_bank"
                 style="@style/edit_text"
                 android:layout_width="0dp"
-                android:background="@android:color/transparent"
                 android:layout_height="match_parent"
+                android:background="@android:color/transparent"
                 android:dropDownVerticalOffset="38dp"
                 android:spinnerMode="dropdown"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/img_bank"
+                app:layout_constraintStart_toEndOf="@+id/iv_bank"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
             <ImageView
-                android:id="@+id/img_bank_down"
+                android:id="@+id/iv_bank_selection"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:padding="@dimen/dp_10"
@@ -73,6 +72,16 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/pb_bank"
+                android:layout_width="@dimen/progress_bar_size_medium"
+                android:layout_height="@dimen/progress_bar_size_medium"
+                android:layout_marginEnd="@dimen/view_horizontal_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -85,7 +94,7 @@
             android:text="@string/account_number" />
 
         <EditText
-            android:id="@+id/et_activebank_accnum"
+            android:id="@+id/et_account_number"
             style="@style/Style_text_title_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,7 +102,8 @@
             android:drawableStart="@drawable/ic_account"
             android:drawablePadding="@dimen/dp_16"
             android:hint="@string/enter_your_account_number"
-            android:inputType="text"
+            android:inputType="numberDecimal"
+            android:maxLength="@integer/account_number_max_length"
             android:padding="@dimen/dp_12" />
 
         <TextView
@@ -105,7 +115,7 @@
             android:text="@string/re_enter_account_number" />
 
         <EditText
-            android:id="@+id/et_activebank_re_accnum"
+            android:id="@+id/et_account_number_reenter"
             style="@style/Style_text_title_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,7 +123,8 @@
             android:drawableStart="@drawable/ic_account"
             android:drawablePadding="@dimen/dp_16"
             android:hint="@string/re_enter_your_account_number"
-            android:inputType="text"
+            android:inputType="numberDecimal"
+            android:maxLength="@integer/account_number_max_length"
             android:padding="@dimen/dp_12" />
 
 
@@ -126,7 +137,7 @@
             android:text="@string/account_holder_name" />
 
         <EditText
-            android:id="@+id/et_activebank_accname"
+            android:id="@+id/et_holder_name"
             style="@style/Style_text_title_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,7 +147,6 @@
             android:hint="@string/enter_account_holder_name"
             android:inputType="text"
             android:padding="@dimen/dp_12" />
-
 
         <TextView
             style="@style/Style_text_title_1"
@@ -166,17 +176,49 @@
             android:paddingTop="@dimen/dp_12"
             android:text="@string/bank_code" />
 
-        <EditText
-            android:id="@+id/et_activebank_bankcode"
-            style="@style/Style_text_title_2"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/custom_squarebox"
-            android:drawableStart="@drawable/ic_bank_green"
-            android:drawablePadding="@dimen/dp_16"
-            android:hint="@string/enter_your_bank_code"
-            android:inputType="text"
-            android:padding="@dimen/dp_12" />
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_bank_code"
+                style="@style/Style_text_title_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_squarebox"
+                android:drawableStart="@drawable/ic_bank_green"
+                android:drawablePadding="@dimen/dp_16"
+                android:hint="@string/enter_your_bank_code"
+                android:inputType="text"
+                android:maxLength="@integer/account_number_max_length"
+                android:padding="@dimen/dp_12"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_bank_code_verification"
+                style="@style/Style_text_title_verifytext"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/dp_16"
+                android:text="@string/verify"
+                android:textColor="@color/red"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/et_bank_code"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/et_bank_code" />
+
+            <ProgressBar
+                android:id="@+id/pb_verification"
+                android:layout_width="@dimen/progress_bar_size_medium"
+                android:layout_height="@dimen/progress_bar_size_medium"
+                android:layout_marginEnd="@dimen/view_horizontal_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             style="@style/Style_text_title_1"
@@ -193,7 +235,7 @@
             android:padding="@dimen/dp_6">
 
             <ImageView
-                android:id="@+id/img_account_type"
+                android:id="@+id/iv_account_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp_4"
@@ -205,19 +247,18 @@
             <Spinner
                 android:id="@+id/sp_account_type"
                 style="@style/edit_text"
-                android:background="@android:color/transparent"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:background="@android:color/transparent"
                 android:dropDownVerticalOffset="38dp"
                 android:spinnerMode="dropdown"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/img_account_type"
+                app:layout_constraintStart_toEndOf="@+id/iv_account_type"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
             <ImageView
-                android:id="@+id/img_account_type_down"
+                android:id="@+id/iv_account_type_selection"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:padding="@dimen/dp_10"
@@ -228,28 +269,14 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- <TextView
-             android:id="@+id/e_activebank_acctype"
-             style="@style/Style_text_title_2"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:background="@drawable/custom_squarebox"
-             android:drawableStart="@drawable/ic_bank_green"
-             android:drawableEnd="@drawable/ic_dropdown"
-             android:drawablePadding="@dimen/dp_16"
-             android:hint="@string/select_account_type"
-             android:padding="@dimen/dp_12" />-->
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/dp_12"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <CheckBox
-                android:id="@+id/cb_activebank_autorenewal"
+                android:id="@+id/cb_primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/colorPrimary" />
@@ -262,28 +289,14 @@
 
         </LinearLayout>
 
-       <!-- <Button
-            android:id="@+id/btn_activebank_next"
-            style="@style/DarkGreenButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_10"
-            android:layout_marginTop="@dimen/dp_16"
-            android:drawableRight="@drawable/ic_arrowright"
-            android:gravity="center|center_vertical"
-            android:paddingLeft="120dp"
-            android:paddingRight="130dp"
-            android:text="@string/next" />-->
-
         <LinearLayout
-            android:id="@+id/ll_addbank_"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_16"
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/ll_addbank_close"
+                android:id="@+id/ll_close"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/dp_12"
@@ -298,11 +311,11 @@
                     android:padding="@dimen/dp_12"
                     android:text="@string/close"
                     android:textColor="@color/green_middle"
-                    android:textSize="@dimen/dp_14" />
+                    android:textSize="@dimen/sp_14" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_addbank_submit"
+                android:id="@+id/ll_submit"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dp_12"
@@ -317,7 +330,7 @@
                     android:padding="@dimen/dp_12"
                     android:text="@string/submit"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/dp_14" />
+                    android:textSize="@dimen/sp_14" />
             </LinearLayout>
         </LinearLayout>
 

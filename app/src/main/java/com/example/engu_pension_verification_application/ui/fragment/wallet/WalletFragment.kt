@@ -20,7 +20,7 @@ import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentWalletBinding
-import com.example.engu_pension_verification_application.model.input.TopUpRequest
+import com.example.engu_pension_verification_application.model.request.TopUpRequest
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.StripeWebViewActivity

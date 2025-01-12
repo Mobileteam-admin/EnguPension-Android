@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.input.InputForgotPassword
+import com.example.engu_pension_verification_application.model.request.InputForgotPassword
 import com.example.engu_pension_verification_application.model.response.ForgotPasswordDetail
 import com.example.engu_pension_verification_application.model.response.ResponseForgotPassword
 import kotlinx.coroutines.Dispatchers

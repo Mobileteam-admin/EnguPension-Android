@@ -1,11 +1,16 @@
-package com.example.engu_pension_verification_application.model.input
+package com.example.engu_pension_verification_application.model.request
 
 import com.google.gson.annotations.SerializedName
 
-data class ResponseRetireeBasicTrial(
+data class InputRetireeBasicDetails(
+	@field:SerializedName("pincode")
+	val pincode: String? = null,
 
-	@field:SerializedName("position_held_last_id")
-	val positionHeldLastId: Int? = null,
+	@field:SerializedName("next_of_kin_pincode")
+	val kinPincode: String? = null,
+
+	@field:SerializedName("position_held_last_id_or_other")
+	val positionHeldLastId: String? = null,
 
 	@field:SerializedName("country")
 	val country: String? = null,
@@ -37,14 +42,14 @@ data class ResponseRetireeBasicTrial(
 	@field:SerializedName("next_of_kin_address")
 	val nextOfKinAddress: String? = null,
 
-	@field:SerializedName("user_type")
-	val userType: String? = null,
-
 	@field:SerializedName("next_of_kin_phone_number")
 	val nextOfKinPhoneNumber: String? = null,
 
 	@field:SerializedName("grade_level")
 	val gradeLevel: Int? = null,
+
+	@field:SerializedName("user_type")
+	val userType: String? = null,
 
 	@field:SerializedName("dob")
 	val dob: String? = null,

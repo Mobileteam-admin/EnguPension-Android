@@ -1,8 +1,8 @@
-package com.example.engu_pension_verification_application.model.input
+package com.example.engu_pension_verification_application.model.request
 
 import com.google.gson.annotations.SerializedName
 
-data class InputForgotVerify(
+data class InputVerify(
 
 	@field:SerializedName("otp")
 	val otp: String? = null,

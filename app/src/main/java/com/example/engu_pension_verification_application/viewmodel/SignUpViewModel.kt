@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.input.InputSignup
+import com.example.engu_pension_verification_application.model.request.InputSignup
 import com.example.engu_pension_verification_application.model.response.Detail
 import com.example.engu_pension_verification_application.model.response.SignupResponse
 import kotlinx.coroutines.*
