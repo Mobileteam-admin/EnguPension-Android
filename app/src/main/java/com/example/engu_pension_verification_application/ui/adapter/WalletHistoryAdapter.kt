@@ -24,10 +24,9 @@ class WalletHistoryAdapter :
         fun bind(transaction: TransactionHistoryResponse.Detail.Data.Transaction) {
             binding.apply {
                 tvTransactionId.text = transaction.stripeTransactionId
-                tvTransactionId.isGone = true
                 tvAmount.text = "${transaction.amount}"
                 tvTransactionType.text = transaction.type.capitalizeFirstLetter()
-                tvDescription.text = transaction.description
+                tvDescription.text = "Wallet Top up"
                 tvDate.text =
                     CalendarUtils.getFormattedString(
                         CalendarUtils.DATE_TIME_FORMAT_1,

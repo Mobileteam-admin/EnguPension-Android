@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -11,7 +13,7 @@ import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.DialogAppointmentBinding
-import com.example.engu_pension_verification_application.model.input.BookAppointmentRequest
+import com.example.engu_pension_verification_application.model.request.BookAppointmentRequest
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.util.CalendarUtils
 import com.example.engu_pension_verification_application.viewmodel.AppointmentViewModel
@@ -46,7 +48,6 @@ class AppointmentDialog : BaseDialog() {
         initValues()
         initViews()
         observeLiveData()
-        showLoader()
         viewModel.fetchBookingDateRange()
     }
 
@@ -110,7 +111,7 @@ class AppointmentDialog : BaseDialog() {
         }
         viewModel.dateRangeApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
-                dismissLoader()
+                binding.pbDate.isGone = true
                 response.detail?.bookingDateRange?.let {
                     enguCalendarHandlerViewModel.enguCalendarRange = CalendarUtils.getEnguCalendarRange(it)
                 }
@@ -153,10 +154,15 @@ class AppointmentDialog : BaseDialog() {
     }
 
     private fun initViews() {
+        binding.pbDate.isVisible = true
         enguCalendarDialog = EnguCalendarDialog()
         binding.tvDate.setOnClickListener {
-            val date = binding.tvDate.text.toString()
-            enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, date)
+            if (binding.tvDate.text.isNullOrEmpty()) {
+                enguCalendarHandlerViewModel.openRangeLastMonth = false
+            } else {
+                val date = binding.tvDate.text.toString()
+                enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, date)
+            }
             showDialog(enguCalendarDialog)
         }
         binding.tvTime.setOnClickListener { showTimeSlotPopUp() }

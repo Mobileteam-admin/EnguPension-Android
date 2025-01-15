@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.data.ApiResult
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
-import com.example.engu_pension_verification_application.model.input.InputBankVerification
-import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
+import com.example.engu_pension_verification_application.model.request.InputActiveBankInfo
+import com.example.engu_pension_verification_application.model.request.InputBankVerification
+import com.example.engu_pension_verification_application.model.request.InputSwiftBankCode
 import com.example.engu_pension_verification_application.model.response.BankDetail
 import com.example.engu_pension_verification_application.model.response.BankVerifyDetail
 import com.example.engu_pension_verification_application.model.response.BanksDetail

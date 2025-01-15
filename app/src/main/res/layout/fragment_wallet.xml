@@ -42,6 +42,9 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_back_arrow"
                     android:padding="@dimen/dp_12"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -197,7 +200,7 @@
 
                 <Spinner
                     android:id="@+id/sp_wallet_bank"
-                    style="@style/edit_text"
+                    style="@style/engu_spinner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:dropDownVerticalOffset="38dp"
@@ -222,25 +225,23 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_wallethistory"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/box_button_height"
                 android:layout_marginVertical="@dimen/dp_20"
-                android:background="@drawable/custom_squarebox"
-                android:padding="@dimen/dp_6">
-
+                android:background="@drawable/custom_squarebox">
 
                 <TextView
-                    android:id="@+id/txt_wallethistory"
+                    android:id="@+id/tv_wallet_history"
                     style="@style/Style_text_title_2"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:drawableStart="@drawable/ic_refresh"
                     android:drawableTint="@color/green_dark"
                     android:drawablePadding="@dimen/dp_16"
+                    android:gravity="center_vertical"
                     android:hint="@string/wallet_history"
-                    android:inputType="text"
                     android:padding="@dimen/dp_10"
+                    android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -251,6 +252,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/dp_6"
+                    android:layout_marginEnd="@dimen/dp_6"
                     android:src="@drawable/ic_arrow_right_black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

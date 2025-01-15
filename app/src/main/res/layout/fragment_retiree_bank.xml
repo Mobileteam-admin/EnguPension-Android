@@ -63,7 +63,7 @@
                 <Spinner
                     android:id="@+id/sp_retireebank_"
                     android:background="@android:color/transparent"
-                    style="@style/edit_text"
+                    style="@style/engu_spinner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:dropDownVerticalOffset="38dp"
@@ -248,7 +248,7 @@
                     android:layout_centerVertical="true"
                     android:visibility="invisible"
                     android:layout_marginEnd="@dimen/dp_16"
-                    android:text="@string/reverfy"
+                    android:text="@string/reverify"
                     android:textColor="@color/red"
                     android:textStyle="bold" />
 
@@ -300,7 +300,7 @@
                 <Spinner
                     android:id="@+id/sp_retireebank_acctype"
                     android:background="@android:color/transparent"
-                    style="@style/edit_text"
+                    style="@style/engu_spinner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:dropDownVerticalOffset="38dp"

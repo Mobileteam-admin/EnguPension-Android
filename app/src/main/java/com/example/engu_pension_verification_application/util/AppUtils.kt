@@ -26,5 +26,13 @@ class AppUtils {
                 this.substring(0, 1).uppercase() + this.substring(1).lowercase()
             }
         }
+        fun isValidBankAccountNumber(accountNumber: String): Boolean {
+            val pattern = Pattern.compile(AppConstants.BANK_ACCOUNT_NUMBER_REGEX)
+            return (pattern.matcher(accountNumber).matches())
+        }
+        fun isValidFullName(fullName: String): Boolean {
+            val pattern = Pattern.compile(AppConstants.FULL_NAME_REGEX)
+            return (pattern.matcher(fullName).matches())
+        }
     }
 }

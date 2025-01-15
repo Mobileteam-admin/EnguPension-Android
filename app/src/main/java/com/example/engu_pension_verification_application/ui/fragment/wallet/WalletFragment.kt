@@ -20,7 +20,7 @@ import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentWalletBinding
-import com.example.engu_pension_verification_application.model.input.TopUpRequest
+import com.example.engu_pension_verification_application.model.request.TopUpRequest
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.WebView.StripeWebViewActivity
@@ -62,13 +62,21 @@ class WalletFragment : BaseFragment() {
         initViewModels()
         initViews()
         observeLiveData()
-        initApiCall()
+        initBanks()
     }
 
     private fun initApiCall() {
         if (viewModel.bankListApiResult.value == null) {
             showLoader()
             viewModel.fetchBankList()
+        }
+    }
+    private fun initBanks() {
+        if (dashboardViewModel.banks == null || dashboardViewModel.bankAccountTypes == null) {
+            showLoader()
+            viewModel.fetchBankList()
+        } else {
+            setBankListAdapter()
         }
     }
     private fun initVars() {
@@ -102,7 +110,7 @@ class WalletFragment : BaseFragment() {
         binding.llWalletBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.txtWallethistory.setOnClickListener {
+        binding.tvWalletHistory.setOnClickListener {
             navigate(R.id.action_wallet_to_wallet_history)
         }
         binding.llWalletTopup.setOnClickListener {
@@ -141,19 +149,10 @@ class WalletFragment : BaseFragment() {
         }
         viewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
+                dashboardViewModel.banks = response.detail.banks
+                dashboardViewModel.bankAccountTypes = response.detail.accountType
                 dismissLoader()
-                viewModel.bankItems.clear()
-                viewModel.bankItems.add(
-                    ListBanksItem(
-                        name = " - Select Bank - ",
-                        id = BANK_ITEM_SELECT_ID,
-                    )
-                )
-                response.detail.banks?.let { viewModel.bankItems.addAll(it) }
-                binding.spWalletBank.adapter = BankAdapter(context, viewModel.bankItems)
-                viewModel.selectedBankItemPosition?.let {
-                    binding.spWalletBank.setSelection(it)
-                }
+                setBankListAdapter()
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -198,6 +197,8 @@ class WalletFragment : BaseFragment() {
                 dismissLoader()
                 if (response.detail?.status == AppConstants.SUCCESS) {
                     response.detail.message?.let { showToast(it) }
+                    showLoader()
+                    dashboardViewModel.fetchDashboardDetails()
                     findNavController().navigateUp()
                 } else {
                     if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -216,6 +217,22 @@ class WalletFragment : BaseFragment() {
         }
     }
 
+    private fun setBankListAdapter() {
+        viewModel.bankItems.clear()
+        if (!dashboardViewModel.banks.isNullOrEmpty()) {
+            viewModel.bankItems.add(
+                ListBanksItem(
+                    name = " - Select Bank - ",
+                    id = BANK_ITEM_SELECT_ID,
+                )
+            )
+            dashboardViewModel.banks?.let { viewModel.bankItems.addAll(it) }
+        }
+        binding.spWalletBank.adapter = BankAdapter(context, viewModel.bankItems)
+        viewModel.selectedBankItemPosition?.let {
+            binding.spWalletBank.setSelection(it)
+        }
+    }
     private fun refreshBankImage(position: Int) {
         binding.imgActivebank.setImageResource(R.drawable.ic_bank_green)
         viewModel.bankItems[position]?.let {

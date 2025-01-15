@@ -21,7 +21,7 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentRetireeBasicDetailsBinding
 import com.example.engu_pension_verification_application.model.dto.EnguCalendarRange
-import com.example.engu_pension_verification_application.model.input.InputRetireeBasicDetails
+import com.example.engu_pension_verification_application.model.request.InputRetireeBasicDetails
 import com.example.engu_pension_verification_application.model.response.*
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.fragment.service.active.isValidOptionalEmail

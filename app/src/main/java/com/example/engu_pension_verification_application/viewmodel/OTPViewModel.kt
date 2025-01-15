@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.input.InputForgotVerify
-import com.example.engu_pension_verification_application.model.input.InputResendotp
-import com.example.engu_pension_verification_application.model.input.InputSignupVerify
+import com.example.engu_pension_verification_application.model.request.InputForgotVerify
+import com.example.engu_pension_verification_application.model.request.InputResendotp
+import com.example.engu_pension_verification_application.model.request.InputSignupVerify
 import com.example.engu_pension_verification_application.model.response.ResendDetail
 import com.example.engu_pension_verification_application.model.response.ResendotpResponse
 import com.example.engu_pension_verification_application.model.response.VerifyResponse

@@ -354,7 +354,7 @@
 
                 <Spinner
                     android:id="@+id/sp_active_lga"
-                    style="@style/edit_text"
+                    style="@style/engu_spinner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:dropDownVerticalOffset="38dp"
@@ -577,7 +577,7 @@
 
                 <Spinner
                     android:id="@+id/sp_active_sub_treasury"
-                    style="@style/edit_text"
+                    style="@style/engu_spinner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:dropDownVerticalOffset="38dp"
@@ -667,7 +667,7 @@
 
                 <Spinner
                     android:id="@+id/sp_active_last_grade"
-                    style="@style/edit_text"
+                    style="@style/engu_spinner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:dropDownVerticalOffset="38dp"
@@ -731,7 +731,7 @@
 
                 <Spinner
                     android:id="@+id/sp_active_occupation_type"
-                    style="@style/edit_text"
+                    style="@style/engu_spinner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:dropDownVerticalOffset="38dp"

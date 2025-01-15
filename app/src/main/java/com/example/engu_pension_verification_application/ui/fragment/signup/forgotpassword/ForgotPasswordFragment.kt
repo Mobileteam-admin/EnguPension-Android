@@ -3,12 +3,10 @@ package com.example.engu_pension_verification_application.ui.fragment.signup.for
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
@@ -74,12 +72,12 @@ class ForgotPasswordFragment : BaseFragment() {
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                     Log.d(
                         "forgotpass",
-                        "onClicked: " + com.example.engu_pension_verification_application.model.input.InputForgotPassword(
+                        "onClicked: " + com.example.engu_pension_verification_application.model.request.InputForgotPassword(
                             email_Phn
                         )
                     )
                     forgotPasswordViewModel.doForgotPass(
-                        com.example.engu_pension_verification_application.model.input.InputForgotPassword(
+                        com.example.engu_pension_verification_application.model.request.InputForgotPassword(
                             email_Phn
                         )
                     )

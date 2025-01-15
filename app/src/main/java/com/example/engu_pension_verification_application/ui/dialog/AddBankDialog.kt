@@ -1,5 +1,7 @@
 package com.example.engu_pension_verification_application.ui.dialog
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,19 +9,30 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
+import com.example.engu_pension_verification_application.databinding.CardBankVerifyBinding
 import com.example.engu_pension_verification_application.databinding.DialogAddBankBinding
+import com.example.engu_pension_verification_application.model.request.ExtraBankAccountRequest
+import com.example.engu_pension_verification_application.model.request.InputBankVerification
 import com.example.engu_pension_verification_application.model.response.AccountTypeItem
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.adapter.AccountTypeAdapter
 import com.example.engu_pension_verification_application.ui.adapter.BankAdapter
+import com.example.engu_pension_verification_application.util.AppUtils
+import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.viewmodel.AddBankViewModel
+import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
@@ -27,13 +40,14 @@ import kotlinx.coroutines.launch
 
 
 class AddBankDialog : BaseDialog() {
-    companion object {
-        private const val BANK_ITEM_SELECT_ID = -1
-        private const val ACC_TYPE_ITEM_SELECT_ID = -1
-    }
-    private lateinit var binding:DialogAddBankBinding
+    private lateinit var binding: DialogAddBankBinding
     private lateinit var viewModel: AddBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
+    private lateinit var dashboardViewModel: DashboardViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCancelable = false
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,15 +62,74 @@ class AddBankDialog : BaseDialog() {
         initViewModel()
         initViews()
         observeLiveData()
-        showLoader()
-        viewModel.fetchBankList()
+        initBanks()
     }
 
+    private fun initBanks() {
+        if (dashboardViewModel.banks == null || dashboardViewModel.bankAccountTypes == null) {
+            setBankListLoaderState(true)
+            viewModel.fetchBankList()
+        } else {
+            setBankListLoaderState(false)
+            setBankAdapters()
+        }
+    }
     private fun observeLiveData() {
+        viewModel.verificationState.observe(viewLifecycleOwner) {
+            if (it != null)
+                when (it) {
+                    AddBankViewModel.VerificationState.NOT_VERIFIED -> {
+                        binding.tvBankCodeVerification.text = getString(R.string.verify)
+                        binding.tvBankCodeVerification.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.red
+                            )
+                        )
+                        binding.tvBankCodeVerification.isVisible = true
+                        binding.pbVerification.isInvisible = true
+                        setBankInputEnabled(true)
+                    }
+
+                    AddBankViewModel.VerificationState.VERIFYING -> {
+                        binding.tvBankCodeVerification.isInvisible = true
+                        binding.pbVerification.isVisible = true
+                        setBankInputEnabled(false)
+                    }
+
+                    AddBankViewModel.VerificationState.FAILED -> {
+                        binding.tvBankCodeVerification.text = getString(R.string.reverify)
+                        binding.tvBankCodeVerification.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.red
+                            )
+                        )
+                        binding.tvBankCodeVerification.isVisible = true
+                        binding.pbVerification.isInvisible = true
+                        setBankInputEnabled(true)
+                    }
+
+                    AddBankViewModel.VerificationState.VERIFIED -> {
+                        binding.tvBankCodeVerification.text = getString(R.string.verified)
+                        binding.tvBankCodeVerification.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.green_middle
+                            )
+                        )
+                        binding.tvBankCodeVerification.isVisible = true
+                        binding.pbVerification.isInvisible = true
+                        setBankInputEnabled(true)
+                    }
+                }
+        }
         viewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
-                dismissLoader()
-                setAdapter(response.detail.banks, response.detail.accountType)
+                setBankListLoaderState(false)
+                dashboardViewModel.banks = response.detail.banks
+                dashboardViewModel.bankAccountTypes = response.detail.accountType
+                setBankAdapters()
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -65,9 +138,50 @@ class AddBankDialog : BaseDialog() {
                         }
                     }
                 } else {
-                    dismissLoader()
+                    setBankListLoaderState(false)
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
-                    dismiss()
+                    resetAndDismiss()
+                }
+            }
+        }
+        viewModel.bankVerificationResult.observe(viewLifecycleOwner) { pair ->
+            val request = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                viewModel.verificationState.value = AddBankViewModel.VerificationState.VERIFIED
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            viewModel.verifyBankAccount(request)
+                        }
+                    }
+                } else {
+                    viewModel.verificationState.value = AddBankViewModel.VerificationState.FAILED
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        viewModel.extraBankAccountResult.observe(viewLifecycleOwner) { pair ->
+            val inputActiveBankInfo = pair.first
+            val response = pair.second
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                dismissLoader()
+                showToast(response.detail.message ?: "Bank account added successfully.")
+                resetAndDismiss()
+            } else if (response.detail?.status == AppConstants.FAIL) {
+                dismissLoader()
+                showToast(response.detail.message?: getString(R.string.common_error_msg_2))
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            viewModel.createExtraBankAccount(inputActiveBankInfo)
+                        }
+                    }
+                } else {
+                    dismissLoader()
+                    showToast(response.detail?.message?: getString(R.string.common_error_msg_2))
                 }
             }
         }
@@ -83,74 +197,228 @@ class AddBankDialog : BaseDialog() {
             requireActivity(),
             EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)
+        dashboardViewModel = ViewModelProviders.of(
+            requireActivity(),
+            EnguViewModelFactory(networkRepo)
+        ).get(DashboardViewModel::class.java)
     }
 
     private fun initViews() {
-        binding.llAddbankClose.setOnClickListener { dismiss() }
-        binding.llAddbankSubmit.setOnClickListener {
+        val holderName = dashboardViewModel.dashboardDetailsResult.value?.detail?.fullName?.trim()
+            ?.replace("  ", " ") ?: ""
+        binding.etHolderName.setText(holderName)
+        binding.tvBankCodeVerification.setOnClickListener {
+            if (viewModel.verificationState.value != AddBankViewModel.VerificationState.VERIFIED
+                && isValidInput(false)
+            ) {
+                showBankVerifyDialog()
+            }
+        }
+        binding.llClose.setOnClickListener { resetAndDismiss() }
+        binding.llSubmit.setOnClickListener {
+            if (isValidInput(true)) {
+                if (viewModel.verificationState.value == AddBankViewModel.VerificationState.VERIFIED) {
+                    if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                        showLoader()
+                        viewModel.createExtraBankAccount(
+                            ExtraBankAccountRequest(
+                                bankId = viewModel.bankItems[viewModel.selectedBankIndex]!!.id.toString(),
+                                accountNumber = binding.etAccountNumber.text.toString(),
+                                bankCode = binding.etBankCode.text.toString(),
+                                accountType = viewModel.accountTypeItems[viewModel.selectedAccountTypeIndex]!!.type,
+                                accountHolderName = binding.etHolderName.text.toString(),
+                                swiftCode = binding.etSwiftCode.text.toString(),
+                                reEnterAccountNumber = binding.etAccountNumberReenter.text.toString(),
+                            )
+                        )
+                    } else {
+                        showToast(R.string.no_internet_error)
+                    }
+                } else {
+                    showToast("Please verify bank code.")
+                }
+            }
         }
         binding.spBank.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                refreshBankImage(position)
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                viewModel.bankItems[position]?.id?.let {
+                    viewModel.selectedBankIndex = position
+                    refreshBankCode(position)
+                    refreshBankImage(position)
+                }
+                changeVerifiedState()
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
         }
-        binding.etSwiftCode.setOnFocusChangeListener { view, hasFocus ->  }
+        binding.spAccountType.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                viewModel.selectedAccountTypeIndex = position
+            }
 
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
 
+        }
+        binding.etAccountNumber.addTextChangedListener {
+            changeVerifiedState()
+        }
+        binding.etAccountNumberReenter.addTextChangedListener {
+            changeVerifiedState()
+        }
+        binding.etHolderName.addTextChangedListener {
+            changeVerifiedState()
+        }
+        binding.etSwiftCode.addTextChangedListener {
+            changeVerifiedState()
+        }
+        binding.etBankCode.addTextChangedListener {
+            changeVerifiedState()
+        }
     }
 
-    private fun setAdapter(
-        banks: ArrayList<ListBanksItem?>?,
-        accountTypes: ArrayList<AccountTypeItem?>?
-    ) {
+    private fun setBankAdapters() {
         viewModel.bankItems.clear()
         viewModel.accountTypeItems.clear()
-        if (!banks.isNullOrEmpty()) {
+        if (!dashboardViewModel.banks.isNullOrEmpty()) {
             viewModel.bankItems.add(
                 ListBanksItem(
                     "",
                     " - Select Bank - ",
                     "0",
                     "",
-                    BANK_ITEM_SELECT_ID,
+                    -1,
                     ""
                 )
             )
-            banks.forEach {
-                viewModel.bankItems.add(
-                    ListBanksItem(
-                        it?.code, it?.name, it?.ussd, it?.logo, it?.id, it?.slug
-                    )
-                )
-            }
+            dashboardViewModel.banks?.let { viewModel.bankItems.addAll(it) }
         }
-        if (!accountTypes.isNullOrEmpty()) {
+        if (!dashboardViewModel.bankAccountTypes.isNullOrEmpty()) {
             viewModel.accountTypeItems.add(
                 AccountTypeItem(
-                    ACC_TYPE_ITEM_SELECT_ID,
+                    -1,
                     " - Select Account Type - "
                 )
             )
-            accountTypes.forEach {
+            dashboardViewModel.bankAccountTypes?.forEach {
                 viewModel.accountTypeItems.add(AccountTypeItem(it?.id, it?.type))
             }
         }
         binding.spBank.adapter = BankAdapter(context, viewModel.bankItems)
+        binding.spBank.post {
+            binding.spBank.setSelection(viewModel.selectedBankIndex)
+        }
         binding.spAccountType.adapter = AccountTypeAdapter(context, viewModel.accountTypeItems)
+        binding.spAccountType.setSelection(viewModel.selectedAccountTypeIndex)
     }
 
-    private fun refreshBankImage(position:Int) {
-        binding.imgBank.setImageResource(R.drawable.ic_bank_green)
+    private fun refreshBankImage(position: Int) {
+        binding.ivBank.setImageResource(R.drawable.ic_bank_green)
         viewModel.bankItems[position]?.let {
-            if (it.id != BANK_ITEM_SELECT_ID) {
+            if (position != AddBankViewModel.BANK_DEFAULT_ITEM_INDEX) {
                 Glide.with(requireContext())
                     .load(it.logo)
                     .placeholder(R.drawable.ic_bank_green)
-                    .into(binding.imgBank)
+                    .into(binding.ivBank)
             }
         }
     }
+
+    private fun changeVerifiedState() {
+        if (viewModel.verificationState.value == AddBankViewModel.VerificationState.VERIFIED) {
+            viewModel.verificationState.value = AddBankViewModel.VerificationState.NOT_VERIFIED
+        }
+    }
+
+    private fun isValidInput(includeAccountType: Boolean): Boolean {
+        var errorMessage: String? = null
+        if (viewModel.selectedBankIndex == AddBankViewModel.BANK_DEFAULT_ITEM_INDEX) {
+            errorMessage = "Please select a bank."
+        } else if (!AppUtils.isValidBankAccountNumber(binding.etAccountNumber.text.toString())) {
+            errorMessage = "Please enter a valid 10–12 digit bank account number."
+        } else if (binding.etAccountNumber.text.toString() != binding.etAccountNumberReenter.text.toString()) {
+            errorMessage = "Re-entered account number does not match."
+        } else if (!AppUtils.isValidFullName(binding.etHolderName.text.toString())) {
+            errorMessage = "Please enter a valid account holder name."
+        } else if (binding.etSwiftCode.text.isNullOrEmpty()) {
+            errorMessage = "Please enter swift code."
+        } else if (binding.etBankCode.text.isNullOrEmpty()) {
+            errorMessage = "Please enter bank code."
+        } else if (includeAccountType &&
+            viewModel.selectedAccountTypeIndex == AddBankViewModel.ACC_TYPE_DEFAULT_ITEM_INDEX) {
+            errorMessage = "Please select account type."
+        }
+        errorMessage?.let { showToast(it) }
+        return errorMessage == null
+    }
+
+    private fun showBankVerifyDialog() {
+        val bankVerifyBinding = CardBankVerifyBinding.inflate(LayoutInflater.from(requireContext()))
+        val bankVerifyDialog = AlertDialog.Builder(requireContext())
+            .setView(bankVerifyBinding.root)
+            .create()
+        bankVerifyDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val accountNumber = binding.etAccountNumber.text.toString()
+        val bankCode = binding.etBankCode.text.toString()
+        bankVerifyBinding.etBankVerifyAccNum.setText(accountNumber)
+        bankVerifyBinding.etBankVerifyBankCode.setText(bankCode)
+        bankVerifyBinding.llBankverifysubmit.setOnClickListener {
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                bankVerifyDialog.dismiss()
+                viewModel.verificationState.value = AddBankViewModel.VerificationState.VERIFYING
+                viewModel.verifyBankAccount(InputBankVerification(accountNumber, bankCode))
+            } else {
+                showToast(R.string.no_internet_error)
+            }
+        }
+        bankVerifyDialog.show()
+    }
+
+    private fun setBankListLoaderState(isLoading: Boolean) {
+        binding.ivBankSelection.isInvisible = isLoading
+        binding.pbBank.isVisible = isLoading
+    }
+
+    private fun setBankInputEnabled(isEnabled: Boolean) {
+        binding.spBank.isEnabled = isEnabled
+        binding.etAccountNumber.isEnabled = isEnabled
+        binding.etAccountNumberReenter.isEnabled = isEnabled
+        binding.etHolderName.isEnabled = isEnabled
+        binding.etSwiftCode.isEnabled = isEnabled
+        binding.etBankCode.isEnabled = isEnabled
+    }
+
+    private fun refreshBankCode(position: Int) {
+        val bankCode =
+            if (position != AddBankViewModel.BANK_DEFAULT_ITEM_INDEX) viewModel.bankItems[position]?.code else ""
+        binding.etBankCode.setText(bankCode)
+    }
+
+    private fun resetAndDismiss() {
+        resetEntries()
+        dismiss()
+    }
+
+    private fun resetEntries() {
+        binding.spBank.setSelection(AddBankViewModel.BANK_DEFAULT_ITEM_INDEX)
+        binding.spAccountType.setSelection(AddBankViewModel.ACC_TYPE_DEFAULT_ITEM_INDEX)
+        binding.etAccountNumber.setText("")
+        binding.etAccountNumberReenter.setText("")
+        binding.etHolderName.setText("")
+        binding.etSwiftCode.setText("")
+        binding.etBankCode.setText("")
+        binding.cbPrimary.isChecked = false
+    }
+
 }

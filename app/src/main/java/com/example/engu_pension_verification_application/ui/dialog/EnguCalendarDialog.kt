@@ -61,7 +61,9 @@ class EnguCalendarDialog : BaseDialog() {
                     minOf(handlerViewModel.maxYear, Calendar.getInstance().get(Calendar.YEAR))
                 )
             } else {
-                viewModel.calendar.time = handlerViewModel.enguCalendarRange!!.ranges.last().second.time
+                viewModel.calendar.time =
+                    if (handlerViewModel.openRangeLastMonth) handlerViewModel.enguCalendarRange!!.ranges.last().second.time
+                    else handlerViewModel.enguCalendarRange!!.ranges.first().first.time
             }
         } else {
             viewModel.calendar.time = handlerViewModel.initSelectedDay!!.time

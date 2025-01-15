@@ -10,15 +10,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentOTPBinding
-import com.example.engu_pension_verification_application.model.input.InputForgotVerify
-import com.example.engu_pension_verification_application.model.input.InputSignupVerify
+import com.example.engu_pension_verification_application.model.request.InputForgotVerify
+import com.example.engu_pension_verification_application.model.request.InputSignupVerify
 import com.example.engu_pension_verification_application.model.response.VerifyResponse
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
@@ -168,13 +167,13 @@ class OTPFragment : BaseFragment() {
 
                 if (screen.equals("Signup")) {
                     otpViewModel.doResendOtp(
-                        com.example.engu_pension_verification_application.model.input.InputResendotp(
+                        com.example.engu_pension_verification_application.model.request.InputResendotp(
                             email = email
                         )
                     )
                 }else{
                     otpViewModel.doResendOtp(
-                        com.example.engu_pension_verification_application.model.input.InputResendotp(
+                        com.example.engu_pension_verification_application.model.request.InputResendotp(
                             email = email_Phn
                         )
                     )

@@ -1,24 +1,25 @@
 package com.example.engu_pension_verification_application.data
 
-import com.example.engu_pension_verification_application.model.input.BookAppointmentRequest
-import com.example.engu_pension_verification_application.model.input.InputActiveBankInfo
-import com.example.engu_pension_verification_application.model.input.InputActiveBasicDetails
-import com.example.engu_pension_verification_application.model.input.InputBankVerification
-import com.example.engu_pension_verification_application.model.input.InputEinNumber
-import com.example.engu_pension_verification_application.model.input.InputForgotPassword
-import com.example.engu_pension_verification_application.model.input.InputForgotVerify
-import com.example.engu_pension_verification_application.model.input.InputLGAList
-import com.example.engu_pension_verification_application.model.input.InputLogin
-import com.example.engu_pension_verification_application.model.input.InputRefreshToken
-import com.example.engu_pension_verification_application.model.input.InputResendotp
-import com.example.engu_pension_verification_application.model.input.InputResetPassword
-import com.example.engu_pension_verification_application.model.input.InputRetireeBasicDetails
-import com.example.engu_pension_verification_application.model.input.InputSignup
-import com.example.engu_pension_verification_application.model.input.InputSignupVerify
-import com.example.engu_pension_verification_application.model.input.InputSwiftBankCode
-import com.example.engu_pension_verification_application.model.input.TopUpRequest
-import com.example.engu_pension_verification_application.model.input.TransferRequest
-import com.example.engu_pension_verification_application.model.input.VideoCallRequest
+import com.example.engu_pension_verification_application.model.request.BookAppointmentRequest
+import com.example.engu_pension_verification_application.model.request.ExtraBankAccountRequest
+import com.example.engu_pension_verification_application.model.request.InputActiveBankInfo
+import com.example.engu_pension_verification_application.model.request.InputActiveBasicDetails
+import com.example.engu_pension_verification_application.model.request.InputBankVerification
+import com.example.engu_pension_verification_application.model.request.InputEinNumber
+import com.example.engu_pension_verification_application.model.request.InputForgotPassword
+import com.example.engu_pension_verification_application.model.request.InputForgotVerify
+import com.example.engu_pension_verification_application.model.request.InputLGAList
+import com.example.engu_pension_verification_application.model.request.InputLogin
+import com.example.engu_pension_verification_application.model.request.InputRefreshToken
+import com.example.engu_pension_verification_application.model.request.InputResendotp
+import com.example.engu_pension_verification_application.model.request.InputResetPassword
+import com.example.engu_pension_verification_application.model.request.InputRetireeBasicDetails
+import com.example.engu_pension_verification_application.model.request.InputSignup
+import com.example.engu_pension_verification_application.model.request.InputSignupVerify
+import com.example.engu_pension_verification_application.model.request.InputSwiftBankCode
+import com.example.engu_pension_verification_application.model.request.TopUpRequest
+import com.example.engu_pension_verification_application.model.request.TransferRequest
+import com.example.engu_pension_verification_application.model.request.VideoCallRequest
 import com.example.engu_pension_verification_application.network.ApiInterface
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.util.SharedPref
@@ -66,6 +67,9 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
 
     suspend fun submitBankInfo(inputActiveBankInfo: InputActiveBankInfo) =
         apiInterface.submitBankInfo(NetworkUtils.getAccessToken(), inputActiveBankInfo)
+
+    suspend fun createExtraBankAccount(request: ExtraBankAccountRequest) =
+        apiInterface.createExtraBankAccount(NetworkUtils.getAccessToken(), request)
 
     fun verifyBankAccount(inputBankVerification: InputBankVerification) =
         apiInterface.getBankVerify(NetworkUtils.getAccessToken(), inputBankVerification)

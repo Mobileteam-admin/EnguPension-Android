@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -116,7 +115,7 @@ class ResetPasswordFragment : BaseFragment() {
                 showLoader()
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                     resetPasswordViewModel.doReset(
-                        com.example.engu_pension_verification_application.model.input.InputResetPassword(
+                        com.example.engu_pension_verification_application.model.request.InputResetPassword(
                             password = binding.etNewResetpass.text.toString(),
                             token = token,
                             otp = OTP

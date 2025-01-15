@@ -1,13 +1,12 @@
 package com.example.engu_pension_verification_application.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.input.InputLogin
+import com.example.engu_pension_verification_application.model.request.InputLogin
 import com.example.engu_pension_verification_application.model.response.LoginDetail
 import com.example.engu_pension_verification_application.model.response.ResponseLogin
 import com.example.engu_pension_verification_application.util.OnboardingStage

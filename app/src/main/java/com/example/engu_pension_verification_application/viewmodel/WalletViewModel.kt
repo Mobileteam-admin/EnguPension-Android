@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.input.TopUpRequest
+import com.example.engu_pension_verification_application.model.request.TopUpRequest
 import com.example.engu_pension_verification_application.model.response.BanksDetail
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
 import com.example.engu_pension_verification_application.model.response.PaymentStatusResponse
