@@ -6,7 +6,7 @@
     app:startDestination="@id/navigation_dashboard">
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.Dashboard.DashboardFragment"
+        android:name="com.example.engu_pension_verification_application.ui.fragment.dashboard.DashboardFragment"
         android:label="Dashboard"
         tools:layout="@layout/fragment_dashboard">
         <action
@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_dashboard_to_account"
             app:destination="@id/navigation_account" />
+        <action
+            android:id="@+id/action_dashboard_to_wallet_history"
+            app:destination="@id/navigation_wallet_history" />
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"

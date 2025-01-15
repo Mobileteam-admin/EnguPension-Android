@@ -13,13 +13,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    var banks: ArrayList<ListBanksItem?>? = null
+    var bankAccountTypes: ArrayList<AccountTypeItem?>? = null
     private val _logoutResult =
         MutableLiveData<ResponseLogout>()
     val logoutResult: LiveData<ResponseLogout>
         get() = _logoutResult
 
     private val _dashboardDetailsResult =
-        MutableLiveData<ResponseDashboardDetails>()
+        MutableLiveData<ResponseDashboardDetails>(null)
     val dashboardDetailsResult: LiveData<ResponseDashboardDetails>
         get() = _dashboardDetailsResult
 

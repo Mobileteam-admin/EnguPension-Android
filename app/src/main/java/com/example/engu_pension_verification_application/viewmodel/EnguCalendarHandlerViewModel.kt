@@ -8,9 +8,10 @@ import java.util.Calendar
 
 class EnguCalendarHandlerViewModel : ViewModel() {
     var actionId = 1
-    var initSelectedDay:Calendar? = null
+    var initSelectedDay: Calendar? = null
+    var openRangeLastMonth = true
     val onDateSelect = MutableLiveData<Calendar?>(null)
-    var enguCalendarRange:EnguCalendarRange? = null
+    var enguCalendarRange: EnguCalendarRange? = null
     var minYear = 1900
     var maxYear = 2100
     val onDismiss = MutableLiveData<Unit>()
@@ -19,7 +20,7 @@ class EnguCalendarHandlerViewModel : ViewModel() {
         onDismiss.value = Unit
     }
 
-    fun setInitSelectedDay(date:String, format:String) {
+    fun setInitSelectedDay(date: String, format: String) {
         initSelectedDay = CalendarUtils.getCalendar(format, date)
     }
 }

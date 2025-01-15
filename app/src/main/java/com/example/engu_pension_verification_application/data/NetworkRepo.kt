@@ -1,6 +1,7 @@
 package com.example.engu_pension_verification_application.data
 
 import com.example.engu_pension_verification_application.model.request.BookAppointmentRequest
+import com.example.engu_pension_verification_application.model.request.ExtraBankAccountRequest
 import com.example.engu_pension_verification_application.model.request.InputActiveBankInfo
 import com.example.engu_pension_verification_application.model.request.InputActiveBasicDetails
 import com.example.engu_pension_verification_application.model.request.InputBankVerification
@@ -66,6 +67,9 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
 
     suspend fun submitBankInfo(inputActiveBankInfo: InputActiveBankInfo) =
         apiInterface.submitBankInfo(NetworkUtils.getAccessToken(), inputActiveBankInfo)
+
+    suspend fun createExtraBankAccount(request: ExtraBankAccountRequest) =
+        apiInterface.createExtraBankAccount(NetworkUtils.getAccessToken(), request)
 
     fun verifyBankAccount(inputBankVerification: InputBankVerification) =
         apiInterface.getBankVerify(NetworkUtils.getAccessToken(), inputBankVerification)

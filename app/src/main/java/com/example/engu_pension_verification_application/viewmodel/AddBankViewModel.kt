@@ -6,90 +6,64 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engu_pension_verification_application.data.ApiResult
 import com.example.engu_pension_verification_application.data.NetworkRepo
-import com.example.engu_pension_verification_application.model.request.InputActiveBankInfo
+import com.example.engu_pension_verification_application.model.request.ExtraBankAccountRequest
 import com.example.engu_pension_verification_application.model.request.InputBankVerification
-import com.example.engu_pension_verification_application.model.request.InputSwiftBankCode
 import com.example.engu_pension_verification_application.model.response.AccountTypeItem
-import com.example.engu_pension_verification_application.model.response.BankDetail
 import com.example.engu_pension_verification_application.model.response.BankVerifyDetail
 import com.example.engu_pension_verification_application.model.response.BanksDetail
-import com.example.engu_pension_verification_application.model.response.EinNumberDetail
+import com.example.engu_pension_verification_application.model.response.ExtraBankAccountResponse
 import com.example.engu_pension_verification_application.model.response.ListBanksItem
-import com.example.engu_pension_verification_application.model.response.ResponseBankInfo
 import com.example.engu_pension_verification_application.model.response.ResponseBankList
 import com.example.engu_pension_verification_application.model.response.ResponseBankVerify
-import com.example.engu_pension_verification_application.model.response.ResponseEinNumber
-import com.example.engu_pension_verification_application.model.response.ResponseSwiftBankCode
-import com.example.engu_pension_verification_application.model.response.SwiftBankDetail
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AddBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     companion object {
-        const val BANK_ITEM_SELECT_ID = -1
-        const val ACC_TYPE_ITEM_SELECT_ID = -1
+        const val BANK_DEFAULT_ITEM_INDEX = 0
+        const val ACC_TYPE_DEFAULT_ITEM_INDEX = 0
     }
-    var selectedBankId = BANK_ITEM_SELECT_ID
-    var selectedAccountTypeId = ACC_TYPE_ITEM_SELECT_ID
+
+    enum class VerificationState {
+        NOT_VERIFIED,
+        VERIFYING,
+        FAILED,
+        VERIFIED,
+    }
+
+    var selectedBankIndex = BANK_DEFAULT_ITEM_INDEX
+    var selectedAccountTypeIndex = ACC_TYPE_DEFAULT_ITEM_INDEX
     val bankItems = ArrayList<ListBanksItem?>()
     val accountTypeItems = ArrayList<AccountTypeItem?>()
-
+    val verificationState = MutableLiveData(VerificationState.NOT_VERIFIED)
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()
     val bankListApiResult: LiveData<ResponseBankList>
         get() = _bankListApiResult
 
-    private val _bankDetailsApiResult = MutableLiveData<Pair<String, ResponseSwiftBankCode>>()
-    val bankDetailsApiResult: LiveData<Pair<String, ResponseSwiftBankCode>>
-        get() = _bankDetailsApiResult
-
-    private val _bankInfoSubmissionResult =
-        MutableLiveData<Pair<InputActiveBankInfo, ResponseBankInfo>>()
-    val bankInfoSubmissionResult: LiveData<Pair<InputActiveBankInfo, ResponseBankInfo>>
-        get() = _bankInfoSubmissionResult
+    private val _extraBankAccountResult =
+        MutableLiveData<Pair<ExtraBankAccountRequest, ExtraBankAccountResponse>>()
+    val extraBankAccountResult: LiveData<Pair<ExtraBankAccountRequest, ExtraBankAccountResponse>>
+        get() = _extraBankAccountResult
 
     private val _bankVerificationResult =
         MutableLiveData<Pair<InputBankVerification, ResponseBankVerify>>()
     val bankVerificationResult: LiveData<Pair<InputBankVerification, ResponseBankVerify>>
         get() = _bankVerificationResult
 
-    private val _einSubmissionResult =
-        MutableLiveData<Pair<String, ResponseEinNumber>>()
-    val einSubmissionResult: LiveData<Pair<String, ResponseEinNumber>>
-        get() = _einSubmissionResult
 
-    fun fetchBankDetails(swiftCode: String) {
+    fun createExtraBankAccount(request: ExtraBankAccountRequest) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _bankDetailsApiResult.postValue(
-                    Pair(swiftCode, networkRepo.fetchBankDetails(InputSwiftBankCode(swiftCode)))
+                _extraBankAccountResult.postValue(
+                    Pair(request, networkRepo.createExtraBankAccount(request))
                 )
             } catch (e: Exception) {
-                _bankDetailsApiResult.postValue(
+                _extraBankAccountResult.postValue(
                     Pair(
-                        swiftCode,
-                        ResponseSwiftBankCode(
-                            SwiftBankDetail(message = "Something went wrong with fetching bank details")
-                        )
-                    )
-                )
-            }
-        }
-    }
-
-    fun submitBankInfo(inputActiveBankInfo: InputActiveBankInfo) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                _bankInfoSubmissionResult.postValue(
-                    Pair(inputActiveBankInfo, networkRepo.submitBankInfo(inputActiveBankInfo))
-                )
-            } catch (e: Exception) {
-                BankDetail()
-                _bankInfoSubmissionResult.postValue(
-                    Pair(
-                        inputActiveBankInfo,
-                        ResponseBankInfo(
-                            BankDetail(message = "Something went wrong with bank info submission")
+                        request,
+                        ExtraBankAccountResponse(
+                            ExtraBankAccountResponse.Detail(message = "Something went wrong with bank account creation")
                         )
                     )
                 )
@@ -113,25 +87,6 @@ class AddBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                     response
                 )
             )
-        }
-    }
-
-    fun submitEin(ein: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                _einSubmissionResult.postValue(
-                    Pair(ein, networkRepo.submitEin(ein))
-                )
-            } catch (e: Exception) {
-                _einSubmissionResult.postValue(
-                    Pair(
-                        ein,
-                        ResponseEinNumber(
-                            EinNumberDetail(message = "Something went wrong with EIN submission")
-                        )
-                    )
-                )
-            }
         }
     }
 

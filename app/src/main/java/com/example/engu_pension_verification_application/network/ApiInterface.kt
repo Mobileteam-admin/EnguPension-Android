@@ -85,6 +85,12 @@ interface ApiInterface {
         @Body inputActiveBankinfo: InputActiveBankInfo
     ): ResponseBankInfo
 
+    @POST("/api/v1/extra-bank-account")
+    suspend fun createExtraBankAccount(
+        @Header("Authorization") token: String,
+        @Body request: ExtraBankAccountRequest
+    ): ExtraBankAccountResponse
+
     @POST("/api/v1/save_ein")
     suspend fun getEinNumber(
         @Header("Authorization") token: String,

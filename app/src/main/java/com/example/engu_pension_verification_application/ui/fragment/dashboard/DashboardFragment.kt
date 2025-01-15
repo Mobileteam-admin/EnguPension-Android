@@ -1,4 +1,4 @@
-package com.example.engu_pension_verification_application.ui.fragment.Dashboard
+package com.example.engu_pension_verification_application.ui.fragment.dashboard
 
 import android.content.Intent
 import android.os.Build
@@ -10,11 +10,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
@@ -24,9 +23,9 @@ import com.example.engu_pension_verification_application.model.response.Response
 import com.example.engu_pension_verification_application.model.response.VideoCallResponse
 import com.example.engu_pension_verification_application.network.ApiClient
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
+import com.example.engu_pension_verification_application.ui.adapter.BankAccountAdapter
 import com.example.engu_pension_verification_application.ui.dialog.AddBankDialog
 import com.example.engu_pension_verification_application.ui.dialog.AppointmentDialog
-import com.example.engu_pension_verification_application.ui.dialog.EnguDialog
 import com.example.engu_pension_verification_application.ui.dialog.LogoutConfirmDialog
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
 import com.example.engu_pension_verification_application.util.NetworkUtils
@@ -40,16 +39,16 @@ import kotlinx.coroutines.launch
 //import org.jitsi.meet.sdk.JitsiMeetActivity
 //import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
 //import org.webrtc.PeerConnectionFactory
-import java.net.URL
 
 
 class DashboardFragment : BaseFragment() {
-    private lateinit var binding:FragmentDashboardBinding
+    private lateinit var binding: FragmentDashboardBinding
     private lateinit var logoutConfirmDialog: LogoutConfirmDialog
     private lateinit var addBankDialog: AddBankDialog
     private lateinit var appointmentDialog: AppointmentDialog
     private lateinit var viewModel: DashboardViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
+    private lateinit var bankAccountAdapter: BankAccountAdapter
     private val logoutConfirmViewModel by activityViewModels<LogoutConfirmViewModel>()
     val prefs = SharedPref
     override fun onCreateView(
@@ -66,7 +65,7 @@ class DashboardFragment : BaseFragment() {
         onClicked()
         initViewModel()
         initViews()
-        initCall()
+        fetchDashboardDetails()
         observeLiveData()
     }
 
@@ -121,22 +120,24 @@ class DashboardFragment : BaseFragment() {
             }
         }
         viewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
-            if (response.detail?.status == AppConstants.SUCCESS) {
-                dismissLoader()
-                populateViews()
-            } else {
-                if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            viewModel.fetchDashboardDetails()
-                        }
-                    }
-                } else {
+            if (response != null) {
+                if (response.detail?.status == AppConstants.SUCCESS) {
                     dismissLoader()
-                    showFetchErrorDialog(
-                        ::initCall,
-                        response.detail?.message ?: getString(R.string.common_error_msg_2)
-                    )
+                    populateViews()
+                } else {
+                    if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                viewModel.fetchDashboardDetails()
+                            }
+                        }
+                    } else {
+                        dismissLoader()
+                        showFetchErrorDialog(
+                            ::fetchDashboardDetails,
+                            response.detail?.message ?: getString(R.string.common_error_msg_2)
+                        )
+                    }
                 }
             }
         }
@@ -146,14 +147,21 @@ class DashboardFragment : BaseFragment() {
         logoutConfirmDialog = LogoutConfirmDialog()
         addBankDialog = AddBankDialog()
         appointmentDialog = AppointmentDialog()
+        bankAccountAdapter = BankAccountAdapter()
+        binding.rvBankAccount.apply {
+            adapter = bankAccountAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
     }
 
-    private fun initCall() {
-        if (NetworkUtils.isConnectedToNetwork(requireContext())) {
-            showLoader()
-            viewModel.fetchDashboardDetails()
-        } else {
-            showFetchErrorDialog(::initCall,R.string.no_internet_error)
+    private fun fetchDashboardDetails() {
+        if (viewModel.dashboardDetailsResult.value == null) {
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                showLoader()
+                viewModel.fetchDashboardDetails()
+            } else {
+                showFetchErrorDialog(::fetchDashboardDetails, R.string.no_internet_error)
+            }
         }
     }
 
@@ -179,19 +187,26 @@ class DashboardFragment : BaseFragment() {
         binding.tvProfile.setOnClickListener {
             navigate(R.id.action_dashboard_to_profile)
         }
-        binding.imgAddAmount.setOnClickListener {
+        binding.ivTopup.setOnClickListener {
             navigate(R.id.action_dashboard_to_wallet)
+        }
+        binding.ivHistory.setOnClickListener {
+            navigate(R.id.action_dashboard_to_wallet_history)
         }
         binding.llAccount.setOnClickListener {
             navigate(R.id.action_dashboard_to_account)
         }
         binding.llAddBank.setOnClickListener {
-            showDialog(addBankDialog)
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                showDialog(addBankDialog)
+            } else {
+                showToast(R.string.no_internet_error)
+            }
         }
         binding.llAppoinment.setOnClickListener {
             showDialog(appointmentDialog)
         }
-        binding.txtLogout.setOnClickListener {
+        binding.llLogout.setOnClickListener {
             showDialog(logoutConfirmDialog)
         }
     }
@@ -217,31 +232,47 @@ class DashboardFragment : BaseFragment() {
             binding.ivNaira.isGone = true
             if (it.verificationStatus == true) {
                 binding.tvVerificationStatus.text = getString(R.string.verified)
-                binding.tvVerificationStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.green_dark))
+                binding.tvVerificationStatus.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.green_dark
+                    )
+                )
                 binding.ivVerificationStatus.setImageResource(R.drawable.ic_tick_green)
             } else {
                 binding.tvVerificationStatus.text = getString(R.string.not_verified)
-                binding.tvVerificationStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                binding.tvVerificationStatus.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.red
+                    )
+                )
                 binding.ivVerificationStatus.setImageResource(R.drawable.ic_not_verified_red)
             }
             if (true == true) { // TODO: Modify this whenever update the API and the response includes status
                 binding.tvBookAppointment.text = getString(R.string.book_appointment)
-                binding.tvBookAppointment.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_500))
+                binding.tvBookAppointment.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.grey_500
+                    )
+                )
                 binding.ivBookAppointment.setImageResource(R.drawable.ic_schedule)
             } else {
                 binding.tvBookAppointment.text = getString(R.string.valid_till_date, "01/01/2025")
-                binding.tvBookAppointment.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                binding.tvBookAppointment.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.red
+                    )
+                )
                 binding.ivBookAppointment.setImageResource(R.drawable.ic_not_verified_red)
             }
-            it.bankDetail?.let { bankDetail ->
-                binding.noBankMsg.visibility = View.GONE
-                binding.clDashboardBank.visibility = View.VISIBLE
-                if (bankDetail.bankImage != null)
-                    Glide.with(this)
-                        .load(bankDetail.bankImage)
-                        .into(binding.imgBankIcon)
-                binding.tvBankname.text = bankDetail.bankName
-                binding.tvBanktype.text = bankDetail.accountType
+
+            if (it.bankDetail != null) {
+                val bankAccounts = mutableListOf(it.bankDetail) // TODO: remove
+                binding.noBankMsg.isGone = !bankAccounts.isNullOrEmpty()
+                bankAccountAdapter.setItems(bankAccounts)
             }
         }
     }

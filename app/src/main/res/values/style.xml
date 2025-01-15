@@ -31,6 +31,12 @@
         <item name="android:textSize">@dimen/dp_14</item>
     </style>
 
+    <style name="engu_edittext">
+        <item name="android:fontFamily">@font/nunito_sans_semibold</item>
+        <item name="android:textColor">@color/edittext_text_color</item>
+        <item name="android:textSize">@dimen/dp_14</item>
+    </style>
+
     <style name="Style_text_title_1">
         <item name="android:fontFamily">@font/nunito_sans_semibold</item>
         <item name="android:textColor">@color/grey_900</item>
@@ -81,7 +87,7 @@
         <item name="android:textSize">12sp</item>
         <!--        <item name="android:textStyle">bold</item>-->
     </style>
-    <style name="edit_text">
+    <style name="engu_spinner">
         <item name="android:background">#f7f7fd</item>
         <item name="android:layout_margin">2dp</item>
         <item name="android:paddingStart">6dp</item>

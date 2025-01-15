@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:layout_marginStart="@dimen/dp_12"
-        android:text=" - - "
-        android:textColor="@android:color/black"
+        android:text="Bank item 1"
+        android:textColor="@color/edittext_text_color"
       app:layout_constraintStart_toEndOf="@+id/img_banklogo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -1,17 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!--<androidx.core.widget.NestedScrollView
-
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.fragment.wallet.WalletHistoryFragment">-->
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.fragment.wallet.WalletHistoryFragment">
+    android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/rl_wallethistory_header"
@@ -42,11 +35,8 @@
                 android:id="@+id/img_wallethistory_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/dp_12"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
                 android:src="@drawable/ic_back_arrow"
+                android:padding="@dimen/dp_12"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -103,20 +93,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="end"
-                app:barrierMargin="@dimen/dp_12"
-                app:constraint_referenced_ids="iv_wallet_icon" />
+                app:constraint_referenced_ids="iv_wallet_icon"
+                app:barrierMargin="@dimen/dp_12"/>
 
             <ImageView
                 android:id="@+id/iv_naira"
                 style="@style/Style_text_title_1"
                 android:layout_width="12dp"
                 android:layout_height="0dp"
-                android:layout_marginEnd="@dimen/dp_3"
                 android:src="@drawable/ic_naira"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_wallet_amount"
-                app:layout_constraintEnd_toStartOf="@+id/tv_wallet_amount"
                 app:layout_constraintStart_toEndOf="@+id/barrier"
-                app:layout_constraintTop_toTopOf="@+id/tv_wallet_amount" />
+                app:layout_constraintTop_toTopOf="@+id/tv_wallet_amount"
+                app:layout_constraintEnd_toStartOf="@+id/tv_wallet_amount"
+                android:layout_marginEnd="@dimen/dp_3"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_wallet_amount" />
 
             <TextView
                 android:id="@+id/tv_wallet_amount"
@@ -140,6 +130,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_wallet_amount" />
 
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
 
@@ -157,53 +148,23 @@
         android:id="@+id/rv_wallet_history"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/dp_12"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/cl_download"
+        android:layout_marginHorizontal="@dimen/dp_12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rl_wallethistory_header"
         tools:listitem="@layout/item_wallet_history" />
-
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/view_vertical_margin"
-        app:layout_constraintBottom_toTopOf="@+id/cl_download"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_download"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_button_height"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dp_8"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/button_green"
-        android:padding="@dimen/dp_10"
-        android:layout_marginHorizontal="@dimen/dp_30"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="@dimen/view_vertical_margin_large">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_sans_semibold"
-            android:drawableEnd="@drawable/ic_download"
-            android:drawablePadding="@dimen/dp_8"
-            android:text="Download Statement"
-            android:textColor="@color/white"
-            android:textSize="@dimen/dp_14"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--
+    </androidx.core.widget.NestedScrollView>-->

@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.fragment.Dashboard.DashboardFragment">
+    tools:context=".ui.fragment.dashboard.DashboardFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        tools:context=".ui.fragment.Dashboard.DashboardFragment">
+        tools:context=".ui.fragment.dashboard.DashboardFragment">
 
         <ImageView
             android:id="@+id/bottom_dashboard_bg"
@@ -156,44 +156,46 @@
                         android:layout_height="wrap_content"
                         android:text="0"
                         android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@+id/tv_wallet_"
-                        app:layout_constraintEnd_toStartOf="@+id/img_add_amount"
+                        app:layout_constraintBottom_toTopOf="@+id/tv_wallet"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_topup"
                         app:layout_constraintStart_toEndOf="@+id/iv_naira"
                         app:layout_constraintTop_toTopOf="@+id/img_wallet_icon"/>
 
 
 
                     <TextView
-                        android:id="@+id/tv_wallet_"
+                        android:id="@+id/tv_wallet"
                         style="@style/Style_text_title_2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Wallet"
                         app:layout_constraintBottom_toBottomOf="@+id/img_wallet_icon"
-                        app:layout_constraintEnd_toStartOf="@+id/img_add_amount"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_topup"
                         app:layout_constraintStart_toEndOf="@+id/barrier"
                         app:layout_constraintTop_toBottomOf="@+id/tv_wallet_amount" />
 
                     <ImageView
-                        android:id="@+id/img_refresh"
+                        android:id="@+id/iv_history"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="@dimen/dp_10"
                         android:padding="@dimen/dp_12"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:src="@drawable/ic_refresh"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:id="@+id/img_add_amount"
+                        android:id="@+id/iv_topup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="@dimen/dp_10"
                         android:padding="@dimen/dp_12"
-                        android:src="@drawable/ic_add"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_plus"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/img_refresh"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_history"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </RelativeLayout>
@@ -222,8 +224,6 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/dp_12"
-                            android:layout_marginStart="@dimen/dp_10"
                             android:orientation="vertical"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -231,6 +231,8 @@
 
                             <TextView
                                 style="@style/Style_text_title_1"
+                                android:layout_marginTop="@dimen/dp_12"
+                                android:layout_marginHorizontal="@dimen/dp_12"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Bank Accounts" />
@@ -241,13 +243,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="@dimen/dp_4"
                                 android:layout_weight="1"
+                                android:layout_marginHorizontal="@dimen/dp_12"
                                 android:drawableTint="#88000000"
                                 android:drawableStart="@drawable/ic_verify_black"
                                 android:drawablePadding="@dimen/dp_4"
                                 android:fontFamily="@font/nunito_sans_regular"
                                 android:text="No banks accounts added."
                                 android:textColor="@color/grey_500"
-                                android:textSize="@dimen/dp_12"
+                                android:textSize="@dimen/dp_14"
                                 android:visibility="visible"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -255,103 +258,19 @@
 
                         </LinearLayout>
 
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/dp_12"
+                            android:background="@color/grey_60" />
 
-                        <LinearLayout
-
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_bank_account"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:visibility="visible"
-                            android:orientation="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/dp_10">
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:id="@+id/cl_dashboard_bank"
-                                android:visibility="gone"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:minHeight="@dimen/dimen_60"
-                                android:layout_margin="@dimen/dp_12">
-
-                                <ImageView
-                                    android:id="@+id/img_bank_icon"
-                                    android:layout_width="@dimen/dimen_60"
-                                    android:layout_height="@dimen/dimen_60"
-                                    android:scaleType="centerCrop"
-                                    android:padding="@dimen/dp_2"
-                                    android:src="@color/red"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                                <TextView
-                                    android:id="@+id/tv_bankname"
-                                    style="@style/Style_text_title_1"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/dp_12"
-                                    android:text="dfgdfg"
-                                    app:layout_constraintStart_toEndOf="@+id/img_bank_icon"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintEnd_toStartOf="@+id/tv_accounttype"
-                                    app:layout_constraintBottom_toTopOf="@id/tv_banktype"/>
-
-                                <TextView
-                                    android:id="@+id/tv_banktype"
-                                    style="@style/Style_text_title_2"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:text="dsfgdfg"
-                                    android:layout_marginStart="@dimen/dp_12"
-                                    app:layout_constraintStart_toEndOf="@+id/img_bank_icon"
-                                    app:layout_constraintEnd_toStartOf="@id/tv_accounttype"
-                                    app:layout_constraintTop_toBottomOf="@+id/tv_bankname"
-                                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-
-
-
-                                <TextView
-                                    android:id="@+id/tv_accounttype"
-                                    style="@style/Style_text_title_2"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="@dimen/dp_12"
-                                    android:drawableStart="@drawable/ic_tick_green"
-                                    android:drawablePadding="@dimen/dp_6"
-                                    android:fontFamily="@font/nunito_sans_semibold"
-                                    android:text="Primary"
-                                    android:textColor="@color/green_theme"
-                                    android:textSize="@dimen/dp_14"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                        </LinearLayout>
-
-
-                        <LinearLayout
-                            android:id="@+id/ll_dashboard_banklist"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone">
-
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:background="@color/grey_60" />
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/rv_dashboard_banklist"
-                                android:layout_width="match_parent"
-                                android:layout_height="150dp"
-                                tools:listitem="@layout/card_bank" />
-                        </LinearLayout>
+                            tools:itemCount="2"
+                            tools:listitem="@layout/item_bank_account" />
 
                         <View
                             android:layout_width="match_parent"
@@ -363,6 +282,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:gravity="center"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?android:attr/selectableItemBackground"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -476,6 +398,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:gravity="center"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?android:attr/selectableItemBackground"
                             android:orientation="horizontal"
                             android:visibility="visible">
 
@@ -555,6 +480,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/ll_logout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/dp_12"
@@ -563,7 +489,6 @@
                         android:gravity="center">
 
                         <TextView
-                            android:id="@+id/txt_logout"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:drawableStart="@drawable/ic_logout"

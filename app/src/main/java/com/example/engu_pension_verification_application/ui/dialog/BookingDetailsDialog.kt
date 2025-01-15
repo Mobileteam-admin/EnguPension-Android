@@ -85,6 +85,7 @@ class BookingDetailsDialog private constructor() : BaseDialog() {
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
                 response.detail?.message?.let { showToast(it) }
+                showLoader()
                 dashboardViewModel.fetchDashboardDetails()
                 dismiss()
             } else {

@@ -341,7 +341,7 @@
 
             <Spinner
                 android:id="@+id/sp_retiree_lga"
-                style="@style/edit_text"
+                style="@style/engu_spinner"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:dropDownVerticalOffset="38dp"
@@ -564,7 +564,7 @@
 
             <Spinner
                 android:id="@+id/sp_retiree_pension_board"
-                style="@style/edit_text"
+                style="@style/engu_spinner"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:dropDownVerticalOffset="38dp"
@@ -633,7 +633,7 @@
 
             <Spinner
                 android:id="@+id/sp_retiree_sub_treasury"
-                style="@style/edit_text"
+                style="@style/engu_spinner"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:dropDownVerticalOffset="38dp"
@@ -756,7 +756,7 @@
 
             <Spinner
                 android:id="@+id/sp_retiree_grade_level"
-                style="@style/edit_text"
+                style="@style/engu_spinner"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:dropDownVerticalOffset="38dp"
@@ -846,7 +846,7 @@
 
             <Spinner
                 android:id="@+id/sp_retiree_position_last"
-                style="@style/edit_text"
+                style="@style/engu_spinner"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:dropDownVerticalOffset="38dp"

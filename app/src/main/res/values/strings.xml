@@ -142,7 +142,7 @@
     <string name="enter_your_swiftcode">Enter your SwiftCode</string>
     <string name="specify_position">specify other position</string>
     <string name="bank_account_verification">Bank Account Verification</string>
-    <string name="reverfy">REVERIFY</string>
+    <string name="reverify">REVERIFY</string>
     <string name="verified">VERIFIED</string>
     <string name="common_error_msg">Something went wrong</string>
     <string name="common_error_msg_2">Something went wrong, please try again!</string>
@@ -174,5 +174,6 @@
     <string name="local_pension_board">local pension board</string>
     <string name="other_position">other position</string>
     <string name="other_occupation">other occupation</string>
+    <string name="account_statement">Account Statement</string>
 
 </resources>
