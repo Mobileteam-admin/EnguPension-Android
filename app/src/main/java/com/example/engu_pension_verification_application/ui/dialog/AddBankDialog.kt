@@ -166,9 +166,9 @@ class AddBankDialog : BaseDialog() {
             val inputActiveBankInfo = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
-                dismissLoader()
                 showToast(response.detail.message ?: "Bank account added successfully.")
                 resetAndDismiss()
+                dashboardViewModel.fetchBankAccountList()
             } else if (response.detail?.status == AppConstants.FAIL) {
                 dismissLoader()
                 showToast(response.detail.message?: getString(R.string.common_error_msg_2))
@@ -351,13 +351,13 @@ class AddBankDialog : BaseDialog() {
             errorMessage = "Re-entered account number does not match."
         } else if (!AppUtils.isValidFullName(binding.etHolderName.text.toString())) {
             errorMessage = "Please enter a valid account holder name."
-        } else if (binding.etSwiftCode.text.isNullOrEmpty()) {
-            errorMessage = "Please enter swift code."
-        } else if (binding.etBankCode.text.isNullOrEmpty()) {
-            errorMessage = "Please enter bank code."
+        } else if (binding.etSwiftCode.text.length !in (5..11)) {
+            errorMessage = "Please enter a valid 5–11 long swift code."
         } else if (includeAccountType &&
             viewModel.selectedAccountTypeIndex == AddBankViewModel.ACC_TYPE_DEFAULT_ITEM_INDEX) {
             errorMessage = "Please select account type."
+        } else if (binding.etBankCode.text.isNullOrEmpty()) {
+            errorMessage = "Please enter bank code."
         }
         errorMessage?.let { showToast(it) }
         return errorMessage == null

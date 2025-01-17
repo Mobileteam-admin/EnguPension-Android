@@ -10,6 +10,8 @@ import com.example.engu_pension_verification_application.model.request.VideoCall
 import com.example.engu_pension_verification_application.model.response.*
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
@@ -25,9 +27,13 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val dashboardDetailsResult: LiveData<ResponseDashboardDetails>
         get() = _dashboardDetailsResult
 
-    private val _videoCallApiResult = MutableLiveData<Pair<VideoCallRequest,VideoCallResponse>>()
-    val videoCallApiResult: LiveData<Pair<VideoCallRequest,VideoCallResponse>>
+    private val _videoCallApiResult = MutableLiveData<Pair<VideoCallRequest, VideoCallResponse>>()
+    val videoCallApiResult: LiveData<Pair<VideoCallRequest, VideoCallResponse>>
         get() = _videoCallApiResult
+
+    private val _bankAccountListApiResult = MutableLiveData<BankAccountListResponse>()
+    val bankAccountListApiResult: LiveData<BankAccountListResponse>
+        get() = _bankAccountListApiResult
 
     fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -43,8 +49,8 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         }
     }
 
-    fun fetchDashboardDetails() {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun fetchDashboardDetails(): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
             try {
                 _dashboardDetailsResult.postValue(networkRepo.fetchDashboardDetails())
             } catch (e: Exception) {
@@ -73,6 +79,20 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                     response
                 )
             )
+        }
+    }
+
+    fun fetchBankAccountList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                _bankAccountListApiResult.postValue(networkRepo.fetchBankAccountList())
+            } catch (e: Exception) {
+                _bankAccountListApiResult.postValue(
+                    BankAccountListResponse(
+                        BankAccountListResponse.Detail(message = "Something went wrong with fetching bank list")
+                    )
+                )
+            }
         }
     }
 }

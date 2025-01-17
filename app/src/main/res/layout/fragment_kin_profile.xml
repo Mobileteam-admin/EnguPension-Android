@@ -11,7 +11,7 @@
     <RelativeLayout
         android:id="@+id/rl_kinprofile_header"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="@dimen/dashboard_top_bg_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

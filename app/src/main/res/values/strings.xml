@@ -175,5 +175,6 @@
     <string name="other_position">other position</string>
     <string name="other_occupation">other occupation</string>
     <string name="account_statement">Account Statement</string>
+    <string name="download_statement">DOWNLOAD STATEMENT</string>
 
 </resources>

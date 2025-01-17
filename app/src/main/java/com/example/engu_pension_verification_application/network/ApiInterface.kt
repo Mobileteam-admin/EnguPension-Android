@@ -205,4 +205,8 @@ interface ApiInterface {
         @Query("limit") limit: Int
     ): TransactionHistoryResponse
 
+    @GET("/api/v1/list-bank-accounts/")
+    suspend fun fetchBankAccountList(@Header("Authorization") token: String
+    ): BankAccountListResponse
+
 }
