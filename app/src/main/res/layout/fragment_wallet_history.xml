@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--<androidx.core.widget.NestedScrollView
-
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.fragment.wallet.WalletHistoryFragment">-->
-
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,22 +6,27 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.fragment.wallet.WalletHistoryFragment">
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:scaleType="fitXY"
+        android:layout_marginBottom="@dimen/view_vertical_margin"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/rv_wallet_history"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_new_main_bg" />
 
     <RelativeLayout
         android:id="@+id/rl_wallethistory_header"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="@dimen/dashboard_top_bg_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:scaleType="fitStart"
-            android:src="@drawable/ic_new_main_bg" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_wallethis_header"
@@ -143,6 +142,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
 
+
     <ImageView
         android:id="@+id/bottom_wallethistory_bg"
         android:layout_width="match_parent"
@@ -159,7 +159,7 @@
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/dp_12"
         android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/cl_download"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rl_wallethistory_header"
@@ -170,40 +170,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/view_vertical_margin"
-        app:layout_constraintBottom_toTopOf="@+id/cl_download"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_download"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_button_height"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dp_8"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/button_green"
-        android:padding="@dimen/dp_10"
-        android:layout_marginHorizontal="@dimen/dp_30"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="@dimen/view_vertical_margin_large">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_sans_semibold"
-            android:drawableEnd="@drawable/ic_download"
-            android:drawablePadding="@dimen/dp_8"
-            android:text="Download Statement"
-            android:textColor="@color/white"
-            android:textSize="@dimen/dp_14"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

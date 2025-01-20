@@ -19,9 +19,11 @@ import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentDashboardBinding
+import com.example.engu_pension_verification_application.model.response.BankAccountListResponse
 import com.example.engu_pension_verification_application.model.response.ResponseLogout
 import com.example.engu_pension_verification_application.model.response.VideoCallResponse
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.network.BankAccountItem
 import com.example.engu_pension_verification_application.ui.activity.SignUpActivity
 import com.example.engu_pension_verification_application.ui.adapter.BankAccountAdapter
 import com.example.engu_pension_verification_application.ui.dialog.AddBankDialog
@@ -65,7 +67,7 @@ class DashboardFragment : BaseFragment() {
         onClicked()
         initViewModel()
         initViews()
-        fetchDashboardDetails()
+        fetchInitDetails()
         observeLiveData()
     }
 
@@ -122,7 +124,6 @@ class DashboardFragment : BaseFragment() {
         viewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
             if (response != null) {
                 if (response.detail?.status == AppConstants.SUCCESS) {
-                    dismissLoader()
                     populateViews()
                 } else {
                     if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
@@ -134,10 +135,28 @@ class DashboardFragment : BaseFragment() {
                     } else {
                         dismissLoader()
                         showFetchErrorDialog(
-                            ::fetchDashboardDetails,
+                            ::fetchInitDetails,
                             response.detail?.message ?: getString(R.string.common_error_msg_2)
                         )
                     }
+                }
+            }
+        }
+        viewModel.bankAccountListApiResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                dismissLoader()
+                viewModel.bankAccounts = response?.detail?.bankAccounts
+                setBankAccountList(response)
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            viewModel.fetchBankAccountList()
+                        }
+                    }
+                } else {
+                    dismissLoader()
+                    showToast(response.detail?.message!!)
                 }
             }
         }
@@ -149,18 +168,22 @@ class DashboardFragment : BaseFragment() {
         appointmentDialog = AppointmentDialog()
         bankAccountAdapter = BankAccountAdapter()
         binding.rvBankAccount.apply {
+            isNestedScrollingEnabled = false
             adapter = bankAccountAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
-    private fun fetchDashboardDetails() {
+    private fun fetchInitDetails() {
         if (viewModel.dashboardDetailsResult.value == null) {
             if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 showLoader()
-                viewModel.fetchDashboardDetails()
+                lifecycleScope.launch {
+                    viewModel.fetchDashboardDetails().join()
+                    viewModel.fetchBankAccountList()
+                }
             } else {
-                showFetchErrorDialog(::fetchDashboardDetails, R.string.no_internet_error)
+                showFetchErrorDialog(::fetchInitDetails, R.string.no_internet_error)
             }
         }
     }
@@ -268,12 +291,6 @@ class DashboardFragment : BaseFragment() {
                 )
                 binding.ivBookAppointment.setImageResource(R.drawable.ic_not_verified_red)
             }
-
-            if (it.bankDetail != null) {
-                val bankAccounts = mutableListOf(it.bankDetail) // TODO: remove
-                binding.noBankMsg.isGone = !bankAccounts.isNullOrEmpty()
-                bankAccountAdapter.setItems(bankAccounts)
-            }
         }
     }
 
@@ -286,6 +303,30 @@ class DashboardFragment : BaseFragment() {
         startActivity(intent)
     }
 
+    private fun setBankAccountList(response: BankAccountListResponse) {
+        val bankAccounts = mutableListOf<BankAccountItem>()
+        response.detail?.bankAccounts?.let { account->
+            account.forEach {
+                if (it.bankName != null &&
+                    it.isPrimary != null &&
+                    it.accountNumber != null &&
+                    it.accountType != null
+                ) {
+                    bankAccounts.add(
+                        BankAccountItem(
+                            it.bankName!!,
+                            it.isPrimary!!,
+                            it.accountNumber!!,
+                            it.accountType!!,
+                            it.logoUrl,
+                        )
+                    )
+                }
+            }
+        }
+        binding.noBankMsg.isGone = bankAccounts.isNotEmpty()
+        bankAccountAdapter.setItems(bankAccounts)
+    }
     private fun startJitsiMeet(response: VideoCallResponse) {
 //        dismissLoader()
 //        PeerConnectionFactory.initialize(

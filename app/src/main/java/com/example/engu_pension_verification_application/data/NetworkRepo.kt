@@ -134,4 +134,10 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
 
     suspend fun fetchTransactionHistory(page: Int, limit: Int) =
         apiInterface.fetchTransactionHistory(NetworkUtils.getAccessToken(), page, limit)
+
+    suspend fun fetchBankAccountList() =
+        apiInterface.fetchBankAccountList(NetworkUtils.getAccessToken())
+
+    suspend fun fetchStatementLink() =
+        apiInterface.fetchStatementLink(NetworkUtils.getAccessToken())
 }

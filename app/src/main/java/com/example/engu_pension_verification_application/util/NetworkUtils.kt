@@ -37,7 +37,7 @@ object NetworkUtils {
                 response.errorBody()?.let {
                     try {
                         Log.i("NetworkUtils", "Error body : ${it.string()}")
-                        val jsonObject = JSONObject(it.string())
+                        val jsonObject = JSONObject(it.byteString().utf8())
                         errorMessage = jsonObject.getJSONObject(detailKey).getString(messageKey)
                     } catch (e: Exception) {
                         e.printStackTrace()

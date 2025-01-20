@@ -4,22 +4,42 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.core.view.isGone
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.engu_pension_verification_application.Constants.AppConstants
 import com.example.engu_pension_verification_application.R
+import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentAccountStatementBinding
-import com.example.engu_pension_verification_application.ui.adapter.AccountStatementAdapter
+import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.adapter.WalletHistoryAdapter
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
+import com.example.engu_pension_verification_application.util.NetworkUtils
+import com.example.engu_pension_verification_application.viewmodel.AccountStatementViewModel
+import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
+import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
+import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AccountStatementFragment : BaseFragment() {
     private lateinit var binding:FragmentAccountStatementBinding
-    private lateinit var accountStatement_lm: LinearLayoutManager
-    lateinit var accountStatementAdapter: AccountStatementAdapter
+    private lateinit var viewModel: AccountStatementViewModel
+    private lateinit var dashboardViewModel: DashboardViewModel
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
+    private val adapter = WalletHistoryAdapter()
+    private var retryCount = 0
+
+    companion object {
+        private const val MAX_RETRY = 3
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,44 +49,105 @@ class AccountStatementFragment : BaseFragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onClicked()
-        val resolution = getScreenResolution(requireContext())
-        Log.d("ScreenResolution", "onViewCreated: "+resolution )
-        onAdapterset()
-
-
+        initViewModels()
+        initViews()
+        observeLiveData()
     }
 
-    private fun onClicked() {
-        binding.llDownload.setOnClickListener {
-            val download= context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val PdfUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/online-learning-ea8c0.appspot.com/o/Uploads%2FSystem%20Design%20Basics%20Handbook%20-8.pdf?alt=media&token=084ec8ce-598a-4a14-ad7c-61003e509af6")
-            val getPdf = DownloadManager.Request(PdfUri)
-            getPdf.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            download.enqueue(getPdf)
-            Toast.makeText(context,"Sample Download Started", Toast.LENGTH_LONG).show()
-        }
+    private fun initViewModels() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        dashboardViewModel = ViewModelProviders.of(
+            requireActivity(), EnguViewModelFactory(networkRepo)
+        ).get(DashboardViewModel::class.java)
+        viewModel = ViewModelProviders.of(
+            this, EnguViewModelFactory(networkRepo)
+        ).get(AccountStatementViewModel::class.java)
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
+    }
 
-        binding.imgAccountstatementBack.setOnClickListener {
+    private fun initViews() {
+        binding.imgBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+        binding.rvWalletHistory.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvWalletHistory.adapter = adapter
+        binding.clDownload.setOnClickListener {
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                showLoader()
+                viewModel.fetchStatementLink()
+            } else {
+                showToast(R.string.no_internet_error)
+            }
+        }
+        binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
+    private fun observeLiveData() {
+        lifecycleScope.launch {
+            viewModel.transactionFlow.collectLatest { pagingData ->
+                retryCount = 0
+                adapter.submitData(pagingData)
+            }
+        }
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                val errorState = loadStates.refresh as? LoadState.Error
+                    ?: loadStates.append as? LoadState.Error
+                    ?: loadStates.prepend as? LoadState.Error
+                if (errorState?.error?.message == AppConstants.TOKEN_EXPIRED) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            withContext(Dispatchers.Main) {
+                                if (retryCount < MAX_RETRY) {
+                                    retryCount++
+                                    adapter.retry()
+                                } else {
+                                    showToast(R.string.common_error_msg_2)
+                                    findNavController().navigateUp()
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (errorState?.error != null) showToast(R.string.common_error_msg_2)
+                    binding.progressBar.visibility =
+                        if (loadStates.refresh is LoadState.Loading) View.VISIBLE else View.GONE
+                }
+            }
+        }
+        dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                populateViews()
+            }
+        }
+        viewModel.statementApiResult.observe(viewLifecycleOwner) { response ->
+            dismissLoader()
+            if (response.downloadLink == null) {
+                showToast(R.string.Statement_download_error_msg)
+            } else {
+                val downloadManager =
+                    context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val request =
+                    DownloadManager.Request(Uri.parse("${AppConstants.BASE_URL}/${response.downloadLink}"))
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                downloadManager.enqueue(request)
+                Uri.parse(response.downloadLink)
+            }
+        }
+    }
 
-    private fun onAdapterset() {
-        accountStatementAdapter = AccountStatementAdapter() {}
-        accountStatement_lm = LinearLayoutManager(requireContext())
-        binding.rvAccountstatement.layoutManager = accountStatement_lm
-        binding.rvAccountstatement.adapter = accountStatementAdapter
+    private fun populateViews() {
+        dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
+            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
+            binding.tvWalletAmount.text = walletText
+            binding.ivNaira.isGone = true
+        }
     }
-    private fun getScreenResolution(context: Context): String? {
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val display: Display = wm.defaultDisplay
-        val metrics = DisplayMetrics()
-        display.getMetrics(metrics)
-        val width = metrics.widthPixels
-        val height = metrics.heightPixels
-        return "{$width,$height}"
-    }
+
 }
