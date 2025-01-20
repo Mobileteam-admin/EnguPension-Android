@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     var banks: ArrayList<ListBanksItem?>? = null
+    var bankAccounts: ArrayList<BankAccountListResponse.Detail.BankAccount>? = null
     var bankAccountTypes: ArrayList<AccountTypeItem?>? = null
     private val _logoutResult =
         MutableLiveData<ResponseLogout>()

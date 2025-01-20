@@ -12,9 +12,7 @@ data class BankAccountListResponse(
         @SerializedName("bank_accounts") var bankAccounts: ArrayList<BankAccount> = arrayListOf()
     ) {
         data class BankAccount(
-            @SerializedName("id") var id: Int? = null,
             @SerializedName("user_id") var userId: Int? = null,
-            @SerializedName("bank_id") var bankId: Int? = null,
             @SerializedName("bank_name") var bankName: String? = null,
             @SerializedName("account_holder_name") var accountHolderName: String? = null,
             @SerializedName("account_number") var accountNumber: String? = null,

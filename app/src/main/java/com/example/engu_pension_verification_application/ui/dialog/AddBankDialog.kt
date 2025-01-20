@@ -353,16 +353,28 @@ class AddBankDialog : BaseDialog() {
             errorMessage = "Please enter a valid account holder name."
         } else if (binding.etSwiftCode.text.length !in (5..11)) {
             errorMessage = "Please enter a valid 5–11 long swift code."
+        } else if (binding.etBankCode.text.isNullOrEmpty()) {
+            errorMessage = "Please enter bank code."
+        } else if (hasAccountAdded()) {
+            errorMessage = "Bank account already added."
         } else if (includeAccountType &&
             viewModel.selectedAccountTypeIndex == AddBankViewModel.ACC_TYPE_DEFAULT_ITEM_INDEX) {
             errorMessage = "Please select account type."
-        } else if (binding.etBankCode.text.isNullOrEmpty()) {
-            errorMessage = "Please enter bank code."
         }
         errorMessage?.let { showToast(it) }
         return errorMessage == null
     }
 
+    private fun hasAccountAdded() :Boolean{
+        dashboardViewModel.bankAccounts?.forEach {
+            if (it.bankName == viewModel.bankItems[viewModel.selectedBankIndex]?.name &&
+                it.accountNumber == binding.etAccountNumber.text.toString() &&
+                it.swiftCode == binding.etSwiftCode.text.toString() &&
+                it.bankCode == binding.etBankCode.text.toString())
+                return true
+        }
+        return false
+    }
     private fun showBankVerifyDialog() {
         val bankVerifyBinding = CardBankVerifyBinding.inflate(LayoutInflater.from(requireContext()))
         val bankVerifyDialog = AlertDialog.Builder(requireContext())

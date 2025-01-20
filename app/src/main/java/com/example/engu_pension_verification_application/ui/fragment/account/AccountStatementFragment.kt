@@ -4,12 +4,9 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.isGone
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -20,16 +17,13 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentAccountStatementBinding
 import com.example.engu_pension_verification_application.network.ApiClient
-import com.example.engu_pension_verification_application.ui.adapter.AccountStatementAdapter
 import com.example.engu_pension_verification_application.ui.adapter.WalletHistoryAdapter
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
-import com.example.engu_pension_verification_application.ui.fragment.wallet.WalletHistoryFragment
-import com.example.engu_pension_verification_application.ui.fragment.wallet.WalletHistoryFragment.Companion
+import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.viewmodel.AccountStatementViewModel
 import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
 import com.example.engu_pension_verification_application.viewmodel.EnguViewModelFactory
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
-import com.example.engu_pension_verification_application.viewmodel.WalletHistoryViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -82,16 +76,18 @@ class AccountStatementFragment : BaseFragment() {
         }
         binding.rvWalletHistory.layoutManager = LinearLayoutManager(requireContext())
         binding.rvWalletHistory.adapter = adapter
-
         binding.clDownload.setOnClickListener {
-
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                showLoader()
+                viewModel.fetchStatementLink()
+            } else {
+                showToast(R.string.no_internet_error)
+            }
         }
-
         binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
-
     private fun observeLiveData() {
         lifecycleScope.launch {
             viewModel.transactionFlow.collectLatest { pagingData ->
@@ -128,6 +124,20 @@ class AccountStatementFragment : BaseFragment() {
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
                 populateViews()
+            }
+        }
+        viewModel.statementApiResult.observe(viewLifecycleOwner) { response ->
+            dismissLoader()
+            if (response.downloadLink == null) {
+                showToast(R.string.Statement_download_error_msg)
+            } else {
+                val downloadManager =
+                    context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val request =
+                    DownloadManager.Request(Uri.parse("${AppConstants.BASE_URL}/${response.downloadLink}"))
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                downloadManager.enqueue(request)
+                Uri.parse(response.downloadLink)
             }
         }
     }

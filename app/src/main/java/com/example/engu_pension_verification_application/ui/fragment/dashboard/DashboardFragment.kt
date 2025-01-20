@@ -145,6 +145,7 @@ class DashboardFragment : BaseFragment() {
         viewModel.bankAccountListApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
                 dismissLoader()
+                viewModel.bankAccounts = response?.detail?.bankAccounts
                 setBankAccountList(response)
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -306,21 +307,18 @@ class DashboardFragment : BaseFragment() {
         val bankAccounts = mutableListOf<BankAccountItem>()
         response.detail?.bankAccounts?.let { account->
             account.forEach {
-                if (it.bankId!=null &&
-                    it.bankName!=null &&
-                    it.isPrimary!=null &&
-                    it.accountNumber!=null &&
-                    it.accountType!=null &&
-                    it.logoUrl!=null) {
-                    viewModel.banks
+                if (it.bankName != null &&
+                    it.isPrimary != null &&
+                    it.accountNumber != null &&
+                    it.accountType != null
+                ) {
                     bankAccounts.add(
                         BankAccountItem(
-                            it.bankId!!,
                             it.bankName!!,
                             it.isPrimary!!,
                             it.accountNumber!!,
                             it.accountType!!,
-                            it.logoUrl!!,
+                            it.logoUrl,
                         )
                     )
                 }

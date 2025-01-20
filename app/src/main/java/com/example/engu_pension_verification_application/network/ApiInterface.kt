@@ -209,4 +209,9 @@ interface ApiInterface {
     suspend fun fetchBankAccountList(@Header("Authorization") token: String
     ): BankAccountListResponse
 
+
+    @GET("/api/v1/transaction-statement/")
+    suspend fun fetchStatementLink(@Header("Authorization") token: String
+    ): StatementLinkResponse
+
 }
