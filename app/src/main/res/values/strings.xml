@@ -177,5 +177,7 @@
     <string name="account_statement">Account Statement</string>
     <string name="download_statement">DOWNLOAD STATEMENT</string>
     <string name="Statement_download_error_msg">Statement download failed, please try again later.</string>
+    <string name="downloading_statement">Downloading account statement…</string>
+    <string name="statement_file_name">Account Statement - %s</string>
 
 </resources>

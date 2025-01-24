@@ -14,7 +14,10 @@ object CalendarUtils {
     const val DATE_FORMAT_2 = "MMMM yyyy"
     const val DATE_FORMAT_3 = "dd/MM/yyyy"
     const val DATE_TIME_FORMAT_1 = "yyyy-MM-dd HH:mm:ss" //"2024-12-09 05:42:11"
+    const val DATE_TIME_FORMAT_2 = "dd-MMM-yyyy hh:mm:ss a" //"2024-12-09 05:42:11"
     const val MONTH_FORMAT_1 = "MMMM" //December
+    fun getFormattedNow() = getFormattedString(DATE_TIME_FORMAT_2, Calendar.getInstance())
+    fun getFormattedToday() = getFormattedString(DATE_FORMAT_3, Calendar.getInstance())
     fun getFormattedString(
         currentFormat: String,
         requiredFormat: String,

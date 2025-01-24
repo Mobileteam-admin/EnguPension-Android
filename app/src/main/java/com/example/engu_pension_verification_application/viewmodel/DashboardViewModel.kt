@@ -55,6 +55,7 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
             try {
                 _dashboardDetailsResult.postValue(networkRepo.fetchDashboardDetails())
             } catch (e: Exception) {
+                e.printStackTrace()
                 _dashboardDetailsResult.postValue(
                     ResponseDashboardDetails(
                         DashboardDetails(message = "Something went wrong with fetching dashboard details")

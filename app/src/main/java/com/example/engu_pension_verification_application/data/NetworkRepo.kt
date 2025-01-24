@@ -1,5 +1,8 @@
 package com.example.engu_pension_verification_application.data
 
+import android.app.DownloadManager
+import android.net.Uri
+import android.os.Environment
 import com.example.engu_pension_verification_application.model.request.BookAppointmentRequest
 import com.example.engu_pension_verification_application.model.request.ExtraBankAccountRequest
 import com.example.engu_pension_verification_application.model.request.InputActiveBankInfo
@@ -140,4 +143,20 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
 
     suspend fun fetchStatementLink() =
         apiInterface.fetchStatementLink(NetworkUtils.getAccessToken())
+
+    fun downloadFile(
+        downloadManager:DownloadManager,
+        fileUrl: String, fileName: String,
+        downloadDescription: String = "Downloading file..."
+    ): Long {
+        val request = DownloadManager.Request(Uri.parse(fileUrl))
+            .setTitle(fileName)
+            .setDescription(downloadDescription)
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalPublicDir(
+                Environment.DIRECTORY_DOWNLOADS,
+                fileName
+            )
+        return downloadManager.enqueue(request)
+    }
 }

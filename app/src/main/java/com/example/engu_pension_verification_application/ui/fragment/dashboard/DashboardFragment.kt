@@ -38,9 +38,9 @@ import com.example.engu_pension_verification_application.viewmodel.LogoutConfirm
 import com.example.engu_pension_verification_application.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-//import org.jitsi.meet.sdk.JitsiMeetActivity
-//import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
-//import org.webrtc.PeerConnectionFactory
+import org.jitsi.meet.sdk.JitsiMeetActivity
+import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
+import java.net.URL
 
 
 class DashboardFragment : BaseFragment() {
@@ -61,10 +61,8 @@ class DashboardFragment : BaseFragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onClicked()
         initViewModel()
         initViews()
         fetchInitDetails()
@@ -172,10 +170,11 @@ class DashboardFragment : BaseFragment() {
             adapter = bankAccountAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+        setClickListeners()
     }
 
     private fun fetchInitDetails() {
-        if (viewModel.dashboardDetailsResult.value == null) {
+        if (viewModel.dashboardDetailsResult.value?.detail?.status != AppConstants.SUCCESS) {
             if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 showLoader()
                 lifecycleScope.launch {
@@ -188,13 +187,15 @@ class DashboardFragment : BaseFragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun onClicked() {
+    private fun setClickListeners() {
         binding.imgBell.setOnClickListener { // TODO: remove after video call api completion
 //            val callLink =
-//                "https://project-one.org/v_call_ser/meeting_6c91334d-5a44-4e79-8a23-599458093cd6?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6InByb2plY3Qtb25lIiwic3ViIjoicHJvamVjdC1vbmUub3JnIiwicm9vbSI6Im1lZXRpbmdfNmM5MTMzNGQtNWE0NC00ZTc5LThhMjMtNTk5NDU4MDkzY2Q2IiwiZXhwIjoxNzMzNzI5ODEwLCJjb250ZXh0Ijp7InVzZXIiOnsiZW1haWwiOiJtdWhhbW1hZC5mYWlzYWxAdGVjaHZlcnNhbnRpbmZvdGVjaC5jb20iLCJuYW1lIjoibXVoYW1tYWQuZmFpc2FsIiwibW9kZXJhdG9yIjp0cnVlfX19.WAyx2DjNui38M3Sh2plLI2HphzqLUIElMnV3QrfF-r8"
-//
+////                "https://project-one.org/v_call_ser/meeting_6c91334d-5a44-4e79-8a23-599458093cd6?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6InByb2plY3Qtb25lIiwic3ViIjoicHJvamVjdC1vbmUub3JnIiwicm9vbSI6Im1lZXRpbmdfNmM5MTMzNGQtNWE0NC00ZTc5LThhMjMtNTk5NDU4MDkzY2Q2IiwiZXhwIjoxNzMzNzI5ODEwLCJjb250ZXh0Ijp7InVzZXIiOnsiZW1haWwiOiJtdWhhbW1hZC5mYWlzYWxAdGVjaHZlcnNhbnRpbmZvdGVjaC5jb20iLCJuYW1lIjoibXVoYW1tYWQuZmFpc2FsIiwibW9kZXJhdG9yIjp0cnVlfX19.WAyx2DjNui38M3Sh2plLI2HphzqLUIElMnV3QrfF-r8"
+//                "https://pension-distributor.demoserver.work/video_call_server/gdGWbp0gHY?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIwYjVkZGZmYy03YzczLTQwZjUtOTBiYy03MjI4YmExODk1NmIiLCJpc3MiOiIwYjVkZGZmYy03YzczLTQwZjUtOTBiYy03MjI4YmExODk1NmIiLCJzdWIiOiJqaXRzaS1sb2NhbGhvc3QiLCJyb29tIjoiZ2RHV2JwMGdIWSIsImV4cCI6MTczNzU0MzkzMCwiY29udGV4dCI6eyJ1c2VyIjp7ImVtYWlsIjoiYXZpbi5tYXRoZXcuY29ubmVjdEBnbWFpbC5jb20iLCJuYW1lIjoib2ZmaWNpYWxfMSIsIm1vZGVyYXRvciI6dHJ1ZX19fQ.iemBP12ioyIPNPMi7g8978aO_k07CEViGNH_361snI0  user-link -  https://pension-distributor.demoserver.work/video_call_server/gdGWbp0gHY?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIwYjVkZGZmYy03YzczLTQwZjUtOTBiYy03MjI4YmExODk1NmIiLCJpc3MiOiIwYjVkZGZmYy03YzczLTQwZjUtOTBiYy03MjI4YmExODk1NmIiLCJzdWIiOiJqaXRzaS1sb2NhbGhvc3QiLCJyb29tIjoiZ2RHV2JwMGdIWSIsImV4cCI6MTczNzU0MzkzMCwiY29udGV4dCI6eyJ1c2VyIjp7ImVtYWlsIjoiYXZpbkB0ZWNodmVyc2FudGluZm8uY29tIiwibmFtZSI6InVzZXJfMDA3IiwibW9kZXJhdG9yIjpmYWxzZX19fQ.EZ1qv-0UhXuRMXldwrbds4EMoxZxzk_PQ7xKbvVEc6U"
 //            startJitsiMeetCall(callLink)
+//
+
+
 //            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
 //                val videoCallRequest = VideoCallRequest(
 //                    govtOfficialEmail = "8adm3eqs29@zlorkun.com",
@@ -343,16 +344,16 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun startJitsiMeetCall(callLink: String) {
-//        try {
-//            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
-//                .setServerURL(URL(callLink))
-//                .setRoom(callLink)
-//                .setAudioOnly(false)
-//                .build()
-//
-//            JitsiMeetActivity.launch(requireContext(), options)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
+        try {
+            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
+                .setServerURL(URL(callLink))
+                .setRoom(callLink)
+                .setAudioOnly(false)
+                .build()
+
+            JitsiMeetActivity.launch(requireContext(), options)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

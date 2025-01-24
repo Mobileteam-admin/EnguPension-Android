@@ -80,15 +80,8 @@ class LoginFragment : BaseFragment() {
         binding.llLogLogin.setOnClickListener {
             if (isValidLogin()) {
                 if (isValidate_password()) {
-                    showLoader()
                     if (NetworkUtils.isConnectedToNetwork(requireContext())) {
-                        Log.d(
-                            "Login",
-                            "onClicked: " + com.example.engu_pension_verification_application.model.request.InputLogin(
-                                binding.edPassword.text.toString(),
-                                email_Phn
-                            )
-                        )
+                        showLoader()
                         loginViewModel.doLogin(
                             com.example.engu_pension_verification_application.model.request.InputLogin(
                                 binding.edPassword.text.toString(),
@@ -96,7 +89,6 @@ class LoginFragment : BaseFragment() {
                             )
                         )
                     } else {
-                        dismissLoader()
                         Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG)
                             .show()
                     }
