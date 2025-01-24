@@ -20,6 +20,11 @@ android {
     }
 
     buildTypes {
+        debug {
+//            minifyEnabled true
+//            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -138,7 +143,7 @@ dependencies {
     implementation "com.google.android.material:material:1.12.0"
 
     implementation 'io.michaelrocks:libphonenumber-android:8.13.48'
-//    implementation ('org.jitsi.react:jitsi-meet-sdk:8.6.0') { transitive = true }
+    implementation ('org.jitsi.react:jitsi-meet-sdk:8.6.0') { transitive = true }
 
     implementation "androidx.paging:paging-runtime:3.1.1"
 

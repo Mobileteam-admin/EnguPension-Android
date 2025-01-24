@@ -1,11 +1,13 @@
 package com.example.engu_pension_verification_application.ui.fragment.account
 
+import android.Manifest
+import android.app.Activity.RESULT_OK
 import android.app.DownloadManager
 import android.content.Context
-import android.net.Uri
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -17,8 +19,10 @@ import com.example.engu_pension_verification_application.R
 import com.example.engu_pension_verification_application.data.NetworkRepo
 import com.example.engu_pension_verification_application.databinding.FragmentAccountStatementBinding
 import com.example.engu_pension_verification_application.network.ApiClient
+import com.example.engu_pension_verification_application.ui.activity.PermissionRequestActivity
 import com.example.engu_pension_verification_application.ui.adapter.WalletHistoryAdapter
 import com.example.engu_pension_verification_application.ui.fragment.base.BaseFragment
+import com.example.engu_pension_verification_application.util.CalendarUtils
 import com.example.engu_pension_verification_application.util.NetworkUtils
 import com.example.engu_pension_verification_application.viewmodel.AccountStatementViewModel
 import com.example.engu_pension_verification_application.viewmodel.DashboardViewModel
@@ -30,7 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AccountStatementFragment : BaseFragment() {
-    private lateinit var binding:FragmentAccountStatementBinding
+    private lateinit var binding: FragmentAccountStatementBinding
     private lateinit var viewModel: AccountStatementViewModel
     private lateinit var dashboardViewModel: DashboardViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
@@ -40,7 +44,18 @@ class AccountStatementFragment : BaseFragment() {
     companion object {
         private const val MAX_RETRY = 3
     }
-
+    private val permissionResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                showLoader()
+                viewModel.fetchStatementLink()
+            } else {
+                showToast(R.string.no_internet_error)
+            }
+        }
+        else showToast("Write permission denied. Cannot download Account statement.")
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -77,17 +92,15 @@ class AccountStatementFragment : BaseFragment() {
         binding.rvWalletHistory.layoutManager = LinearLayoutManager(requireContext())
         binding.rvWalletHistory.adapter = adapter
         binding.clDownload.setOnClickListener {
-            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
-                showLoader()
-                viewModel.fetchStatementLink()
-            } else {
-                showToast(R.string.no_internet_error)
-            }
+            val intent = Intent(requireActivity(), PermissionRequestActivity::class.java)
+            intent.putExtra(PermissionRequestActivity.EXTRA_PERMISSION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            permissionResultLauncher.launch(intent)
         }
         binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
+
     private fun observeLiveData() {
         lifecycleScope.launch {
             viewModel.transactionFlow.collectLatest { pagingData ->
@@ -133,11 +146,10 @@ class AccountStatementFragment : BaseFragment() {
             } else {
                 val downloadManager =
                     context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                val request =
-                    DownloadManager.Request(Uri.parse("${AppConstants.BASE_URL}/${response.downloadLink}"))
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                downloadManager.enqueue(request)
-                Uri.parse(response.downloadLink)
+                val url = "${AppConstants.BASE_URL}/${response.downloadLink}"
+                val fileName = getString(R.string.statement_file_name, CalendarUtils.getFormattedNow())
+                val downloadDescription = getString(R.string.downloading_statement)
+                viewModel.downloadPdf(downloadManager, url, fileName, downloadDescription)
             }
         }
     }

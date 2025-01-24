@@ -30,12 +30,12 @@ open class BaseActivity : AppCompatActivity() {
     private fun observeData() {
         loaderViewModel.isLoading.observe(this) { isLoading ->
             try {
+                try {
+                    supportFragmentManager.executePendingTransactions()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
                 if (isLoading) {
-                    try {
-                        supportFragmentManager.executePendingTransactions()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
                     if (!loaderDialog.isAdded && supportFragmentManager.findFragmentByTag(
                             LoaderDialog.TAG
                         ) == null

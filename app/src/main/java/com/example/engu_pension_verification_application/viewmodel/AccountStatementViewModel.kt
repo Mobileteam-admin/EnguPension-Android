@@ -1,5 +1,6 @@
 package com.example.engu_pension_verification_application.viewmodel
 
+import android.app.DownloadManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -39,5 +40,13 @@ class AccountStatementViewModel(private val networkRepo: NetworkRepo) : ViewMode
                 )
             }
         }
+    }
+
+    fun downloadPdf(
+        downloadManager: DownloadManager,
+        fileUrl: String, fileName: String,
+        downloadDescription: String
+    ){
+        networkRepo.downloadFile(downloadManager, fileUrl, fileName, downloadDescription)
     }
 }
