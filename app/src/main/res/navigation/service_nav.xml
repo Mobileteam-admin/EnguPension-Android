@@ -6,7 +6,7 @@
     app:startDestination="@id/navigation_choose_service">
     <fragment
         android:id="@+id/navigation_choose_service"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.service.ChooseServiceFragment"
+        android:name="com.enugu.pension.ui.fragment.service.ChooseServiceFragment"
         android:label="Choose Service"
         tools:layout="@layout/fragment_choose_service">
         <action
@@ -20,13 +20,13 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_activeService"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.service.ActiveServiceFragment"
+        android:name="com.enugu.pension.ui.fragment.service.ActiveServiceFragment"
         android:label="Active Service"
         tools:layout="@layout/fragment_active_service">
     </fragment>
     <fragment
         android:id="@+id/navigation_Retiree"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.service.RetireeServiceFragment"
+        android:name="com.enugu.pension.ui.fragment.service.RetireeServiceFragment"
         android:label="Retiree Service"
         tools:layout="@layout/fragment_retiree">
     </fragment>

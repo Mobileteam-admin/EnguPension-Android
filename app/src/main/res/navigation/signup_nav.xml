@@ -6,7 +6,7 @@
     app:startDestination="@+id/navigation_login">
     <fragment
         android:id="@+id/navigation_login"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.signup.login.LoginFragment"
+        android:name="com.enugu.pension.ui.fragment.signup.login.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login">
 
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_signup"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.signup.sign_up.SignUpFragment"
+        android:name="com.enugu.pension.ui.fragment.signup.sign_up.SignUpFragment"
         android:label="SignUp"
         tools:layout="@layout/fragment_sign_up">
         <action
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/navigation_forgotpassword"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.signup.forgotpassword.ForgotPasswordFragment"
+        android:name="com.enugu.pension.ui.fragment.signup.forgotpassword.ForgotPasswordFragment"
         android:label="Forget Password"
         tools:layout="@layout/fragment_forgot_password" >
         <action
@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/navigation_otp"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.signup.otp_verify.OTPFragment"
+        android:name="com.enugu.pension.ui.fragment.signup.otp_verify.OTPFragment"
         android:label="OTP"
         tools:layout="@layout/fragment_o_t_p" >
         <action
@@ -48,7 +48,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_resetpassword"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.signup.resetpassword.ResetPasswordFragment"
+        android:name="com.enugu.pension.ui.fragment.signup.resetpassword.ResetPasswordFragment"
         android:label="Reset Password"
         tools:layout="@layout/fragment_reset_password" >
 

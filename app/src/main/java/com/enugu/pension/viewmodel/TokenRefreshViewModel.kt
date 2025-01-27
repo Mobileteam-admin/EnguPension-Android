@@ -1,0 +1,59 @@
+package com.enugu.pension.viewmodel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.enugu.pension.model.request.InputRefreshToken
+import com.enugu.pension.model.response.ResponseRefreshToken
+import com.enugu.pension.model.response.TokenDetail
+import com.enugu.pension.network.ApiClient
+import com.enugu.pension.ui.fragment.tokenrefresh.TokenRefreshCallBack
+import com.enugu.pension.util.SharedPref
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
+class TokenRefreshViewModel(var tokenRefreshCallBack: TokenRefreshCallBack) {
+//(application: Application) : AndroidViewModel(application)
+    private val prefs = SharedPref
+
+    private val _tokenrefreshStatus = MutableLiveData<ResponseRefreshToken>()
+    val TokenrefreshStatus: LiveData<ResponseRefreshToken>
+        get() = _tokenrefreshStatus
+
+    /*init {
+        application.let { prefs.with(it) }
+    }*/
+
+    fun getTokenRefresh() {
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val response =
+                    ApiClient.getApiInterface().getRefreshToken(
+                        InputRefreshToken(
+                            prefs.refresh_token
+                        )
+                    )
+
+                if (response.tokenDetail?.status.equals("success")) {
+                    prefs.access_token = response.tokenDetail?.accessToken
+                    prefs.refresh_token = response.tokenDetail?.refreshToken
+                    //_tokenrefreshStatus.value = response
+                    tokenRefreshCallBack.onTokenRefreshSuccess(response)
+                } else {
+                    //_tokenrefreshStatus.value = response
+                    tokenRefreshCallBack.onTokenRefreshFailure(response)
+                }
+
+            } catch (e: java.lang.Exception) {
+                /*_tokenrefreshStatus.value =
+                    ResponseRefreshToken(
+                        TokenDetail(
+                            message = "Something went wrong"
+                        )
+                    )*/
+                tokenRefreshCallBack.onTokenRefreshFailure(ResponseRefreshToken(TokenDetail(message = "Something went wrong"))
+                )
+            }
+        }
+    }
+}
