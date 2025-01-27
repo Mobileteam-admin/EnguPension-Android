@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "587964905834",
+    "project_id": "engu-pension",
+    "storage_bucket": "engu-pension.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587964905834:android:33314facb8fa6264cc4d13",
+        "android_client_info": {
+          "package_name": "com.enugu.pension"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApjXx-oKG4u9J3-Cd3eWGtIOM6lGNAJmU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
