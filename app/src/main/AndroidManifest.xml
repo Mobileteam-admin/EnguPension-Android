@@ -61,7 +61,7 @@
              />
 
         <activity
-            android:name=".ui.activity.WebView.ActiveDocWebViewActivity"
+            android:name=".ui.activity.ActiveDocWebViewActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar"
@@ -74,7 +74,7 @@
             android:theme="@style/Theme.Design.Light.NoActionBar" />
 
         <activity
-            android:name=".ui.activity.WebView.StripeWebViewActivity"
+            android:name=".ui.activity.StripeWebViewActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar" />

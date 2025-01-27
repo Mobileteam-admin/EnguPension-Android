@@ -6,7 +6,7 @@
     app:startDestination="@id/navigation_splash1">
     <fragment
         android:id="@+id/navigation_splash1"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.splash.Splash1"
+        android:name="com.enugu.pension.ui.fragment.splash.Splash1"
         android:label="Splash1"
         tools:layout="@layout/fragment_splash1" >
 
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_splash2"
-        android:name="com.example.engu_pension_verification_application.ui.fragment.splash.Splash2"
+        android:name="com.enugu.pension.ui.fragment.splash.Splash2"
         android:label="Splash2"
         tools:layout="@layout/fragment_splash2" />
 
