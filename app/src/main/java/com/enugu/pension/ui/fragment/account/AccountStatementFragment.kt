@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -86,6 +88,8 @@ class AccountStatementFragment : BaseFragment() {
     }
 
     private fun initViews() {
+        binding.tvEmptyMessage.isGone = true
+        binding.clDownload.isGone = true
         binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -110,6 +114,11 @@ class AccountStatementFragment : BaseFragment() {
         }
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest { loadStates ->
+                val isEmpty = adapter.itemCount == 0 &&
+                        loadStates.refresh is LoadState.NotLoading &&
+                        loadStates.append.endOfPaginationReached
+                binding.tvEmptyMessage.isVisible = isEmpty
+                binding.clDownload.isInvisible = isEmpty
                 val errorState = loadStates.refresh as? LoadState.Error
                     ?: loadStates.append as? LoadState.Error
                     ?: loadStates.prepend as? LoadState.Error

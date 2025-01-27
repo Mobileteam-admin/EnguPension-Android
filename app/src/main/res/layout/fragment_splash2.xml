@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.fragment.splash.Splash2">
+    tools:context=".ui.fragment.splash.Splash2Fragment">
 
     <LinearLayout
         android:id="@+id/rl_engu_logo"
@@ -64,10 +64,10 @@
 
     <ImageView
         android:id="@+id/img_next2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_splash_bg"
+        android:src="@drawable/splash_bg"
         app:layout_constraintHeight_percent="0.50"
         app:layout_constraintWidth_percent="0.50"
         app:layout_constraintBottom_toBottomOf="parent"

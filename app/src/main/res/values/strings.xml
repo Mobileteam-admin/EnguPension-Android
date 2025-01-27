@@ -179,5 +179,6 @@
     <string name="Statement_download_error_msg">Statement download failed, please try again later.</string>
     <string name="downloading_statement">Downloading account statement…</string>
     <string name="statement_file_name">Account Statement - %s</string>
+    <string name="no_transactions">No transactions!</string>
 
 </resources>

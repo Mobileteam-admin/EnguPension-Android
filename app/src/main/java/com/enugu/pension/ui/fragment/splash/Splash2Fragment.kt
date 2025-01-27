@@ -15,7 +15,7 @@ import com.enugu.pension.util.OnboardingStage
 import com.enugu.pension.util.SharedPref
 
 
-class Splash2 : BaseFragment() {
+class Splash2Fragment : BaseFragment() {
     private lateinit var binding:FragmentSplash2Binding
     val prefs = SharedPref
 
@@ -34,7 +34,7 @@ class Splash2 : BaseFragment() {
     }
 
     private fun onClicked() {
-        binding.imgNext2.setOnClickListener {
+        binding.root.setOnClickListener {
             if (prefs.isLogin) {
                 val intent = when (prefs.onboardingStage) {
                     OnboardingStage.DASHBOARD -> Intent(context, DashboardActivity::class.java)

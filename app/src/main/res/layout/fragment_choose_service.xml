@@ -1,52 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.service.ChooseServiceFragment">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/onboarding_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/fl_choose_service_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_30"
+        android:gravity="center"
+        android:paddingTop="@dimen/dp_20"
+        app:layout_constraintBottom_toTopOf="@+id/cl_choose_service"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintVertical_chainStyle="packed">
 
 
-        <FrameLayout
-            android:id="@+id/fl_choose_service_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dp_30"
-            android:gravity="center"
-            android:paddingTop="@dimen/dp_20"
-            app:layout_constraintBottom_toTopOf="@+id/cl_choose_service"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/img_bg_img"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_ellipse_circle" />
 
+        <ImageView
+            android:id="@+id/img_bg_logo"
+            android:layout_width="@dimen/dp_120"
+            android:layout_height="@dimen/dp_120"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_logo" />
 
-            <ImageView
-                android:id="@+id/img_bg_img"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_ellipse_circle" />
-
-            <ImageView
-                android:id="@+id/img_bg_logo"
-                android:layout_width="@dimen/dp_120"
-                android:layout_height="@dimen/dp_120"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_logo" />
-
-        </FrameLayout>
+    </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_choose_service"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_12"
-            app:layout_constraintBottom_toTopOf="@+id/img_service_bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fl_choose_service_logo">
@@ -80,8 +83,8 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_activeservice"
                     android:layout_width="0dp"
+                    app:cardUseCompatPadding="true"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/dp_12"
                     android:layout_weight="1"
                     app:cardCornerRadius="@dimen/dp_18"
                     app:cardElevation="@dimen/dp_8">
@@ -116,7 +119,7 @@
                     android:id="@+id/cv_retiree"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/dp_12"
+                    app:cardUseCompatPadding="true"
                     android:layout_weight="1"
                     app:cardCornerRadius="@dimen/dp_18"
                     app:cardElevation="@dimen/dp_8">
@@ -152,14 +155,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/img_service_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_new_basebg"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
