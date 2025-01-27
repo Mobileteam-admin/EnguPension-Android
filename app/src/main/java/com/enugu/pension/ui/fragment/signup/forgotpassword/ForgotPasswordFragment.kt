@@ -2,7 +2,6 @@ package com.enugu.pension.ui.fragment.signup.forgotpassword
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,14 +23,13 @@ import com.enugu.pension.viewmodel.ForgotPasswordViewModel
 
 class ForgotPasswordFragment : BaseFragment() {
     private lateinit var binding:FragmentForgotPasswordBinding
-    var Ph_no: String = ""
     var email_Phn: String = ""
     private lateinit var forgotPasswordViewModel: ForgotPasswordViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentForgotPasswordBinding.inflate(inflater, container, false)
         return binding.root
     }

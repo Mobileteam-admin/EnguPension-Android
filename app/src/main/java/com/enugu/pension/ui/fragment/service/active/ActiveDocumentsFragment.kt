@@ -64,7 +64,6 @@ class ActiveDocumentsFragment(
 
     val mimeTypes = arrayOf("image/jpeg", "image/png", "application/pdf")
 
-    val uris = mutableListOf<Uri>()
 
     private var applicationFormUri: Uri? = null
     private var letterFileUri: Uri? = null
