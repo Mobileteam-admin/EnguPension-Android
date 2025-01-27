@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -67,6 +68,7 @@ class WalletHistoryFragment : BaseFragment() {
     }
 
     private fun initViews() {
+        binding.tvEmptyMessage.isGone = true
         binding.imgWallethistoryBack.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -84,6 +86,10 @@ class WalletHistoryFragment : BaseFragment() {
         }
         lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest { loadStates ->
+                val isEmpty = adapter.itemCount == 0 &&
+                        loadStates.refresh is LoadState.NotLoading &&
+                        loadStates.append.endOfPaginationReached
+                binding.tvEmptyMessage.isVisible = isEmpty
                 val errorState = loadStates.refresh as? LoadState.Error
                     ?: loadStates.append as? LoadState.Error
                     ?: loadStates.prepend as? LoadState.Error

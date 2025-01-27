@@ -9,7 +9,7 @@ import com.enugu.pension.databinding.FragmentSplash1Binding
 import com.enugu.pension.ui.fragment.base.BaseFragment
 
 
-class Splash1 : BaseFragment() {
+class Splash1Fragment : BaseFragment() {
     private lateinit var binding:FragmentSplash1Binding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,7 +25,7 @@ class Splash1 : BaseFragment() {
     }
 
     private fun onClicked() {
-        binding.imgNext1.setOnClickListener {
+        binding.root.setOnClickListener {
             navigate(
                 R.id.action_splash1_to_splash2,
                 allowAnimation = false, popUpTo = R.id.navigation_splash1)
