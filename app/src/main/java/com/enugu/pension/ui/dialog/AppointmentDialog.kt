@@ -30,6 +30,11 @@ class AppointmentDialog : BaseDialog() {
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private val enguCalendarHandlerViewModel by activityViewModels<EnguCalendarHandlerViewModel>()
     private lateinit var enguCalendarDialog: EnguCalendarDialog
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCancelable = false
+        dismissOnDoubleBackPress = true
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {

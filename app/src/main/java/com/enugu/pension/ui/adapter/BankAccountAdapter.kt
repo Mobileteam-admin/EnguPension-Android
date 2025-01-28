@@ -2,6 +2,7 @@ package com.enugu.pension.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,6 +19,7 @@ class BankAccountAdapter(private val onItemClick: ((BankAccountItem) -> Unit)? =
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
             item: BankAccountItem,
+            isLastItem: Boolean,
             onItemClick: ((BankAccountItem) -> Unit)? = null
         ) {
             binding.root.setOnClickListener { onItemClick?.invoke(item) }
@@ -28,6 +30,7 @@ class BankAccountAdapter(private val onItemClick: ((BankAccountItem) -> Unit)? =
             binding.tvBankName.text = item.bankName
             binding.tvBankType.text = item.accountType
             binding.tvPrimary.isVisible = item.isPrimary
+            binding.divider.isGone = isLastItem
         }
     }
 
@@ -40,7 +43,8 @@ class BankAccountAdapter(private val onItemClick: ((BankAccountItem) -> Unit)? =
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item, onItemClick)
+        val isLastItem = position == itemCount - 1
+        holder.bind(item, isLastItem , onItemClick)
     }
 
     override fun getItemCount(): Int = items.size

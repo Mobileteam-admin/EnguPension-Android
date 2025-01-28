@@ -180,5 +180,6 @@
     <string name="downloading_statement">Downloading account statement…</string>
     <string name="statement_file_name">Account Statement - %s</string>
     <string name="no_transactions">No transactions!</string>
+    <string name="double_back_press_msg">Press back again to dismiss.</string>
 
 </resources>
