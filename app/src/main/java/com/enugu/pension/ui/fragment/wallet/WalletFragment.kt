@@ -65,20 +65,28 @@ class WalletFragment : BaseFragment() {
         initBanks()
     }
 
-    private fun initApiCall() {
-        if (viewModel.bankListApiResult.value == null) {
-            showLoader()
-            viewModel.fetchBankList()
-        }
-    }
     private fun initBanks() {
-        if (dashboardViewModel.banks == null || dashboardViewModel.bankAccountTypes == null) {
-            showLoader()
-            viewModel.fetchBankList()
-        } else {
-            setBankListAdapter()
+        viewModel.bankItems.clear()
+        viewModel.bankItems.add(
+            ListBanksItem(
+                name = " - Select Bank - ",
+                id = BANK_ITEM_SELECT_ID,
+            )
+        )
+        dashboardViewModel.bankAccounts?.forEach {
+                viewModel.bankItems.add(ListBanksItem(
+                    code = it.bankCode,
+                    name = it.bankName,
+                    id = it.bankId
+                ))
+        }
+        binding.spWalletBank.adapter = BankAdapter(context, viewModel.bankItems)
+        viewModel.selectedBankItemPosition?.let {
+            binding.spWalletBank.setSelection(it)
+
         }
     }
+
     private fun initVars() {
         stripeActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -117,7 +125,7 @@ class WalletFragment : BaseFragment() {
             if (validateInputs()) {
                 val topUpRequest = TopUpRequest(
                     userId = SharedPref.user_id?.toInt()!!,
-                    bankId = binding.spWalletBank.selectedItemPosition,
+                    bankId = viewModel.bankItems[binding.spWalletBank.selectedItemPosition]?.id!! ,
                     amount = binding.etTopUpWalletAmount.text.toString().toFloat(),
                     currency = AppConstants.DEFAULT_CURRENCY_CODE,
                 )
@@ -147,25 +155,7 @@ class WalletFragment : BaseFragment() {
                 populateViews()
             }
         }
-        viewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
-            if (response.detail?.status == AppConstants.SUCCESS) {
-                dashboardViewModel.banks = response.detail.banks
-                dashboardViewModel.bankAccountTypes = response.detail.accountType
-                dismissLoader()
-                setBankListAdapter()
-            } else {
-                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            viewModel.fetchBankList()
-                        }
-                    }
-                } else {
-                    dismissLoader()
-                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
-                }
-            }
-        }
+
         viewModel.topUpApiResult.observe(viewLifecycleOwner) { pair ->
             dismissLoader()
             if (pair != null) {
@@ -217,22 +207,6 @@ class WalletFragment : BaseFragment() {
         }
     }
 
-    private fun setBankListAdapter() {
-        viewModel.bankItems.clear()
-        if (!dashboardViewModel.banks.isNullOrEmpty()) {
-            viewModel.bankItems.add(
-                ListBanksItem(
-                    name = " - Select Bank - ",
-                    id = BANK_ITEM_SELECT_ID,
-                )
-            )
-            dashboardViewModel.banks?.let { viewModel.bankItems.addAll(it) }
-        }
-        binding.spWalletBank.adapter = BankAdapter(context, viewModel.bankItems)
-        viewModel.selectedBankItemPosition?.let {
-            binding.spWalletBank.setSelection(it)
-        }
-    }
     private fun refreshBankImage(position: Int) {
         binding.imgActivebank.setImageResource(R.drawable.ic_bank_green)
         viewModel.bankItems[position]?.let {

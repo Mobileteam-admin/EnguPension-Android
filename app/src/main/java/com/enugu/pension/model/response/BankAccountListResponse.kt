@@ -14,6 +14,7 @@ data class BankAccountListResponse(
         data class BankAccount(
             @SerializedName("user_id") var userId: Int? = null,
             @SerializedName("bank_name") var bankName: String? = null,
+            @SerializedName("bank_id") var bankId: Int? = null,
             @SerializedName("account_holder_name") var accountHolderName: String? = null,
             @SerializedName("account_number") var accountNumber: String? = null,
             @SerializedName("swift_code") var swiftCode: String? = null,
