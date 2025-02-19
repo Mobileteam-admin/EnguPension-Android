@@ -22,6 +22,7 @@ import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentAccountStatementBinding
 import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.activity.PermissionRequestActivity
+import com.enugu.pension.ui.adapter.TransactionLoadStateAdapter
 import com.enugu.pension.ui.adapter.WalletHistoryAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
 import com.enugu.pension.util.CalendarUtils
@@ -88,13 +89,11 @@ class AccountStatementFragment : BaseFragment() {
     }
 
     private fun initViews() {
+        initRvWalletHistory()
         binding.tvEmptyMessage.isGone = true
-        binding.clDownload.isGone = true
         binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.rvWalletHistory.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvWalletHistory.adapter = adapter
         binding.clDownload.setOnClickListener {
             val intent = Intent(requireActivity(), PermissionRequestActivity::class.java)
             intent.putExtra(PermissionRequestActivity.EXTRA_PERMISSION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -105,6 +104,12 @@ class AccountStatementFragment : BaseFragment() {
         }
     }
 
+    private fun initRvWalletHistory() {
+        binding.rvWalletHistory.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvWalletHistory.adapter = adapter.withLoadStateFooter(
+            footer = TransactionLoadStateAdapter { adapter.retry() }
+        )
+    }
     private fun observeLiveData() {
         lifecycleScope.launch {
             viewModel.transactionFlow.collectLatest { pagingData ->
@@ -118,7 +123,6 @@ class AccountStatementFragment : BaseFragment() {
                         loadStates.refresh is LoadState.NotLoading &&
                         loadStates.append.endOfPaginationReached
                 binding.tvEmptyMessage.isVisible = isEmpty
-                binding.clDownload.isInvisible = isEmpty
                 val errorState = loadStates.refresh as? LoadState.Error
                     ?: loadStates.append as? LoadState.Error
                     ?: loadStates.prepend as? LoadState.Error

@@ -44,9 +44,11 @@ class AddBankDialog : BaseDialog() {
     private lateinit var viewModel: AddBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private lateinit var dashboardViewModel: DashboardViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = false
+        dismissOnDoubleBackPress = true
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +76,7 @@ class AddBankDialog : BaseDialog() {
             setBankAdapters()
         }
     }
+
     private fun observeLiveData() {
         viewModel.verificationState.observe(viewLifecycleOwner) {
             if (it != null)
@@ -171,7 +174,7 @@ class AddBankDialog : BaseDialog() {
                 dashboardViewModel.fetchBankAccountList()
             } else if (response.detail?.status == AppConstants.FAIL) {
                 dismissLoader()
-                showToast(response.detail.message?: getString(R.string.common_error_msg_2))
+                showToast(response.detail.message ?: getString(R.string.common_error_msg_2))
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -181,7 +184,7 @@ class AddBankDialog : BaseDialog() {
                     }
                 } else {
                     dismissLoader()
-                    showToast(response.detail?.message?: getString(R.string.common_error_msg_2))
+                    showToast(response.detail?.message ?: getString(R.string.common_error_msg_2))
                 }
             }
         }
@@ -365,16 +368,18 @@ class AddBankDialog : BaseDialog() {
         return errorMessage == null
     }
 
-    private fun hasAccountAdded() :Boolean{
+    private fun hasAccountAdded(): Boolean {
         dashboardViewModel.bankAccounts?.forEach {
             if (it.bankName == viewModel.bankItems[viewModel.selectedBankIndex]?.name &&
                 it.accountNumber == binding.etAccountNumber.text.toString() &&
                 it.swiftCode == binding.etSwiftCode.text.toString() &&
-                it.bankCode == binding.etBankCode.text.toString())
+                it.bankCode == binding.etBankCode.text.toString()
+            )
                 return true
         }
         return false
     }
+
     private fun showBankVerifyDialog() {
         val bankVerifyBinding = CardBankVerifyBinding.inflate(LayoutInflater.from(requireContext()))
         val bankVerifyDialog = AlertDialog.Builder(requireContext())

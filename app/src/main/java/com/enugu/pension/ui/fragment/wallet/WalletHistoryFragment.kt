@@ -16,6 +16,7 @@ import com.enugu.pension.R
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentWalletHistoryBinding
 import com.enugu.pension.network.ApiClient
+import com.enugu.pension.ui.adapter.TransactionLoadStateAdapter
 import com.enugu.pension.ui.adapter.WalletHistoryAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
 import com.enugu.pension.viewmodel.DashboardViewModel
@@ -68,15 +69,19 @@ class WalletHistoryFragment : BaseFragment() {
     }
 
     private fun initViews() {
+        initRvWalletHistory()
         binding.tvEmptyMessage.isGone = true
         binding.imgWallethistoryBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.rvWalletHistory.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvWalletHistory.adapter = adapter
-
     }
 
+    private fun initRvWalletHistory() {
+        binding.rvWalletHistory.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvWalletHistory.adapter = adapter.withLoadStateFooter(
+            footer = TransactionLoadStateAdapter { adapter.retry() }
+        )
+    }
     private fun observeLiveData() {
         lifecycleScope.launch {
             viewModel.transactionFlow.collectLatest { pagingData ->

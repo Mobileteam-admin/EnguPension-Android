@@ -49,11 +49,11 @@ class ChooseServiceFragment : BaseFragment() {
     }
 
     private fun setClickListeners() {
-        binding.cvActiveservice.setOnClickListener {
+        binding.llAccountService.setOnClickListener {
             SharedPref.onboardingStage = OnboardingStage.ACTIVE_BASIC_DETAILS
             navigateToActiveService(true)
         }
-        binding.cvRetiree.setOnClickListener {
+        binding.llRetiree.setOnClickListener {
             SharedPref.onboardingStage = OnboardingStage.RETIREE_BASIC_DETAILS
             navigateToRetireService(true)
         }
