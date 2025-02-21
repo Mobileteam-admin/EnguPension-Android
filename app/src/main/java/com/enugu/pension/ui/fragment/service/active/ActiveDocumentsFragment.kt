@@ -80,11 +80,6 @@ class ActiveDocumentsFragment(
         const val PHOTO_FILE = 104
         const val CLEARANCE_FORM_FILE = 105
 
-        /*fun newInstance(viewPageCallBack: ViewPageCallBack, tabAccessControl: TabAccessControl): ActiveDocumentsFragment {
-            return ActiveDocumentsFragment(viewPageCallBack, tabAccessControl).apply {
-                this.viewPageCallBack = viewPageCallBack
-            }
-        }*/
     }
 
     var ActiveUserDocRetrive: FileUrlResponse? = null
@@ -302,48 +297,6 @@ class ActiveDocumentsFragment(
                 }
             }
 
-
-            /*
-            //from device or web view when view button clicked
-            binding.aIdCardBtnGreenView ->
-                if(!ActiveUserDocRetrive?.idCardFileUrl.isNullOrEmpty()){
-
-                    Log.d("viewbutton", " id cardurl ${ActiveUserDocRetrive?.idCardFileUrl}")
-                    startActivityWebViewFromUrl(ActiveUserDocRetrive?.idCardFileUrl)
-                }else{
-                    Log.d("viewbutton", " id card uri  ${idCardUri}")
-                    Log.d("viewbutton", " id card url ${ActiveUserDocRetrive?.idCardFileUrl}")
-                    idCardUri?.let { it1 -> startActivityFromUri(it1) }
-                }
-            binding.aPassportPhotoBtnGreenView ->
-                if(!ActiveUserDocRetrive?.passportPhotoFileUrl.isNullOrEmpty()){
-                    Log.d("viewbutton", " passport url ${ActiveUserDocRetrive?.passportPhotoFileUrl}")
-                    startActivityWebViewFromUrl(ActiveUserDocRetrive?.passportPhotoFileUrl)
-                }else{
-                    Log.d("viewbutton", " passport uri ${PhotoUri}")
-                    Log.d("viewbutton", " passport url ${ActiveUserDocRetrive?.passportPhotoFileUrl}")
-                    PhotoUri?.let { it1 -> startActivityFromUri(it1) }
-                }
-
-            binding.appFormBtnGreenView ->
-                if(!ActiveUserDocRetrive?.applicationFormFileUrl.isNullOrEmpty()){
-                startActivityWebViewFromUrl(ActiveUserDocRetrive?.applicationFormFileUrl)
-                }else{
-                applicationFormUri?.let { it1 -> startActivityFromUri(it1) }
-                }
-            binding.promotionLetterBtnGreenView ->
-                if(!ActiveUserDocRetrive?.promotionLetterTransferLetterFileUrl.isNullOrEmpty()){
-                    startActivityWebViewFromUrl(ActiveUserDocRetrive?.promotionLetterTransferLetterFileUrl)
-                }else{
-                    letterFileUri?.let { it1 -> startActivityFromUri(it1) }
-                }
-
-            binding.aClearenceFormBtnGreenView ->
-                if(!ActiveUserDocRetrive?.clearanceFormFileUrl.isNullOrEmpty()){
-                startActivityWebViewFromUrl(ActiveUserDocRetrive?.clearanceFormFileUrl)
-            }else{
-                ClearanceUri?.let { it1 -> startActivityFromUri(it1) }
-            }*/
             binding.aIdCardBtnGreenView -> {
                 if (idCardUri != null) {
                     Log.d("viewbutton", "id card uri ${idCardUri}")

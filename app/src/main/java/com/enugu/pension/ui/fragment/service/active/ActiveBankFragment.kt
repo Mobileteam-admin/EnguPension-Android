@@ -388,20 +388,31 @@ class ActiveBankFragment: BaseFragment() {
 
     private fun onClicked() {
 
+        binding.spActiveBank.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spActivebankAcctype.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+
         // Assuming you have a CheckBox with the ID 'myCheckBox' in your layout
 
         binding.cbActivebankAutorenewal.setOnCheckedChangeListener { buttonView, isChecked ->
+            clearAllEditTextFocus()
             autoRenewal = isChecked
         }
 
         binding.tvActivebankBankcodeVerify.setOnClickListener{
-
+            clearAllEditTextFocus()
             if (isValidBankAccountNumber()){
                 bankVerifyDialog()
             }
         }
 
         binding.tvActivebankBankcodeReverify.setOnClickListener{
+            clearAllEditTextFocus()
             if (isValidBankAccountNumber()){
                 bankVerifyDialog()
             }
@@ -409,6 +420,7 @@ class ActiveBankFragment: BaseFragment() {
 
 
         binding.llActivebankNext.setOnClickListener {
+            clearAllEditTextFocus()
             if (isValidBank()) {
                 //finish the Form
                 if (context?.isConnectedToNetwork()!!) {

@@ -1,5 +1,6 @@
 package com.enugu.pension.ui.fragment.service.retiree
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
@@ -344,26 +345,37 @@ class RetireeBankFragment : BaseFragment() {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun onClicked() {
-
+        binding.spRetireebank.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spRetireebankAcctype.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
         binding.cbRetireebankAutorenewal.setOnCheckedChangeListener { buttonView, isChecked ->
+            clearAllEditTextFocus()
             autoRenewal = isChecked
         }
 
         binding.tvRetireebankBankcodeVerify.setOnClickListener{
+            clearAllEditTextFocus()
             if (isValidBankAccountNumber()){
                 bankVerifyDialog()
             }
         }
 
         binding.tvRetireebankBankcodeReverify.setOnClickListener{
+            clearAllEditTextFocus()
             if (isValidBankAccountNumber()){
                 bankVerifyDialog()
             }
         }
 
         binding.llRetireebankNext.setOnClickListener {
-
+            clearAllEditTextFocus()
             if (isValidRBank()) {
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {/*     //finish the Form
                          FinishFnCall()*/

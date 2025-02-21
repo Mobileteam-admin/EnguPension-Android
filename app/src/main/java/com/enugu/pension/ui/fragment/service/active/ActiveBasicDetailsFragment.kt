@@ -1,5 +1,6 @@
 package com.enugu.pension.ui.fragment.service.active
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -247,6 +248,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
         onClicked()
 
         binding.ccpActivedetails.setOnCountryChangeListener {
+            clearAllEditTextFocus()
             selected_country = binding.ccpActivedetails.selectedCountryName
             Log.d("changed_country", "onViewCreated: " + binding.ccpActivedetails.selectedCountryName)
             showLoader()
@@ -578,8 +580,32 @@ class ActiveBasicDetailsFragment : BaseFragment()
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun onClicked() {
-
+        binding.rbActiveMale.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.rbActiveFemale.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spActiveLga.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spActiveSubTreasury.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spActiveLastGrade.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spActiveOccupationType.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
         binding.etActiveFirstName.addTextChangedListener(AlphabeticTextWatcher(binding.etActiveFirstName))
         binding.etActiveMiddleName.addTextChangedListener(AlphabeticTextWatcher(binding.etActiveMiddleName))
         binding.etActiveLastName.addTextChangedListener(AlphabeticTextWatcher(binding.etActiveLastName))
@@ -589,12 +615,14 @@ class ActiveBasicDetailsFragment : BaseFragment()
         binding.radioGroupActive.setOnCheckedChangeListener { group, checkedId ->
             //sex = "You selected: " + if (R.id.rb_active_male == checkedId) "male" else "female"
             sex = if (R.id.rb_active_male == checkedId) "male" else "female"
+            clearAllEditTextFocus()
         }
 
 
 
 
         binding.etActiveDOB.setOnClickListener {
+            clearAllEditTextFocus()
             val startCalendar = CalendarUtils.getMinCalendar()
             var endCalendar = Calendar.getInstance()
             val doj = binding.etActiveDateAppointment.text.toString()
@@ -616,6 +644,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
         }
 
         binding.etActiveDateAppointment.setOnClickListener {
+            clearAllEditTextFocus()
             val dob = binding.etActiveDOB.text.toString()
             var startCalendar = CalendarUtils.getMinCalendar()
             val endCalendar = Calendar.getInstance()
@@ -634,6 +663,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
         binding.llActivebasicdetailsNext.setOnClickListener {
             //nextButtonCall()
+            clearAllEditTextFocus()
             if (isValidActiveBasicDetails()) {
                 Ph_no = "+" + binding.activeNextKinPhoneCcp.fullNumber
                 nextButtonCall()
