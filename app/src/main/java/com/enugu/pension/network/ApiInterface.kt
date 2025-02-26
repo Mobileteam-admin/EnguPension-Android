@@ -4,6 +4,7 @@ package com.enugu.pension.network
 import com.enugu.pension.model.request.*
 import com.enugu.pension.model.response.*
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -214,4 +215,6 @@ interface ApiInterface {
     suspend fun fetchStatementLink(@Header("Authorization") token: String
     ): StatementLinkResponse
 
+    @GET
+    suspend fun downloadFile(@Url fileUrl: String): ResponseBody
 }

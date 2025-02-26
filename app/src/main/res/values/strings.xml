@@ -88,6 +88,7 @@
     <string name="position_last_held">Position Last held</string>
     <string name="enter_your_last_position_held">Enter your last position held</string>
     <string name="upload_application_form">Upload Application form</string>
+    <string name="application_form">Application form</string>
     <string name="upload">Upload</string>
     <string name="promotion_letter_transfer_letter">Promotion Letter/Transfer letter</string>
     <string name="id_card">ID card</string>
@@ -182,5 +183,10 @@
     <string name="no_transactions">No transactions!</string>
     <string name="double_back_press_msg">Press back again to dismiss.</string>
     <string name="failed_to_load_data">Failed to load data</string>
-
+    <string name="fail_size_exceed_error">Can\'t upload a file larger than %d MB.</string>
+    <string name="appointment_for_payment_of_monthly_arrears">Appointment for payment of monthly arrears</string>
+    <string name="authorisation_for_payment">Authorisation for payment of retirement/Death</string>
+    <string name="notification_of_promotion">Notification of Promotion</string>
+    <string name="pension_life_certificate">Pension Life certificate</string>
+    <string name="retirement_notice">Retirement Notice</string>
 </resources>
