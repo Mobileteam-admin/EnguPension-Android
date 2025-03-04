@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +51,7 @@ class AccountStatementFragment : BaseFragment() {
         if (result.resultCode == RESULT_OK) {
             if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 showLoader()
-                viewModel.fetchStatementLink()
+                viewModel.fetchStatementPdfLink()
             } else {
                 showToast(R.string.no_internet_error)
             }
@@ -154,12 +153,12 @@ class AccountStatementFragment : BaseFragment() {
         }
         viewModel.statementApiResult.observe(viewLifecycleOwner) { response ->
             dismissLoader()
-            if (response.downloadLink == null) {
+            if (response.downloadUrl == null) {
                 showToast(R.string.Statement_download_error_msg)
             } else {
                 val downloadManager =
                     context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                val url = "${AppConstants.BASE_URL}/${response.downloadLink}"
+                val url = "${AppConstants.BASE_URL}/${response.downloadUrl}"
                 val fileName = getString(R.string.statement_file_name, CalendarUtils.getFormattedNow())
                 val downloadDescription = getString(R.string.downloading_statement)
                 viewModel.downloadPdf(downloadManager, url, fileName, downloadDescription)

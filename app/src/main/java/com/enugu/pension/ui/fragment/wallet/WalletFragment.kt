@@ -8,10 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -26,8 +27,8 @@ import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.activity.StripeWebViewActivity
 import com.enugu.pension.ui.adapter.BankAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.AppUtils.Companion.isValidNumber
 import com.enugu.pension.util.SharedPref
+import com.enugu.pension.util.isValidNumber
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 class WalletFragment : BaseFragment() {
     companion object {
         const val BANK_ITEM_SELECT_ID = -1
+        const val MIN_TOP_UP_AMOUNT = 1400f
     }
     private lateinit var binding:FragmentWalletBinding
     private lateinit var dashboardViewModel: DashboardViewModel
@@ -112,6 +114,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun initViews() {
+        binding.tvAmountError.isInvisible = true
         binding.imgWalletBack.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -146,6 +149,10 @@ class WalletFragment : BaseFragment() {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
+        }
+        binding.etTopUpWalletAmount.addTextChangedListener {
+            val amount = it.toString().toFloatOrNull() ?: 0f
+            binding.tvAmountError.isInvisible = amount >= MIN_TOP_UP_AMOUNT
         }
     }
 
@@ -219,9 +226,11 @@ class WalletFragment : BaseFragment() {
 
     private fun validateInputs(): Boolean {
         var errorResId: Int? = null
-        val amount = binding.etTopUpWalletAmount.text.toString()
-        if (!amount.isValidNumber()) {
+        val amountText = binding.etTopUpWalletAmount.text.toString()
+        if (!amountText.isValidNumber()) {
             errorResId = R.string.invalid_amount_msg
+        } else if ((amountText.toFloatOrNull() ?: 0f) < MIN_TOP_UP_AMOUNT) {
+            errorResId = R.string.top_up_minimum_amount_error
         } else if (binding.spWalletBank.selectedItemPosition !in viewModel.bankItems.indices
             || viewModel.bankItems[binding.spWalletBank.selectedItemPosition]?.id == BANK_ITEM_SELECT_ID
         ) {

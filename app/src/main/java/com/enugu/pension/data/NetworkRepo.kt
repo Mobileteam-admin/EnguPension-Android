@@ -26,7 +26,13 @@ import com.enugu.pension.model.request.VideoCallRequest
 import com.enugu.pension.network.ApiInterface
 import com.enugu.pension.util.NetworkUtils
 import com.enugu.pension.util.SharedPref
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun login(inputLogin: InputLogin) = apiInterface.getLogin(inputLogin)
@@ -141,8 +147,8 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchBankAccountList() =
         apiInterface.fetchBankAccountList(NetworkUtils.getAccessToken())
 
-    suspend fun fetchStatementLink() =
-        apiInterface.fetchStatementLink(NetworkUtils.getAccessToken())
+    suspend fun fetchStatementPdfLink() =
+        apiInterface.fetchStatementPdfLink(NetworkUtils.getAccessToken(), SharedPref.user_id!!.toInt())
 
     fun downloadFile(
         downloadManager:DownloadManager,
@@ -159,4 +165,20 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
             )
         return downloadManager.enqueue(request)
     }
+
+    suspend fun downloadCacheFile(fileUrl: String, cacheFile: File): File? {
+            return withContext(Dispatchers.IO) {
+                try {
+                    val responseBody: ResponseBody = apiInterface.downloadFile(fileUrl)
+                    val inputStream: InputStream = responseBody.byteStream()
+                    val outputStream = FileOutputStream(cacheFile)
+                    inputStream.use { it.copyTo(outputStream) } // Safe copy
+                    outputStream.close()
+                    cacheFile
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
+        }
 }

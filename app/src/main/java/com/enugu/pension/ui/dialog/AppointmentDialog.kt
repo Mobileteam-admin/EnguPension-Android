@@ -118,7 +118,7 @@ class AppointmentDialog : BaseDialog() {
             if (response.detail?.status == AppConstants.SUCCESS) {
                 binding.pbDate.isGone = true
                 response.detail?.bookingDateRange?.let {
-                    enguCalendarHandlerViewModel.enguCalendarRange = CalendarUtils.getEnguCalendarRange(it)
+                    enguCalendarHandlerViewModel.enguCalendarRange = CalendarUtils.getEnguCalendarRange(it, false)
                 }
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {

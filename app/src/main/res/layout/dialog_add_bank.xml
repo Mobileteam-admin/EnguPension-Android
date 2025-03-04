@@ -167,6 +167,7 @@
             android:drawablePadding="@dimen/dp_16"
             android:hint="Enter your SwiftCode"
             android:inputType="text"
+            android:maxLength="@integer/swift_code_length_2"
             android:padding="@dimen/dp_12" />
 
         <TextView
@@ -191,7 +192,7 @@
                 android:drawablePadding="@dimen/dp_16"
                 android:hint="@string/enter_your_bank_code"
                 android:inputType="text"
-                android:maxLength="@integer/account_number_max_length"
+                android:maxLength="@integer/bank_code_max_length"
                 android:padding="@dimen/dp_12"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -275,6 +276,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/dp_12"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <CheckBox

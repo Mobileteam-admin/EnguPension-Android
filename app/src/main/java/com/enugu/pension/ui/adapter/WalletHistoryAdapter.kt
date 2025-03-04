@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.enugu.pension.databinding.ItemWalletHistoryBinding
 import com.enugu.pension.model.response.TransactionHistoryResponse
-import com.enugu.pension.util.AppUtils.Companion.capitalizeFirstLetter
 import com.enugu.pension.util.CalendarUtils
+import com.enugu.pension.util.capitalizeFirstLetter
 
 
 class WalletHistoryAdapter :

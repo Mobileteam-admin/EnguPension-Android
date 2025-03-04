@@ -1,5 +1,6 @@
 package com.enugu.pension.ui.fragment.service.retiree
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
@@ -242,6 +243,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         binding.ccpRetireedetails.setOnCountryChangeListener(object :
             CountryCodePicker.OnCountryChangeListener {
             override fun onCountrySelected(selectedCountry: Country?) {
+                clearAllEditTextFocus()
                 selected_country = binding.ccpRetireedetails.selectedCountryName
                 Log.d("changed_country", "onViewCreated: " + binding.ccpRetireedetails.selectedCountryName)
                 showLoader()
@@ -530,8 +532,36 @@ class RetireeBasicDetailsFragment : BaseFragment() {
             }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun onClicked() {
-
+        binding.spRetireePensionBoard.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spRetireeSubTreasury.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.rbRetireeMale.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.rbRetireeFemale.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spRetireeLga.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spRetireeGradeLevel.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spRetireePositionLast.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
         binding.etRetireeFirstName.addTextChangedListener(AlphabeticTextWatcher(binding.etRetireeFirstName))
         binding.etRetireeMiddleName.addTextChangedListener(AlphabeticTextWatcher(binding.etRetireeMiddleName))
         binding.etRetireeLastName.addTextChangedListener(AlphabeticTextWatcher(binding.etRetireeLastName))
@@ -550,6 +580,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         }
 
         binding.etRetireeDOB.setOnClickListener {
+            clearAllEditTextFocus()
             val startCalendar = CalendarUtils.getMinCalendar()
             var endCalendar = Calendar.getInstance()
             val doj = binding.etRetireeDateAppointment.text.toString()
@@ -576,6 +607,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         }
 
         binding.etRetireeDateAppointment.setOnClickListener {
+            clearAllEditTextFocus()
             val dob = binding.etRetireeDOB.text.toString()
             val dor = binding.etRetireeDateRetirement.text.toString()
             var startCalendar = CalendarUtils.getMinCalendar()
@@ -597,6 +629,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         }
 
         binding.etRetireeDateRetirement.setOnClickListener {
+            clearAllEditTextFocus()
             var startCalendar = CalendarUtils.getMinCalendar()
             val endCalendar = Calendar.getInstance()
             val doj = binding.etRetireeDateAppointment.text.toString()
@@ -618,6 +651,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         }
 
         binding.tvLastPromotionYear.setOnClickListener {
+            clearAllEditTextFocus()
             val doj = binding.etRetireeDateAppointment.text.toString()
             val dor = binding.etRetireeDateRetirement.text.toString()
             val minYear = if (doj.isNotEmpty())
@@ -637,7 +671,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
                 }.show()
         }
         binding.llRetireeBasicdetailsNext.setOnClickListener {
-
+            clearAllEditTextFocus()
             //nextButtonCall()
             if (isValidRetireeBasicDetails()) {
                 Ph_no = "+" + binding.retireeNextKinPhoneCcp.fullNumber

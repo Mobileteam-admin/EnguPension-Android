@@ -9,7 +9,6 @@ object AppConstants {
     const val TOKEN_EXPIRED = "token_expired"
     const val EMAIL_REGEX = "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}\\@[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}(\\.[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25})+"
     const val PASSWORD_REGEX = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
-    const val BANK_ACCOUNT_NUMBER_REGEX = "\\d{10,12}"
     const val FULL_NAME_REGEX ="^[a-zA-Z]+(?:\\s[a-zA-Z]+)*$"
 
     const val DEFAULT_CURRENCY_CODE = "ngn"
