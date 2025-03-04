@@ -147,8 +147,8 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchBankAccountList() =
         apiInterface.fetchBankAccountList(NetworkUtils.getAccessToken())
 
-    suspend fun fetchStatementLink() =
-        apiInterface.fetchStatementLink(NetworkUtils.getAccessToken())
+    suspend fun fetchStatementPdfLink() =
+        apiInterface.fetchStatementPdfLink(NetworkUtils.getAccessToken(), SharedPref.user_id!!.toInt())
 
     fun downloadFile(
         downloadManager:DownloadManager,

@@ -102,7 +102,7 @@ object CalendarUtils {
         }
     }
 
-    fun getEnguCalendarRange(dateRange: List<BookingDateRange>): EnguCalendarRange {
+    fun getEnguCalendarRange(dateRange: List<BookingDateRange>, fixDateOrder: Boolean): EnguCalendarRange {
         val ranges = mutableListOf<Pair<Calendar, Calendar>>()
         val holidays = mutableListOf<Calendar>()
         dateRange.forEach {
@@ -111,9 +111,10 @@ object CalendarUtils {
             var calendarEnd =
                 getCalendar(DATE_FORMAT_1, it.endDay!!)
             if (calendarStart != null && calendarEnd != null) {
-                if (calendarStart.after(calendarEnd))
+                if (fixDateOrder && calendarStart.after(calendarEnd))
                     calendarStart = calendarEnd.also { calendarEnd = calendarStart }
-                ranges.add(Pair(calendarStart!!, calendarEnd!!))
+                if (!calendarStart.after(calendarEnd))
+                    ranges.add(Pair(calendarStart!!, calendarEnd!!))
             }
 
             it.holidays.forEach { holiday ->

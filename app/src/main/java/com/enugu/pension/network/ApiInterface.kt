@@ -153,12 +153,6 @@ interface ApiInterface {
         @Query("bank_code") bankCode: String,
     ): ResponseBankVerify
 
-
-
-
-
-
-
     @POST("/api/v1/verify_bank_account")
     fun getBankVerify(
         @Header("Authorization") token: String,
@@ -211,9 +205,12 @@ interface ApiInterface {
     ): BankAccountListResponse
 
 
-    @GET("/api/v1/transaction-statement/")
-    suspend fun fetchStatementLink(@Header("Authorization") token: String
-    ): StatementLinkResponse
+//    @GET("/api/v1/transaction-statement/")
+    @GET("/api/v1/download-transactions/{userId}")
+    suspend fun fetchStatementPdfLink(
+        @Header("Authorization") token: String,
+        @Path("userId") userId: Int
+    ): StatementPdfLinkResponse
 
     @GET
     suspend fun downloadFile(@Url fileUrl: String): ResponseBody

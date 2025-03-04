@@ -10,8 +10,8 @@ import androidx.fragment.app.viewModels
 import com.enugu.pension.R
 import com.enugu.pension.databinding.DialogEnguCalendarBinding
 import com.enugu.pension.ui.custom.CalendarLabelView
-import com.enugu.pension.util.AppUtils.Companion.isValidNumber
 import com.enugu.pension.util.CalendarUtils
+import com.enugu.pension.util.isValidNumber
 import com.enugu.pension.viewmodel.EnguCalendarHandlerViewModel
 import com.enugu.pension.viewmodel.EnguCalendarViewModel
 import com.enugu.pension.viewmodel.EnguCalendarViewModel.DayType

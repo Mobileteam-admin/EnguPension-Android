@@ -238,7 +238,7 @@ class AddBankDialog : BaseDialog() {
                         showToast(R.string.no_internet_error)
                     }
                 } else {
-                    showToast("Please verify bank code.")
+                    showToast(R.string.verify_bank_code_msg)
                 }
             }
         }
@@ -347,22 +347,28 @@ class AddBankDialog : BaseDialog() {
     private fun isValidInput(includeAccountType: Boolean): Boolean {
         var errorMessage: String? = null
         if (viewModel.selectedBankIndex == AddBankViewModel.BANK_DEFAULT_ITEM_INDEX) {
-            errorMessage = "Please select a bank."
+            errorMessage = getString(R.string.select_bank_msg)
         } else if (!AppUtils.isValidBankAccountNumber(binding.etAccountNumber.text.toString())) {
-            errorMessage = "Please enter a valid 10–12 digit bank account number."
+            val minLength = resources.getInteger(R.integer.account_number_min_length)
+            val maxLength = resources.getInteger(R.integer.account_number_max_length)
+            errorMessage = getString(R.string.bank_account_number_error_msg,minLength, maxLength)
+        } else if (binding.etAccountNumberReenter.text.isNullOrEmpty()) {
+            errorMessage = getString(R.string.re_enter_account_number_msg)
         } else if (binding.etAccountNumber.text.toString() != binding.etAccountNumberReenter.text.toString()) {
-            errorMessage = "Re-entered account number does not match."
+            errorMessage = getString(R.string.re_entered_account_number_error_msg)
         } else if (!AppUtils.isValidFullName(binding.etHolderName.text.toString())) {
-            errorMessage = "Please enter a valid account holder name."
-        } else if (binding.etSwiftCode.text.length !in (5..11)) {
-            errorMessage = "Please enter a valid 5–11 long swift code."
+            errorMessage = getString(R.string.account_holder_error_msg)
+        } else if (binding.etSwiftCode.text.length !in AppUtils.getSwiftCodeRange()) {
+            val length1 = resources.getInteger(R.integer.swift_code_length_1)
+            val length2 = resources.getInteger(R.integer.swift_code_length_2)
+            errorMessage = getString(R.string.swift_code_error_msg, length1, length2)
         } else if (binding.etBankCode.text.isNullOrEmpty()) {
-            errorMessage = "Please enter bank code."
+            errorMessage = getString(R.string.please_enter_bank_code)
         } else if (hasAccountAdded()) {
-            errorMessage = "Bank account already added."
+            errorMessage = getString(R.string.bank_account_already_added)
         } else if (includeAccountType &&
             viewModel.selectedAccountTypeIndex == AddBankViewModel.ACC_TYPE_DEFAULT_ITEM_INDEX) {
-            errorMessage = "Please select account type."
+            errorMessage = getString(R.string.please_select_account_type)
         }
         errorMessage?.let { showToast(it) }
         return errorMessage == null

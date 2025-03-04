@@ -37,6 +37,8 @@ import com.enugu.pension.ui.activity.ProcessDashboardActivity
 import com.enugu.pension.ui.adapter.AccountTypeAdapter
 import com.enugu.pension.ui.adapter.BankAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
+import com.enugu.pension.ui.fragment.service.retiree.RetireeBankFragment
+import com.enugu.pension.ui.fragment.service.retiree.RetireeBankFragment.Companion
 import com.enugu.pension.util.AppUtils
 import com.enugu.pension.util.OnboardingStage
 import com.enugu.pension.util.SharedPref
@@ -62,17 +64,12 @@ class ActiveBankFragment: BaseFragment() {
     companion object {
         const val TAB_POSITION = 2
         private const val BANK_ITEM_SELECT_ID = -1
+        private const val ACCOUNT_TYPE_ITEM_SELECT_ID = -1
     }
     var bankdetailsList = mutableListOf<ListBanksItem?>()
     var accountTypeList = mutableListOf<AccountTypeItem?>()
 
     private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
-
-    val FULL_NAME_PATTERN =
-        Pattern.compile("^[a-zA-Z]+(?:\\s[a-zA-Z]+)*$") /*Pattern.compile("^[a-zA-Z\\s]+$")*/
-
-    val ACC_NO_PATTERN = Pattern.compile("\\d+")
-    val ACC_NO_PATTERN_TWO = Pattern.compile("\\d{10,12}")
 
     private lateinit var activeBankViewModel: ActiveBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
@@ -81,7 +78,7 @@ class ActiveBankFragment: BaseFragment() {
     var a_bankid = ""
     var a_accounttype = ""
     var autoRenewal: Boolean = false
-    var isBankVerifyBtn = false
+    private var hasVerified = false
 
     var BankList = ArrayList<ListBanksItem?>()
     lateinit var bankAdapter: BankAdapter
@@ -224,7 +221,7 @@ class ActiveBankFragment: BaseFragment() {
                 } else {
                     dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
-                    isBankVerifyBtn = false
+                    hasVerified = false
                     binding.tvActivebankBankcodeVerify.visibility = View.INVISIBLE
                     binding.tvActivebankBankcodeReverify.visibility = View.VISIBLE
                     binding.tvActivebankBankcodeVerified.visibility = View.INVISIBLE
@@ -300,7 +297,7 @@ class ActiveBankFragment: BaseFragment() {
 
             AccountTypeList.clear()
 
-            AccountTypeList.add(AccountTypeItem(0, " - Select Account Type - "))
+            AccountTypeList.add(AccountTypeItem(ACCOUNT_TYPE_ITEM_SELECT_ID, " - Select Account Type - "))
             accountTypeList.forEach {
                 AccountTypeList.add(AccountTypeItem(it?.id, it?.type))
             }
@@ -406,14 +403,14 @@ class ActiveBankFragment: BaseFragment() {
 
         binding.tvActivebankBankcodeVerify.setOnClickListener{
             clearAllEditTextFocus()
-            if (isValidBankAccountNumber()){
+            if (isValidInput(false)){
                 bankVerifyDialog()
             }
         }
 
         binding.tvActivebankBankcodeReverify.setOnClickListener{
             clearAllEditTextFocus()
-            if (isValidBankAccountNumber()){
+            if (isValidInput(false)){
                 bankVerifyDialog()
             }
         }
@@ -421,7 +418,7 @@ class ActiveBankFragment: BaseFragment() {
 
         binding.llActivebankNext.setOnClickListener {
             clearAllEditTextFocus()
-            if (isValidBank()) {
+            if (isValidInput(true)) {
                 //finish the Form
                 if (context?.isConnectedToNetwork()!!) {
                     //bank
@@ -439,75 +436,6 @@ class ActiveBankFragment: BaseFragment() {
 
 
     }
-
-
-    //Validation Bank info
-    private fun isValidBank(): Boolean {
-
-        //select bank
-        if (binding.spActiveBank.selectedItemPosition == 0) {
-            Toast.makeText(context, "Please Select Bank", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //acc number
-        if (TextUtils.isEmpty(binding.etActivebankAccnum.text)) {
-            Toast.makeText(context, "Empty account number", Toast.LENGTH_LONG).show()
-            return false
-        } else if (!ACC_NO_PATTERN.matcher(binding.etActivebankAccnum.text.toString()).matches()) {
-            Toast.makeText(context, "Account number not valid", Toast.LENGTH_LONG).show()
-            return false
-        }
-
-        //re enter acc number
-        if (TextUtils.isEmpty(binding.etActivebankReAccnum.text)) {
-            Toast.makeText(context, "Empty reAccount number", Toast.LENGTH_LONG).show()
-            return false
-        } else if (!ACC_NO_PATTERN.matcher(binding.etActivebankReAccnum.text.toString()).matches()) {
-            Toast.makeText(context, "reAccount number not valid", Toast.LENGTH_LONG).show()
-            return false
-        } else if (binding.etActivebankAccnum.text.toString() != binding.etActivebankReAccnum.text.toString()) {
-            Toast.makeText(context, "Account numbers doesn't match", Toast.LENGTH_LONG).show()
-            return false
-        }
-
-        //acc name
-        if (TextUtils.isEmpty(binding.etActivebankAccname.text)) {
-            Toast.makeText(context, "Empty account Name", Toast.LENGTH_LONG).show()
-            return false
-        } else if (!FULL_NAME_PATTERN.matcher(binding.etActivebankAccname.text.toString().trim()).matches()) {
-
-            Toast.makeText(context, "account name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //swift
-        if (TextUtils.isEmpty(binding.etActivebankSwiftcode.text)) {
-            Toast.makeText(context, "Please enter SwiftCode", Toast.LENGTH_LONG).show()
-            return false
-        }
-        //bankcode
-        if (TextUtils.isEmpty(binding.etActivebankBankcode.text)) {
-            Toast.makeText(context, "Please enter BankCode", Toast.LENGTH_LONG).show()
-            return false
-        }
-        //accounttype
-        if (binding.spActivebankAcctype.selectedItemPosition == 0) {
-            Toast.makeText(context, "Please Select Account Type", Toast.LENGTH_LONG).show()
-            return false
-        }
-
-        if (!isBankVerifyBtn){
-            Toast.makeText(context, "Please Verify Bank code", Toast.LENGTH_LONG).show()
-            return false
-        }
-
-
-        /*Toast.makeText(context, "Active Bank info validated", Toast.LENGTH_LONG)
-            .show()*/
-        return true
-    }
-    //END Validation Bank info
 
     private fun BankinformationCall() {
         activeBankViewModel.submitBankInfo(
@@ -710,56 +638,35 @@ class ActiveBankFragment: BaseFragment() {
         return true
     }
 
-    private fun isValidBankAccountNumber(): Boolean {
-
-        //select bank
-        if (binding.spActiveBank.selectedItemPosition == 0) {
-            Toast.makeText(context, "Please Select Bank", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //acc number
-        if (TextUtils.isEmpty(binding.etActivebankAccnum.text)) {
-            Toast.makeText(context, "Empty account number", Toast.LENGTH_LONG).show()
-            return false
-        } else if (!ACC_NO_PATTERN_TWO.matcher(binding.etActivebankAccnum.text.toString()).matches()) {
-            Toast.makeText(context, "Account number Not valid, must 10-12 digits", Toast.LENGTH_LONG).show()
-            return false
-        }
-
-        //re enter acc number
-        if (TextUtils.isEmpty(binding.etActivebankReAccnum.text)) {
-            Toast.makeText(context, "Empty reAccount number", Toast.LENGTH_LONG).show()
-            return false
-        } else if (!ACC_NO_PATTERN_TWO.matcher(binding.etActivebankReAccnum.text.toString()).matches()) {
-            Toast.makeText(context, "reAccount number Not valid, , must 10-12 digits", Toast.LENGTH_LONG).show()
-            return false
+    private fun isValidInput(isVerificationComplete: Boolean): Boolean {
+        var errorMessage: String? = null
+        if (BankList[binding.spActiveBank.selectedItemPosition]?.id == BANK_ITEM_SELECT_ID) {
+            errorMessage = getString(R.string.select_bank_msg)
+        } else if (!AppUtils.isValidBankAccountNumber(binding.etActivebankAccnum.text.toString())) {
+            val minLength = resources.getInteger(R.integer.account_number_min_length)
+            val maxLength = resources.getInteger(R.integer.account_number_max_length)
+            errorMessage = getString(R.string.bank_account_number_error_msg,minLength, maxLength)
+        } else if (binding.etActivebankReAccnum.text.isNullOrEmpty()) {
+            errorMessage = getString(R.string.re_enter_account_number_msg)
         } else if (binding.etActivebankAccnum.text.toString() != binding.etActivebankReAccnum.text.toString()) {
-            Toast.makeText(context, "Account numbers doesn't match", Toast.LENGTH_LONG).show()
-            return false
+            errorMessage = getString(R.string.re_entered_account_number_error_msg)
+        } else if (!AppUtils.isValidFullName(binding.etActivebankAccname.text.toString())) {
+            errorMessage = getString(R.string.account_holder_error_msg)
+        } else if (binding.etActivebankSwiftcode.text.length !in AppUtils.getSwiftCodeRange()) {
+            val length1 = resources.getInteger(R.integer.swift_code_length_1)
+            val length2 = resources.getInteger(R.integer.swift_code_length_2)
+            errorMessage = getString(R.string.swift_code_error_msg, length1, length2)
+        } else if (binding.etActivebankBankcode.text.isNullOrEmpty()) {
+            errorMessage = getString(R.string.please_enter_bank_code)
+        } else if(isVerificationComplete) {
+            if (!hasVerified) {
+                errorMessage = getString(R.string.verify_bank_code_msg)
+            } else if (AccountTypeList[binding.spActivebankAcctype.selectedItemPosition]?.id == ACCOUNT_TYPE_ITEM_SELECT_ID) {
+                errorMessage = getString(R.string.please_select_account_type)
+            }
         }
-
-        //acc name
-        if (TextUtils.isEmpty(binding.etActivebankAccname.text)) {
-            Toast.makeText(context, "Empty account Name", Toast.LENGTH_LONG).show()
-            return false
-        } else if (!FULL_NAME_PATTERN.matcher(binding.etActivebankAccname.text.toString().trim()).matches()) {
-            Toast.makeText(context, "account name not valid", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        //swift
-        if (TextUtils.isEmpty(binding.etActivebankSwiftcode.text)) {
-            Toast.makeText(context, "Please enter SwiftCode", Toast.LENGTH_LONG).show()
-            return false
-        }
-        //bankcode
-        if (TextUtils.isEmpty(binding.etActivebankBankcode.text)) {
-            Toast.makeText(context, "Please enter BankCode", Toast.LENGTH_LONG).show()
-            return false
-        }
-
-        return true
+        errorMessage?.let { showToast(it) }
+        return errorMessage == null
     }
 
 
@@ -779,7 +686,7 @@ class ActiveBankFragment: BaseFragment() {
 
         //prefs.isBankVerify = true
 
-        isBankVerifyBtn = true
+        hasVerified = true
         binding.tvActivebankBankcodeVerify.visibility = View.INVISIBLE
         binding.tvActivebankBankcodeReverify.visibility = View.INVISIBLE
         binding.tvActivebankBankcodeVerified.visibility = View.VISIBLE

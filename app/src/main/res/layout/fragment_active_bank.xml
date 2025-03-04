@@ -183,6 +183,7 @@
                 android:hint="@string/enter_your_swiftcode"
                 android:inputType="textCapCharacters"
                 android:padding="@dimen/dp_12"
+                android:maxLength="@integer/swift_code_length_2"
                 android:textAllCaps="true"/>
 
             <TextView

@@ -189,4 +189,15 @@
     <string name="notification_of_promotion">Notification of Promotion</string>
     <string name="pension_life_certificate">Pension Life certificate</string>
     <string name="retirement_notice">Retirement Notice</string>
+    <string name="swift_code_error_msg">Please enter a valid Swift code with %d or %d characters.</string>
+    <string name="bank_account_number_error_msg">Please enter a valid %d-%d digit bank account number.</string>
+    <string name="select_bank_msg">Please select a bank.</string>
+    <string name="re_entered_account_number_error_msg">Re-entered account number does not match.</string>
+    <string name="account_holder_error_msg">Please enter a valid account holder name.</string>
+    <string name="please_enter_bank_code">Please enter bank code.</string>
+    <string name="bank_account_already_added">Bank account already added.</string>
+    <string name="please_select_account_type">Please select account type.</string>
+    <string name="verify_bank_code_msg">Please verify bank code.</string>
+    <string name="re_enter_account_number_msg">Please re-enter your account number.</string>
+    <string name="top_up_minimum_amount_error">The minimum top-up amount is 1400 NGN.</string>
 </resources>

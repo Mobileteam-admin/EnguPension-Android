@@ -34,10 +34,11 @@ object NetworkUtils {
             if (response.isSuccessful && response.body() != null) {
                 ApiResult.Success(response.body()!!)
             } else {
-                response.errorBody()?.let {
+                val errorBody = response.errorBody()?.source()?.peek()?.readUtf8()
+                Log.i("NetworkUtils", "Error body : $errorBody")
+                if (!errorBody.isNullOrEmpty()) {
                     try {
-                        Log.i("NetworkUtils", "Error body : ${it.string()}")
-                        val jsonObject = JSONObject(it.byteString().utf8())
+                        val jsonObject = JSONObject(errorBody)
                         errorMessage = jsonObject.getJSONObject(detailKey).getString(messageKey)
                     } catch (e: Exception) {
                         e.printStackTrace()

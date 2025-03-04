@@ -29,6 +29,7 @@
     <color name="dark">#222222</color>
     <color name="green_verylight">#06FF57</color>
     <color name="red">#FF0510</color>
+    <color name="error_text">#F05529</color>
     <color name="transparent_line">#25000000</color>
 
 </resources>
