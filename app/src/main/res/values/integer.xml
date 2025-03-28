@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="account_number_min_length">6</integer>
-    <integer name="account_number_max_length">18</integer>
+    <integer name="account_number_min_length">10</integer>
+    <integer name="account_number_max_length">12</integer>
     <integer name="bank_code_max_length">12</integer>
     <integer name="swift_code_length_1">8</integer>
     <integer name="swift_code_length_2">11</integer>

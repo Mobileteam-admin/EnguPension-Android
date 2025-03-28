@@ -29,7 +29,6 @@ object AppUtils {
     }
 
     fun isValidBankAccountNumber(accountNumber: String): Boolean {
-        return true // Remove after confirmation
         val minLength = appContext.resources.getInteger(R.integer.account_number_min_length)
         val maxLength = appContext.resources.getInteger(R.integer.account_number_max_length)
         val pattern = Pattern.compile("\\d{$minLength,$maxLength}")
@@ -51,4 +50,10 @@ object AppUtils {
     fun getSwiftCodeLength1() = appContext.resources.getInteger(R.integer.swift_code_length_2)
     fun getSwiftCodeLength2() = appContext.resources.getInteger(R.integer.swift_code_length_1)
     fun getSwiftCodeRange() = listOf(getSwiftCodeLength1(), getSwiftCodeLength2())
+
+    fun isValidEIN(ein: String?): Boolean {
+        if (ein == null) return false
+        val einPattern = Regex("^\\d{8}-\\d{4}$")
+        return einPattern.matches(ein)
+    }
 }

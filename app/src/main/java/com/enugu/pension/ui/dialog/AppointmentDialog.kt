@@ -172,7 +172,7 @@ class AppointmentDialog : BaseDialog() {
         }
         binding.tvTime.setOnClickListener { showTimeSlotPopUp() }
         binding.llBack.setOnClickListener { dismiss() }
-        binding.llPayNow.setOnClickListener { bookAppointment() }
+        binding.llBookNow.setOnClickListener { bookAppointment() }
 
     }
 

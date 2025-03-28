@@ -36,12 +36,12 @@ import com.enugu.pension.viewmodel.LogoutConfirmViewModel
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jitsi.meet.sdk.JitsiMeetActivity
-import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
-import java.net.URL
 
 
 class DashboardFragment : BaseFragment() {
+    companion object {
+        const val MIN_BOOKING_AMOUNT = 1400f
+    }
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var logoutConfirmDialog: LogoutConfirmDialog
     private lateinit var addBankDialog: AddBankDialog
@@ -82,6 +82,9 @@ class DashboardFragment : BaseFragment() {
     private fun observeLiveData() {
         logoutConfirmViewModel.logout.observe(viewLifecycleOwner) { logout ->
             if (logout != null) callLogout()
+        }
+        viewModel.profilePictureUrl.observe(viewLifecycleOwner) {
+            it?.let {url -> setProfilePicture(url) }
         }
         viewModel.logoutResult.observe(viewLifecycleOwner) { response ->
             if (response.logout_detail?.status == AppConstants.SUCCESS) {
@@ -177,7 +180,8 @@ class DashboardFragment : BaseFragment() {
                 showLoader()
                 lifecycleScope.launch {
                     viewModel.fetchDashboardDetails().join()
-                    viewModel.fetchBankAccountList()
+                    viewModel.fetchBankAccountList().join()
+                    viewModel.fetchProfilePicture() // TODO: remove after dashboard-details API update
                 }
             } else {
                 showFetchErrorDialog(::fetchInitDetails, R.string.no_internet_error)
@@ -226,7 +230,16 @@ class DashboardFragment : BaseFragment() {
             }
         }
         binding.llAppoinment.setOnClickListener {
-            showDialog(appointmentDialog)
+            viewModel.dashboardDetailsResult.value?.detail?.walletBalanceAmount?.let {
+                if (it >= MIN_BOOKING_AMOUNT) showDialog(appointmentDialog)
+                else {
+                    showAlertDialog(
+                        message = getString(R.string.booking_amount_error),
+                        positiveTextId = R.string.ok,
+                        onPositiveClick = {},
+                    )
+                }
+            }
         }
         binding.llLogout.setOnClickListener {
             showDialog(logoutConfirmDialog)
@@ -245,9 +258,7 @@ class DashboardFragment : BaseFragment() {
 
     private fun populateViews() {
         viewModel.dashboardDetailsResult.value?.detail?.let {
-            Glide.with(this)
-                .load(it.profilePic)
-                .into(binding.imgProfile)
+            //it.profilePic?.let { url -> setProfilePicture(url) } // TODO: uncomment after dashboard-details API update
             binding.tvPersonName.text = it.fullName
             val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
             binding.tvWalletAmount.text = walletText
@@ -291,6 +302,13 @@ class DashboardFragment : BaseFragment() {
                 binding.ivBookAppointment.setImageResource(R.drawable.ic_not_verified_red)
             }
         }
+    }
+
+    private fun setProfilePicture(url: String) {
+        Glide.with(this)
+            .load(url)
+            .placeholder(R.drawable.baseline_account_circle_white)
+            .into(binding.ivProfile)
     }
 
     private fun onLogoutSuccess(response: ResponseLogout) {
@@ -342,16 +360,16 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun startJitsiMeetCall(callLink: String) {
-        try {
-            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
-                .setServerURL(URL(callLink))
-                .setRoom(callLink)
-                .setAudioOnly(false)
-                .build()
-
-            JitsiMeetActivity.launch(requireContext(), options)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        try {
+//            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
+//                .setServerURL(URL(callLink))
+//                .setRoom(callLink)
+//                .setAudioOnly(false)
+//                .build()
+//
+//            JitsiMeetActivity.launch(requireContext(), options)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
     }
 }

@@ -79,7 +79,7 @@ class RetireeDocumentsViewModel(private val networkRepo: NetworkRepo) : ViewMode
 
     fun downloadDocCacheFile(fileUrl: String, cacheFile: File) {
         viewModelScope.launch(Dispatchers.IO) {
-            networkRepo.downloadCacheFile(fileUrl, cacheFile)
+            networkRepo.downloadFile(fileUrl, cacheFile)
         }
     }
 }

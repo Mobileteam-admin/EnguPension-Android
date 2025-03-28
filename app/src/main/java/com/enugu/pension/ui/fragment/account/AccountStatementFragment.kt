@@ -1,9 +1,6 @@
 package com.enugu.pension.ui.fragment.account
 
-import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.app.DownloadManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -20,7 +17,6 @@ import com.enugu.pension.R
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentAccountStatementBinding
 import com.enugu.pension.network.ApiClient
-import com.enugu.pension.ui.activity.PermissionRequestActivity
 import com.enugu.pension.ui.adapter.TransactionLoadStateAdapter
 import com.enugu.pension.ui.adapter.WalletHistoryAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
@@ -51,12 +47,18 @@ class AccountStatementFragment : BaseFragment() {
         if (result.resultCode == RESULT_OK) {
             if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                 showLoader()
-                viewModel.fetchStatementPdfLink()
+//                viewModel.fetchStatementPdfLink()
             } else {
                 showToast(R.string.no_internet_error)
             }
         }
         else showToast("Write permission denied. Cannot download Account statement.")
+    }
+
+    private val createFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.data?.let { uri -> viewModel.fetchStatementPdfLink(uri,requireContext().contentResolver) }
+        }
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,17 +92,35 @@ class AccountStatementFragment : BaseFragment() {
     private fun initViews() {
         initRvWalletHistory()
         binding.tvEmptyMessage.isGone = true
+        binding.clDownload.isGone = true
         binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
         binding.clDownload.setOnClickListener {
-            val intent = Intent(requireActivity(), PermissionRequestActivity::class.java)
-            intent.putExtra(PermissionRequestActivity.EXTRA_PERMISSION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            permissionResultLauncher.launch(intent)
+//            val intent = Intent(requireActivity(), PermissionRequestActivity::class.java)
+//            intent.putExtra(PermissionRequestActivity.EXTRA_PERMISSION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//            permissionResultLauncher.launch(intent)
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                showLoader()
+                val fileName = "Account Statement ${CalendarUtils.getFormattedToday()}.pdf"
+                openPathPicker(fileName)
+            } else {
+                showToast(R.string.no_internet_error)
+            }
         }
         binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+
+    private fun openPathPicker(fileName: String) {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_TITLE, fileName)
+        }
+        createFileLauncher.launch(intent)
     }
 
     private fun initRvWalletHistory() {
@@ -122,6 +142,7 @@ class AccountStatementFragment : BaseFragment() {
                         loadStates.refresh is LoadState.NotLoading &&
                         loadStates.append.endOfPaginationReached
                 binding.tvEmptyMessage.isVisible = isEmpty
+                binding.clDownload.isVisible = !isEmpty
                 val errorState = loadStates.refresh as? LoadState.Error
                     ?: loadStates.append as? LoadState.Error
                     ?: loadStates.prepend as? LoadState.Error
@@ -151,18 +172,20 @@ class AccountStatementFragment : BaseFragment() {
                 populateViews()
             }
         }
-        viewModel.statementApiResult.observe(viewLifecycleOwner) { response ->
+        viewModel.statementApiResult.observe(viewLifecycleOwner) { message ->
             dismissLoader()
-            if (response.downloadUrl == null) {
-                showToast(R.string.Statement_download_error_msg)
-            } else {
-                val downloadManager =
-                    context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                val url = "${AppConstants.BASE_URL}/${response.downloadUrl}"
-                val fileName = getString(R.string.statement_file_name, CalendarUtils.getFormattedNow())
-                val downloadDescription = getString(R.string.downloading_statement)
-                viewModel.downloadPdf(downloadManager, url, fileName, downloadDescription)
-            }
+            showToast(message)
+//            if (response.fileUrl == null) {
+//                showToast(R.string.Statement_download_error_msg)
+//            } else {
+//                val downloadManager =
+//                    context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+//                val url = "${AppConstants.BASE_URL}/${response.fileUrl}"
+//                val fileName = getString(R.string.statement_file_name, CalendarUtils.getFormattedNow())
+//                val downloadDescription = getString(R.string.downloading_statement)
+//                viewModel.downloadPdf(downloadManager, url, fileName, downloadDescription)
+
+//            }
         }
     }
 

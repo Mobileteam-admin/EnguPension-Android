@@ -152,7 +152,7 @@ class WalletFragment : BaseFragment() {
         }
         binding.etTopUpWalletAmount.addTextChangedListener {
             val amount = it.toString().toFloatOrNull() ?: 0f
-            binding.tvAmountError.isInvisible = amount >= MIN_TOP_UP_AMOUNT
+            binding.tvAmountError.isInvisible = it.isNullOrEmpty() || amount >= MIN_TOP_UP_AMOUNT
         }
     }
 

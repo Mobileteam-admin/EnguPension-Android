@@ -9,8 +9,8 @@
     <string name="email_phone">Email / Phone Number</string>
     <string name="email_address">Email address</string>
     <string name="password">Password</string>
-    <string name="forget_password">FORGET PASSWORD</string>
-    <string name="forget_password_small">Forget Password</string>
+    <string name="forget_password">FORGOT PASSWORD</string>
+    <string name="forget_password_small">Forgot Password?</string>
     <string name="signup">SIGN UP</string>
     <string name="login_now">LOGIN NOW </string>
     <string name="forgetpassword_note">Don’t worry, we have way to reset your password.\n enter your email address/Phone number in the following\n field &amp;  click Send request.</string>
@@ -102,10 +102,11 @@
     <string name="booking_date">Booking Date</string>
     <string name="booking_slot">Booking Slot</string>
     <string name="pay_now">PAY NOW</string>
+    <string name="book_now">BOOK NOW</string>
     <string name="select_bank_account">Select Bank Account</string>
     <string name="top_up_wallet">Top up wallet</string>
     <string name="top_up_wallet_2">TOP UP WALLET</string>
-    <string name="set_auto_deduciton">Set Auto Deduciton</string>
+    <string name="set_auto_deduction">Set Auto Deduction</string>
     <string name="wallet_balance">Wallet Balance</string>
     <string name="enter_amount">Enter Amount</string>
     <string name="wallet_history">Wallet History</string>
@@ -144,7 +145,7 @@
     <string name="specify_position">specify other position</string>
     <string name="bank_account_verification">Bank Account Verification</string>
     <string name="reverify">REVERIFY</string>
-    <string name="verified">VERIFIED</string>
+    <string name="verified">Verified</string>
     <string name="common_error_msg">Something went wrong</string>
     <string name="common_error_msg_2">Something went wrong, please try again!</string>
     <string name="retry">Retry</string>
@@ -200,4 +201,16 @@
     <string name="verify_bank_code_msg">Please verify bank code.</string>
     <string name="re_enter_account_number_msg">Please re-enter your account number.</string>
     <string name="top_up_minimum_amount_error">The minimum top-up amount is 1400 NGN.</string>
+    <string name="employment_status">Employment status</string>
+    <string name="designation">Designation</string>
+    <string name="department">Department</string>
+    <string name="duration">Duration</string>
+    <string name="state">State</string>
+    <string name="region">Region</string>
+    <string name="status">Status</string>
+    <string name="no_app_found_to_open">No application found to open this file type.</string>
+    <string name="invalid_ein_error">Invalid EIN format. Expected format: 12345678-1234</string>
+    <string name="file_selection_error">Something went wrong while selecting the file. Please try again.</string>
+    <string name="booking_amount_error">Your wallet balance is insufficient to complete this booking. Please top up your wallet.</string>
+
 </resources>

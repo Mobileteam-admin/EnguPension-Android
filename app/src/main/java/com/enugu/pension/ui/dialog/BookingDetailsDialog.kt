@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
+import com.enugu.pension.R
 import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.DialogBookingDetailsBinding
@@ -82,10 +83,17 @@ class BookingDetailsDialog private constructor() : BaseDialog() {
             val request = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
-                response.detail?.message?.let { showToast(it) }
-                showLoader()
-                dashboardViewModel.fetchDashboardDetails()
-                dismiss()
+//                response.detail?.message?.let { showToast(it) }
+                showAlertDialog(
+                    message = response.detail?.message ?: "Payment completed successfully",
+                    positiveTextId = R.string.ok,
+                    onPositiveClick = {
+                        showLoader()
+                        dashboardViewModel.fetchDashboardDetails()
+                        dismiss()
+                    },
+                    isCancellable = false,
+                )
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {

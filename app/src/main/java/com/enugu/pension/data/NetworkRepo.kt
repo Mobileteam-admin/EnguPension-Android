@@ -1,6 +1,7 @@
 package com.enugu.pension.data
 
 import android.app.DownloadManager
+import android.content.ContentResolver
 import android.net.Uri
 import android.os.Environment
 import com.enugu.pension.model.request.BookAppointmentRequest
@@ -22,19 +23,35 @@ import com.enugu.pension.model.request.InputSignupVerify
 import com.enugu.pension.model.request.InputSwiftBankCode
 import com.enugu.pension.model.request.TopUpRequest
 import com.enugu.pension.model.request.TransferRequest
+import com.enugu.pension.model.request.UpdateProfileForm
 import com.enugu.pension.model.request.VideoCallRequest
+import com.enugu.pension.model.response.ProfileResponse
 import com.enugu.pension.network.ApiInterface
 import com.enugu.pension.util.NetworkUtils
 import com.enugu.pension.util.SharedPref
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
 class NetworkRepo(private val apiInterface: ApiInterface) {
+    private fun createStringPart(value: String): RequestBody =
+        value.toRequestBody("text/plain".toMediaTypeOrNull())
+
+    private fun createImagePart(file: File?, paramName: String): MultipartBody.Part? {
+        return file?.let {
+            val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData(paramName, it.name, requestFile)
+        }
+    }
+
     suspend fun login(inputLogin: InputLogin) = apiInterface.getLogin(inputLogin)
 
     suspend fun signUp(inputSignup: InputSignup) = apiInterface.getSignUp(inputSignup)
@@ -148,10 +165,26 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
         apiInterface.fetchBankAccountList(NetworkUtils.getAccessToken())
 
     suspend fun fetchStatementPdfLink() =
-        apiInterface.fetchStatementPdfLink(NetworkUtils.getAccessToken(), SharedPref.user_id!!.toInt())
+        apiInterface.fetchStatementPdfLink(
+            NetworkUtils.getAccessToken(),
+        )
+
+    suspend fun fetchProfileDetails() =
+        apiInterface.fetchProfileDetails(NetworkUtils.getAccessToken())
+
+    suspend fun updateProfileDetails(updateProfileForm: UpdateProfileForm): ProfileResponse {
+        val stringParts: Map<String, RequestBody> =
+            updateProfileForm.items.associate { it.key to createStringPart(it.value) }
+        val imagePart = createImagePart(updateProfileForm.profilePicFile, "profile_picture")
+        return apiInterface.updateProfileDetails(
+            NetworkUtils.getAccessToken(),
+            stringParts,
+            imagePart
+        )
+    }
 
     fun downloadFile(
-        downloadManager:DownloadManager,
+        downloadManager: DownloadManager,
         fileUrl: String, fileName: String,
         downloadDescription: String = "Downloading file..."
     ): Long {
@@ -166,19 +199,35 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
         return downloadManager.enqueue(request)
     }
 
-    suspend fun downloadCacheFile(fileUrl: String, cacheFile: File): File? {
-            return withContext(Dispatchers.IO) {
-                try {
-                    val responseBody: ResponseBody = apiInterface.downloadFile(fileUrl)
-                    val inputStream: InputStream = responseBody.byteStream()
-                    val outputStream = FileOutputStream(cacheFile)
-                    inputStream.use { it.copyTo(outputStream) } // Safe copy
-                    outputStream.close()
-                    cacheFile
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    null
-                }
+    suspend fun downloadFile(fileUrl: String, file: File): File? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val responseBody: ResponseBody = apiInterface.downloadFile(fileUrl)
+                val inputStream: InputStream = responseBody.byteStream()
+                val outputStream = FileOutputStream(file)
+                inputStream.use { it.copyTo(outputStream) }
+                outputStream.close()
+                file
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
             }
         }
+    }
+
+    suspend fun downloadFile(fileUrl: String, uri: Uri, contentResolver: ContentResolver): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val responseBody: ResponseBody = apiInterface.downloadFile(fileUrl)
+                val inputStream = responseBody.byteStream()
+                contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    inputStream.use { it.copyTo(outputStream) }
+                } ?: return@withContext false
+                true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
 }

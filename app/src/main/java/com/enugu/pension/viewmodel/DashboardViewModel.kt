@@ -21,6 +21,7 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         MutableLiveData<ResponseLogout>()
     val logoutResult: LiveData<ResponseLogout>
         get() = _logoutResult
+    val profilePictureUrl = MutableLiveData<String?>(null) // TODO: remove after dashboard-details API update
 
     private val _dashboardDetailsResult =
         MutableLiveData<ResponseDashboardDetails>(null)
@@ -83,8 +84,8 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         }
     }
 
-    fun fetchBankAccountList() {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun fetchBankAccountList(): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
             try {
                 _bankAccountListApiResult.postValue(networkRepo.fetchBankAccountList())
             } catch (e: Exception) {
@@ -96,4 +97,18 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
             }
         }
     }
+
+
+
+    fun fetchProfilePicture() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val result = networkRepo.fetchProfileDetails()
+                result.detail?.userProfileDetails?.imageUrl?.let { profilePictureUrl.postValue(it) }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }
