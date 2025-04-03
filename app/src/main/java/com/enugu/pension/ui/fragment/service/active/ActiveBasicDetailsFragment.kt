@@ -769,7 +769,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
             errorMessage = getString(R.string.select_input_msg, getString(R.string.gender).lowercase())
         } else if (TextUtils.isEmpty(binding.etActiveAddress.text)) {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.address).lowercase())
-        } else if (TextUtils.isEmpty(binding.etActivePincode.text)) {
+        } else if (binding.etActivePincode.text.length != resources.getInteger(R.integer.pin_code_length)) {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.pincode).lowercase())
         } else if (binding.spActiveLga.selectedItemPosition == 0 || (binding.spActiveLga.isEmpty())) {
             errorMessage = getString(R.string.select_input_msg, getString(R.string.lga))
@@ -781,7 +781,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.phone_num_of_next_kin))
         } else if (TextUtils.isEmpty(binding.etActiveNextKinAddress.text)) {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.address_of_next_kin))
-        } else if (TextUtils.isEmpty(binding.etActiveKinPincode.text)) {
+        } else if (binding.etActiveKinPincode.text.length != resources.getInteger(R.integer.pin_code_length)) {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.pincode_of_next_kin))
         } else if ((binding.spActiveSubTreasury.selectedItemPosition == 0) || (binding.spActiveSubTreasury.isEmpty())) {
             errorMessage = getString(R.string.select_input_msg, getString(R.string.sub_treasury).lowercase())

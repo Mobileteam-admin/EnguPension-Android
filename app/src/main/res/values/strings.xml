@@ -199,6 +199,7 @@
     <string name="bank_account_already_added">Bank account already added.</string>
     <string name="please_select_account_type">Please select account type.</string>
     <string name="verify_bank_code_msg">Please verify bank code.</string>
+    <string name="verify_swift_code_msg">Please verify swift code.</string>
     <string name="re_enter_account_number_msg">Please re-enter your account number.</string>
     <string name="top_up_minimum_amount_error">The minimum top-up amount is 1400 NGN.</string>
     <string name="employment_status">Employment status</string>
@@ -212,5 +213,26 @@
     <string name="invalid_ein_error">Invalid EIN format. Expected format: 12345678-1234</string>
     <string name="file_selection_error">Something went wrong while selecting the file. Please try again.</string>
     <string name="booking_amount_error">Your wallet balance is insufficient to complete this booking. Please top up your wallet.</string>
+    <string name="your_reservation">Your Reservation</string>
+    <string name="paid_amount">Paid Amount</string>
+    <string name="payment_status">Payment Status</string>
+    <string name="success">Success</string>
+    <string name="reservation_description">Payment completed for the verification.</string>
+    <string name="start_video_call_verification">Start video call verification</string>
+    <string name="video_call_info">Calling option activates 5 minutes before the meeting.</string>
+    <string name="permissions_required">Permissions Required</string>
+    <string name="permissions_denied">Permissions Denied</string>
+    <string name="video_call_permissions_request">%s requires Camera and Microphone access for the video call feature. Please grant the permissions.</string>
+    <string name="video_call_permissions_rationale">You previously denied the permissions required for the video call feature. You cannot proceed with the video call without granting them. Would you like to grant the permissions now?</string>
+    <string name="video_call_permissions_denied_message">You have permanently denied the permissions for the video call feature. You can enable them in the app settings.</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="grant_permissions">Grant Permissions</string>
+    <string name="go_to_settings">Go to Settings</string>
+    <string name="go_back">Go back</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="discard_video_call_message">Are you sure you want to discard the video call?</string>
+
 
 </resources>

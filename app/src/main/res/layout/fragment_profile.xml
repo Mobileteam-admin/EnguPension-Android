@@ -90,7 +90,6 @@
             android:paddingVertical="@dimen/dp_4">
 
             <com.google.android.material.imageview.ShapeableImageView
-                app:shapeAppearance="@style/RoundedImage"
                 android:id="@+id/iv_profile_pic"
                 android:layout_width="@dimen/dp_50"
                 android:layout_height="@dimen/dp_50"
@@ -99,7 +98,8 @@
                 android:src="@drawable/baseline_account_circle_green"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearance="@style/RoundedImage" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_edit_profile_pic"
@@ -120,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="end"
-                app:barrierMargin="@dimen/dp_12"
+                app:barrierMargin="@dimen/dp_18"
                 app:constraint_referenced_ids="iv_profile_pic" />
 
 
@@ -156,7 +156,7 @@
                 android:fontFamily="@font/nunito_sans_regular"
                 android:text="@string/verified"
                 android:textColor="@color/green_theme"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tv_verification_date"
                 app:layout_constraintStart_toEndOf="@+id/iv_verification_status"
                 app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
@@ -164,15 +164,16 @@
                 android:id="@+id/tv_verification_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/nunito_sans_regular"
                 android:lines="1"
                 android:text="Last verified on 01/12/2023"
                 android:textColor="@color/grey_text_2"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_verification_status"
-                app:layout_constraintTop_toTopOf="@+id/tv_verification_status" />
+                app:layout_constraintStart_toEndOf="@+id/barrier"
+                app:layout_constraintTop_toBottomOf="@+id/tv_verification_status" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
@@ -198,9 +199,9 @@
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/ll_profile"
-            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
             android:orientation="vertical" />
     </ScrollView>
 

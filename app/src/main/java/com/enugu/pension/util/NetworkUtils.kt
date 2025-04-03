@@ -27,12 +27,12 @@ object NetworkUtils {
         unknownErrorMsg: String? = null,
         detailKey: String = "detail",
         messageKey: String = "message"
-    ): ApiResult<T> {
+    ): ApiResult<T & Any> {
         var errorMessage = unknownErrorMsg ?: "Something went wrong"
-        return try {
+        try {
             val response = call.execute()
             if (response.isSuccessful && response.body() != null) {
-                ApiResult.Success(response.body()!!)
+                return ApiResult.Success(response.body()!!)
             } else {
                 val errorBody = response.errorBody()?.source()?.peek()?.readUtf8()
                 Log.i("NetworkUtils", "Error body : $errorBody")
@@ -44,11 +44,11 @@ object NetworkUtils {
                         e.printStackTrace()
                     }
                 }
-                ApiResult.Error(errorMessage)
+                return ApiResult.Error(errorMessage)
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            ApiResult.Error(errorMessage)
+            return ApiResult.Error(errorMessage)
         }
     }
 }

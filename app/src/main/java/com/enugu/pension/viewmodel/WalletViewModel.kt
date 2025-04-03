@@ -93,6 +93,16 @@ class WalletViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 }
 
                 override fun onFailure(call: Call<TopUpResponse>, t: Throwable) {
+                    _topUpApiResult.postValue(
+                        Pair(
+                            topUpRequest,
+                            TopUpResponse(
+                                TopUpResponse.Detail(
+                                    status = AppConstants.FAIL, message = "Something went wrong"
+                                )
+                            )
+                        )
+                    )
                 }
             })
         }

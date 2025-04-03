@@ -134,4 +134,13 @@ interface BaseUtils {
         listView.adapter = adapter
         PopupWindowCompat.showAsDropDown(popupWindow, anchor, 0, 0, Gravity.BOTTOM)
     }
+
+    fun confirmInternet(showToast: Boolean = true): Boolean {
+        if (NetworkUtils.isConnectedToNetwork(provideContext())) {
+            return true
+        } else {
+            if (showToast) showToast(R.string.no_internet_error)
+            return false
+        }
+    }
 }

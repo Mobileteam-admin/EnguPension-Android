@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/custom_squarebox"
-            android:drawableStart="@drawable/ic_calander"
+            android:drawableStart="@drawable/ic_calender"
             android:drawablePadding="@dimen/dp_16"
             android:hint="@string/dd_mm_yyyy"
             android:inputType="text"

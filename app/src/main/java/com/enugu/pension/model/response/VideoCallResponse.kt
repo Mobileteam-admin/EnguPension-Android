@@ -9,6 +9,6 @@ data class VideoCallResponse(
         @SerializedName("status") var status: String? = null,
         @SerializedName("token_status") var tokenStatus: String? = null,
         @SerializedName("message") var message: String? = null,
-        @SerializedName("room_name") var roomName: String? = null
+        @SerializedName("room_url") var roomUrl: String = "",
     )
 }

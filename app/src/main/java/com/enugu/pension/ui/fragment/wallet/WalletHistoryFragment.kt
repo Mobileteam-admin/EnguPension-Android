@@ -120,7 +120,7 @@ class WalletHistoryFragment : BaseFragment() {
             }
         }
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
-            if (response.detail?.status == AppConstants.SUCCESS) {
+            if (response?.detail?.status == AppConstants.SUCCESS) {
                 populateViews()
             }
         }

@@ -56,16 +56,16 @@ class AccountFragment : BaseFragment() {
             findNavController().navigateUp()
         }
         binding.txtStatement.setOnClickListener {
-            navigate(R.id.action_account_to_accountstatement)
+            if (confirmInternet()) navigate(R.id.action_account_to_accountstatement)
         }
         binding.txtKinprofile.setOnClickListener {
-            navigate(R.id.action_account_to_kinprofile)
+            if (confirmInternet()) navigate(R.id.action_account_to_kinprofile)
         }
     }
 
     private fun observeLiveData() {
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
-            if (response.detail?.status == AppConstants.SUCCESS) {
+            if (response?.detail?.status == AppConstants.SUCCESS) {
                 populateViews()
             }
         }

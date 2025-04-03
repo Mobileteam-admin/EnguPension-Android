@@ -167,13 +167,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_wallet_amount" />
 
             <ImageView
-                android:id="@+id/iv_history"
+                android:id="@+id/iv_reservation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/dp_10"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/dp_12"
-                android:src="@drawable/ic_refresh"
+                android:src="@drawable/ic_dashboard_video"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -182,12 +182,11 @@
                 android:id="@+id/iv_topup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/dp_10"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/dp_12"
                 android:src="@drawable/ic_plus"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/iv_history"
+                app:layout_constraintEnd_toStartOf="@+id/iv_reservation"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>

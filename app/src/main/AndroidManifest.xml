@@ -18,6 +18,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+<!--    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>-->
 
     <application
         android:name=".EnguApp"
@@ -86,6 +89,16 @@
             android:theme="@style/TransparentActivityTheme"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"/>
+        <activity
+            android:name=".ui.activity.VideoCallActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
+        <activity
+            android:name=".ui.activity.TestVideoCallActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
     </application>
 
 

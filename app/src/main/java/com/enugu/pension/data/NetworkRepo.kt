@@ -155,8 +155,8 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     fun transferToFinalAccount(request: TransferRequest) =
         apiInterface.transferToFinalAccount(NetworkUtils.getAccessToken(), request)
 
-    suspend fun fetchVideoCallLink(request: VideoCallRequest) =
-        apiInterface.fetchVideoCallLink(NetworkUtils.getAccessToken(), request)
+    suspend fun fetchVideoCallLink() =
+        apiInterface.fetchVideoCallLink(NetworkUtils.getAccessToken())
 
     suspend fun fetchTransactionHistory(page: Int, limit: Int) =
         apiInterface.fetchTransactionHistory(NetworkUtils.getAccessToken(), page, limit)

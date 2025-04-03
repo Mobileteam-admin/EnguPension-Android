@@ -100,12 +100,10 @@ class AccountStatementFragment : BaseFragment() {
 //            val intent = Intent(requireActivity(), PermissionRequestActivity::class.java)
 //            intent.putExtra(PermissionRequestActivity.EXTRA_PERMISSION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 //            permissionResultLauncher.launch(intent)
-            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+            if (confirmInternet()) {
                 showLoader()
                 val fileName = "Account Statement ${CalendarUtils.getFormattedToday()}.pdf"
                 openPathPicker(fileName)
-            } else {
-                showToast(R.string.no_internet_error)
             }
         }
         binding.imgBack.setOnClickListener {
@@ -168,7 +166,7 @@ class AccountStatementFragment : BaseFragment() {
             }
         }
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
-            if (response.detail?.status == AppConstants.SUCCESS) {
+            if (response?.detail?.status == AppConstants.SUCCESS) {
                 populateViews()
             }
         }

@@ -187,11 +187,12 @@ interface ApiInterface {
     @POST("/api/v1/transfer-to-final-account")
     fun transferToFinalAccount(@Header("Authorization") token: String,@Body request:TransferRequest): Call<TransferResponse>
 
-    @POST("/api/v1/booking/videocall/")
+//    @POST("/api/v1/booking/videocall/")
+    @POST("/api/v1/create-room_daily/")
     suspend fun fetchVideoCallLink(
         @Header("Authorization") token: String,
-        @Body request: VideoCallRequest
-    ): Call<VideoCallResponse>
+//        @Body request: VideoCallRequest
+    ): VideoCallResponse
 
 
     @GET("/api/v1/transaction-details")

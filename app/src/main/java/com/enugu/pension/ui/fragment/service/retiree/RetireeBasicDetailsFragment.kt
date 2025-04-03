@@ -721,7 +721,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
             errorMessage = getString(R.string.select_input_msg, getString(R.string.gender))
         } else if (TextUtils.isEmpty(binding.etRetireeAddress.text)) {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.address).lowercase())
-        } else if (TextUtils.isEmpty(binding.etRetireePincode.text)) {
+        } else if (binding.etRetireePincode.text.length != resources.getInteger(R.integer.pin_code_length)) {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.pincode).lowercase())
         } else if (binding.spRetireeLga.selectedItemPosition == 0 || (binding.spRetireeLga.isEmpty())) {
             errorMessage = getString(R.string.select_input_msg, getString(R.string.lga))
@@ -733,7 +733,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.phone_num_of_next_kin))
         } else if (TextUtils.isEmpty(binding.etRetireeNextKinAddress.text)) {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.address_of_next_kin))
-        } else if (TextUtils.isEmpty(binding.etRetireeKinPincode.text)) {
+        } else if (binding.etRetireeKinPincode.text.length != resources.getInteger(R.integer.pin_code_length)) {
             errorMessage = getString(R.string.enter_input_msg, getString(R.string.pincode_of_next_kin))
         } else if (binding.spRetireePensionBoard.selectedItemPosition == 0 || (binding.spRetireePensionBoard.isEmpty())) {
             errorMessage = getString(R.string.select_input_msg, getString(R.string.local_pension_board))
