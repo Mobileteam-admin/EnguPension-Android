@@ -24,6 +24,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    enum class VerificationState{VERIFY,RE_VERIFY,VERIFIED}
+    val swiftCodeState = MutableLiveData(VerificationState.VERIFY)
+    val bankCodeState = MutableLiveData(VerificationState.VERIFY)
 
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()
     val bankListApiResult: LiveData<ResponseBankList>

@@ -172,19 +172,56 @@
                 android:paddingTop="@dimen/dp_12"
                 android:text="@string/swift_code" />
 
-            <EditText
-                android:id="@+id/et_activebank_swiftcode"
-                style="@style/Style_text_title_2"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_squarebox"
-                android:drawableStart="@drawable/ic_swiftcode"
-                android:drawablePadding="@dimen/dp_16"
-                android:hint="@string/enter_your_swiftcode"
-                android:inputType="textCapCharacters"
-                android:padding="@dimen/dp_12"
-                android:maxLength="@integer/swift_code_length_2"
-                android:textAllCaps="true"/>
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_activebank_swiftcode"
+                    style="@style/Style_text_title_2"
+                    android:layout_width="match_parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_squarebox"
+                    android:drawableStart="@drawable/ic_swiftcode"
+                    android:drawablePadding="@dimen/dp_16"
+                    android:hint="@string/enter_your_swiftcode"
+                    android:inputType="textCapCharacters"
+                    android:padding="@dimen/dp_12"
+                    android:maxLength="@integer/swift_code_length_2"
+                    android:textAllCaps="true"/>
+
+                <TextView
+                    android:id="@+id/tv_swift_code_verification"
+                    android:layout_width="wrap_content"
+                    style="@style/Style_text_title_verifytext"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_activebank_swiftcode"
+                    app:layout_constraintTop_toTopOf="@+id/et_activebank_swiftcode"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp_16"
+                    android:text="@string/verify"
+                    android:textAllCaps="true"
+                    android:textColor="@color/red"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_swift_code_verified"
+                    android:layout_width="@dimen/dp_22"
+                    android:layout_height="@dimen/dp_22"
+                    android:layout_marginEnd="@dimen/dp_8"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_swift_code_verification"
+                    android:src="@drawable/ic_tick_green"
+                    app:tint="@color/green_middle" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 style="@style/Style_text_title_1"
@@ -218,7 +255,7 @@
                     android:padding="@dimen/dp_12" />
 
                 <TextView
-                    android:id="@+id/tv_activebank_bankcode_verify"
+                    android:id="@+id/tv_bank_code_verification"
                     android:layout_width="wrap_content"
                     style="@style/Style_text_title_verifytext"
                     android:layout_height="wrap_content"
@@ -230,14 +267,14 @@
                     android:textColor="@color/red"
                     android:textStyle="bold" />
 
-                <TextView
+                <!--<TextView
                     android:id="@+id/tv_activebank_bankcode_reverify"
                     style="@style/Style_text_title_verifytext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     android:layout_marginEnd="@dimen/dp_16"
                     android:text="@string/reverify"
                     android:textColor="@color/red"
@@ -252,9 +289,21 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/dp_16"
                     android:text="@string/verified"
-                    android:visibility="invisible"
+                    android:textAllCaps="true"
+                    android:visibility="gone"
                     android:textColor="@color/green_middle"
-                    android:textStyle="bold" />
+                    android:textStyle="bold" />-->
+
+                <ImageView
+                    android:id="@+id/iv_bank_code_verified"
+                    android:layout_width="@dimen/dp_22"
+                    android:layout_height="@dimen/dp_22"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp_8"
+                    android:visibility="gone"
+                    android:layout_toStartOf="@+id/tv_bank_code_verification"
+                    android:src="@drawable/ic_tick_green"
+                    app:tint="@color/green_middle" />
 
 
 
