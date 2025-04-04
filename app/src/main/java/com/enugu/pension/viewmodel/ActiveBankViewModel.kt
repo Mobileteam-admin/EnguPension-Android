@@ -20,10 +20,13 @@ import com.enugu.pension.model.response.ResponseEinNumber
 import com.enugu.pension.model.response.ResponseSwiftBankCode
 import com.enugu.pension.model.response.SwiftBankDetail
 import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.util.VerificationState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    val swiftCodeState = MutableLiveData(VerificationState.VERIFY)
+    val bankCodeState = MutableLiveData(VerificationState.VERIFY)
 
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()
     val bankListApiResult: LiveData<ResponseBankList>

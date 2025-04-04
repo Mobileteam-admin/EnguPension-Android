@@ -114,7 +114,7 @@ class ReservationFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        binding.incReservation.llVideoCall.isEnabled = false
+//        binding.incReservation.llVideoCall.isEnabled = false todo
         binding.imgWalletBack.setOnClickListener { findNavController().navigateUp() }
         binding.incReservation.llVideoCall.setOnClickListener {
             if (confirmInternet()) {

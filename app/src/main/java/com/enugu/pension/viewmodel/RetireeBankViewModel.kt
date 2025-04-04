@@ -11,10 +11,14 @@ import com.enugu.pension.model.request.InputBankVerification
 import com.enugu.pension.model.request.InputSwiftBankCode
 import com.enugu.pension.model.response.*
 import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.util.VerificationState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RetireeBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    val swiftCodeState = MutableLiveData(VerificationState.VERIFY)
+    val bankCodeState = MutableLiveData(VerificationState.VERIFY)
+
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()
     val bankListApiResult: LiveData<ResponseBankList>
         get() = _bankListApiResult

@@ -173,6 +173,7 @@
                 android:layout_marginRight="@dimen/dp_10"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/dp_12"
+                android:tooltipText="@string/your_reservation"
                 android:src="@drawable/ic_dashboard_video"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -185,6 +186,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/dp_12"
                 android:src="@drawable/ic_plus"
+                android:tooltipText="@string/top_up_wallet"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/iv_reservation"
                 app:layout_constraintTop_toTopOf="parent" />

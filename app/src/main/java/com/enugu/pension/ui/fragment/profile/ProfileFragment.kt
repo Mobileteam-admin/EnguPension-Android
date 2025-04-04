@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
+import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -142,8 +143,12 @@ class ProfileFragment : BaseFragment() {
             R.string.region,
             R.string.status,
         )
+
+        val hiddenInfoItemIndices = listOf(DURATION_INDEX, REGION_INDEX)
         repeat(INFO_ITEM_COUNT) {
-            infoBindingList.add(addInfoItem(hintList[it]))
+            val item = addInfoItem(hintList[it])
+            infoBindingList.add(item)
+            if (hiddenInfoItemIndices.contains(it)) item.cvParent.isGone = true
         }
         binding.llProfile.requestLayout()
     }
