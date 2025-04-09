@@ -24,7 +24,6 @@ import com.enugu.pension.model.request.InputSwiftBankCode
 import com.enugu.pension.model.request.TopUpRequest
 import com.enugu.pension.model.request.TransferRequest
 import com.enugu.pension.model.request.UpdateProfileForm
-import com.enugu.pension.model.request.VideoCallRequest
 import com.enugu.pension.model.response.ProfileResponse
 import com.enugu.pension.network.ApiInterface
 import com.enugu.pension.util.NetworkUtils
@@ -89,7 +88,7 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
         apiInterface.getRetireeDocRetrive(NetworkUtils.getAccessToken())
 
     suspend fun fetchBankDetails(inputSwiftBankCode: InputSwiftBankCode) =
-        apiInterface.getSwiftBankCode(NetworkUtils.getAccessToken(), inputSwiftBankCode)
+        apiInterface.fetchBankDetails(NetworkUtils.getAccessToken(), inputSwiftBankCode)
 
     suspend fun submitBankInfo(inputActiveBankInfo: InputActiveBankInfo) =
         apiInterface.submitBankInfo(NetworkUtils.getAccessToken(), inputActiveBankInfo)
@@ -230,4 +229,8 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
             }
         }
     }
+
+    suspend fun fetchReservationDetails() =
+        apiInterface.fetchReservationDetails(NetworkUtils.getAccessToken())
+
 }

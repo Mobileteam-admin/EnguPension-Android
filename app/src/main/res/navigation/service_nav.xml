@@ -23,11 +23,22 @@
         android:name="com.enugu.pension.ui.fragment.service.ActiveServiceFragment"
         android:label="Active Service"
         tools:layout="@layout/fragment_active_service">
+        <action
+            android:id="@+id/action_navigation_activeService_to_swiftVerificationDialog"
+            app:destination="@id/swiftVerificationDialog" />
     </fragment>
     <fragment
         android:id="@+id/navigation_Retiree"
         android:name="com.enugu.pension.ui.fragment.service.RetireeServiceFragment"
         android:label="Retiree Service"
         tools:layout="@layout/fragment_retiree">
+        <action
+            android:id="@+id/action_navigation_Retiree_to_swiftVerificationDialog"
+            app:destination="@id/swiftVerificationDialog" />
     </fragment>
+    <dialog
+        android:id="@+id/swiftVerificationDialog"
+        android:name="com.enugu.pension.ui.dialog.SwiftVerificationDialog"
+        android:label="SwiftVerificationDialog"
+        tools:layout="@layout/dialog_swift_confirmation"/>
 </navigation>

@@ -9,10 +9,8 @@ import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
 import android.text.InputFilter
 import android.text.TextUtils
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +19,13 @@ import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.R
@@ -36,19 +38,18 @@ import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.activity.ProcessDashboardActivity
 import com.enugu.pension.ui.adapter.AccountTypeAdapter
 import com.enugu.pension.ui.adapter.BankAdapter
+import com.enugu.pension.ui.dialog.SwiftVerificationDialog
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.ui.fragment.service.retiree.RetireeBankFragment
-import com.enugu.pension.ui.fragment.service.retiree.RetireeBankFragment.Companion
 import com.enugu.pension.util.AppUtils
 import com.enugu.pension.util.OnboardingStage
 import com.enugu.pension.util.SharedPref
+import com.enugu.pension.util.VerificationState
 import com.enugu.pension.viewmodel.ActiveBankViewModel
 import com.enugu.pension.viewmodel.ActiveServiceViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 val filterUpperCaseAndDigits = InputFilter { source, start, end, dest, dstart, dend ->
@@ -71,14 +72,13 @@ class ActiveBankFragment: BaseFragment() {
 
     private val activeServiceViewModel by activityViewModels<ActiveServiceViewModel>()
 
-    private lateinit var activeBankViewModel: ActiveBankViewModel
+    private lateinit var viewModel: ActiveBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
 
     var a_bankid = ""
     var a_accounttype = ""
     var autoRenewal: Boolean = false
-    private var hasVerified = false
 
     var BankList = ArrayList<ListBanksItem?>()
     lateinit var bankAdapter: BankAdapter
@@ -120,14 +120,22 @@ class ActiveBankFragment: BaseFragment() {
 
 //        setAdapter()
         // initcall()  - hold
+        setFragmentResultListener()
         OnTextWatcher()
         onClicked()
         //observeActiveBankDetails()
     }
 
+    private fun setFragmentResultListener() {
+        requireActivity().supportFragmentManager.setFragmentResultListener(SwiftVerificationDialog.DIALOG_RESULT, viewLifecycleOwner) { _, bundle ->
+            if(bundle.getBoolean(SwiftVerificationDialog.HAS_CONFIRMED)) {
+                viewModel.swiftCodeState.value = VerificationState.VERIFIED
+            }
+        }
+    }
     private fun initViewModels() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
-        activeBankViewModel = ViewModelProviders.of(
+        viewModel = ViewModelProviders.of(
             this,
             EnguViewModelFactory(networkRepo)
         ).get(ActiveBankViewModel::class.java)
@@ -138,9 +146,24 @@ class ActiveBankFragment: BaseFragment() {
     }
     private fun observeLiveData() {
         activeServiceViewModel.currentTabPos.observe(viewLifecycleOwner){
-            if (it == TAB_POSITION) activeBankViewModel.fetchBankList()
+            if (it == TAB_POSITION) {
+                showLoader()
+                viewModel.fetchBankList()
+            }
         }
-        activeBankViewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
+        viewModel.swiftCodeState.observe(viewLifecycleOwner) {
+            binding.tvSwiftCodeVerification.text = getVerificationStateText(it)
+            binding.tvSwiftCodeVerification.isClickable = it != VerificationState.VERIFIED
+            binding.tvSwiftCodeVerification.setTextColor(getVerificationStateColor(it))
+            binding.ivSwiftCodeVerified.isVisible = it == VerificationState.VERIFIED
+        }
+        viewModel.bankCodeState.observe(viewLifecycleOwner) {
+            binding.tvBankCodeVerification.text = getVerificationStateText(it)
+            binding.tvBankCodeVerification.isClickable = it != VerificationState.VERIFIED
+            binding.tvBankCodeVerification.setTextColor(getVerificationStateColor(it))
+            binding.ivBankCodeVerified.isVisible = it == VerificationState.VERIFIED
+        }
+        viewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
                 dismissLoader()
                 bankdetailsList.clear()
@@ -152,38 +175,45 @@ class ActiveBankFragment: BaseFragment() {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            activeBankViewModel.fetchBankList()
+                            viewModel.fetchBankList()
                         }
                     }
                 } else {
                     dismissLoader()
                     showFetchErrorDialog(
-                        activeBankViewModel::fetchBankList,
+                        viewModel::fetchBankList,
                         response.detail?.message ?: getString(R.string.common_error_msg_2)
                     )
                 }
             }
         }
-        activeBankViewModel.bankDetailsApiResult.observe(viewLifecycleOwner) { pair ->
+        viewModel.bankDetailsApiResult.observe(viewLifecycleOwner) { pair ->
             val swiftCode = pair.first
             val response = pair.second
-            if (response.swiftbankdetail?.status == AppConstants.SUCCESS) {
+            if (response.detail?.status == AppConstants.SUCCESS) {
                 dismissLoader()
-                onSwiftBankCodeSuccess(response)
+                response.detail.swiftCodeResponse?.let {
+                    val bundle = Bundle().apply {
+                        putString(SwiftVerificationDialog.ARG_BANK_NAME, it.bankName)
+                        putString(SwiftVerificationDialog.ARG_BRANCH, it.branchName)
+                        putString(SwiftVerificationDialog.ARG_CITY, it.cityName)
+                    }
+                    findNavController().navigate(R.id.swiftVerificationDialog,bundle)
+                }
             } else {
-                if (response.swiftbankdetail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            activeBankViewModel.fetchBankDetails(swiftCode)
+                            viewModel.fetchBankDetails(swiftCode)
                         }
                     }
                 } else {
                     dismissLoader()
-                    Toast.makeText(context, response.swiftbankdetail?.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
-        activeBankViewModel.bankInfoSubmissionResult.observe(viewLifecycleOwner) { pair ->
+        viewModel.bankInfoSubmissionResult.observe(viewLifecycleOwner) { pair ->
             val inputActiveBankInfo = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
@@ -196,7 +226,7 @@ class ActiveBankFragment: BaseFragment() {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            activeBankViewModel.submitBankInfo(inputActiveBankInfo)
+                            viewModel.submitBankInfo(inputActiveBankInfo)
                         }
                     }
                 } else {
@@ -205,31 +235,28 @@ class ActiveBankFragment: BaseFragment() {
                 }
             }
         }
-        activeBankViewModel.bankVerificationResult.observe(viewLifecycleOwner) { pair ->
+        viewModel.bankVerificationResult.observe(viewLifecycleOwner) { pair ->
             val inputBankVerification = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
                 dismissLoader()
-                onBankVerifySubmitSuccess(response)
+                response.detail?.message?.let { showToast(it) }
+                viewModel.bankCodeState.value = VerificationState.VERIFIED
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            activeBankViewModel.verifyBankAccount(inputBankVerification)
+                            viewModel.verifyBankAccount(inputBankVerification)
                         }
                     }
                 } else {
                     dismissLoader()
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
-                    hasVerified = false
-                    binding.tvActivebankBankcodeVerify.visibility = View.INVISIBLE
-                    binding.tvActivebankBankcodeReverify.visibility = View.VISIBLE
-                    binding.tvActivebankBankcodeVerified.visibility = View.INVISIBLE
-
+                    viewModel.bankCodeState.value = VerificationState.RE_VERIFY
                 }
             }
         }
-        activeBankViewModel.einSubmissionResult.observe(viewLifecycleOwner) { pair ->
+        viewModel.einSubmissionResult.observe(viewLifecycleOwner) { pair ->
             val ein = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
@@ -239,7 +266,7 @@ class ActiveBankFragment: BaseFragment() {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            activeBankViewModel.submitEin(ein)
+                            viewModel.submitEin(ein)
                         }
                     }
                 } else {
@@ -250,6 +277,25 @@ class ActiveBankFragment: BaseFragment() {
         }
     }
 
+    private fun getVerificationStateText(state: VerificationState): String {
+        return getString(
+            when (state) {
+                VerificationState.VERIFY -> R.string.verify
+                VerificationState.RE_VERIFY -> R.string.reverify
+                VerificationState.VERIFIED -> R.string.verified
+            }
+        )
+    }
+    private fun getVerificationStateColor(state: VerificationState): Int {
+        return  ContextCompat.getColor(
+            requireContext(),
+            when (state) {
+                VerificationState.VERIFY -> R.color.red
+                VerificationState.RE_VERIFY -> R.color.red
+                VerificationState.VERIFIED -> R.color.green_middle
+            }
+        )
+    }
 
     private fun setAdapter() {
 
@@ -309,29 +355,12 @@ class ActiveBankFragment: BaseFragment() {
     }
 
     private fun OnTextWatcher() {
-
-        binding.etActivebankSwiftcode.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-
-                binding.etActivebankSwiftcode.setOnFocusChangeListener { view, hasFocus ->
-                    if (!hasFocus) {
-                        // TODO: Uncomment after fixing api -> "/api/v1/get_bank_details"
-//                        activeBankViewModel.fetchBankDetails(binding.etActivebankSwiftcode.text.toString())
-
-                    }
-                }
-
-
-            }
-        })
+        binding.etActivebankSwiftcode.addTextChangedListener {
+            viewModel.swiftCodeState.value = VerificationState.VERIFY
+        }
+        binding.etActivebankBankcode.addTextChangedListener {
+            viewModel.bankCodeState.value = VerificationState.VERIFY
+        }
 
         binding.spActiveBank.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -340,6 +369,7 @@ class ActiveBankFragment: BaseFragment() {
                 position: Int,
                 id: Long,
             ) {
+//                binding.etActivebankSwiftcode.setText("")
                 refreshBankCode(position)
                 refreshBankImage(position)
                 if (BankList.get(position)?.id?.equals(0) == true) {
@@ -401,17 +431,26 @@ class ActiveBankFragment: BaseFragment() {
             autoRenewal = isChecked
         }
 
-        binding.tvActivebankBankcodeVerify.setOnClickListener{
-            clearAllEditTextFocus()
-            if (isValidInput(false)){
-                bankVerifyDialog()
+        binding.tvBankCodeVerification.setOnClickListener {
+            if (viewModel.bankCodeState.value != VerificationState.VERIFIED) {
+                clearAllEditTextFocus()
+                if (isValidInput(false)) {
+                    bankVerifyDialog()
+                }
             }
         }
 
-        binding.tvActivebankBankcodeReverify.setOnClickListener{
-            clearAllEditTextFocus()
-            if (isValidInput(false)){
-                bankVerifyDialog()
+        binding.tvSwiftCodeVerification.setOnClickListener {
+            if (viewModel.swiftCodeState.value != VerificationState.VERIFIED) {
+                if (binding.etActivebankSwiftcode.text.length !in AppUtils.getSwiftCodeRange()) {
+                    showToast(getSwiftCodeErrorMessage())
+                } else {
+                    clearAllEditTextFocus()
+                    if (confirmInternet()) {
+                        showLoader()
+                        viewModel.fetchBankDetails(binding.etActivebankSwiftcode.text.toString())
+                    }
+                }
             }
         }
 
@@ -438,7 +477,7 @@ class ActiveBankFragment: BaseFragment() {
     }
 
     private fun BankinformationCall() {
-        activeBankViewModel.submitBankInfo(
+        viewModel.submitBankInfo(
             InputActiveBankInfo(
 
                 bankId = a_bankid/*"7b8dc580-ba28-8f3b-354410354410351ab4"*//*binding.spActiveBank.selectedItemPosition.toString()*/,
@@ -473,13 +512,6 @@ class ActiveBankFragment: BaseFragment() {
         return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
     }
 
-
-    fun onSwiftBankCodeSuccess(response: ResponseSwiftBankCode) {
-        dismissLoader()
-        binding.etActivebankBankcode.text = Editable.Factory.getInstance()
-            .newEditable(response.swiftbankdetail?.swiftCodeResponse?.bankCode)
-
-    }
 
     private fun onActiveBankInfoSubmitSuccess(response: ResponseBankInfo) {
         dismissLoader()
@@ -595,7 +627,7 @@ class ActiveBankFragment: BaseFragment() {
 
     private fun BankVerifyApiCall(etAccNum: EditText?, etBankCode: EditText?) {
 
-        activeBankViewModel.verifyBankAccount(
+        viewModel.verifyBankAccount(
             InputBankVerification(
                 accountNumber = etAccNum?.text.toString(),
                 bankCode = etBankCode?.text.toString()
@@ -606,7 +638,7 @@ class ActiveBankFragment: BaseFragment() {
     }
 
     private fun EinSubmitCall(et_ein_number_popupsub: EditText?) {
-        activeBankViewModel.submitEin(et_ein_number_popupsub!!.text.toString())
+        viewModel.submitEin(et_ein_number_popupsub!!.text.toString())
         Log.d("Ein", "EIN_Number${et_ein_number_popupsub.text}")
     }
 
@@ -638,7 +670,13 @@ class ActiveBankFragment: BaseFragment() {
         return true
     }
 
-    private fun isValidInput(isVerificationComplete: Boolean): Boolean {
+    private fun getSwiftCodeErrorMessage(): String {
+        val length1 = resources.getInteger(R.integer.swift_code_length_1)
+        val length2 = resources.getInteger(R.integer.swift_code_length_2)
+        return getString(R.string.swift_code_error_msg, length1, length2)
+    }
+
+    private fun isValidInput(isBankCodeVerified: Boolean): Boolean {
         var errorMessage: String? = null
         if (BankList[binding.spActiveBank.selectedItemPosition]?.id == BANK_ITEM_SELECT_ID) {
             errorMessage = getString(R.string.select_bank_msg)
@@ -653,13 +691,13 @@ class ActiveBankFragment: BaseFragment() {
         } else if (!AppUtils.isValidFullName(binding.etActivebankAccname.text.toString())) {
             errorMessage = getString(R.string.account_holder_error_msg)
         } else if (binding.etActivebankSwiftcode.text.length !in AppUtils.getSwiftCodeRange()) {
-            val length1 = resources.getInteger(R.integer.swift_code_length_1)
-            val length2 = resources.getInteger(R.integer.swift_code_length_2)
-            errorMessage = getString(R.string.swift_code_error_msg, length1, length2)
+            errorMessage = getSwiftCodeErrorMessage()
+        } else if (viewModel.swiftCodeState.value != VerificationState.VERIFIED) {
+            errorMessage = getString(R.string.verify_swift_code_msg)
         } else if (binding.etActivebankBankcode.text.isNullOrEmpty()) {
             errorMessage = getString(R.string.please_enter_bank_code)
-        } else if(isVerificationComplete) {
-            if (!hasVerified) {
+        } else if(isBankCodeVerified) {
+            if (viewModel.swiftCodeState.value != VerificationState.VERIFIED) {
                 errorMessage = getString(R.string.verify_bank_code_msg)
             } else if (AccountTypeList[binding.spActivebankAcctype.selectedItemPosition]?.id == ACCOUNT_TYPE_ITEM_SELECT_ID) {
                 errorMessage = getString(R.string.please_select_account_type)
@@ -680,17 +718,6 @@ class ActiveBankFragment: BaseFragment() {
         activity?.finish()
     }
 
-    fun onBankVerifySubmitSuccess(response: ResponseBankVerify) {
-        dismissLoader()
-        Toast.makeText(context, response.detail?.message, Toast.LENGTH_SHORT).show()
-
-        //prefs.isBankVerify = true
-
-        hasVerified = true
-        binding.tvActivebankBankcodeVerify.visibility = View.INVISIBLE
-        binding.tvActivebankBankcodeReverify.visibility = View.INVISIBLE
-        binding.tvActivebankBankcodeVerified.visibility = View.VISIBLE
-    }
     private fun refreshBankImage(position:Int) {
         binding.imgActivebank.setImageResource(R.drawable.ic_bank_green)
         BankList[position]?.let {
@@ -702,7 +729,7 @@ class ActiveBankFragment: BaseFragment() {
             }
         }
     }
-    // TODO: Remove this function after fixing api -> "/api/v1/get_bank_details"
+
     private fun refreshBankCode(position:Int) {
         val bankCode = if (BankList[position]?.id != BANK_ITEM_SELECT_ID) BankList[position]?.code else ""
         binding.etActivebankBankcode.setText(bankCode)

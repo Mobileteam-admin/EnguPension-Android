@@ -88,7 +88,7 @@
             android:layout_height="@dimen/dp_14"
             android:src="@drawable/ic_naira"
             android:textSize="@dimen/sp_16"
-            android:tint="@color/colorPrimary"
+            app:tint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_paid_amount_label" />
@@ -171,6 +171,7 @@
         style="@style/Style_text_title_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_marginTop="@dimen/dp_8"
         android:text="@string/description" />
 
@@ -179,6 +180,7 @@
         style="@style/Style_text_title_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_marginTop="@dimen/dp_6"
         android:text="@string/reservation_description"
         android:textColor="@color/grey_500" />

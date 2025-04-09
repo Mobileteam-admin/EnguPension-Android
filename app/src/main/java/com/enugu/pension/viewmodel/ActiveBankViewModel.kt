@@ -17,20 +17,22 @@ import com.enugu.pension.model.response.ResponseBankInfo
 import com.enugu.pension.model.response.ResponseBankList
 import com.enugu.pension.model.response.ResponseBankVerify
 import com.enugu.pension.model.response.ResponseEinNumber
-import com.enugu.pension.model.response.ResponseSwiftBankCode
-import com.enugu.pension.model.response.SwiftBankDetail
+import com.enugu.pension.model.response.SwiftCodeVerificationResponse
 import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.util.VerificationState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    val swiftCodeState = MutableLiveData(VerificationState.VERIFY)
+    val bankCodeState = MutableLiveData(VerificationState.VERIFY)
 
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()
     val bankListApiResult: LiveData<ResponseBankList>
         get() = _bankListApiResult
 
-    private val _bankDetailsApiResult = MutableLiveData<Pair<String, ResponseSwiftBankCode>>()
-    val bankDetailsApiResult: LiveData<Pair<String, ResponseSwiftBankCode>>
+    private val _bankDetailsApiResult = MutableLiveData<Pair<String, SwiftCodeVerificationResponse>>()
+    val bankDetailsApiResult: LiveData<Pair<String, SwiftCodeVerificationResponse>>
         get() = _bankDetailsApiResult
 
     private val _bankInfoSubmissionResult =
@@ -58,8 +60,8 @@ class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _bankDetailsApiResult.postValue(
                     Pair(
                         swiftCode,
-                        ResponseSwiftBankCode(
-                            SwiftBankDetail(message = "Something went wrong with fetching bank details")
+                        SwiftCodeVerificationResponse(
+                            SwiftCodeVerificationResponse.Detail(message = "Something went wrong with verifying swift code.")
                         )
                     )
                 )

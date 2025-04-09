@@ -21,6 +21,10 @@ class ReservationViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val videoCallApiResult: LiveData<VideoCallResponse>
         get() = _videoCallApiResult
 
+    private val _reservationApiResult = MutableLiveData<ReservationResponse>()
+    val reservationApiResult: LiveData<ReservationResponse>
+        get() = _reservationApiResult
+
 
     fun fetchVideoCallLink() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -31,6 +35,21 @@ class ReservationViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _videoCallApiResult.postValue(
                     VideoCallResponse(
                         VideoCallResponse.Detail(message = "Something went wrong with video call")
+                    )
+                )
+            }
+        }
+    }
+
+    fun fetchReservationDetails() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                _reservationApiResult.postValue(networkRepo.fetchReservationDetails())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _reservationApiResult.postValue(
+                    ReservationResponse(
+                        ReservationResponse.Detail(message = "Something went wrong with fetching reservation details.")
                     )
                 )
             }

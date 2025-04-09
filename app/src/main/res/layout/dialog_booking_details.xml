@@ -101,6 +101,7 @@
         style="@style/Style_text_title_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_marginTop="@dimen/dp_16"
         android:text="@string/description" />
 
@@ -113,6 +114,7 @@
         android:layout_marginTop="@dimen/dp_8"
         android:background="@drawable/custom_squarebox"
         android:hint="@string/description"
+        android:visibility="gone"
         android:padding="@dimen/dp_12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
