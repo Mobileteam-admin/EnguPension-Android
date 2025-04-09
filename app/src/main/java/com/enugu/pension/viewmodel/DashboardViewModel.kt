@@ -21,15 +21,12 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         MutableLiveData<ResponseLogout>()
     val logoutResult: LiveData<ResponseLogout>
         get() = _logoutResult
+    val profilePictureUrl = MutableLiveData<String?>(null) // TODO: remove after dashboard-details API update
 
     private val _dashboardDetailsResult =
         MutableLiveData<ResponseDashboardDetails>(null)
     val dashboardDetailsResult: LiveData<ResponseDashboardDetails>
         get() = _dashboardDetailsResult
-
-    private val _videoCallApiResult = MutableLiveData<Pair<VideoCallRequest, VideoCallResponse>>()
-    val videoCallApiResult: LiveData<Pair<VideoCallRequest, VideoCallResponse>>
-        get() = _videoCallApiResult
 
     private val _bankAccountListApiResult = MutableLiveData<BankAccountListResponse>()
     val bankAccountListApiResult: LiveData<BankAccountListResponse>
@@ -64,27 +61,8 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         }
     }
 
-    fun fetchVideoCallLink(request: VideoCallRequest) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val call = networkRepo.fetchVideoCallLink(request)
-            val response = when (val apiResult = NetworkUtils.handleResponse(call)) {
-                is ApiResult.Success -> apiResult.data
-                is ApiResult.Error ->
-                    VideoCallResponse(
-                        VideoCallResponse.Detail(message = apiResult.message)
-                    )
-            }
-            _videoCallApiResult.postValue(
-                Pair(
-                    request,
-                    response
-                )
-            )
-        }
-    }
-
-    fun fetchBankAccountList() {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun fetchBankAccountList(): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
             try {
                 _bankAccountListApiResult.postValue(networkRepo.fetchBankAccountList())
             } catch (e: Exception) {
@@ -96,4 +74,18 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
             }
         }
     }
+
+
+
+    fun fetchProfilePicture() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val result = networkRepo.fetchProfileDetails()
+                result.detail?.userProfileDetails?.imageUrl?.let { profilePictureUrl.postValue(it) }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }

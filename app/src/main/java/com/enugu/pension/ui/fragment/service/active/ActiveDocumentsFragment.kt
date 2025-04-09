@@ -3,15 +3,12 @@ package com.enugu.pension.ui.fragment.service.active
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
@@ -30,7 +27,7 @@ import com.enugu.pension.ui.fragment.base.BaseFragment
 import com.enugu.pension.util.NetworkUtils
 import com.enugu.pension.util.OnboardingStage
 import com.enugu.pension.util.SharedPref
-import com.enugu.pension.util.UploadDocumentsUtils
+import com.enugu.pension.util.FileUtils
 import com.enugu.pension.viewmodel.ActiveDocumentsViewModel
 import com.enugu.pension.viewmodel.ActiveDocumentsViewModel.DocItemIndex.ID_CARD
 import com.enugu.pension.viewmodel.ActiveDocumentsViewModel.DocItemIndex.PHOTO
@@ -268,11 +265,7 @@ class ActiveDocumentsFragment : BaseFragment(), View.OnClickListener {
         try {
             startActivity(Intent.createChooser(intent, "Open file with"))
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(
-                context,
-                "No application found to open this file type.",
-                Toast.LENGTH_LONG
-            ).show()
+            showToast(R.string.no_app_found_to_open)
         }
     }
 
@@ -325,7 +318,7 @@ class ActiveDocumentsFragment : BaseFragment(), View.OnClickListener {
     private fun onFileSelected(index: Int, uri: Uri): Boolean {
         val parcelFileDescriptor =
             context?.contentResolver?.openFileDescriptor(uri, "r", null) ?: return false
-        val fileName = UploadDocumentsUtils.getFileName(context?.contentResolver, uri)
+        val fileName = FileUtils.getFileName(context?.contentResolver, uri)
         val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
         val file = File(context?.cacheDir, fileName)
         val outputStream = FileOutputStream(file)
@@ -337,7 +330,7 @@ class ActiveDocumentsFragment : BaseFragment(), View.OnClickListener {
         } else {
             rvAdapter.items[index]!!.file = file
             rvAdapter.items[index]!!.fileName = file.name
-            rvAdapter.items[index]!!.mime = UploadDocumentsUtils.getMimeType(file.path)
+            rvAdapter.items[index]!!.mime = FileUtils.getDocumentMimeType(file.path)
             rvAdapter.items[index]!!.pickedUri = uri
             lifecycleScope.launch {
                 var progress = 0
@@ -382,7 +375,7 @@ class ActiveDocumentsFragment : BaseFragment(), View.OnClickListener {
         rvAdapter.items.forEachIndexed { index, item ->
             item!!.fileName = item.uploadedUrl?.substringAfterLast('/') ?: ""
             if (!item.uploadedUrl.isNullOrEmpty()) {
-                item.mime = UploadDocumentsUtils.getMimeType(item.uploadedUrl!!)
+                item.mime = FileUtils.getDocumentMimeType(item.uploadedUrl!!)
                 val cacheFile = File(requireContext().cacheDir, item.cacheFileName)
                 item.file = cacheFile
                 viewModel.downloadDocCacheFile(item.uploadedUrl!!, cacheFile)

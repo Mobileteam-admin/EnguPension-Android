@@ -1,0 +1,41 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cv_ein"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/dp_8"
+    app:cardElevation="@dimen/dp_6"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/til_info"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_margin="@dimen/dp_8"
+            android:background="@drawable/edittext_curve_outline"
+            android:hint="Aaaaaaaggggggg fi"
+            android:paddingTop="@dimen/dp_4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_info"
+                style="@style/Style_text_title_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:inputType="text|textNoSuggestions"
+                android:paddingHorizontal="@dimen/dp_12"
+                android:paddingBottom="8dp"
+                android:text="Bbbbbbb fi"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

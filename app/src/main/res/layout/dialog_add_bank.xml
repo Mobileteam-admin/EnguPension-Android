@@ -166,7 +166,7 @@
             android:drawableStart="@drawable/ic_swiftcode"
             android:drawablePadding="@dimen/dp_16"
             android:hint="Enter your SwiftCode"
-            android:inputType="text"
+            android:inputType="textCapCharacters"
             android:maxLength="@integer/swift_code_length_2"
             android:padding="@dimen/dp_12" />
 

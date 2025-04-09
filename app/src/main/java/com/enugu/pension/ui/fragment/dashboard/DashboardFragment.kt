@@ -36,12 +36,12 @@ import com.enugu.pension.viewmodel.LogoutConfirmViewModel
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jitsi.meet.sdk.JitsiMeetActivity
-import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
-import java.net.URL
 
 
 class DashboardFragment : BaseFragment() {
+    companion object {
+        const val MIN_BOOKING_AMOUNT = 1400f
+    }
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var logoutConfirmDialog: LogoutConfirmDialog
     private lateinit var addBankDialog: AddBankDialog
@@ -83,6 +83,9 @@ class DashboardFragment : BaseFragment() {
         logoutConfirmViewModel.logout.observe(viewLifecycleOwner) { logout ->
             if (logout != null) callLogout()
         }
+        viewModel.profilePictureUrl.observe(viewLifecycleOwner) {
+            it?.let {url -> setProfilePicture(url) }
+        }
         viewModel.logoutResult.observe(viewLifecycleOwner) { response ->
             if (response.logout_detail?.status == AppConstants.SUCCESS) {
                 onLogoutSuccess(response)
@@ -99,16 +102,17 @@ class DashboardFragment : BaseFragment() {
                 }
             }
         }
-        viewModel.videoCallApiResult.observe(viewLifecycleOwner) { pair ->
-            val request = pair.first
-            val response = pair.second
+       /* viewModel.videoCallApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
+                dismissLoader()
 //                startJitsiMeet(response)
+                    response.detail.roomUrl?.let { startMeet(it) } // TODO:
+
             } else {
                 if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            viewModel.fetchVideoCallLink(request)
+                            viewModel.fetchVideoCallLink()
                         }
                     }
                 } else {
@@ -116,7 +120,7 @@ class DashboardFragment : BaseFragment() {
                     Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
                 }
             }
-        }
+        }*/
         viewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
             if (response != null) {
                 if (response.detail?.status == AppConstants.SUCCESS) {
@@ -177,7 +181,8 @@ class DashboardFragment : BaseFragment() {
                 showLoader()
                 lifecycleScope.launch {
                     viewModel.fetchDashboardDetails().join()
-                    viewModel.fetchBankAccountList()
+                    viewModel.fetchBankAccountList().join()
+                    viewModel.fetchProfilePicture() // TODO: remove after dashboard-details API update
                 }
             } else {
                 showFetchErrorDialog(::fetchInitDetails, R.string.no_internet_error)
@@ -194,39 +199,45 @@ class DashboardFragment : BaseFragment() {
 //
 
 
-//            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
-//                val videoCallRequest = VideoCallRequest(
-//                    govtOfficialEmail = "8adm3eqs29@zlorkun.com",
-//                    userEmail = "avin@techversantinfo.com",
-//                    callDay = "10/12/2024",
-//                    slotId = 33
-//                )
-//                viewModel.fetchVideoCallLink(videoCallRequest)
-//                showLoader()
-//            } else {
-//            }
+           /*if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                viewModel.fetchVideoCallLink()
+                showLoader()
+            } else {
+            }*/
+
+//            val intent = Intent(requireActivity(), TestVideoCallActivity::class.java)
+//            startActivity(intent)
         }
         binding.tvProfile.setOnClickListener {
-            navigate(R.id.action_dashboard_to_profile)
+            if (confirmInternet()) navigate(R.id.action_dashboard_to_profile)
         }
         binding.ivTopup.setOnClickListener {
             navigate(R.id.action_dashboard_to_wallet)
         }
-        binding.ivHistory.setOnClickListener {
-            navigate(R.id.action_dashboard_to_wallet_history)
+        binding.ivReservation.setOnClickListener {
+            if (confirmInternet()) {
+                navigate(R.id.action_navigation_dashboard_to_navigation_reservation)
+            }
         }
         binding.llAccount.setOnClickListener {
             navigate(R.id.action_dashboard_to_account)
         }
         binding.llAddBank.setOnClickListener {
-            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
-                showDialog(addBankDialog)
-            } else {
-                showToast(R.string.no_internet_error)
-            }
+            if (confirmInternet()) showDialog(addBankDialog)
         }
         binding.llAppoinment.setOnClickListener {
-            showDialog(appointmentDialog)
+            viewModel.dashboardDetailsResult.value?.detail?.walletBalanceAmount?.let {
+                if (it >= MIN_BOOKING_AMOUNT) {
+                    if (confirmInternet()) showDialog(appointmentDialog)
+                }
+                else {
+                    showAlertDialog(
+                        message = getString(R.string.booking_amount_error),
+                        positiveTextId = R.string.ok,
+                        onPositiveClick = {},
+                    )
+                }
+            }
         }
         binding.llLogout.setOnClickListener {
             showDialog(logoutConfirmDialog)
@@ -245,9 +256,7 @@ class DashboardFragment : BaseFragment() {
 
     private fun populateViews() {
         viewModel.dashboardDetailsResult.value?.detail?.let {
-            Glide.with(this)
-                .load(it.profilePic)
-                .into(binding.imgProfile)
+            //it.profilePic?.let { url -> setProfilePicture(url) } // TODO: uncomment after dashboard-details API update
             binding.tvPersonName.text = it.fullName
             val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
             binding.tvWalletAmount.text = walletText
@@ -291,6 +300,13 @@ class DashboardFragment : BaseFragment() {
                 binding.ivBookAppointment.setImageResource(R.drawable.ic_not_verified_red)
             }
         }
+    }
+
+    private fun setProfilePicture(url: String) {
+        Glide.with(this)
+            .load(url)
+            .placeholder(R.drawable.baseline_account_circle_white)
+            .into(binding.ivProfile)
     }
 
     private fun onLogoutSuccess(response: ResponseLogout) {
@@ -342,16 +358,16 @@ class DashboardFragment : BaseFragment() {
     }
 
     private fun startJitsiMeetCall(callLink: String) {
-        try {
-            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
-                .setServerURL(URL(callLink))
-                .setRoom(callLink)
-                .setAudioOnly(false)
-                .build()
-
-            JitsiMeetActivity.launch(requireContext(), options)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        try {
+//            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
+//                .setServerURL(URL(callLink))
+//                .setRoom(callLink)
+//                .setAudioOnly(false)
+//                .build()
+//
+//            JitsiMeetActivity.launch(requireContext(), options)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
     }
 }

@@ -300,7 +300,7 @@
                 style="@style/Style_text_title_2"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:text="@string/set_auto_deduciton" />
+                android:text="@string/set_auto_deduction" />
 
         </LinearLayout>
 

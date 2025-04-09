@@ -1,14 +1,15 @@
 package com.enugu.pension.util
 
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
-import android.view.View
 import android.webkit.MimeTypeMap
-import android.widget.TextView
+import java.io.File
+import java.io.IOException
 
-object UploadDocumentsUtils {
-    fun getMimeType(filePath: String): String {
+object FileUtils {
+    fun getDocumentMimeType(filePath: String): String {
         val extension = MimeTypeMap.getFileExtensionFromUrl(filePath)
         val extension2 = filePath.substringAfterLast('.', "")
         var mimeTypeSecondary = ""
@@ -21,7 +22,8 @@ object UploadDocumentsUtils {
             MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: mimeTypeSecondary
         return mimeType
     }
-    fun getFileName(contentResolver:ContentResolver?,selectedImageUri: Uri): String {
+
+    fun getFileName(contentResolver: ContentResolver?, selectedImageUri: Uri): String {
         var name = ""
         val returnCursor = contentResolver?.query(selectedImageUri, null, null, null, null)
         if (returnCursor != null) {
@@ -33,5 +35,20 @@ object UploadDocumentsUtils {
         return name
     }
 
+    fun getFileFromUri(context: Context, uri: Uri): File? {
+        val fileName = getFileName(context.contentResolver, uri) ?: return null
+        val file = File(context.cacheDir, fileName)
+        return try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                file.outputStream().use { outputStream -> inputStream.copyTo(outputStream) }
+            }
+            file
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    fun getFileSizeInMB(file: File) = file.length().toDouble() / (1024 * 1024)
 }
 

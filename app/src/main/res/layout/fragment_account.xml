@@ -360,6 +360,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_kin_profile"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_12"

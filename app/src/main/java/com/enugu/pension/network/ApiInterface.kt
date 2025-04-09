@@ -3,6 +3,7 @@ package com.enugu.pension.network
 
 import com.enugu.pension.model.request.*
 import com.enugu.pension.model.response.*
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -186,11 +187,12 @@ interface ApiInterface {
     @POST("/api/v1/transfer-to-final-account")
     fun transferToFinalAccount(@Header("Authorization") token: String,@Body request:TransferRequest): Call<TransferResponse>
 
-    @POST("/api/v1/booking/videocall/")
+//    @POST("/api/v1/booking/videocall/")
+    @POST("/api/v1/create-room_daily/")
     suspend fun fetchVideoCallLink(
         @Header("Authorization") token: String,
-        @Body request: VideoCallRequest
-    ): Call<VideoCallResponse>
+//        @Body request: VideoCallRequest
+    ): VideoCallResponse
 
 
     @GET("/api/v1/transaction-details")
@@ -206,12 +208,36 @@ interface ApiInterface {
 
 
 //    @GET("/api/v1/transaction-statement/")
-    @GET("/api/v1/download-transactions/{userId}")
+//    @GET("/api/v1/download-transactions/{userId}")
+    @GET("/api/v1/download-transactions/")
     suspend fun fetchStatementPdfLink(
         @Header("Authorization") token: String,
-        @Path("userId") userId: Int
+//        @Path("userId") userId: Int
     ): StatementPdfLinkResponse
 
     @GET
     suspend fun downloadFile(@Url fileUrl: String): ResponseBody
+
+    @POST("/api/v1/update-profile/")
+    suspend fun fetchProfileDetails(@Header("Authorization") token: String
+    ): ProfileResponse
+
+    @Multipart
+    @POST("/api/v1/update-profile/")
+    suspend fun updateProfileDetails(
+        @Header("Authorization") token: String,
+        @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,
+        @Part image: MultipartBody.Part?
+    ): ProfileResponse
+
+    @Multipart
+    @POST("/api/v1/update-profile/")
+    suspend fun updateProfileDetails2(
+        @Header("Authorization") token: String,
+        @Part("ein") ein:RequestBody,
+        @Part("employment_status") employmentStatus:RequestBody,
+        @Part("designation") designation:RequestBody,
+    ): ProfileResponse
+
+
 }

@@ -27,6 +27,7 @@ import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.activity.StripeWebViewActivity
 import com.enugu.pension.ui.adapter.BankAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
+import com.enugu.pension.util.NetworkUtils
 import com.enugu.pension.util.SharedPref
 import com.enugu.pension.util.isValidNumber
 import com.enugu.pension.viewmodel.DashboardViewModel
@@ -122,19 +123,21 @@ class WalletFragment : BaseFragment() {
             findNavController().navigateUp()
         }
         binding.tvWalletHistory.setOnClickListener {
-            navigate(R.id.action_wallet_to_wallet_history)
+            if (confirmInternet()) navigate(R.id.action_wallet_to_wallet_history)
         }
         binding.llWalletTopup.setOnClickListener {
-            if (validateInputs()) {
-                val topUpRequest = TopUpRequest(
-                    userId = SharedPref.user_id?.toInt()!!,
-                    bankId = viewModel.bankItems[binding.spWalletBank.selectedItemPosition]?.id!! ,
-                    amount = binding.etTopUpWalletAmount.text.toString().toFloat(),
-                    currency = AppConstants.DEFAULT_CURRENCY_CODE,
-                )
-                viewModel.fetchTopUp(topUpRequest)
-                showLoader()
-            }
+            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
+                if (validateInputs()) {
+                    val topUpRequest = TopUpRequest(
+                        userId = SharedPref.user_id?.toInt()!!,
+                        bankId = viewModel.bankItems[binding.spWalletBank.selectedItemPosition]?.id!!,
+                        amount = binding.etTopUpWalletAmount.text.toString().toFloat(),
+                        currency = AppConstants.DEFAULT_CURRENCY_CODE,
+                    )
+                    viewModel.fetchTopUp(topUpRequest)
+                    showLoader()
+                }
+            } else showToast(R.string.no_internet_error)
         }
         binding.spWalletBank.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(
@@ -152,13 +155,13 @@ class WalletFragment : BaseFragment() {
         }
         binding.etTopUpWalletAmount.addTextChangedListener {
             val amount = it.toString().toFloatOrNull() ?: 0f
-            binding.tvAmountError.isInvisible = amount >= MIN_TOP_UP_AMOUNT
+            binding.tvAmountError.isInvisible = it.isNullOrEmpty() || amount >= MIN_TOP_UP_AMOUNT
         }
     }
 
     private fun observeLiveData() {
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
-            if (response.detail?.status == AppConstants.SUCCESS) {
+            if (response?.detail?.status == AppConstants.SUCCESS) {
                 populateViews()
             }
         }

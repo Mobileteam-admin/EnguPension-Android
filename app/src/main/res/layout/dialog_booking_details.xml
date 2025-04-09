@@ -22,9 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_12"
-        android:drawableStart="@drawable/ic_calander"
+        android:gravity="center_vertical"
         android:drawablePadding="@dimen/dp_16"
-        android:text="@string/booking_date" />
+        android:text="@string/booking_date"
+        app:drawableStartCompat="@drawable/ic_calender" />
 
     <TextView
         android:id="@+id/tv_booking_date"
@@ -45,9 +46,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_16"
-        android:drawableStart="@drawable/ic_time"
-        android:drawablePadding="@dimen/dp_16"
-        android:text="@string/booking_slot" />
+        android:gravity="center_vertical"
+        android:drawablePadding="@dimen/dp_12"
+        android:text="@string/booking_slot"
+        app:drawableStartCompat="@drawable/ic_time" />
 
     <TextView
         android:id="@+id/tv_booking_slot"

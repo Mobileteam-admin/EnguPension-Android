@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/custom_squarebox"
-            android:drawableStart="@drawable/ic_calander"
+            android:drawableStart="@drawable/ic_calender"
             android:drawablePadding="@dimen/dp_16"
             android:hint="@string/dd_mm_yyyy"
             android:inputType="text"
@@ -116,7 +116,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_pay_now"
+            android:id="@+id/ll_book_now"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/dp_8"
@@ -128,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nunito_sans_semibold"
-                android:text="@string/pay_now"
+                android:text="@string/book_now"
                 android:textColor="@color/white"
                 android:textSize="@dimen/dp_14" />
 

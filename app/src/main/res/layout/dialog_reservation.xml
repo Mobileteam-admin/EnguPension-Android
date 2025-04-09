@@ -1,0 +1,251 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_dashboard_booking"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/dp_16">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/dp_16"
+        android:fontFamily="@font/nunito_sans_semibold"
+        android:text="@string/your_reservation"
+        android:textColor="@color/grey_900"
+        android:textSize="@dimen/sp_18" />
+
+
+    <TextView
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_12"
+        android:drawablePadding="@dimen/dp_16"
+        android:gravity="center_vertical"
+        android:text="@string/booking_date"
+        app:drawableStartCompat="@drawable/ic_calender" />
+
+    <TextView
+        android:id="@+id/tv_booking_date"
+        style="@style/Style_text_title_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="01/01/2024" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/dp_8"
+        android:background="@color/transparent_line" />
+
+    <TextView
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_16"
+        android:drawablePadding="@dimen/dp_12"
+        android:gravity="center_vertical"
+        android:text="@string/booking_slot"
+        app:drawableStartCompat="@drawable/ic_time" />
+
+    <TextView
+        android:id="@+id/tv_booking_slot"
+        style="@style/Style_text_title_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="11:00 AM - 11:30 AM" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/dp_8"
+        android:background="@color/transparent_line" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_8">
+
+        <TextView
+            android:id="@+id/tv_paid_amount_label"
+            style="@style/Style_text_title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/paid_amount"
+            app:layout_constraintBottom_toTopOf="@+id/tv_paid_amount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_naira"
+            style="@style/Style_text_title_1"
+            android:layout_width="@dimen/dp_14"
+            android:layout_height="@dimen/dp_14"
+            android:src="@drawable/ic_naira"
+            android:textSize="@dimen/sp_16"
+            android:tint="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_paid_amount_label" />
+
+        <TextView
+            android:id="@+id/tv_paid_amount"
+            style="@style/Style_text_title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_4"
+            android:text="1400"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sp_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_naira"
+            app:layout_constraintTop_toBottomOf="@+id/tv_paid_amount_label" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/dp_8"
+        android:background="@color/transparent_line" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_8">
+
+        <TextView
+            android:id="@+id/tv_payment_status_label"
+            style="@style/Style_text_title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/payment_status"
+            app:layout_constraintBottom_toTopOf="@+id/tv_payment_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_payment_status"
+            style="@style/Style_text_title_1"
+            android:layout_width="@dimen/dp_14"
+            android:layout_height="@dimen/dp_14"
+            android:src="@drawable/ic_tick_green"
+            android:textSize="@dimen/sp_16"
+            android:tint="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_payment_status_label" />
+
+        <TextView
+            android:id="@+id/tv_payment_status"
+            style="@style/Style_text_title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_4"
+            android:text="@string/success"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sp_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_payment_status"
+            app:layout_constraintTop_toBottomOf="@+id/tv_payment_status_label" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/dp_8"
+        android:background="@color/transparent_line" />
+
+
+    <TextView
+        android:id="@+id/tv_description_label"
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_8"
+        android:text="@string/description" />
+
+    <TextView
+        android:id="@+id/tv_description"
+        style="@style/Style_text_title_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_6"
+        android:text="@string/reservation_description"
+        android:textColor="@color/grey_500" />
+
+    <LinearLayout
+        android:id="@+id/ll_video_call"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_button_height"
+        android:layout_marginTop="@dimen/dp_40"
+        android:background="@drawable/button_green"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_14"
+            android:fontFamily="@font/nunito_sans_semibold"
+            android:text="@string/start_video_call_verification"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dp_14" />
+
+        <ImageView
+            android:id="@+id/iv_video"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:paddingStart="@dimen/dp_4"
+            android:src="@drawable/ic_video" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="@dimen/bottom_button_height"
+        android:layout_marginTop="@dimen/dp_14"
+        android:layout_marginBottom="@dimen/dp_24"
+        android:background="@drawable/info_box"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_info"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            android:paddingStart="@dimen/dp_4"
+            android:tint="@color/green_dark"
+            android:layout_marginStart="@dimen/dp_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/ic_verify_black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_16"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="6dp"
+            android:layout_marginVertical="@dimen/dp_6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_info"
+            android:fontFamily="@font/nunito_sans_semibold"
+            android:text="@string/video_call_info"
+            android:textColor="@color/light_green_info_text"
+            android:textSize="@dimen/dp_14" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

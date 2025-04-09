@@ -6,10 +6,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.enugu.pension.R
 import com.enugu.pension.ui.dialog.LoaderDialog
+import com.enugu.pension.util.BaseUtils
 import com.enugu.pension.viewmodel.LoaderViewModel
 
 
-open class BaseActivity : AppCompatActivity() {
+open class BaseActivity : AppCompatActivity(), BaseUtils {
     private val loaderViewModel by viewModels<LoaderViewModel>()
     private val loaderDialog by lazy { LoaderDialog() }
 
@@ -53,11 +54,8 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun showLoader() {
-        loaderViewModel.show()
-    }
-
-    fun dismissLoader() {
-        loaderViewModel.dismiss()
-    }
+    override fun provideContext() = this
+    override fun provideActivity() = this
+    override fun provideFragmentManager() = supportFragmentManager
+    override fun provideLoaderViewModel() = loaderViewModel
 }

@@ -125,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_squarebox"
-                android:drawableStart="@drawable/ic_calander"
+                android:drawableStart="@drawable/ic_calender"
                 android:drawablePadding="@dimen/dp_16"
                 android:editable="false"
                 android:hint="@string/dd_mm_yyyy"
@@ -247,6 +247,7 @@
                 android:drawablePadding="@dimen/dp_16"
                 android:hint="@string/enter_your_pin"
                 android:inputType="number"
+                android:maxLength="@integer/pin_code_length"
                 android:padding="@dimen/dp_12" />
 
             <TextView
@@ -532,6 +533,7 @@
                 android:drawablePadding="@dimen/dp_16"
                 android:hint="@string/enter_your_pin"
                 android:inputType="number"
+                android:maxLength="@integer/pin_code_length"
                 android:padding="@dimen/dp_12" />
 
 
@@ -617,7 +619,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/custom_squarebox"
-                android:drawableStart="@drawable/ic_calander"
+                android:drawableStart="@drawable/ic_calender"
                 android:drawablePadding="@dimen/dp_16"
                 android:editable="false"
                 android:hint="@string/dd_mm_yyyy"

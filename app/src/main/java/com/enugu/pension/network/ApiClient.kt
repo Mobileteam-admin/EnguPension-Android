@@ -27,10 +27,10 @@ object ApiClient {
         return apiInterface!!
     }
     private fun createRetrofit(): ApiInterface {
-        var interceptor = HttpLoggingInterceptor()
+        val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        var client = OkHttpClient.Builder()
+        val client = OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
