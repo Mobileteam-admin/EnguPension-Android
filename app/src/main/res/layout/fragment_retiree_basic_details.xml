@@ -886,7 +886,7 @@
              />
          <androidx.constraintlayout.widget.ConstraintLayout
              android:id="@+id/ll_retiree_basicdetails_next"
-             android:layout_width="wrap_content"
+             android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:layout_gravity="center"
              android:layout_marginTop="@dimen/dp_50"

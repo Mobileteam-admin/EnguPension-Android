@@ -11,10 +11,14 @@ import com.enugu.pension.model.request.InputBankVerification
 import com.enugu.pension.model.request.InputSwiftBankCode
 import com.enugu.pension.model.response.*
 import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.util.VerificationState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RetireeBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    val swiftCodeState = MutableLiveData(VerificationState.VERIFY)
+    val bankCodeState = MutableLiveData(VerificationState.VERIFY)
+
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()
     val bankListApiResult: LiveData<ResponseBankList>
         get() = _bankListApiResult
@@ -24,8 +28,8 @@ class RetireeBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val bankInfoSubmissionResult: LiveData<Pair<InputActiveBankInfo, ResponseBankInfo>>
         get() = _bankInfoSubmissionResult
 
-    private val _bankDetailsApiResult = MutableLiveData<Pair<String, ResponseSwiftBankCode>>()
-    val bankDetailsApiResult: LiveData<Pair<String, ResponseSwiftBankCode>>
+    private val _bankDetailsApiResult = MutableLiveData<Pair<String, SwiftCodeVerificationResponse>>()
+    val bankDetailsApiResult: LiveData<Pair<String, SwiftCodeVerificationResponse>>
         get() = _bankDetailsApiResult
 
     private val _einSubmissionResult =
@@ -81,8 +85,8 @@ class RetireeBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _bankDetailsApiResult.postValue(
                     Pair(
                         swiftCode,
-                        ResponseSwiftBankCode(
-                            SwiftBankDetail(message = "Something went wrong with fetching bank details")
+                        SwiftCodeVerificationResponse(
+                            SwiftCodeVerificationResponse.Detail(message = "Something went wrong with verifying swift code.")
                         )
                     )
                 )

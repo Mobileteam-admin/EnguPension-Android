@@ -197,12 +197,16 @@
                     android:layout_width="wrap_content"
                     style="@style/Style_text_title_verifytext"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    android:gravity="center"
                     app:layout_constraintBottom_toBottomOf="@+id/et_activebank_swiftcode"
                     app:layout_constraintTop_toTopOf="@+id/et_activebank_swiftcode"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/dp_16"
+                    android:paddingHorizontal="@dimen/dp_16"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?android:attr/selectableItemBackground"
                     android:text="@string/verify"
                     android:textAllCaps="true"
                     android:textColor="@color/red"
@@ -212,14 +216,12 @@
                     android:id="@+id/iv_swift_code_verified"
                     android:layout_width="@dimen/dp_22"
                     android:layout_height="@dimen/dp_22"
-                    android:layout_marginEnd="@dimen/dp_8"
                     android:visibility="gone"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/tv_swift_code_verification"
                     android:src="@drawable/ic_tick_green"
                     app:tint="@color/green_middle" />
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -258,54 +260,29 @@
                     android:id="@+id/tv_bank_code_verification"
                     android:layout_width="wrap_content"
                     style="@style/Style_text_title_verifytext"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/dp_16"
+                    android:paddingHorizontal="@dimen/dp_16"
                     android:visibility="visible"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:textAllCaps="true"
+                    android:background="?android:attr/selectableItemBackground"
                     android:text="@string/verify"
                     android:textColor="@color/red"
                     android:textStyle="bold" />
-
-                <!--<TextView
-                    android:id="@+id/tv_activebank_bankcode_reverify"
-                    style="@style/Style_text_title_verifytext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:visibility="gone"
-                    android:layout_marginEnd="@dimen/dp_16"
-                    android:text="@string/reverify"
-                    android:textColor="@color/red"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_activebank_bankcode_verified"
-                    style="@style/Style_text_title_verifytext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/dp_16"
-                    android:text="@string/verified"
-                    android:textAllCaps="true"
-                    android:visibility="gone"
-                    android:textColor="@color/green_middle"
-                    android:textStyle="bold" />-->
 
                 <ImageView
                     android:id="@+id/iv_bank_code_verified"
                     android:layout_width="@dimen/dp_22"
                     android:layout_height="@dimen/dp_22"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/dp_8"
                     android:visibility="gone"
                     android:layout_toStartOf="@+id/tv_bank_code_verification"
                     android:src="@drawable/ic_tick_green"
                     app:tint="@color/green_middle" />
-
-
 
             </RelativeLayout>
 
@@ -408,7 +385,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ll_activebank_next"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_16"
                 android:layout_gravity="center"

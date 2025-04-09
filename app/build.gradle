@@ -153,7 +153,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
 
-    implementation 'co.daily:client:0.8.0'
-    implementation 'co.daily:client-videoprocessor-plugin:0.1.0'
+//    implementation 'co.daily:client:0.8.0'
+//    implementation 'co.daily:client-videoprocessor-plugin:0.1.0'
 
 }

@@ -520,7 +520,7 @@
                 app:drawableRightCompat="@drawable/asterisk_8"
                 android:layout_marginVertical="@dimen/dp_8"
                 android:paddingTop="@dimen/dp_12"
-                android:text="@string/pincode"
+                android:text="@string/next_of_kin_pincode"
                 />
 
             <EditText
@@ -773,7 +773,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ll_activebasicdetails_next"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/dp_50"

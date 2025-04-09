@@ -41,6 +41,9 @@ import kotlinx.coroutines.launch
 
 
 class AddBankDialog : BaseDialog() {
+    companion object {
+        const val BANK_CODE_VALIDATION = false //to temporarily disable bank code validation
+    }
     private lateinit var binding: DialogAddBankBinding
     private lateinit var viewModel: AddBankViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
@@ -79,54 +82,56 @@ class AddBankDialog : BaseDialog() {
     }
 
     private fun observeLiveData() {
-        viewModel.verificationState.observe(viewLifecycleOwner) {
-            if (it != null)
-                when (it) {
-                    AddBankViewModel.VerificationState.NOT_VERIFIED -> {
-                        binding.tvBankCodeVerification.text = getString(R.string.verify)
-                        binding.tvBankCodeVerification.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.red
+        if (BANK_CODE_VALIDATION) {
+            viewModel.verificationState.observe(viewLifecycleOwner) {
+                if (it != null)
+                    when (it) {
+                        AddBankViewModel.VerificationState.NOT_VERIFIED -> {
+                            binding.tvBankCodeVerification.text = getString(R.string.verify)
+                            binding.tvBankCodeVerification.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.red
+                                )
                             )
-                        )
-                        binding.tvBankCodeVerification.isVisible = true
-                        binding.pbVerification.isInvisible = true
-                        setBankInputEnabled(true)
-                    }
+                            binding.tvBankCodeVerification.isVisible = true
+                            binding.pbVerification.isInvisible = true
+                            setBankInputEnabled(true)
+                        }
 
-                    AddBankViewModel.VerificationState.VERIFYING -> {
-                        binding.tvBankCodeVerification.isInvisible = true
-                        binding.pbVerification.isVisible = true
-                        setBankInputEnabled(false)
-                    }
+                        AddBankViewModel.VerificationState.VERIFYING -> {
+                            binding.tvBankCodeVerification.isInvisible = true
+                            binding.pbVerification.isVisible = true
+                            setBankInputEnabled(false)
+                        }
 
-                    AddBankViewModel.VerificationState.FAILED -> {
-                        binding.tvBankCodeVerification.text = getString(R.string.reverify)
-                        binding.tvBankCodeVerification.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.red
+                        AddBankViewModel.VerificationState.FAILED -> {
+                            binding.tvBankCodeVerification.text = getString(R.string.reverify)
+                            binding.tvBankCodeVerification.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.red
+                                )
                             )
-                        )
-                        binding.tvBankCodeVerification.isVisible = true
-                        binding.pbVerification.isInvisible = true
-                        setBankInputEnabled(true)
-                    }
+                            binding.tvBankCodeVerification.isVisible = true
+                            binding.pbVerification.isInvisible = true
+                            setBankInputEnabled(true)
+                        }
 
-                    AddBankViewModel.VerificationState.VERIFIED -> {
-                        binding.tvBankCodeVerification.text = getString(R.string.verified)
-                        binding.tvBankCodeVerification.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.green_middle
+                        AddBankViewModel.VerificationState.VERIFIED -> {
+                            binding.tvBankCodeVerification.text = getString(R.string.verified)
+                            binding.tvBankCodeVerification.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.green_middle
+                                )
                             )
-                        )
-                        binding.tvBankCodeVerification.isVisible = true
-                        binding.pbVerification.isInvisible = true
-                        setBankInputEnabled(true)
+                            binding.tvBankCodeVerification.isVisible = true
+                            binding.pbVerification.isInvisible = true
+                            setBankInputEnabled(true)
+                        }
                     }
-                }
+            }
         }
         viewModel.bankListApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
@@ -211,11 +216,14 @@ class AddBankDialog : BaseDialog() {
         val holderName = dashboardViewModel.dashboardDetailsResult.value?.detail?.fullName?.trim()
             ?.replace("  ", " ") ?: ""
         binding.etHolderName.setText(holderName)
-        binding.tvBankCodeVerification.setOnClickListener {
-            if (viewModel.verificationState.value != AddBankViewModel.VerificationState.VERIFIED
-                && isValidInput(false)
-            ) {
-                showBankVerifyDialog()
+        binding.tvBankCodeVerification.isVisible = BANK_CODE_VALIDATION
+        if (BANK_CODE_VALIDATION) {
+            binding.tvBankCodeVerification.setOnClickListener {
+                if (viewModel.verificationState.value != AddBankViewModel.VerificationState.VERIFIED
+                    && isValidInput(false)
+                ) {
+                    showBankVerifyDialog()
+                }
             }
         }
         binding.etSwiftCode.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
@@ -224,7 +232,7 @@ class AddBankDialog : BaseDialog() {
         binding.llClose.setOnClickListener { resetAndDismiss() }
         binding.llSubmit.setOnClickListener {
             if (isValidInput(true)) {
-                if (viewModel.verificationState.value == AddBankViewModel.VerificationState.VERIFIED) {
+                if (!BANK_CODE_VALIDATION || viewModel.verificationState.value == AddBankViewModel.VerificationState.VERIFIED) {
                     if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                         showLoader()
                         viewModel.createExtraBankAccount(
