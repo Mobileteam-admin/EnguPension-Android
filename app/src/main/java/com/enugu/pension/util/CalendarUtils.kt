@@ -143,8 +143,7 @@ object CalendarUtils {
         return yearDifference
     }
 
-    fun getMinutesFromNow(targetCalendar: Calendar): Long { //targetCalendar should be in the future
-        return (targetCalendar.timeInMillis - Calendar.getInstance().timeInMillis) / 60000
-//        return (targetCalendar.timeInMillis - Calendar.getInstance().timeInMillis) / 1000 // TODO:
+    fun getSecondsFromNow(targetCalendar: Calendar): Long { //targetCalendar should be in the future to get +ve value
+        return (targetCalendar.timeInMillis - Calendar.getInstance().timeInMillis) / 1000 // TODO:
     }
 }

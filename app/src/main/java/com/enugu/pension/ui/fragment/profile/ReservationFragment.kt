@@ -2,7 +2,6 @@ package com.enugu.pension.ui.fragment.profile
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import java.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -53,7 +52,16 @@ class ReservationFragment : BaseFragment() {
         initViewModel()
         initViews()
         observeLiveData()
+    }
+
+    override fun onResume() {
+        super.onResume()
         initLoadData()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        callActivationJob?.cancel()
     }
 
     private fun initLoadData() {
@@ -77,19 +85,15 @@ class ReservationFragment : BaseFragment() {
 
     private fun checkCallActivationTime() {
         if (viewModel.startTime != null) {
-            val minutesFromNow = CalendarUtils.getMinutesFromNow(viewModel.startTime!!)
-            if (minutesFromNow <= CALL_ACTIVATION_MINUTES - 1) {
+            val secondsFromNow = CalendarUtils.getSecondsFromNow(viewModel.startTime!!)
+            if (secondsFromNow <= CALL_ACTIVATION_MINUTES * 60) {
                 viewModel.isCallButtonEnabled = true
                 callActivationJob?.cancel()
+            } else{
+                viewModel.isCallButtonEnabled = false
             }
         }
         binding.incReservation.llVideoCall.isEnabled = viewModel.isCallButtonEnabled
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        callActivationJob?.cancel()
     }
 
 
@@ -124,20 +128,24 @@ class ReservationFragment : BaseFragment() {
             if (response?.detail?.status == AppConstants.SUCCESS) populateHeader()
         }
         viewModel.reservationApiResult.observe(viewLifecycleOwner) { response ->
-            if (response.detail?.status == AppConstants.SUCCESS) {
-                dismissLoader()
-                populateContent()
-            } else {
-                if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            viewModel.fetchReservationDetails()
-                        }
-                    }
-                } else {
+            if (response != null) {
+                if (response.detail?.status == AppConstants.SUCCESS) {
                     dismissLoader()
-                    binding.tvNoReservation.isVisible = true//TODO: show error instead, after updating API
+                    populateContent()
+                } else {
+                    if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                viewModel.fetchReservationDetails()
+                            }
+                        }
+                    } else {
+                        dismissLoader()
+                        binding.tvNoReservation.isVisible =
+                            true//TODO: show error instead, after updating API
+                    }
                 }
+                viewModel.resetReservationApiResult()
             }
         }
         viewModel.videoCallApiResult.observe(viewLifecycleOwner) { response ->
@@ -171,10 +179,12 @@ class ReservationFragment : BaseFragment() {
         }
     }
     private fun populateContent() {
+        binding.incReservation.llVideoCall.isEnabled = false
         viewModel.reservationApiResult.value?.detail?.bookingData?.let {
             binding.svContent.isVisible = true
             val slot = "${it.slotStartTime} - ${it.slotEndTime}"
-            binding.incReservation.tvBookingDate.text = it.bookingDate
+            val formattedDate = CalendarUtils.getFormattedString(CalendarUtils.DATE_FORMAT_1, CalendarUtils.DATE_FORMAT_3, it.bookingDate)
+            binding.incReservation.tvBookingDate.text = formattedDate
             binding.incReservation.tvBookingSlot.text = slot
             binding.incReservation.tvPaidAmount.text = it.totalPayableAmount.toString()
             viewModel.startTime = CalendarUtils.getCalendar(

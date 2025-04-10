@@ -31,9 +31,12 @@ class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val bankListApiResult: LiveData<ResponseBankList>
         get() = _bankListApiResult
 
-    private val _bankDetailsApiResult = MutableLiveData<Pair<String, SwiftCodeVerificationResponse>>()
-    val bankDetailsApiResult: LiveData<Pair<String, SwiftCodeVerificationResponse>>
+    private val _bankDetailsApiResult = MutableLiveData<Pair<String, SwiftCodeVerificationResponse>?>()
+    val bankDetailsApiResult: MutableLiveData<Pair<String, SwiftCodeVerificationResponse>?>
         get() = _bankDetailsApiResult
+    fun resetBankDetailsApiResult() {
+        _bankDetailsApiResult.value = null
+    }
 
     private val _bankInfoSubmissionResult =
         MutableLiveData<Pair<InputActiveBankInfo, ResponseBankInfo>>()
@@ -41,9 +44,12 @@ class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         get() = _bankInfoSubmissionResult
 
     private val _bankVerificationResult =
-        MutableLiveData<Pair<InputBankVerification, ResponseBankVerify>>()
-    val bankVerificationResult: LiveData<Pair<InputBankVerification, ResponseBankVerify>>
+        MutableLiveData<Pair<InputBankVerification, ResponseBankVerify>?>()
+    val bankVerificationResult: MutableLiveData<Pair<InputBankVerification, ResponseBankVerify>?>
         get() = _bankVerificationResult
+    fun resetBankVerificationResult() {
+        _bankVerificationResult.value = null
+    }
 
     private val _einSubmissionResult =
         MutableLiveData<Pair<String, ResponseEinNumber>>()
