@@ -1,7 +1,6 @@
 package com.enugu.pension.ui.fragment.profile
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
+import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -29,9 +29,6 @@ import com.enugu.pension.viewmodel.ProfileViewModel
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
-import com.bumptech.glide.request.target.Target
-import java.io.IOException
 
 
 class ProfileFragment : BaseFragment() {
@@ -142,7 +139,15 @@ class ProfileFragment : BaseFragment() {
             R.string.region,
             R.string.status,
         )
-        repeat(INFO_ITEM_COUNT) {
+        val hiddenItemIndices = listOf(DURATION_INDEX, REGION_INDEX)
+        for(i in 0 until INFO_ITEM_COUNT) {
+            val item = addInfoItem(hintList[i])
+            infoBindingList.add(item)
+            if (i in hiddenItemIndices) {
+                item.root.isGone = true
+            }
+        }
+        repeat(hiddenItemIndices.size) {
             infoBindingList.add(addInfoItem(hintList[it]))
         }
         binding.llProfile.requestLayout()

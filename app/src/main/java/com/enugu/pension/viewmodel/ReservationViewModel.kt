@@ -21,10 +21,13 @@ class ReservationViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val videoCallApiResult: LiveData<VideoCallResponse>
         get() = _videoCallApiResult
 
-    private val _reservationApiResult = MutableLiveData<ReservationResponse>()
-    val reservationApiResult: LiveData<ReservationResponse>
+    private val _reservationApiResult = MutableLiveData<ReservationResponse?>()
+    val reservationApiResult: LiveData<ReservationResponse?>
         get() = _reservationApiResult
 
+    fun resetReservationApiResult() {
+        _reservationApiResult.value = null
+    }
 
     fun fetchVideoCallLink() {
         viewModelScope.launch(Dispatchers.IO) {
