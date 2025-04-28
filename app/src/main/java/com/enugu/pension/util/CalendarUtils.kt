@@ -144,6 +144,6 @@ object CalendarUtils {
     }
 
     fun getSecondsFromNow(targetCalendar: Calendar): Long { //targetCalendar should be in the future to get +ve value
-        return (targetCalendar.timeInMillis - Calendar.getInstance().timeInMillis) / 1000 // TODO:
+        return (targetCalendar.timeInMillis - Calendar.getInstance().timeInMillis) / 1000
     }
 }

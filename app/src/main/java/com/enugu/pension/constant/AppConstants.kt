@@ -1,5 +1,7 @@
 package com.enugu.pension.constant
 
+import android.text.InputFilter
+
 object AppConstants {
     const val BASE_URL: String = "https://pension-distributor.demoserver.work"
     const val BEARER = "Bearer"
@@ -13,5 +15,14 @@ object AppConstants {
 
     const val DEFAULT_CURRENCY_CODE = "ngn"
     const val SESSION_ID = "session_id"
+
+    val SwiftCodeFilter = InputFilter { source, start, end, dest, dstart, dend ->
+        for (index in start until end) {
+            if (!Character.isDigit(source[index]) && !Character.isUpperCase(source[index])) {
+                return@InputFilter ""
+            }
+        }
+        null
+    }
 
 }

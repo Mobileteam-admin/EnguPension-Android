@@ -106,7 +106,7 @@
                 android:text="@string/account_number" />
 
             <EditText
-                android:id="@+id/et_activebank_accnum"
+                android:id="@+id/et_account_number"
                 style="@style/Style_text_title_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
                 android:text="@string/re_enter_account_number" />
 
             <EditText
-                android:id="@+id/et_activebank_re_accnum"
+                android:id="@+id/et_re_account_number"
                 style="@style/Style_text_title_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -140,7 +140,6 @@
                 android:maxLength="@integer/account_number_max_length"
                 android:padding="@dimen/dp_12" />
 
-
             <TextView
                 style="@style/Style_text_title_1"
                 android:layout_width="wrap_content"
@@ -151,7 +150,7 @@
                 android:text="@string/account_holder_name" />
 
             <EditText
-                android:id="@+id/et_activebank_accname"
+                android:id="@+id/et_holder_name"
                 style="@style/Style_text_title_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -174,10 +173,10 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="@dimen/box_button_height">
 
                 <EditText
-                    android:id="@+id/et_activebank_swiftcode"
+                    android:id="@+id/et_swift_code"
                     style="@style/Style_text_title_2"
                     android:layout_width="match_parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -198,15 +197,15 @@
                     style="@style/Style_text_title_verifytext"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_height="0dp"
-                    android:gravity="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/et_activebank_swiftcode"
-                    app:layout_constraintTop_toTopOf="@+id/et_activebank_swiftcode"
+                    android:gravity="center_vertical"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_swift_code"
+                    app:layout_constraintTop_toTopOf="@+id/et_swift_code"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:paddingHorizontal="@dimen/dp_16"
+                    android:layout_marginEnd="@dimen/dp_16"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:text="@string/verify"
                     android:textAllCaps="true"
                     android:textColor="@color/red"
@@ -216,6 +215,7 @@
                     android:id="@+id/iv_swift_code_verified"
                     android:layout_width="@dimen/dp_22"
                     android:layout_height="@dimen/dp_22"
+                    android:layout_marginEnd="@dimen/dp_8"
                     android:visibility="gone"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -238,19 +238,19 @@
 
 
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="@dimen/box_button_height">
 
                 <EditText
-                    android:id="@+id/et_activebank_bankcode"
+                    android:id="@+id/et_bankcode"
                     style="@style/Style_text_title_2"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="match_parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     android:background="@drawable/custom_squarebox"
                     android:drawableStart="@drawable/ic_bank_green_2"
                     android:drawablePadding="@dimen/dp_16"
-                    android:editable="false"
                     android:hint="@string/enter_your_bank_code"
                     android:inputType="textCapCharacters"
                     android:textAllCaps="true"
@@ -260,17 +260,18 @@
                     android:id="@+id/tv_bank_code_verification"
                     android:layout_width="wrap_content"
                     style="@style/Style_text_title_verifytext"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:paddingHorizontal="@dimen/dp_16"
+                    android:layout_height="0dp"
+                    android:gravity="center_vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/et_bankcode"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_bankcode"
+                    android:layout_marginEnd="@dimen/dp_16"
                     android:visibility="visible"
+                    android:text="@string/verify"
+                    android:textAllCaps="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:textAllCaps="true"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:text="@string/verify"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:textColor="@color/red"
                     android:textStyle="bold" />
 
@@ -279,12 +280,16 @@
                     android:layout_width="@dimen/dp_22"
                     android:layout_height="@dimen/dp_22"
                     android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp_8"
                     android:visibility="gone"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_bank_code_verification"
                     android:layout_toStartOf="@+id/tv_bank_code_verification"
                     android:src="@drawable/ic_tick_green"
                     app:tint="@color/green_middle" />
 
-            </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 style="@style/Style_text_title_1"
@@ -385,7 +390,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ll_activebank_next"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_16"
                 android:layout_gravity="center"

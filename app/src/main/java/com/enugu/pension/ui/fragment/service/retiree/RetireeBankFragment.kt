@@ -36,7 +36,6 @@ import com.enugu.pension.model.response.*
 import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.activity.ProcessDashboardActivity
 import com.enugu.pension.ui.adapter.AccountTypeAdapter
-import com.enugu.pension.ui.fragment.service.active.filterUpperCaseAndDigits
 import com.enugu.pension.ui.adapter.BankAdapter
 import com.enugu.pension.ui.dialog.SwiftVerificationDialog
 import com.enugu.pension.ui.fragment.base.BaseFragment
@@ -96,30 +95,25 @@ class RetireeBankFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setFragmentResultListener()
         initViewModels()
         initViews()
         observeLiveData()
     }
-    private fun setFragmentResultListener() {
-        requireActivity().supportFragmentManager.setFragmentResultListener(SwiftVerificationDialog.DIALOG_RESULT, viewLifecycleOwner) { _, bundle ->
-            if(bundle.getBoolean(SwiftVerificationDialog.HAS_CONFIRMED)) {
-                viewModel.swiftCodeState.value = VerificationState.VERIFIED
-            }
-        }
-    }
+
     private fun initViews(){
-        binding.etSwiftCode.filters = arrayOf(InputFilter.AllCaps(), filterUpperCaseAndDigits )
+        binding.etSwiftCode.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
+            source.toString().uppercase()
+        })
+        binding.etSwiftCode.filters = arrayOf(InputFilter.AllCaps(), AppConstants.SwiftCodeFilter )
 //        setAdapter()
         // initcall()  - hold
-        OnTextWatcher()
-        onClicked()
+        setListeners()
 
         /*   observeRetireeBankDetails()*/
 
 //        et_activebank_swiftcode.text = Editable.Factory.getInstance().newEditable("MOOGNGL1")
 
-        binding.etRetireebankAccname.setText(AppUtils.getFullName(
+        binding.etHolderName.setText(AppUtils.getFullName(
             prefs.Rfirst_name,
             prefs.Rmiddle_name,
             prefs.Rlast_name))
@@ -282,6 +276,7 @@ class RetireeBankFragment : BaseFragment() {
             }
         )
     }
+
     private fun getVerificationStateColor(state: VerificationState): Int {
         return  ContextCompat.getColor(
             requireContext(),
@@ -292,12 +287,17 @@ class RetireeBankFragment : BaseFragment() {
             }
         )
     }
-
-    private fun OnTextWatcher() {
+    private fun setListeners() {
         binding.etSwiftCode.addTextChangedListener {
             viewModel.swiftCodeState.value = VerificationState.VERIFY
         }
-        binding.etRetireebankBankcode.addTextChangedListener {
+        binding.etBankcode.addTextChangedListener {
+            viewModel.bankCodeState.value = VerificationState.VERIFY
+        }
+        binding.etAccountNumber.addTextChangedListener {
+            viewModel.bankCodeState.value = VerificationState.VERIFY
+        }
+        binding.etReAccountNumber.addTextChangedListener {
             viewModel.bankCodeState.value = VerificationState.VERIFY
         }
 
@@ -308,7 +308,7 @@ class RetireeBankFragment : BaseFragment() {
                 position: Int,
                 id: Long,
             ) {
-//                binding.etSwiftCode.setText("")
+                viewModel.swiftCodeState.value = VerificationState.VERIFY
                 refreshBankCode(position)
                 refreshBankImage(position)
                 if (BankList.get(position)?.id?.equals(0) == true) {
@@ -349,6 +349,58 @@ class RetireeBankFragment : BaseFragment() {
                 }
 
             }
+    
+        binding.spRetireebank.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.spRetireebankAcctype.setOnTouchListener { _, _ ->
+            clearAllEditTextFocus()
+            false
+        }
+        binding.cbRetireebankAutorenewal.setOnCheckedChangeListener { buttonView, isChecked ->
+            clearAllEditTextFocus()
+            autoRenewal = isChecked
+        }
+
+        binding.tvBankCodeVerification.setOnClickListener {
+            if (viewModel.bankCodeState.value != VerificationState.VERIFIED) {
+                clearAllEditTextFocus()
+                if (isValidAccountNumber() && isValidBankCode()) {
+                    bankVerifyDialog()
+                }
+            }
+        }
+        
+        binding.tvSwiftCodeVerification.setOnClickListener {
+            if (viewModel.swiftCodeState.value != VerificationState.VERIFIED) {
+                if (isValidBank() && isValidSwiftCode()) {
+                    clearAllEditTextFocus()
+                    if (confirmInternet()) {
+                        showLoader()
+                        viewModel.fetchBankDetails(binding.etSwiftCode.text.toString())
+                    }
+                }
+            }
+        }
+
+        binding.llRetireebankNext.setOnClickListener {
+            clearAllEditTextFocus()
+            if (isValidInput()) {
+                if (NetworkUtils.isConnectedToNetwork(requireContext())) {/*     //finish the Form
+                         FinishFnCall()*/
+                    //bank
+                    showLoader()
+                    BankinformationCall()
+                } else {
+                    dismissLoader()
+                    Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
+                }
+
+            }
+        }
+
+
     }
 
     private fun setAdapter() {
@@ -388,65 +440,7 @@ class RetireeBankFragment : BaseFragment() {
         binding.spRetireebankAcctype.adapter = accounttypeAdapter
 
     }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun onClicked() {
-        binding.spRetireebank.setOnTouchListener { _, _ ->
-            clearAllEditTextFocus()
-            false
-        }
-        binding.spRetireebankAcctype.setOnTouchListener { _, _ ->
-            clearAllEditTextFocus()
-            false
-        }
-        binding.cbRetireebankAutorenewal.setOnCheckedChangeListener { buttonView, isChecked ->
-            clearAllEditTextFocus()
-            autoRenewal = isChecked
-        }
-
-        binding.tvBankCodeVerification.setOnClickListener {
-            if (viewModel.bankCodeState.value != VerificationState.VERIFIED) {
-                if (binding.etRetireebankBankcode.text.isNullOrEmpty()) {
-                    showToast(getString(R.string.please_enter_bank_code))
-                } else {
-                    clearAllEditTextFocus()
-                    if (isValidBank() && isValidAccountNumber()) {
-                        bankVerifyDialog()
-                    }
-                }
-            }
-        }
-
-        binding.tvSwiftCodeVerification.setOnClickListener {
-            if (viewModel.swiftCodeState.value != VerificationState.VERIFIED) {
-                if (binding.etSwiftCode.text.length !in AppUtils.getSwiftCodeRange()) {
-                    showToast(getSwiftCodeErrorMessage())
-                } else {
-                    clearAllEditTextFocus()
-                    if (confirmInternet()) {
-                        showLoader()
-                        viewModel.fetchBankDetails(binding.etSwiftCode.text.toString())
-                    }
-                }
-            }
-        }
-
-        binding.llRetireebankNext.setOnClickListener {
-            clearAllEditTextFocus()
-            if (isValidInput()) {
-                if (NetworkUtils.isConnectedToNetwork(requireContext())) {/*     //finish the Form
-                         FinishFnCall()*/
-                    //bank
-                    showLoader()
-                    BankinformationCall()
-                } else {
-                    dismissLoader()
-                    Toast.makeText(context, "Please connect to internet", Toast.LENGTH_LONG).show()
-                }
-
-            }
-        }
-    }
+    
 
     private fun bankVerifyDialog() {
         val bankVerifyBuilder = AlertDialog.Builder(requireContext())
@@ -460,9 +454,9 @@ class RetireeBankFragment : BaseFragment() {
         val et_bank_verify_bank_code = bankVerifyView.findViewById<EditText>(R.id.et_bank_verify_bank_code)
 
 
-        et_bank_verify_acc_number.text = binding.etRetireebankAccnum.text
+        et_bank_verify_acc_number.text = binding.etAccountNumber.text
 
-        et_bank_verify_bank_code.text = binding.etRetireebankBankcode.text
+        et_bank_verify_bank_code.text = binding.etBankcode.text
 
         val bank_verify_submit = bankVerifyView.findViewById<LinearLayout>(R.id.ll_bankverifysubmit)
         bankVerifyalertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -517,7 +511,6 @@ class RetireeBankFragment : BaseFragment() {
         )
         Log.d("bankVerifyApiPresenter", "bankVerify account ${etAccNum?.text}")
     }
-
     private fun getSwiftCodeErrorMessage(): String {
         val length1 = resources.getInteger(R.integer.swift_code_length_1)
         val length2 = resources.getInteger(R.integer.swift_code_length_2)
@@ -529,42 +522,48 @@ class RetireeBankFragment : BaseFragment() {
         if (BankList[binding.spRetireebank.selectedItemPosition]?.id == BANK_ITEM_SELECT_ID) {
             errorMessage = getString(R.string.select_bank_msg)
         }
-        if (errorMessage != null) {
-            showToast(errorMessage)
-        }
+        errorMessage?.let { showToast(it) }
         return errorMessage == null
     }
-
     private fun isValidAccountNumber(): Boolean {
         var errorMessage: String? = null
-        if (!AppUtils.isValidBankAccountNumber(binding.etRetireebankAccnum.text.toString())) {
+        if (!AppUtils.isValidBankAccountNumber(binding.etAccountNumber.text.toString())) {
             val minLength = resources.getInteger(R.integer.account_number_min_length)
             val maxLength = resources.getInteger(R.integer.account_number_max_length)
             errorMessage = getString(R.string.bank_account_number_error_msg,minLength, maxLength)
-        } else if (binding.etRetireebankReAccnum.text.isNullOrEmpty()) {
+        } else if (binding.etReAccountNumber.text.isNullOrEmpty()) {
             errorMessage = getString(R.string.re_enter_account_number_msg)
-        } else if (binding.etRetireebankAccnum.text.toString() != binding.etRetireebankReAccnum.text.toString()) {
+        } else if (binding.etAccountNumber.text.toString() != binding.etReAccountNumber.text.toString()) {
             errorMessage = getString(R.string.re_entered_account_number_error_msg)
         }
-        if (errorMessage != null) {
-            showToast(errorMessage)
-        }
+        errorMessage?.let { showToast(it) }
         return errorMessage == null
     }
-
-    private fun isValidInput(): Boolean {
-        if (!isValidBank() || !isValidAccountNumber()) {
-            return false
-        }
+    private fun isValidSwiftCode(): Boolean {
         var errorMessage: String? = null
-        if (!AppUtils.isValidFullName(binding.etRetireebankAccname.text.toString())) {
-            errorMessage = getString(R.string.account_holder_error_msg)
-        } else if (binding.etSwiftCode.text.length !in AppUtils.getSwiftCodeRange()) {
+        if (binding.etSwiftCode.text.length !in AppUtils.getSwiftCodeRange()) {
             errorMessage = getSwiftCodeErrorMessage()
+        }
+        errorMessage?.let { showToast(it) }
+        return errorMessage == null
+    }
+    private fun isValidBankCode(): Boolean {
+        var errorMessage: String? = null
+        if (binding.etBankcode.text.isNullOrEmpty()) {
+            errorMessage = getString(R.string.please_enter_bank_code)
+        }
+        errorMessage?.let { showToast(it) }
+        return errorMessage == null
+    }
+    private fun isValidInput(): Boolean {
+        if (!isValidBank() || !isValidAccountNumber()) return false
+        var errorMessage: String? = null
+
+
+        if (!AppUtils.isValidFullName(binding.etHolderName.text.toString())) {
+            errorMessage = getString(R.string.account_holder_error_msg)
         } else if (viewModel.swiftCodeState.value != VerificationState.VERIFIED) {
             errorMessage = getString(R.string.verify_swift_code_msg)
-        } else if (binding.etRetireebankBankcode.text.isNullOrEmpty()) {
-            errorMessage = getString(R.string.please_enter_bank_code)
         } else if (viewModel.bankCodeState.value != VerificationState.VERIFIED) {
             errorMessage = getString(R.string.verify_bank_code_msg)
         } else if (AccountTypeList[binding.spRetireebankAcctype.selectedItemPosition]?.id == ACCOUNT_TYPE_ITEM_SELECT_ID) {
@@ -580,12 +579,12 @@ class RetireeBankFragment : BaseFragment() {
 //                userId = prefs.user_id?.toInt(),
 
                 bankId = r_bankid/*"7b8dc580-ba28-8f3b-354410354410351ab4"*/,
-                accountNumber = binding.etRetireebankAccnum.text.toString(),
-                bankCode = binding.etRetireebankBankcode.text.toString(),
+                accountNumber = binding.etAccountNumber.text.toString(),
+                bankCode = binding.etBankcode.text.toString(),
                 accountType = r_accounttype /*binding.spRetireebankAcctype.selectedItemPosition.toString()*/,
-                accountHolderName = binding.etRetireebankAccname.text.toString(),
+                accountHolderName = binding.etHolderName.text.toString(),
                 swiftCode = binding.etSwiftCode.text.toString(),
-                reEnterAccountNumber = binding.etRetireebankReAccnum.text.toString(),
+                reEnterAccountNumber = binding.etReAccountNumber.text.toString(),
                 autoRenewal = autoRenewal,
 //                userId = prefs.user_id
 
@@ -684,7 +683,7 @@ class RetireeBankFragment : BaseFragment() {
         startActivity(intent)
         activity?.finish()
     }
-
+    
     private fun refreshBankImage(position:Int) {
         binding.imgRetireebank.setImageResource(R.drawable.ic_bank_green)
         BankList[position]?.let {
@@ -699,6 +698,6 @@ class RetireeBankFragment : BaseFragment() {
 
     private fun refreshBankCode(position:Int) {
         val bankCode = if (BankList[position]?.id != BANK_ITEM_SELECT_ID) BankList[position]?.code else ""
-        binding.etRetireebankBankcode.setText(bankCode)
+        binding.etBankcode.setText(bankCode)
     }
 }

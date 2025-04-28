@@ -12,6 +12,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -42,7 +43,7 @@ import kotlinx.coroutines.launch
 
 class AddBankDialog : BaseDialog() {
     companion object {
-        const val BANK_CODE_VALIDATION = false //to temporarily disable bank code validation
+        private const val ENABLE_BANK_CODE_VERIFICATION = false
     }
     private lateinit var binding: DialogAddBankBinding
     private lateinit var viewModel: AddBankViewModel
@@ -82,7 +83,7 @@ class AddBankDialog : BaseDialog() {
     }
 
     private fun observeLiveData() {
-        if (BANK_CODE_VALIDATION) {
+        if (ENABLE_BANK_CODE_VERIFICATION) {
             viewModel.verificationState.observe(viewLifecycleOwner) {
                 if (it != null)
                     when (it) {
@@ -213,11 +214,8 @@ class AddBankDialog : BaseDialog() {
     }
 
     private fun initViews() {
-        val holderName = dashboardViewModel.dashboardDetailsResult.value?.detail?.fullName?.trim()
-            ?.replace("  ", " ") ?: ""
-        binding.etHolderName.setText(holderName)
-        binding.tvBankCodeVerification.isVisible = BANK_CODE_VALIDATION
-        if (BANK_CODE_VALIDATION) {
+        if (ENABLE_BANK_CODE_VERIFICATION) {
+            binding.tvBankCodeVerification.isVisible = true
             binding.tvBankCodeVerification.setOnClickListener {
                 if (viewModel.verificationState.value != AddBankViewModel.VerificationState.VERIFIED
                     && isValidInput(false)
@@ -225,14 +223,18 @@ class AddBankDialog : BaseDialog() {
                     showBankVerifyDialog()
                 }
             }
+        } else{
+            binding.tvBankCodeVerification.isGone = true
         }
-        binding.etSwiftCode.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
-            source.toString().uppercase()
-        })
+        val holderName = dashboardViewModel.dashboardDetailsResult.value?.detail?.fullName?.trim()
+            ?.replace("  ", " ") ?: ""
+        binding.etHolderName.setText(holderName)
+        binding.etSwiftCode.filters = arrayOf(InputFilter.AllCaps(), AppConstants.SwiftCodeFilter )
         binding.llClose.setOnClickListener { resetAndDismiss() }
         binding.llSubmit.setOnClickListener {
             if (isValidInput(true)) {
-                if (!BANK_CODE_VALIDATION || viewModel.verificationState.value == AddBankViewModel.VerificationState.VERIFIED) {
+                if (!ENABLE_BANK_CODE_VERIFICATION ||
+                    viewModel.verificationState.value == AddBankViewModel.VerificationState.VERIFIED) {
                     if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                         showLoader()
                         viewModel.createExtraBankAccount(

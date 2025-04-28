@@ -139,16 +139,12 @@ class ProfileFragment : BaseFragment() {
             R.string.region,
             R.string.status,
         )
-        val hiddenItemIndices = listOf(DURATION_INDEX, REGION_INDEX)
-        for(i in 0 until INFO_ITEM_COUNT) {
-            val item = addInfoItem(hintList[i])
+
+        val hiddenInfoItemIndices = listOf(DURATION_INDEX, REGION_INDEX)
+        repeat(INFO_ITEM_COUNT) {
+            val item = addInfoItem(hintList[it])
             infoBindingList.add(item)
-            if (i in hiddenItemIndices) {
-                item.root.isGone = true
-            }
-        }
-        repeat(hiddenItemIndices.size) {
-            infoBindingList.add(addInfoItem(hintList[it]))
+            if (hiddenInfoItemIndices.contains(it)) item.cvParent.isGone = true
         }
         binding.llProfile.requestLayout()
     }
