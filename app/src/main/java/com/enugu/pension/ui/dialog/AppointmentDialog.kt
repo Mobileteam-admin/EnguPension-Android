@@ -147,7 +147,7 @@ class AppointmentDialog : BaseDialog() {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            viewModel.bookAppointmentCall(request)
+                            viewModel.bookAppointment(request)
                         }
                     }
                 } else {
@@ -183,7 +183,7 @@ class AppointmentDialog : BaseDialog() {
             showToast(R.string.slot_not_selected_msg)
         } else {
             showLoader()
-            viewModel.bookAppointmentCall(
+            viewModel.bookAppointment(
                 BookAppointmentRequest(
                     viewModel.selectedDate!!,
                     viewModel.selectedTimeSlotId!!

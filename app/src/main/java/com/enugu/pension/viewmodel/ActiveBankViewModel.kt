@@ -17,8 +17,7 @@ import com.enugu.pension.model.response.ResponseBankInfo
 import com.enugu.pension.model.response.ResponseBankList
 import com.enugu.pension.model.response.ResponseBankVerify
 import com.enugu.pension.model.response.ResponseEinNumber
-import com.enugu.pension.model.response.ResponseSwiftBankCode
-import com.enugu.pension.model.response.SwiftBankDetail
+import com.enugu.pension.model.response.SwiftCodeVerificationResponse
 import com.enugu.pension.util.NetworkUtils
 import com.enugu.pension.util.VerificationState
 import kotlinx.coroutines.Dispatchers
@@ -32,9 +31,12 @@ class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val bankListApiResult: LiveData<ResponseBankList>
         get() = _bankListApiResult
 
-    private val _bankDetailsApiResult = MutableLiveData<Pair<String, ResponseSwiftBankCode>>()
-    val bankDetailsApiResult: LiveData<Pair<String, ResponseSwiftBankCode>>
+    private val _bankDetailsApiResult = MutableLiveData<Pair<String, SwiftCodeVerificationResponse>?>()
+    val bankDetailsApiResult: MutableLiveData<Pair<String, SwiftCodeVerificationResponse>?>
         get() = _bankDetailsApiResult
+    fun resetBankDetailsApiResult() {
+        _bankDetailsApiResult.value = null
+    }
 
     private val _bankInfoSubmissionResult =
         MutableLiveData<Pair<InputActiveBankInfo, ResponseBankInfo>>()
@@ -42,9 +44,12 @@ class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         get() = _bankInfoSubmissionResult
 
     private val _bankVerificationResult =
-        MutableLiveData<Pair<InputBankVerification, ResponseBankVerify>>()
-    val bankVerificationResult: LiveData<Pair<InputBankVerification, ResponseBankVerify>>
+        MutableLiveData<Pair<InputBankVerification, ResponseBankVerify>?>()
+    val bankVerificationResult: MutableLiveData<Pair<InputBankVerification, ResponseBankVerify>?>
         get() = _bankVerificationResult
+    fun resetBankVerificationResult() {
+        _bankVerificationResult.value = null
+    }
 
     private val _einSubmissionResult =
         MutableLiveData<Pair<String, ResponseEinNumber>>()
@@ -61,8 +66,8 @@ class ActiveBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _bankDetailsApiResult.postValue(
                     Pair(
                         swiftCode,
-                        ResponseSwiftBankCode(
-                            SwiftBankDetail(message = "Something went wrong with fetching bank details")
+                        SwiftCodeVerificationResponse(
+                            SwiftCodeVerificationResponse.Detail(message = "Something went wrong with verifying swift code.")
                         )
                     )
                 )

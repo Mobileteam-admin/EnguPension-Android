@@ -4,10 +4,10 @@
     android:layout_height="300dp"
     android:layout_margin="20dp">
 
-    <co.daily.view.VideoView
+    <!--<co.daily.view.VideoView
         android:id="@+id/participant_video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

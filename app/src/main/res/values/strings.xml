@@ -28,6 +28,7 @@
     <string name="enter_your_phone_number">Enter your phone number</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="confirm_swift_code">Confirm Swift Code</string>
     <string name="re_enter_your_password">Re-enter your password</string>
     <string name="signup_now">SIGNUP NOW </string>
     <string name="send_request">SEND REQUEST </string>
@@ -62,14 +63,14 @@
     <string name="enter_your_address">Enter your Address</string>
     <string name="lga">LGA</string>
     <string name="enter_lga">Enter LGA</string>
-    <string name="enter_name_of_next_of_kin">Enter name of next of kin</string>
-    <string name="enter_email_of_next_of_kin">Enter email of next of kin</string>
-    <string name="enter_phone_number_of_next_of_kin">Enter phone number of next of kin</string>
-    <string name="next_of_kin_phone">Next of kin Phone</string>
-    <string name="next_of_kin_address">Next of kin Address</string>
-    <string name="next_of_kin_pincode">Next of kin Pincode</string>
-    <string name="enter_address_of_next_of_kin">Enter address of next of kin</string>
-    <string name="enter_pincode_of_next_of_kin">Enter pincode of next of kin</string>
+    <string name="enter_name_of_next_of_kin">Enter name of next of Kin</string>
+    <string name="enter_email_of_next_of_kin">Enter email of next of Kin</string>
+    <string name="enter_phone_number_of_next_of_kin">Enter phone number of next of Kin</string>
+    <string name="next_of_kin_phone">Next of Kin Phone</string>
+    <string name="next_of_kin_address">Next of Kin Address</string>
+    <string name="next_of_kin_pincode">Next of Kin Pincode</string>
+    <string name="enter_address_of_next_of_kin">Enter address of next of Kin</string>
+    <string name="enter_pincode_of_next_of_kin">Enter pincode of next of Kin</string>
     <string name="sub_treasury">Sub Treasury</string>
     <string name="enter_your_sub_treasury">Enter your sub treasury</string>
     <string name="date_of_appointment">Date Of Joining</string>
@@ -77,8 +78,8 @@
     <string name="enter_your_last_grade">Enter your last grade</string>
     <string name="occupation_type">Occupation Type</string>
     <string name="enter_your_occupation">Enter your occupation</string>
-    <string name="next_of_kin_email_address">Next of kin email Address</string>
-    <string name="name_of_next_of_kin">Name of Next of kin</string>
+    <string name="next_of_kin_email_address">Next of Kin email Address</string>
+    <string name="name_of_next_of_kin">Name of Next of Kin</string>
     <string name="last_promotion_year">Last Promotion year</string>
     <string name="yyyy">yyyy</string>
     <string name="grade_level">Grade Level</string>
@@ -131,7 +132,7 @@
     <string name="enter_proper_password">Enter Proper Password</string>
     <string name="clearance_form">Clearance Form</string>
     <string name="local_government_pension_board">Local Government Pension Board</string>
-    <string name="password_must_have_at_least_8_characters_include_uppercase_and_lowercase_letters_a_digit_and_a_special_character">Password must have at least 8 characters, include uppercase and lowercase letters, a digit, and a special character</string>
+    <string name="invalid_password_message">Password must have at least 8 characters, include uppercase and lowercase letters, a digit, and a special character</string>
     <string name="country">Country</string>
     <string name="specify_other">"Specify other occupation "</string>
     <string name="enter_your_pin">Enter Your Pincode</string>
@@ -167,11 +168,11 @@
     <string name="enter_input_msg">Please enter a valid %s</string>
     <string name="date_of_birth">date of birth</string>
     <string name="gender">gender</string>
-    <string name="name_of_next_kin">name of next kin</string>
-    <string name="email_id_of_next_kin">email id of next kin</string>
-    <string name="phone_num_of_next_kin">phone number of next kin</string>
-    <string name="address_of_next_kin">address of next kin</string>
-    <string name="pincode_of_next_kin">pincode of next kin</string>
+    <string name="name_of_next_kin">name of next of Kin</string>
+    <string name="email_id_of_next_kin">email id of next of Kin</string>
+    <string name="phone_num_of_next_kin">phone number next of Kin</string>
+    <string name="address_of_next_kin">address of next of Kin</string>
+    <string name="pincode_of_next_kin">pincode of next of Kin</string>
     <string name="local_pension_board">local pension board</string>
     <string name="other_position">other position</string>
     <string name="other_occupation">other occupation</string>
@@ -183,7 +184,7 @@
     <string name="no_transactions">No transactions!</string>
     <string name="double_back_press_msg">Press back again to dismiss.</string>
     <string name="failed_to_load_data">Failed to load data</string>
-    <string name="fail_size_exceed_error">Can\'t upload a file larger than %d MB.</string>
+    <string name="fail_size_exceed_error">File size exceeds the maximum limit of %d MB.</string>
     <string name="appointment_for_payment_of_monthly_arrears">Appointment for payment of monthly arrears</string>
     <string name="authorisation_for_payment">Authorisation for payment of retirement/Death</string>
     <string name="notification_of_promotion">Notification of Promotion</string>
@@ -199,6 +200,7 @@
     <string name="please_select_account_type">Please select account type.</string>
     <string name="verify_bank_code_msg">Please verify bank code.</string>
     <string name="verify_swift_code_msg">Please verify swift code.</string>
+    <string name="invalid_swift_code">Invalid swift code.</string>
     <string name="re_enter_account_number_msg">Please re-enter your account number.</string>
     <string name="top_up_minimum_amount_error">The minimum top-up amount is 1400 NGN.</string>
     <string name="employment_status">Employment status</string>
@@ -232,6 +234,12 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="discard_video_call_message">Are you sure you want to discard the video call?</string>
+    <string name="doc_uploaded">Document uploaded successfully.</string>
+    <string name="no_reservation_found">No reservation found.</string>
+    <string name="bank_name">Bank Name</string>
+    <string name="branch_name">Branch Name</string>
+    <string name="confirm">Confirm</string>
+    <string name="city">City</string>
 
 
 </resources>

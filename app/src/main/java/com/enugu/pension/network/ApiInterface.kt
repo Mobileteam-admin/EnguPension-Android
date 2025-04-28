@@ -54,20 +54,10 @@ interface ApiInterface {
     @GET("/api/v1/banks")
     suspend fun getAddedBanks(@Header("Authorization") token: String): ResponseBankList
 
-
-
-
-
-
     @POST("/api/v1/get_bank_details")
-    suspend fun getSwiftBankCode(
+    suspend fun fetchBankDetails(
         @Header("Authorization") token: String, @Body inputSwiftBankCode: InputSwiftBankCode
-    ): ResponseSwiftBankCode
-
-
-
-
-
+    ): SwiftCodeVerificationResponse
 
     @POST("/api/v1/account_completion/active")
     fun submitActiveDetails(
@@ -238,6 +228,11 @@ interface ApiInterface {
         @Part("employment_status") employmentStatus:RequestBody,
         @Part("designation") designation:RequestBody,
     ): ProfileResponse
+
+    @GET("/api/v1/user/booking-details/")
+    suspend fun fetchReservationDetails(@Header("Authorization") token: String
+    ): ReservationResponse
+
 
 
 }

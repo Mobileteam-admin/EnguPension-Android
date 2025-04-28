@@ -162,10 +162,14 @@ class ActiveDocumentsFragment : BaseFragment(), View.OnClickListener {
 
     private fun observeLiveData() {
         activeServiceViewModel.currentTabPos.observe(viewLifecycleOwner) {
-            if (it == TAB_POSITION) fetchActiveDocuments()
+            if (it == TAB_POSITION) {
+                showLoader()
+                fetchActiveDocuments()
+            }
         }
         viewModel.documentsApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
+                dismissLoader()
                 populateViews(response.detail.fileUrlResponse)
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -343,6 +347,7 @@ class ActiveDocumentsFragment : BaseFragment(), View.OnClickListener {
                 }
                 rvAdapter.items[index]!!.isUploading = false
                 rvAdapter.notifyItemChanged(index)
+                showToast(R.string.doc_uploaded)
             }
             showLoader()
             uploadDocs(false)
