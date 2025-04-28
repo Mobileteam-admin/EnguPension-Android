@@ -1,7 +1,6 @@
 package com.enugu.pension.ui.fragment.profile
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,9 +29,6 @@ import com.enugu.pension.viewmodel.ProfileViewModel
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
-import com.bumptech.glide.request.target.Target
-import java.io.IOException
 
 
 class ProfileFragment : BaseFragment() {

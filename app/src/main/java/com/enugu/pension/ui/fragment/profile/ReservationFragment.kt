@@ -2,12 +2,13 @@ package com.enugu.pension.ui.fragment.profile
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import java.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -32,13 +33,12 @@ class ReservationFragment : BaseFragment() {
     companion object {
         const val CALL_ACTIVATION_MINUTES = 5
     }
+
     private lateinit var binding: FragmentReservationBinding
     private lateinit var dashboardViewModel: DashboardViewModel
     private lateinit var viewModel: ReservationViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private var callActivationJob: Job? = null
-    var ss="*"
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -52,25 +52,29 @@ class ReservationFragment : BaseFragment() {
         initViewModel()
         initViews()
         observeLiveData()
-//        startCheckingTime()
-
-//        test()
     }
 
-    private fun test() { // TODO: remove
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, 125)
-
-//        val calendar = CalendarUtils.getCalendar()
-
-
-        viewModel.startTime = calendar
-        binding.incReservation.tvBookingSlot.text = CalendarUtils.getFormattedString(CalendarUtils.DATE_TIME_FORMAT_2, calendar)
-
-
+    override fun onResume() {
+        super.onResume()
+        initLoadData()
     }
 
-    private fun startCheckingTime() {
+    override fun onPause() {
+        super.onPause()
+        callActivationJob?.cancel()
+    }
+
+    private fun initLoadData() {
+        if (confirmInternet()) {
+            showLoader()
+            viewModel.fetchReservationDetails()
+        } else {
+            findNavController().navigateUp()
+        }
+    }
+
+
+    private fun startTimeChecking() {
         callActivationJob = lifecycleScope.launch(Dispatchers.Main) {
             while (true) {
                 checkCallActivationTime()
@@ -80,23 +84,16 @@ class ReservationFragment : BaseFragment() {
     }
 
     private fun checkCallActivationTime() {
-        if (viewModel.startTime!=null){
-            val minutesFromNow = CalendarUtils.getMinutesFromNow(viewModel.startTime!!)
-            binding.incReservation.tvPaidAmount.text = minutesFromNow.toString() +"   $ss"
-            ss=if (ss=="*") "***" else "*"
-            if (minutesFromNow <= CALL_ACTIVATION_MINUTES) {
+        if (viewModel.startTime != null) {
+            val secondsFromNow = CalendarUtils.getSecondsFromNow(viewModel.startTime!!)
+            if (secondsFromNow <= CALL_ACTIVATION_MINUTES * 60) {
                 viewModel.isCallButtonEnabled = true
                 callActivationJob?.cancel()
+            } else{
+                viewModel.isCallButtonEnabled = false
             }
-
         }
         binding.incReservation.llVideoCall.isEnabled = viewModel.isCallButtonEnabled
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        callActivationJob?.cancel() // Cancel the coroutine when Fragment view is destroyed
     }
 
 
@@ -114,7 +111,8 @@ class ReservationFragment : BaseFragment() {
     }
 
     private fun initViews() {
-//        binding.incReservation.llVideoCall.isEnabled = false todo
+        binding.tvNoReservation.isGone = true
+        binding.svContent.isInvisible = true
         binding.imgWalletBack.setOnClickListener { findNavController().navigateUp() }
         binding.incReservation.llVideoCall.setOnClickListener {
             if (confirmInternet()) {
@@ -127,7 +125,28 @@ class ReservationFragment : BaseFragment() {
 
     private fun observeLiveData() {
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
-            if (response?.detail?.status == AppConstants.SUCCESS) populateViews()
+            if (response?.detail?.status == AppConstants.SUCCESS) populateHeader()
+        }
+        viewModel.reservationApiResult.observe(viewLifecycleOwner) { response ->
+            if (response != null) {
+                if (response.detail?.status == AppConstants.SUCCESS) {
+                    dismissLoader()
+                    populateContent()
+                } else {
+                    if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                viewModel.fetchReservationDetails()
+                            }
+                        }
+                    } else {
+                        dismissLoader()
+                        binding.tvNoReservation.isVisible =
+                            true//TODO: show error instead, after updating API
+                    }
+                }
+                viewModel.resetReservationApiResult()
+            }
         }
         viewModel.videoCallApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
@@ -151,13 +170,31 @@ class ReservationFragment : BaseFragment() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun populateViews() {
+    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
+    private fun populateHeader() {
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
+            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount}"
             binding.tvWalletAmount.text = walletText
             binding.ivNaira.isGone = true
         }
     }
-
+    private fun populateContent() {
+        binding.incReservation.llVideoCall.isEnabled = false
+        viewModel.reservationApiResult.value?.detail?.bookingData?.let {
+            binding.svContent.isVisible = true
+            val slot = "${it.slotStartTime} - ${it.slotEndTime}"
+            val formattedDate = CalendarUtils.getFormattedString(CalendarUtils.DATE_FORMAT_1, CalendarUtils.DATE_FORMAT_3, it.bookingDate)
+            binding.incReservation.tvBookingDate.text = formattedDate
+            binding.incReservation.tvBookingSlot.text = slot
+            binding.incReservation.tvPaidAmount.text = it.totalPayableAmount.toString()
+            viewModel.startTime = CalendarUtils.getCalendar(
+                CalendarUtils.DATE_TIME_FORMAT_3,
+                "${it.bookingDate} ${it.slotStartTime}"
+            )
+            startTimeChecking()
+        }
+        val hasReserved = viewModel.reservationApiResult.value?.detail?.bookingData != null
+        binding.tvNoReservation.isGone = hasReserved
+        binding.svContent.isInvisible = !hasReserved
+    }
 }

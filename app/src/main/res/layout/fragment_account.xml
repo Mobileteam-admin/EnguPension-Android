@@ -248,7 +248,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="start"
-                            android:text="01/05/2023"
+                            android:text="Status"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -262,7 +262,6 @@
                             android:text="@string/not_verified"
                             android:textColor="@color/red"
                             android:textSize="@dimen/dp_14"
-                            android:visibility="visible"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -306,7 +305,6 @@
                             android:textColor="@color/green_theme"
                             android:textSize="@dimen/dp_18"
                             android:textStyle="bold"
-                            android:visibility="visible"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -359,7 +357,6 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_kin_profile"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_12"

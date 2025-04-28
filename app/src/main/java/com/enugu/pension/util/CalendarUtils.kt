@@ -17,6 +17,7 @@ object CalendarUtils {
     const val DATE_TIME_FORMAT_1 = "yyyy-MM-dd HH:mm:ss" //"2024-12-09 05:42:11"
 //    const val DATE_TIME_FORMAT_2 = "dd-MMM-yyyy hh:mm:ss a" //"21-Mar-2025 05:42:11 am"
     const val DATE_TIME_FORMAT_2 = "dd-MMM-yyyy hh:mm a" //"21-Mar-2025 05:42 am"
+    const val DATE_TIME_FORMAT_3 = "yyyy-MM-dd hh:mm a" // "2025-04-15 09:15 AM"
     const val MONTH_FORMAT_1 = "MMMM" //December
     fun getFormattedNow() = getFormattedString(DATE_TIME_FORMAT_2, Calendar.getInstance())
     fun getFormattedToday() = getFormattedString(DATE_FORMAT_4, Calendar.getInstance())
@@ -142,7 +143,7 @@ object CalendarUtils {
         return yearDifference
     }
 
-    fun getMinutesFromNow(targetCalendar: Calendar): Long { //targetCalendar should be in the future
-        return (targetCalendar.timeInMillis - Calendar.getInstance().timeInMillis) / 60000
+    fun getSecondsFromNow(targetCalendar: Calendar): Long { //targetCalendar should be in the future to get +ve value
+        return (targetCalendar.timeInMillis - Calendar.getInstance().timeInMillis) / 1000
     }
 }
