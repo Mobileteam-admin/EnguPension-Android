@@ -1,4 +1,4 @@
-package com.enugu.pension.model.dto
+package com.enugu.pension.model.misc
 
 import java.util.Calendar
 

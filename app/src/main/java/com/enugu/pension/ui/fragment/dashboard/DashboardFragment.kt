@@ -2,6 +2,7 @@ package com.enugu.pension.ui.fragment.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -160,6 +161,22 @@ class DashboardFragment : BaseFragment() {
                 }
             }
         }
+        viewModel.verificationHistoryApiResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                dismissLoader()
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            viewModel.fetchVerificationHistory()
+                        }
+                    }
+                } else {
+                    dismissLoader()
+                    showToast(response.detail?.message!!)
+                }
+            }
+        }
     }
 
     private fun initViews() {
@@ -182,6 +199,7 @@ class DashboardFragment : BaseFragment() {
                 lifecycleScope.launch {
                     viewModel.fetchDashboardDetails().join()
                     viewModel.fetchBankAccountList().join()
+                    viewModel.fetchVerificationHistory().join()
                     viewModel.fetchProfilePicture() // TODO: remove after dashboard-details API update
                 }
             } else {

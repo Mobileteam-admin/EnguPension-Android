@@ -17,7 +17,7 @@ import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.R
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentActiveDocumentsBinding
-import com.enugu.pension.model.dto.DocumentUploadItem
+import com.enugu.pension.model.ui.DocumentUploadItem
 import com.enugu.pension.model.response.FileUrlResponse
 import com.enugu.pension.model.response.ResponseActiveDocUpload
 import com.enugu.pension.network.ApiClient

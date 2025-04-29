@@ -1,6 +1,6 @@
 package com.enugu.pension.util
 
-import com.enugu.pension.model.dto.EnguCalendarRange
+import com.enugu.pension.model.misc.EnguCalendarRange
 import com.enugu.pension.model.response.BookingDateRangeResponse.Detail.BookingDateRange
 import java.text.SimpleDateFormat
 import java.time.Month

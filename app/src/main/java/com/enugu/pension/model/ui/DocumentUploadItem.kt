@@ -1,4 +1,4 @@
-package com.enugu.pension.model.dto
+package com.enugu.pension.model.ui
 
 import android.net.Uri
 import java.io.File
