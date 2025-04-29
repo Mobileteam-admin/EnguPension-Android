@@ -8,12 +8,12 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.enugu.pension.R
 import com.enugu.pension.databinding.ItemDocumentUploadBinding
-import com.enugu.pension.model.dto.DocumentUploadItem
+import com.enugu.pension.model.ui.DocumentUploadItem
 
 class DocumentUploadAdapter(public val items: MutableList<DocumentUploadItem?>,
-                            private val onRemoveDoc:(item:DocumentUploadItem)->Unit,
-                            private val onViewDoc:(item:DocumentUploadItem)->Unit,
-                            private val onUploadClick:(item:DocumentUploadItem)->Unit,
+                            private val onRemoveDoc:(item: DocumentUploadItem)->Unit,
+                            private val onViewDoc:(item: DocumentUploadItem)->Unit,
+                            private val onUploadClick:(item: DocumentUploadItem)->Unit,
     ) :
     RecyclerView.Adapter<DocumentUploadAdapter.ItemViewHolder>() {
 

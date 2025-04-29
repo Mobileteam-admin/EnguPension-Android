@@ -1,6 +1,6 @@
 package com.enugu.pension.model.request
 
-import com.enugu.pension.model.dto.KeyValue
+import com.enugu.pension.model.misc.KeyValue
 import java.io.File
 
 class UpdateProfileForm(

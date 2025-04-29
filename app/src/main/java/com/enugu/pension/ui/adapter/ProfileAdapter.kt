@@ -2,11 +2,9 @@ package com.enugu.pension.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.enugu.pension.databinding.ItemProfile2Binding
-import com.enugu.pension.databinding.ItemProfileBinding
-import com.enugu.pension.model.dto.ProfileInfo
+import com.enugu.pension.model.ui.ProfileInfo
 
 class ProfileAdapter(private val profileInfo: ProfileInfo) :
     RecyclerView.Adapter<ProfileAdapter.ItemViewHolder>() {
