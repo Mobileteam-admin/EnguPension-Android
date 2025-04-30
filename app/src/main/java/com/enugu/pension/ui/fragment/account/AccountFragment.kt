@@ -55,10 +55,10 @@ class AccountFragment : BaseFragment() {
         binding.imgAccountBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.txtStatement.setOnClickListener {
+        binding.clStatement.setOnClickListener {
             if (confirmInternet()) navigate(R.id.action_account_to_accountstatement)
         }
-        binding.txtKinprofile.setOnClickListener {
+        binding.clKinProfile.setOnClickListener {
             if (confirmInternet()) navigate(R.id.action_account_to_kinprofile)
         }
     }

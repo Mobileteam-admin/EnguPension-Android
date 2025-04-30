@@ -237,4 +237,8 @@ interface ApiInterface {
     suspend fun fetchVerificationHistory(@Header("Authorization") token: String
     ): VerificationHistoryResponse
 
+    @GET("/api/v1/profile/next_of_kin_details")
+    suspend fun fetchNextOfKinDetails(@Header("Authorization") token: String
+    ): NextOfKinResponse
+
 }

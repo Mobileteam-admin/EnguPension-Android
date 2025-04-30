@@ -17,7 +17,7 @@ import com.enugu.pension.R
 import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentProfileBinding
-import com.enugu.pension.databinding.ItemProfile2Binding
+import com.enugu.pension.databinding.ItemProfileBinding
 import com.enugu.pension.model.request.UpdateProfileForm
 import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.fragment.base.BaseFragment
@@ -54,7 +54,7 @@ class ProfileFragment : BaseFragment() {
 
     //    private lateinit var adapter: ProfileAdapter
 //    private lateinit var profileInfo: ProfileInfo
-    private val infoBindingList = mutableListOf<ItemProfile2Binding>()
+    private val infoBindingList = mutableListOf<ItemProfileBinding>()
 
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -149,8 +149,8 @@ class ProfileFragment : BaseFragment() {
         binding.llProfile.requestLayout()
     }
 
-    private fun addInfoItem(@StringRes hint: Int): ItemProfile2Binding {
-        val itemBinding = ItemProfile2Binding.inflate(
+    private fun addInfoItem(@StringRes hint: Int): ItemProfileBinding {
+        val itemBinding = ItemProfileBinding.inflate(
             LayoutInflater.from(requireContext()),
             binding.llProfile,
             false
