@@ -53,6 +53,8 @@ class EnguViewModelFactory(private val networkRepo: NetworkRepo) : ViewModelProv
             return AccountStatementViewModel(networkRepo) as T
         } else if (modelClass.isAssignableFrom(ReservationViewModel::class.java)) {
             return ReservationViewModel(networkRepo) as T
+        } else if (modelClass.isAssignableFrom(NextOfKinProfileViewModel::class.java)) {
+            return NextOfKinProfileViewModel(networkRepo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
