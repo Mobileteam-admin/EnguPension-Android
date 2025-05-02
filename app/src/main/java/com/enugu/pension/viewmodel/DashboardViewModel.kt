@@ -32,10 +32,6 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val bankAccountListApiResult: LiveData<BankAccountListResponse>
         get() = _bankAccountListApiResult
 
-    private val _verificationHistoryApiResult = MutableLiveData<VerificationHistoryResponse>()
-    val verificationHistoryApiResult: LiveData<VerificationHistoryResponse>
-        get() = _verificationHistoryApiResult
-
     fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -86,20 +82,6 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 result.detail?.userProfileDetails?.imageUrl?.let { profilePictureUrl.postValue(it) }
             } catch (e: Exception) {
                 e.printStackTrace()
-            }
-        }
-    }
-
-    fun fetchVerificationHistory(): Job {
-        return viewModelScope.launch(Dispatchers.IO) {
-            try {
-                _verificationHistoryApiResult.postValue(networkRepo.fetchVerificationHistory())
-            } catch (e: Exception) {
-                _verificationHistoryApiResult.postValue(
-                    VerificationHistoryResponse(
-                        VerificationHistoryResponse.Detail(message = "Something went wrong with fetching verification history.")
-                    )
-                )
             }
         }
     }
