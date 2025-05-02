@@ -110,6 +110,7 @@
     <string name="wallet_balance">Wallet Balance</string>
     <string name="enter_amount">Enter Amount</string>
     <string name="wallet_history">Wallet History</string>
+    <string name="verification_history">Verification History</string>
     <string name="wallet_transaction_history">Wallet Transaction History</string>
     <string name="profile">Profile</string>
     <string name="ein">EIN</string>
@@ -240,6 +241,7 @@
     <string name="branch_name">Branch Name</string>
     <string name="confirm">Confirm</string>
     <string name="city">City</string>
+    <string name="verified_at">Verified at</string>
 
 
 </resources>

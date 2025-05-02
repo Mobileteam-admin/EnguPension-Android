@@ -157,23 +157,7 @@ class DashboardFragment : BaseFragment() {
                     }
                 } else {
                     dismissLoader()
-                    showToast(response.detail?.message!!)
-                }
-            }
-        }
-        viewModel.verificationHistoryApiResult.observe(viewLifecycleOwner) { response ->
-            if (response.detail?.status == AppConstants.SUCCESS) {
-                dismissLoader()
-            } else {
-                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            viewModel.fetchVerificationHistory()
-                        }
-                    }
-                } else {
-                    dismissLoader()
-                    showToast(response.detail?.message!!)
+                    showToast(response.detail?.message?: getString(R.string.common_error_msg))
                 }
             }
         }
@@ -199,7 +183,6 @@ class DashboardFragment : BaseFragment() {
                 lifecycleScope.launch {
                     viewModel.fetchDashboardDetails().join()
                     viewModel.fetchBankAccountList().join()
-                    viewModel.fetchVerificationHistory().join()
                     viewModel.fetchProfilePicture() // TODO: remove after dashboard-details API update
                 }
             } else {
@@ -234,7 +217,7 @@ class DashboardFragment : BaseFragment() {
         }
         binding.ivReservation.setOnClickListener {
             if (confirmInternet()) {
-                navigate(R.id.action_navigation_dashboard_to_navigation_reservation)
+                navigate(R.id.action_dashboard_to_navigation_reservation)
             }
         }
         binding.llAccount.setOnClickListener {
@@ -242,6 +225,9 @@ class DashboardFragment : BaseFragment() {
         }
         binding.llAddBank.setOnClickListener {
             if (confirmInternet()) showDialog(addBankDialog)
+        }
+        binding.ivVerificationHistory.setOnClickListener {
+            if (confirmInternet()) navigate(R.id.action_dashboard_to_verification_history)
         }
         binding.llAppoinment.setOnClickListener {
             viewModel.dashboardDetailsResult.value?.detail?.walletBalanceAmount?.let {

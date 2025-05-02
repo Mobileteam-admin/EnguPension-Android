@@ -22,8 +22,11 @@
             android:id="@+id/action_dashboard_to_wallet_history"
             app:destination="@id/navigation_wallet_history" />
         <action
-            android:id="@+id/action_navigation_dashboard_to_navigation_reservation"
+            android:id="@+id/action_dashboard_to_navigation_reservation"
             app:destination="@id/navigation_reservation" />
+        <action
+            android:id="@+id/action_dashboard_to_verification_history"
+            app:destination="@id/verificationHistoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
@@ -71,4 +74,9 @@
         android:name="com.enugu.pension.ui.fragment.profile.ReservationFragment"
         android:label="Reservation"
         tools:layout="@layout/fragment_reservation" />
+    <fragment
+        android:id="@+id/verificationHistoryFragment"
+        android:name="com.enugu.pension.ui.fragment.verification.VerificationHistoryFragment"
+        android:label="VerificationHistoryFragment"
+        tools:layout="@layout/fragment_verification_history"/>
 </navigation>
