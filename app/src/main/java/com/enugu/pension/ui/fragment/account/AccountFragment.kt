@@ -67,16 +67,7 @@ class AccountFragment : BaseFragment() {
         }
         binding.txtKinprofile.setOnClickListener {
             viewModel.accountDetailsResult.value?.detail?.accountData?.nextOfKin?.let {
-                navigate(
-                    R.id.action_account_to_kinprofile,
-                    args = bundleOf(
-                        KinProfileFragment.ARG_NAME to it.name,
-                        KinProfileFragment.ARG_PHONE_NUMBER to it.phoneNumber,
-                        KinProfileFragment.ARG_EMAIL to it.email,
-                        KinProfileFragment.ARG_ADDRESS to it.address,
-                        KinProfileFragment.ARG_PIN_CODE to it.pinCode
-                    )
-                )
+                navigate(R.id.action_account_to_kinprofile)
             }
         }
     }

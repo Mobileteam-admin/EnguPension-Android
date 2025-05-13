@@ -40,7 +40,7 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/img_back"
+                android:id="@+id/iv_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
@@ -61,14 +61,14 @@
                 android:text="@string/kin_of_profile"
                 android:textColor="@color/white"
                 android:textSize="@dimen/dp_16"
-                app:layout_constraintBottom_toBottomOf="@+id/img_back"
-                app:layout_constraintEnd_toStartOf="@+id/img_bell"
-                app:layout_constraintStart_toEndOf="@+id/img_back"
-                app:layout_constraintTop_toTopOf="@+id/img_back" />
+                app:layout_constraintBottom_toBottomOf="@+id/iv_back"
+                app:layout_constraintEnd_toStartOf="@+id/iv_bell"
+                app:layout_constraintStart_toEndOf="@+id/iv_back"
+                app:layout_constraintTop_toTopOf="@+id/iv_back" />
 
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/img_bell"
+                android:id="@+id/iv_bell"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dp_12"

@@ -4,25 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isGone
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.enugu.pension.R
+import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentKinProfileBinding
-import com.enugu.pension.model.dto.KeyValue
+import com.enugu.pension.model.misc.KeyValue
+import com.enugu.pension.model.response.NextOfKinResponse
+import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.adapter.KinProfileAdapter
-import com.enugu.pension.ui.adapter.ProfileAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
+import com.enugu.pension.viewmodel.EnguViewModelFactory
+import com.enugu.pension.viewmodel.NextOfKinProfileViewModel
+import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 
 class KinProfileFragment : BaseFragment() {
-    companion object {
-        const val ARG_NAME = "name"
-        const val ARG_PHONE_NUMBER = "phone_number"
-        const val ARG_EMAIL = "email"
-        const val ARG_ADDRESS = "address"
-        const val ARG_PIN_CODE = "pin_code"
-    }
     private lateinit var binding:FragmentKinProfileBinding
+    private lateinit var viewModel: NextOfKinProfileViewModel
+    private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,26 +34,46 @@ class KinProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setListeners()
-        populate()
+        initViewModels()
+        initViews()
+        observeLiveData()
+        showLoader()
+        viewModel.fetchProfileDetails()
     }
 
-    private fun setListeners() {
-        binding.ivBack.setOnClickListener { findNavController().navigateUp() }
+    private fun initViewModels() {
+        val networkRepo = NetworkRepo(ApiClient.getApiInterface())
+        viewModel = ViewModelProviders.of(
+            this, EnguViewModelFactory(networkRepo)
+        ).get(NextOfKinProfileViewModel::class.java)
+        tokenRefreshViewModel2 = ViewModelProviders.of(
+            requireActivity(), EnguViewModelFactory(networkRepo)
+        ).get(TokenRefreshViewModel2::class.java)
     }
-    private fun populate() {
-        binding.tvKinName.text = arguments?.getString(ARG_NAME) ?: ""
-        binding.tvRelation.isGone = true
-        val items = listOf(
-            KeyValue(getString(R.string.email_id), arguments?.getString(ARG_EMAIL)?:""),
-            KeyValue(getString(R.string.phone), arguments?.getString(ARG_PHONE_NUMBER)?:""),
-            KeyValue(getString(R.string.address), arguments?.getString(ARG_ADDRESS)?:""),
-//            KeyValue(getString(R.string.pincode), arguments?.getString(ARG_PIN_CODE)?:""),
-        )
-        binding.rvDetails.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = KinProfileAdapter(items)
+
+    private fun initViews() {
+        binding.ivBack.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
+    private fun observeLiveData() {
+        viewModel.nexOfKinApiResult.observe(viewLifecycleOwner) { response ->
+            dismissLoader()
+            if (response?.detail?.status == AppConstants.SUCCESS) {
+                populateViews()
+            }
+        }
+    }
+
+    private fun populateViews() {
+        val kinDetails = viewModel.nexOfKinApiResult.value?.detail?.nextOfKinDetails?: NextOfKinResponse.Detail.NextOfKinDetails()
+        binding.tvKinName.text = kinDetails.nextOfKinName
+        val items = listOf(
+            KeyValue(getString(R.string.email_id), kinDetails.nextOfKinEmail),
+            KeyValue(getString(R.string.phone), kinDetails.nextOfKinPhoneNumber),
+            KeyValue(getString(R.string.address), kinDetails.nextOfKinAddress)
+        )
+        binding.rvProfile.adapter = KinProfileAdapter(items)
+    }
 }
