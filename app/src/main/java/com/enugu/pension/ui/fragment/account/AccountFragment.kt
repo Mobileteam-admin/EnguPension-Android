@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +16,7 @@ import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentAccountBinding
 import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.fragment.base.BaseFragment
+import com.enugu.pension.ui.fragment.kin.KinProfileFragment
 import com.enugu.pension.viewmodel.AccountViewModel
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
@@ -63,7 +66,18 @@ class AccountFragment : BaseFragment() {
             if (confirmInternet()) navigate(R.id.action_account_to_accountstatement)
         }
         binding.txtKinprofile.setOnClickListener {
-            if (confirmInternet()) navigate(R.id.action_account_to_kinprofile)
+            viewModel.accountDetailsResult.value?.detail?.accountData?.nextOfKin?.let {
+                navigate(
+                    R.id.action_account_to_kinprofile,
+                    args = bundleOf(
+                        KinProfileFragment.ARG_NAME to it.name,
+                        KinProfileFragment.ARG_PHONE_NUMBER to it.phoneNumber,
+                        KinProfileFragment.ARG_EMAIL to it.email,
+                        KinProfileFragment.ARG_ADDRESS to it.address,
+                        KinProfileFragment.ARG_PIN_CODE to it.pinCode
+                    )
+                )
+            }
         }
     }
 
@@ -103,15 +117,33 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun populateViews2() {
-        viewModel.accountDetailsResult.value?.detail?.let {
+        viewModel.accountDetailsResult.value?.detail?.accountData?.let {
+            binding.clGratuity.isGone = it.gratuity.isEmpty()
+            val status = it.currentMonthStatus ?: ""
+            binding.tvStatus.text = status
+            binding.tvStatus.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    if (status == "Active") R.color.green_middle else R.color.red
+                )
+            )
+//            binding.tvPensionAmount.text = getVerificationText(it.currentMonthStatus ?: "")
+            binding.tvPensionAmount.text = ""
 
         }
     }
 
     private fun fetchAccountDetails() {
-        if (confirmInternet()) {
+        if (viewModel.accountDetailsResult.value == null && confirmInternet()) {
             viewModel.fetchDashboardDetails()
         }
     }
+
+    private fun getVerificationRecordText(status: String) =
+        when (status) {
+            "NOT_VERIFIED" -> getString(R.string.not_verified)
+            "VERIFIED" -> getString(R.string.verified)
+            else -> status
+        }
 
 }

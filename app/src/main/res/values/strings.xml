@@ -240,6 +240,7 @@
     <string name="branch_name">Branch Name</string>
     <string name="confirm">Confirm</string>
     <string name="city">City</string>
+    <string name="name">Name</string>
 
 
 </resources>

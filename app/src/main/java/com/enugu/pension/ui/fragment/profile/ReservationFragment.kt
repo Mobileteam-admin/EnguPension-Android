@@ -155,6 +155,7 @@ class ReservationFragment : BaseFragment() {
                     putExtra(VideoCallActivity.EXTRA_URL, response.detail.roomUrl)
                 }
                 startActivity(intent)
+                findNavController().popBackStack()
             } else {
                 if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
                     lifecycleScope.launch(Dispatchers.IO) {

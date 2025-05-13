@@ -21,7 +21,7 @@ class AccountViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _accountDetailsResult.postValue(networkRepo.fetchAccountDetails())
             } catch (e: Exception) {
                 _accountDetailsResult.postValue(
-                    AccountDetailsResponse(AccountDetailsResponse.Detail(message = "Something went wrong"))
+                    AccountDetailsResponse(AccountDetailsResponse.Detail(message = "Something went wrong--"+e.message))
                 )
             }
         }
