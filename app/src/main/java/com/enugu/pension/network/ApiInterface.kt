@@ -234,5 +234,10 @@ interface ApiInterface {
     ): ReservationResponse
 
 
+    @GET("/api/v1/accountdetails/")
+    suspend fun fetchAccountDetails(@Header("Authorization") token: String
+    ): AccountDetailsResponse
+
+
 
 }

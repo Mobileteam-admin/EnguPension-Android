@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.R
@@ -17,6 +18,8 @@ import com.enugu.pension.viewmodel.AccountViewModel
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class AccountFragment : BaseFragment() {
@@ -36,6 +39,7 @@ class AccountFragment : BaseFragment() {
         initViewModels()
         initViews()
         observeLiveData()
+        fetchAccountDetails()
     }
 
     private fun initViewModels() {
@@ -69,6 +73,25 @@ class AccountFragment : BaseFragment() {
                 populateViews()
             }
         }
+        viewModel.accountDetailsResult.observe(viewLifecycleOwner) { response ->
+            if (response != null) {
+                if (response.detail?.status == AppConstants.SUCCESS) {
+                    dismissLoader()
+                    populateViews2()
+                } else {
+                    if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                viewModel.fetchDashboardDetails()
+                            }
+                        }
+                    } else {
+                        dismissLoader()
+                        response.detail?.message?.let { showToast(it) }
+                    }
+                }
+            }
+        }
     }
 
     private fun populateViews() {
@@ -76,6 +99,18 @@ class AccountFragment : BaseFragment() {
             val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
             binding.tvWalletAmount.text = walletText
             binding.ivNaira.isGone = true
+        }
+    }
+
+    private fun populateViews2() {
+        viewModel.accountDetailsResult.value?.detail?.let {
+
+        }
+    }
+
+    private fun fetchAccountDetails() {
+        if (confirmInternet()) {
+            viewModel.fetchDashboardDetails()
         }
     }
 
