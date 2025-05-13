@@ -242,6 +242,7 @@
     <string name="confirm">Confirm</string>
     <string name="city">City</string>
     <string name="verified_at">Verified at</string>
+    <string name="name">Name</string>
 
 
 </resources>

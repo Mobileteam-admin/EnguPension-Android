@@ -239,4 +239,7 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchNextOfKinDetails() =
         apiInterface.fetchNextOfKinDetails(NetworkUtils.getAccessToken())
 
+    suspend fun fetchAccountDetails() =
+        apiInterface.fetchAccountDetails(NetworkUtils.getAccessToken())
+
 }

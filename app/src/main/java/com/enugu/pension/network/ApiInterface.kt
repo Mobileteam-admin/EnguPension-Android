@@ -241,4 +241,10 @@ interface ApiInterface {
     suspend fun fetchNextOfKinDetails(@Header("Authorization") token: String
     ): NextOfKinResponse
 
+    @GET("/api/v1/accountdetails/")
+    suspend fun fetchAccountDetails(@Header("Authorization") token: String
+    ): AccountDetailsResponse
+
+
+
 }

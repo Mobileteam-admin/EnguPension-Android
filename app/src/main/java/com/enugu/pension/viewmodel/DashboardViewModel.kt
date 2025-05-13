@@ -17,8 +17,7 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     var banks: ArrayList<ListBanksItem?>? = null
     var bankAccounts: ArrayList<BankAccountListResponse.Detail.BankAccount>? = null
     var bankAccountTypes: ArrayList<AccountTypeItem?>? = null
-    private val _logoutResult =
-        MutableLiveData<ResponseLogout>()
+    private val _logoutResult = MutableLiveData<ResponseLogout>()
     val logoutResult: LiveData<ResponseLogout>
         get() = _logoutResult
     val profilePictureUrl = MutableLiveData<String?>(null) // TODO: remove after dashboard-details API update

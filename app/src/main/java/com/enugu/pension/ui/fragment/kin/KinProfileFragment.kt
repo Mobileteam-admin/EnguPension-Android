@@ -1,7 +1,6 @@
 package com.enugu.pension.ui.fragment.kin
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,8 +37,7 @@ class KinProfileFragment : BaseFragment() {
         initViewModels()
         initViews()
         observeLiveData()
-        showLoader()
-        viewModel.fetchProfileDetails()
+        loadDetails()
     }
 
     private fun initViewModels() {
@@ -53,7 +51,7 @@ class KinProfileFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        binding.imgBack.setOnClickListener {
+        binding.ivBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
@@ -64,6 +62,13 @@ class KinProfileFragment : BaseFragment() {
             if (response?.detail?.status == AppConstants.SUCCESS) {
                 populateViews()
             }
+        }
+    }
+
+    private fun loadDetails() {
+        if (confirmInternet()) {
+            showLoader()
+            viewModel.fetchProfileDetails()
         }
     }
 
