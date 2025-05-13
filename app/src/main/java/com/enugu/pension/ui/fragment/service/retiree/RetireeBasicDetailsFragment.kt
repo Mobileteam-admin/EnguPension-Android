@@ -21,7 +21,7 @@ import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.R
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentRetireeBasicDetailsBinding
-import com.enugu.pension.model.dto.EnguCalendarRange
+import com.enugu.pension.model.misc.EnguCalendarRange
 import com.enugu.pension.model.request.InputRetireeBasicDetails
 import com.enugu.pension.model.response.*
 import com.enugu.pension.network.ApiClient

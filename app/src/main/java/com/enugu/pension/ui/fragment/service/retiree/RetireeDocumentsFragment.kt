@@ -17,7 +17,7 @@ import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.R
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentRetireeDocumentsBinding
-import com.enugu.pension.model.dto.DocumentUploadItem
+import com.enugu.pension.model.ui.DocumentUploadItem
 import com.enugu.pension.model.response.ResponseRetireeDocUpload
 import com.enugu.pension.model.response.RetireeFileUrlResponse
 import com.enugu.pension.network.ApiClient

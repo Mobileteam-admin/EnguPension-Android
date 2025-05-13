@@ -2,6 +2,7 @@ package com.enugu.pension.ui.fragment.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -156,7 +157,7 @@ class DashboardFragment : BaseFragment() {
                     }
                 } else {
                     dismissLoader()
-                    showToast(response.detail?.message!!)
+                    showToast(response.detail?.message?: getString(R.string.common_error_msg))
                 }
             }
         }
@@ -216,7 +217,7 @@ class DashboardFragment : BaseFragment() {
         }
         binding.ivReservation.setOnClickListener {
             if (confirmInternet()) {
-                navigate(R.id.action_navigation_dashboard_to_navigation_reservation)
+                navigate(R.id.action_dashboard_to_navigation_reservation)
             }
         }
         binding.llAccount.setOnClickListener {
@@ -224,6 +225,9 @@ class DashboardFragment : BaseFragment() {
         }
         binding.llAddBank.setOnClickListener {
             if (confirmInternet()) showDialog(addBankDialog)
+        }
+        binding.ivVerificationHistory.setOnClickListener {
+            if (confirmInternet()) navigate(R.id.action_dashboard_to_verification_history)
         }
         binding.llAppoinment.setOnClickListener {
             viewModel.dashboardDetailsResult.value?.detail?.walletBalanceAmount?.let {

@@ -233,6 +233,12 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchReservationDetails() =
         apiInterface.fetchReservationDetails(NetworkUtils.getAccessToken())
 
+    suspend fun fetchVerificationHistory() =
+        apiInterface.fetchVerificationHistory(NetworkUtils.getAccessToken())
+
+    suspend fun fetchNextOfKinDetails() =
+        apiInterface.fetchNextOfKinDetails(NetworkUtils.getAccessToken())
+
     suspend fun fetchAccountDetails() =
         apiInterface.fetchAccountDetails(NetworkUtils.getAccessToken())
 

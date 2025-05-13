@@ -20,7 +20,7 @@ import com.enugu.pension.R
 import com.enugu.pension.util.AlphabeticTextWatcher
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentActiveBasicDetailsBinding
-import com.enugu.pension.model.dto.EnguCalendarRange
+import com.enugu.pension.model.misc.EnguCalendarRange
 import com.enugu.pension.model.request.InputActiveBasicDetails
 import com.enugu.pension.model.response.ActiveRetriveUserProfileDetails
 import com.enugu.pension.model.response.GradeLevelsItem

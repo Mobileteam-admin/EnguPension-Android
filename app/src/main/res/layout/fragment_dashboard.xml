@@ -365,23 +365,39 @@
                             android:id="@+id/iv_verification_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="6dp"
+                            android:layout_marginStart="10dp"
                             android:layout_weight="1"
                             android:src="@drawable/ic_not_verified_red"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/tv_verification_status"
+                            app:layout_constraintStart_toEndOf="@+id/txt_status"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/tv_verification_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
                             android:layout_weight="1"
                             android:drawablePadding="@dimen/dp_6"
                             android:fontFamily="@font/nunito_sans_semibold"
                             android:text="@string/not_verified"
                             android:textColor="@color/red"
                             android:textSize="@dimen/dp_14"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_verification_status"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/iv_verification_history"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:padding="8dp"
+                            android:layout_weight="1"
+                            app:tint="@color/green_dark"
+                            android:src="@drawable/ic_arrow_right"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?android:attr/selectableItemBackgroundBorderless"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />

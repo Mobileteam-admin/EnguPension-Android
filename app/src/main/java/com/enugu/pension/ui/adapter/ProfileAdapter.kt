@@ -2,21 +2,19 @@ package com.enugu.pension.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
-import com.enugu.pension.databinding.ItemProfile2Binding
 import com.enugu.pension.databinding.ItemProfileBinding
-import com.enugu.pension.model.dto.ProfileInfo
+import com.enugu.pension.model.ui.ProfileInfo
 
 class ProfileAdapter(private val profileInfo: ProfileInfo) :
     RecyclerView.Adapter<ProfileAdapter.ItemViewHolder>() {
 
-    class ItemViewHolder(val binding: ItemProfile2Binding) :
+    class ItemViewHolder(val binding: ItemProfileBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding =
-            ItemProfile2Binding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemProfileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding)
     }
 
