@@ -37,8 +37,7 @@ class KinProfileFragment : BaseFragment() {
         initViewModels()
         initViews()
         observeLiveData()
-        showLoader()
-        viewModel.fetchProfileDetails()
+        loadDetails()
     }
 
     private fun initViewModels() {
@@ -63,6 +62,13 @@ class KinProfileFragment : BaseFragment() {
             if (response?.detail?.status == AppConstants.SUCCESS) {
                 populateViews()
             }
+        }
+    }
+
+    private fun loadDetails() {
+        if (confirmInternet()) {
+            showLoader()
+            viewModel.fetchProfileDetails()
         }
     }
 
