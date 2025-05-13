@@ -90,12 +90,12 @@
             android:paddingVertical="@dimen/dp_4">
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/iv_wallet_icon"
+                android:id="@+id/iv_kin"
                 android:layout_width="@dimen/dp_50"
                 android:layout_height="@dimen/dp_50"
                 android:layout_margin="@dimen/dp_6"
                 android:background="@color/green_dark"
-                android:src="@drawable/ic_profile_circle"
+                android:src="@drawable/ic_kin"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 app:barrierDirection="end"
                 app:barrierMargin="@dimen/dp_12"
-                app:constraint_referenced_ids="iv_wallet_icon" />
+                app:constraint_referenced_ids="iv_kin" />
 
             <TextView
                 android:id="@+id/tv_kin_name"
@@ -118,7 +118,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/barrier"
-                app:layout_constraintTop_toTopOf="@+id/iv_wallet_icon" />
+                app:layout_constraintTop_toTopOf="@+id/iv_kin" />
 
             <TextView
                 android:id="@+id/tv_relationship"
@@ -126,7 +126,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Wife"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_wallet_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_kin"
                 app:layout_constraintStart_toStartOf="@+id/barrier"
                 app:layout_constraintTop_toBottomOf="@+id/tv_kin_name" />
 
