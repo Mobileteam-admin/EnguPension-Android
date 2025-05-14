@@ -48,6 +48,7 @@ class WalletFragment : BaseFragment() {
     private lateinit var viewModel: WalletViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private lateinit var stripeActivityResultLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initVars()
@@ -252,4 +253,5 @@ class WalletFragment : BaseFragment() {
             binding.ivNaira.isGone = true
         }
     }
+
 }

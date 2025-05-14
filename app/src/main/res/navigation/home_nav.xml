@@ -58,6 +58,9 @@
         <action
             android:id="@+id/action_account_to_kinprofile"
             app:destination="@id/navigation_kinprofile" />
+        <action
+            android:id="@+id/action_navigation_account_to_gratuity"
+            app:destination="@id/gratuityFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_accountstatement"
@@ -79,4 +82,9 @@
         android:name="com.enugu.pension.ui.fragment.verification.VerificationHistoryFragment"
         android:label="VerificationHistoryFragment"
         tools:layout="@layout/fragment_verification_history"/>
+    <fragment
+        android:id="@+id/gratuityFragment"
+        android:name="com.enugu.pension.ui.fragment.account.GratuityFragment"
+        android:label="GratuityFragment"
+        tools:layout="@layout/fragment_gratuity"/>
 </navigation>

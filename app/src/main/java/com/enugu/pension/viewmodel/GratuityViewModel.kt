@@ -9,7 +9,7 @@ import com.enugu.pension.model.response.AccountDetailsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AccountViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+class GratuityViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
 
     private val _accountDetailsResult = MutableLiveData<AccountDetailsResponse>()
     val accountDetailsResult: LiveData<AccountDetailsResponse>
@@ -21,7 +21,7 @@ class AccountViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _accountDetailsResult.postValue(networkRepo.fetchAccountDetails())
             } catch (e: Exception) {
                 _accountDetailsResult.postValue(
-                    AccountDetailsResponse(AccountDetailsResponse.Detail(message = "Something went wrong"))
+                    AccountDetailsResponse(AccountDetailsResponse.Detail(message = "Something went wrong."))
                 )
             }
         }

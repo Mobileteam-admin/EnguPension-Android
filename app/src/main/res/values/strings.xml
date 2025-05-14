@@ -243,6 +243,8 @@
     <string name="city">City</string>
     <string name="verified_at">Verified at</string>
     <string name="name">Name</string>
+    <string name="gratuity">Gratuity</string>
+    <string name="list_is_empty">The list is empty!</string>
 
 
 </resources>

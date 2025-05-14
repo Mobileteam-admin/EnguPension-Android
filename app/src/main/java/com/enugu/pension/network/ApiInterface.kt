@@ -196,13 +196,15 @@ interface ApiInterface {
     suspend fun fetchBankAccountList(@Header("Authorization") token: String
     ): BankAccountListResponse
 
+    @POST("/api/v1/pension/statement")
+    suspend fun fetchStatement(
+        @Header("Authorization") token: String,
+        @Body request: StatementRequest
+    ): StatementResponse
 
-//    @GET("/api/v1/transaction-statement/")
-//    @GET("/api/v1/download-transactions/{userId}")
     @GET("/api/v1/download-transactions/")
     suspend fun fetchStatementPdfLink(
         @Header("Authorization") token: String,
-//        @Path("userId") userId: Int
     ): StatementPdfLinkResponse
 
     @GET

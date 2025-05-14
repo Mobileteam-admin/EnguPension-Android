@@ -1,5 +1,9 @@
 package com.enugu.pension.viewmodel
 
+import android.content.ContentResolver
+import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -9,9 +13,15 @@ import androidx.paging.cachedIn
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.data.TransactionHistoryPagingSource
 import com.enugu.pension.model.response.TransactionHistoryResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class WalletHistoryViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    private val _statementDownloadApiResult = MutableLiveData<String>()
+    val statementDownloadApiResult: LiveData<String>
+        get() = _statementDownloadApiResult
+
     val transactionFlow: Flow<PagingData<TransactionHistoryResponse.Detail.Data.Transaction>> = Pager(
         config = PagingConfig(
             pageSize = 10,
@@ -19,4 +29,25 @@ class WalletHistoryViewModel(private val networkRepo: NetworkRepo) : ViewModel()
         ),
         pagingSourceFactory = { TransactionHistoryPagingSource(networkRepo) }
     ).flow.cachedIn(viewModelScope)
+
+    fun fetchStatementPdfLink(uri: Uri, contentResolver: ContentResolver) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val defaultErrorMessage = "Failed to download Account Statement"
+            try {
+                val linkResponse = networkRepo.fetchStatementPdfLink()
+                val fileUrl = linkResponse.detail.fileUrl
+
+                val message = if (fileUrl.isNullOrEmpty()) {
+                    linkResponse.detail.message ?: defaultErrorMessage
+                } else {
+                    val success = networkRepo.downloadFile(fileUrl, uri, contentResolver)
+                    if (success) "Account Statement downloaded successfully" else defaultErrorMessage
+                }
+
+                _statementDownloadApiResult.postValue(message)
+            } catch (e: Exception) {
+                _statementDownloadApiResult.postValue(defaultErrorMessage)
+            }
+        }
+    }
 }

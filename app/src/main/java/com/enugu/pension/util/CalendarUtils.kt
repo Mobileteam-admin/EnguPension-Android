@@ -18,6 +18,7 @@ object CalendarUtils {
 //    const val DATE_TIME_FORMAT_2 = "dd-MMM-yyyy hh:mm:ss a" //"21-Mar-2025 05:42:11 am"
     const val DATE_TIME_FORMAT_2 = "dd-MMM-yyyy hh:mm a" //"21-Mar-2025 05:42 am"
     const val DATE_TIME_FORMAT_3 = "yyyy-MM-dd hh:mm a" // "2025-04-15 09:15 AM"
+    const val DATE_TIME_FORMAT_4 = "yyyy-MM-dd'T'HH:mm:ss" //(ISO 8601) "2025-05-31T23:59:59"
     const val MONTH_FORMAT_1 = "MMMM" //December
     fun getFormattedNow() = getFormattedString(DATE_TIME_FORMAT_2, Calendar.getInstance())
     fun getFormattedToday() = getFormattedString(DATE_FORMAT_4, Calendar.getInstance())
