@@ -15,7 +15,7 @@
         android:scaleType="fitXY"
         android:layout_marginBottom="@dimen/view_vertical_margin"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/rv_wallet_history"
+        app:layout_constraintBottom_toTopOf="@+id/cl_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:adjustViewBounds="true"
@@ -151,27 +151,79 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_wallet_history"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/dp_12"
-        android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/cl_download"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rl_header"
-        tools:listitem="@layout/item_wallet_history" />
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rl_header">
+        <TextView
+            android:id="@+id/tv_from_label"
+            style="@style/Style_text_title_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tv_from"
+            app:layout_constraintEnd_toEndOf="@+id/tv_from"
+            android:text="From" />
+        <TextView
+            android:id="@+id/tv_from"
+            style="@style/Style_text_title_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_squarebox"
+            android:drawableStart="@drawable/ic_calender"
+            android:drawablePadding="@dimen/dp_16"
+            android:hint="@string/dd_mm_yyyy"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/view_horizontal_margin"
+            android:padding="@dimen/dp_12"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/gl_middle"
+            app:layout_constraintTop_toBottomOf="@+id/tv_from_label" />
+        <TextView
+            android:id="@+id/tv_to_label"
+            style="@style/Style_text_title_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tv_to"
+            app:layout_constraintEnd_toEndOf="@+id/tv_to"
+            android:text="To" />
+        <TextView
+            android:id="@+id/tv_to"
+            style="@style/Style_text_title_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_squarebox"
+            android:drawableStart="@drawable/ic_calender"
+            android:drawablePadding="@dimen/dp_16"
+            android:hint="@string/dd_mm_yyyy"
+            android:layout_marginTop="@dimen/dp_8"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:padding="@dimen/dp_12"
+            android:layout_marginStart="@dimen/view_horizontal_margin"
+            app:layout_constraintStart_toStartOf="@+id/gl_middle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_from_label" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_statement"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/view_vertical_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_from"
+            tools:listitem="@layout/item_wallet_history" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/tv_empty_message"
@@ -180,43 +232,11 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginHorizontal="@dimen/view_horizontal_margin"
-        android:text="@string/no_transactions"
+        android:text="@string/no_transaction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rl_header"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_download"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_button_height"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dp_8"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/button_green"
-        android:padding="@dimen/dp_10"
-        android:layout_marginHorizontal="@dimen/dp_30"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="@dimen/view_vertical_margin_large">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_sans_semibold"
-            android:drawableEnd="@drawable/ic_download"
-            android:drawablePadding="@dimen/dp_8"
-            android:text="@string/download_statement"
-            android:textColor="@color/white"
-            android:textSize="@dimen/dp_14"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

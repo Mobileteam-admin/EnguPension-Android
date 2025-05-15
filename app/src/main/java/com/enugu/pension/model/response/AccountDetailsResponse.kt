@@ -10,14 +10,16 @@ data class AccountDetailsResponse(
         @SerializedName("token_status") var tokenStatus: String? = null,
         @SerializedName("message") var message: String? = null,
         @SerializedName("account_data") var accountData: AccountData = AccountData(),
+        @SerializedName("pension_amount") var pensionAmount: Double = 0.0,
+        @SerializedName("salary_amount") var salaryAmount: Double = 0.0,
     ) {
         data class AccountData(
-            @SerializedName("current_balance") var currentBalance: Float = 0f,
+            @SerializedName("current_balance") var currentBalance: Double = 0.0,
             @SerializedName("transaction_history") var transactionHistory: List<TransactionHistory> = emptyList(),
             @SerializedName("current_month_transaction_status") var currentMonthStatus: String? = null,
             @SerializedName("verification_record") var verificationRecord: String? = null,
             @SerializedName("next_of_kin") var nextOfKin: NextOfKin = NextOfKin(),
-            @SerializedName("gratuity") var gratuity: List<Gratuity> = emptyList()
+            @SerializedName("gratuity") var gratuity: List<Gratuity> = emptyList(),
         ) {
             data class TransactionHistory(
                 @SerializedName("amount") var amount: Float,

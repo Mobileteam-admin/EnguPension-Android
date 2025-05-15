@@ -1,5 +1,6 @@
 package com.enugu.pension.model.response
 
+import com.enugu.pension.util.AppUtils
 import com.google.gson.annotations.SerializedName
 
 data class ResponseDashboardDetails(
@@ -26,17 +27,19 @@ data class DashboardDetails(
 	val message: String? = null,
 
 	@field:SerializedName("wallet_balance_currency")
-	val walletBalanceCurrency: String? = null,
+	private val walletBalanceCurrency: String? = null,
 
 	@field:SerializedName("verification_status")
 	val verificationStatus: Boolean? = null,
 
 	@field:SerializedName("wallet_balance_amount")
-	val walletBalanceAmount: Int? = null,
+	val walletBalanceAmount: Double? = 0.0,
 
 	@field:SerializedName("status")
 	val status: String? = null
-)
+) {
+	fun getWalletBalanceAmount() = "$walletBalanceCurrency ${AppUtils.getFormattedMoney(walletBalanceAmount)}"
+}
 
 data class DashboardBankDetails(
 

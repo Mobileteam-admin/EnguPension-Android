@@ -4,9 +4,11 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,50 +18,39 @@ import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.R
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.databinding.FragmentAccountStatementBinding
+import com.enugu.pension.model.misc.EnguCalendarRange
+import com.enugu.pension.model.ui.StatementItem
 import com.enugu.pension.network.ApiClient
-import com.enugu.pension.ui.adapter.TransactionLoadStateAdapter
-import com.enugu.pension.ui.adapter.WalletHistoryAdapter
+import com.enugu.pension.ui.adapter.StatementAdapter
+import com.enugu.pension.ui.dialog.EnguCalendarDialog
 import com.enugu.pension.ui.fragment.base.BaseFragment
 import com.enugu.pension.util.CalendarUtils
 import com.enugu.pension.util.NetworkUtils
 import com.enugu.pension.viewmodel.AccountStatementViewModel
 import com.enugu.pension.viewmodel.DashboardViewModel
+import com.enugu.pension.viewmodel.EnguCalendarHandlerViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class AccountStatementFragment : BaseFragment() {
     private lateinit var binding: FragmentAccountStatementBinding
     private lateinit var viewModel: AccountStatementViewModel
     private lateinit var dashboardViewModel: DashboardViewModel
+    private val enguCalendarHandlerViewModel by activityViewModels<EnguCalendarHandlerViewModel>()
+    private lateinit var enguCalendarDialog: EnguCalendarDialog
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
-    private val adapter = WalletHistoryAdapter()
-    private var retryCount = 0
+    private lateinit var statementAdapter: StatementAdapter
 
     companion object {
-        private const val MAX_RETRY = 3
-    }
-    private val permissionResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            if (NetworkUtils.isConnectedToNetwork(requireContext())) {
-                showLoader()
-//                viewModel.fetchStatementPdfLink()
-            } else {
-                showToast(R.string.no_internet_error)
-            }
-        }
-        else showToast("Write permission denied. Cannot download Account statement.")
+        const val CALENDAR_ACTION_FROM = 1
+        const val CALENDAR_ACTION_TO = 2
     }
 
-    private val createFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            result.data?.data?.let { uri -> viewModel.fetchStatementPdfLink(uri,requireContext().contentResolver) }
-        }
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,12 +59,12 @@ class AccountStatementFragment : BaseFragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModels()
         initViews()
         observeLiveData()
+        initDateSelection()
     }
 
     private fun initViewModels() {
@@ -90,79 +81,40 @@ class AccountStatementFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        initRvWalletHistory()
+        initRvStatement()
         binding.tvEmptyMessage.isGone = true
-        binding.clDownload.isGone = true
         binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.clDownload.setOnClickListener {
-//            val intent = Intent(requireActivity(), PermissionRequestActivity::class.java)
-//            intent.putExtra(PermissionRequestActivity.EXTRA_PERMISSION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//            permissionResultLauncher.launch(intent)
-            if (confirmInternet()) {
-                showLoader()
-                val fileName = "Account Statement ${CalendarUtils.getFormattedToday()}.pdf"
-                openPathPicker(fileName)
-            }
-        }
-        binding.imgBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        enguCalendarDialog = EnguCalendarDialog()
+        binding.tvFrom.setOnClickListener { showCalendar(CALENDAR_ACTION_FROM) }
+        binding.tvTo.setOnClickListener { showCalendar(CALENDAR_ACTION_TO) }
     }
 
 
-    private fun openPathPicker(fileName: String) {
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/pdf"
-            putExtra(Intent.EXTRA_TITLE, fileName)
+    private fun initRvStatement() {
+        statementAdapter = StatementAdapter(resources)
+        binding.rvStatement.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = statementAdapter
         }
-        createFileLauncher.launch(intent)
     }
 
-    private fun initRvWalletHistory() {
-        binding.rvWalletHistory.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvWalletHistory.adapter = adapter.withLoadStateFooter(
-            footer = TransactionLoadStateAdapter { adapter.retry() }
-        )
-    }
     private fun observeLiveData() {
-        lifecycleScope.launch {
-            viewModel.transactionFlow.collectLatest { pagingData ->
-                retryCount = 0
-                adapter.submitData(pagingData)
-            }
-        }
-        lifecycleScope.launch {
-            adapter.loadStateFlow.collectLatest { loadStates ->
-                val isEmpty = adapter.itemCount == 0 &&
-                        loadStates.refresh is LoadState.NotLoading &&
-                        loadStates.append.endOfPaginationReached
-                binding.tvEmptyMessage.isVisible = isEmpty
-                binding.clDownload.isVisible = !isEmpty
-                val errorState = loadStates.refresh as? LoadState.Error
-                    ?: loadStates.append as? LoadState.Error
-                    ?: loadStates.prepend as? LoadState.Error
-                if (errorState?.error?.message == AppConstants.TOKEN_EXPIRED) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            withContext(Dispatchers.Main) {
-                                if (retryCount < MAX_RETRY) {
-                                    retryCount++
-                                    adapter.retry()
-                                } else {
-                                    showToast(R.string.common_error_msg_2)
-                                    findNavController().navigateUp()
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (errorState?.error != null) showToast(R.string.common_error_msg_2)
-                    binding.progressBar.visibility =
-                        if (loadStates.refresh is LoadState.Loading) View.VISIBLE else View.GONE
-                }
+        enguCalendarHandlerViewModel.onDateSelect.observe(viewLifecycleOwner) { calendar ->
+            if (calendar != null) {
+                val selectedDay = CalendarUtils.getFormattedString(
+                    CalendarUtils.DATE_FORMAT_3,
+                    calendar
+                )
+                if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_FROM)
+                    binding.tvFrom.text = selectedDay
+                else if (enguCalendarHandlerViewModel.actionId == CALENDAR_ACTION_TO)
+                    binding.tvTo.text = selectedDay
+
+                enguCalendarDialog.dismiss()
+                enguCalendarHandlerViewModel.onDateSelect.value = null
+                fetchStatement()
             }
         }
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
@@ -170,29 +122,108 @@ class AccountStatementFragment : BaseFragment() {
                 populateViews()
             }
         }
-        viewModel.statementApiResult.observe(viewLifecycleOwner) { message ->
-            dismissLoader()
-            showToast(message)
-//            if (response.fileUrl == null) {
-//                showToast(R.string.Statement_download_error_msg)
-//            } else {
-//                val downloadManager =
-//                    context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-//                val url = "${AppConstants.BASE_URL}/${response.fileUrl}"
-//                val fileName = getString(R.string.statement_file_name, CalendarUtils.getFormattedNow())
-//                val downloadDescription = getString(R.string.downloading_statement)
-//                viewModel.downloadPdf(downloadManager, url, fileName, downloadDescription)
-
-//            }
+        viewModel.statementApiResult.observe(viewLifecycleOwner) { response ->
+            if (response.detail?.status == AppConstants.SUCCESS) {
+                dismissLoader()
+                refreshStatementList()
+            } else {
+                if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                            fetchStatement()
+                        }
+                    }
+                } else {
+                    dismissLoader()
+                    statementAdapter.refreshList(emptyList())
+                    showToast(response.detail?.message?:getString(R.string.common_error_msg_2))
+                }
+            }
         }
+    }
+
+    private fun refreshStatementList() {
+        val items = mutableListOf<StatementItem>()
+        viewModel.statementApiResult.value?.detail?.pensionData.let { pensionData ->
+            pensionData?.salaryReceived?.forEach {
+                items.add(
+                    StatementItem(
+                        id = it.id,
+                        isPension = false,
+                        amount = it.amount,
+                        date = it.paymentDate,
+                    )
+                )
+            }
+            pensionData?.pensionWithdrawn?.forEach {
+                items.add(
+                    StatementItem(
+                        id = it.id,
+                        isPension = true,
+                        amount = it.amount,
+                        date = it.transactionDate,
+                        description = it.description,
+                    )
+                )
+            }
+        }
+        statementAdapter.refreshList(items)
+        binding.tvEmptyMessage.isGone = items.isNotEmpty()
     }
 
     private fun populateViews() {
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
-            binding.tvWalletAmount.text = walletText
+            binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
         }
     }
 
+    private fun showCalendar(actionId: Int) {
+        val initSelectedDay =
+            if (actionId == CALENDAR_ACTION_FROM) binding.tvFrom.text else binding.tvTo.text
+        if (!initSelectedDay.isNullOrEmpty()) {
+            enguCalendarHandlerViewModel.setInitSelectedDay(
+                initSelectedDay.toString(),
+                CalendarUtils.DATE_FORMAT_3
+            )
+        }
+        val startCalendar =
+            if (actionId == CALENDAR_ACTION_TO && !binding.tvFrom.text.isNullOrEmpty()) {
+                CalendarUtils.getCalendar(
+                    CalendarUtils.DATE_FORMAT_3,
+                    binding.tvFrom.text.toString()
+                )!!
+            } else {
+                CalendarUtils.getMinCalendar()
+            }
+        val endCalendar = Calendar.getInstance()
+        enguCalendarHandlerViewModel.minYear = startCalendar.get(Calendar.YEAR)
+        enguCalendarHandlerViewModel.maxYear = endCalendar.get(Calendar.YEAR)
+        enguCalendarHandlerViewModel.enguCalendarRange = EnguCalendarRange(
+            listOf(Pair(startCalendar, endCalendar))
+        )
+        enguCalendarHandlerViewModel.actionId = actionId
+        showDialog(enguCalendarDialog)
+    }
+
+    private fun fetchStatement() {
+        if (!binding.tvFrom.text.isNullOrEmpty() && !binding.tvTo.text.isNullOrEmpty() && confirmInternet()) {
+            showLoader()
+            val from = CalendarUtils.getFormattedString(CalendarUtils.DATE_FORMAT_3, CalendarUtils.DATE_TIME_FORMAT_4,binding.tvFrom.text.toString())
+            val toCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, binding.tvTo.text.toString())!!
+            CalendarUtils.setDayEnd(toCalendar)
+            val to = CalendarUtils.getFormattedString(CalendarUtils.DATE_TIME_FORMAT_4, toCalendar)
+            viewModel.fetchStatement(from, to)
+        }
+    }
+
+    private fun initDateSelection() {
+        val calendarFrom = Calendar.getInstance()
+        CalendarUtils.setMonthBegin(calendarFrom)
+        val calendarTo = Calendar.getInstance()
+        CalendarUtils.setDayEnd(calendarTo)
+        binding.tvFrom.text = CalendarUtils.getFormattedString(CalendarUtils.DATE_FORMAT_3, calendarFrom)
+        binding.tvTo.text = CalendarUtils.getFormattedString(CalendarUtils.DATE_FORMAT_3, calendarTo)
+        fetchStatement()
+    }
 }

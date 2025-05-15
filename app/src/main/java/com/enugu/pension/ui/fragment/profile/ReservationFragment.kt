@@ -174,8 +174,7 @@ class ReservationFragment : BaseFragment() {
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     private fun populateHeader() {
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount}"
-            binding.tvWalletAmount.text = walletText
+            binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
         }
     }

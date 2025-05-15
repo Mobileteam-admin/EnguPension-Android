@@ -48,6 +48,7 @@ class WalletFragment : BaseFragment() {
     private lateinit var viewModel: WalletViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private lateinit var stripeActivityResultLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initVars()
@@ -247,9 +248,9 @@ class WalletFragment : BaseFragment() {
     }
     private fun populateViews() {
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
-            binding.tvWalletAmount.text = walletText
+            binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
         }
     }
+
 }

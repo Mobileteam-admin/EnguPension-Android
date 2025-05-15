@@ -1,62 +1,31 @@
 package com.enugu.pension.viewmodel
 
-import android.app.DownloadManager
 import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.data.TransactionHistoryPagingSource
-import com.enugu.pension.model.response.TransactionHistoryResponse
+import com.enugu.pension.model.response.StatementResponse
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class AccountStatementViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
-    private val _statementDownloadApiResult = MutableLiveData<String>()
-    val statementApiResult: LiveData<String>
-        get() = _statementDownloadApiResult
 
-    val transactionFlow: Flow<PagingData<TransactionHistoryResponse.Detail.Data.Transaction>> = Pager(
-        config = PagingConfig(
-            pageSize = 10,
-            prefetchDistance = 6,
-        ),
-        pagingSourceFactory = { TransactionHistoryPagingSource(networkRepo) }
-    ).flow.cachedIn(viewModelScope)
+    private val _statementApiResult = MutableLiveData<StatementResponse>() // TODO: change name
+    val statementApiResult: LiveData<StatementResponse>
+        get() = _statementApiResult
 
-    fun fetchStatementPdfLink(uri: Uri, contentResolver: ContentResolver) {
+    fun fetchStatement(startDate: String,endDate: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val defaultErrorMessage = "Failed to download Account Statement"
             try {
-                val linkResponse = networkRepo.fetchStatementPdfLink()
-                val fileUrl = linkResponse.detail.fileUrl
-
-                val message = if (fileUrl.isNullOrEmpty()) {
-                    linkResponse.detail.message ?: defaultErrorMessage
-                } else {
-                    val success = networkRepo.downloadFile(fileUrl, uri, contentResolver)
-                    if (success) "Account Statement downloaded successfully" else defaultErrorMessage
-                }
-
-                _statementDownloadApiResult.postValue(message)
+                _statementApiResult.postValue(networkRepo.fetchStatement(startDate, endDate))
             } catch (e: Exception) {
-                _statementDownloadApiResult.postValue(defaultErrorMessage)
+                _statementApiResult.postValue(
+                    StatementResponse(StatementResponse.Detail(message = "Something went wrong."))
+                )
             }
         }
-    }
-
-    fun downloadPdf(
-        downloadManager: DownloadManager,
-        fileUrl: String, fileName: String,
-        downloadDescription: String
-    ){
-        networkRepo.downloadFile(downloadManager, fileUrl, fileName, downloadDescription)
     }
 }

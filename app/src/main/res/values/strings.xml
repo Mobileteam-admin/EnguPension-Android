@@ -182,7 +182,7 @@
     <string name="Statement_download_error_msg">Statement download failed, please try again later.</string>
     <string name="downloading_statement">Downloading account statement…</string>
     <string name="statement_file_name">Account Statement - %s</string>
-    <string name="no_transactions">No transactions!</string>
+    <string name="no_transaction">No transaction!</string>
     <string name="double_back_press_msg">Press back again to dismiss.</string>
     <string name="failed_to_load_data">Failed to load data</string>
     <string name="fail_size_exceed_error">File size exceeds the maximum limit of %d MB.</string>
@@ -243,6 +243,12 @@
     <string name="city">City</string>
     <string name="verified_at">Verified at</string>
     <string name="name">Name</string>
+    <string name="gratuity">Gratuity</string>
+    <string name="pension_withdrawn_on">Pension withdrawn on</string>
+    <string name="salary_disbursed_on">Salary disbursed on</string>
+    <string name="list_is_empty">The list is empty!</string>
+    <string name="pension_amount">Pension Amount</string>
+    <string name="salary_amount">Salary Amount</string>
 
 
 </resources>

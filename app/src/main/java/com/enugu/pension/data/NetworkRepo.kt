@@ -21,6 +21,7 @@ import com.enugu.pension.model.request.InputRetireeBasicDetails
 import com.enugu.pension.model.request.InputSignup
 import com.enugu.pension.model.request.InputSignupVerify
 import com.enugu.pension.model.request.InputSwiftBankCode
+import com.enugu.pension.model.request.StatementRequest
 import com.enugu.pension.model.request.TopUpRequest
 import com.enugu.pension.model.request.TransferRequest
 import com.enugu.pension.model.request.UpdateProfileForm
@@ -241,5 +242,8 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
 
     suspend fun fetchAccountDetails() =
         apiInterface.fetchAccountDetails(NetworkUtils.getAccessToken())
+
+    suspend fun fetchStatement(startDate: String,endDate: String) =
+        apiInterface.fetchStatement(NetworkUtils.getAccessToken(), StatementRequest(startDate, endDate))
 
 }

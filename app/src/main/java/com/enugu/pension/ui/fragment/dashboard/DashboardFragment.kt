@@ -262,8 +262,7 @@ class DashboardFragment : BaseFragment() {
         viewModel.dashboardDetailsResult.value?.detail?.let {
             //it.profilePic?.let { url -> setProfilePicture(url) } // TODO: uncomment after dashboard-details API update
             binding.tvPersonName.text = it.fullName
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
-            binding.tvWalletAmount.text = walletText
+            binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
             if (it.verificationStatus == true) {
                 binding.tvVerificationStatus.text = getString(R.string.verified)

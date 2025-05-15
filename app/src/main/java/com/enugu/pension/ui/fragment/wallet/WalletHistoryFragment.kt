@@ -1,9 +1,12 @@
 package com.enugu.pension.ui.fragment.wallet
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
@@ -19,6 +22,7 @@ import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.adapter.TransactionLoadStateAdapter
 import com.enugu.pension.ui.adapter.WalletHistoryAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
+import com.enugu.pension.util.CalendarUtils
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
@@ -39,6 +43,19 @@ class WalletHistoryFragment : BaseFragment() {
     companion object {
         private const val MAX_RETRY = 3
     }
+
+    private val createFileLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                result.data?.data?.let { uri ->
+                    showLoader()
+                    viewModel.fetchStatementPdfLink(
+                        uri,
+                        requireContext().contentResolver
+                    )
+                }
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -124,13 +141,31 @@ class WalletHistoryFragment : BaseFragment() {
                 populateViews()
             }
         }
+        viewModel.statementDownloadApiResult.observe(viewLifecycleOwner) { message ->
+            dismissLoader()
+            showToast(message)
+        }
     }
 
     private fun populateViews() {
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
-            binding.tvWalletAmount.text = walletText
+            binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
         }
+        binding.clDownload.setOnClickListener {
+            if (confirmInternet()) {
+                val fileName = "Account Statement ${CalendarUtils.getFormattedToday()}.pdf"
+                openPathPicker(fileName)
+            }
+        }
+    }
+
+    private fun openPathPicker(fileName: String) {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_TITLE, fileName)
+        }
+        createFileLauncher.launch(intent)
     }
 }
