@@ -56,4 +56,10 @@ object AppUtils {
         val einPattern = Regex("^\\d{8}-\\d{4}$")
         return einPattern.matches(ein)
     }
+
+    fun getFormattedMoney(amount: Double?): String {
+        if (amount == null) return "0"
+        val format = java.text.DecimalFormat("0.##")
+        return format.format(amount)
+    }
 }

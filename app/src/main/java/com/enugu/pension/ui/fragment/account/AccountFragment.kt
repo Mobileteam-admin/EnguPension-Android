@@ -17,6 +17,7 @@ import com.enugu.pension.databinding.FragmentAccountBinding
 import com.enugu.pension.network.ApiClient
 import com.enugu.pension.ui.fragment.base.BaseFragment
 import com.enugu.pension.ui.fragment.kin.KinProfileFragment
+import com.enugu.pension.util.AppUtils
 import com.enugu.pension.viewmodel.AccountViewModel
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
@@ -78,14 +79,17 @@ class AccountFragment : BaseFragment() {
     private fun observeLiveData() {
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
             if (response?.detail?.status == AppConstants.SUCCESS) {
-                populateViews()
+                response.detail.let {
+                    binding.tvWalletAmount.text = it.getWalletBalanceAmount()
+                    binding.ivNaira.isGone = true
+                }
             }
         }
         viewModel.accountDetailsResult.observe(viewLifecycleOwner) { response ->
             if (response != null) {
                 if (response.detail?.status == AppConstants.SUCCESS) {
                     dismissLoader()
-                    populateViews2()
+                    populateViews()
                 } else {
                     if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
                         lifecycleScope.launch(Dispatchers.IO) {
@@ -103,17 +107,9 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun populateViews() {
-        dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
-            binding.tvWalletAmount.text = walletText
-            binding.ivNaira.isGone = true
-        }
-    }
-
-    private fun populateViews2() {
-        viewModel.accountDetailsResult.value?.detail?.accountData?.let {
-            binding.clGratuity.isGone = it.gratuity.isEmpty()
-            val status = it.currentMonthStatus ?: ""
+        viewModel.accountDetailsResult.value?.detail?.let {
+            binding.clGratuity.isGone = it.accountData.gratuity.isEmpty()
+            val status = it.accountData.currentMonthStatus ?: ""
             binding.tvStatus.text = status
             binding.tvStatus.setTextColor(
                 ContextCompat.getColor(
@@ -121,8 +117,15 @@ class AccountFragment : BaseFragment() {
                     if (status == "Active") R.color.green_middle else R.color.red
                 )
             )
-//            binding.tvPensionAmount.text = getVerificationText(it.currentMonthStatus ?: "")
-            binding.tvPensionAmount.text = ""
+            if (it.pensionAmount > 0) {
+                binding.tvAmountLabel.text = getString(R.string.pension_amount)
+                binding.tvPensionOrSalary.text = AppUtils.getFormattedMoney(it.pensionAmount)
+            } else if (it.salaryAmount > 0) {
+                binding.tvAmountLabel.text = getString(R.string.salary_amount)
+                binding.tvPensionOrSalary.text = AppUtils.getFormattedMoney(it.salaryAmount)
+            } else {
+                binding.llPensionOrSalary.isGone = true
+            }
 
         }
     }

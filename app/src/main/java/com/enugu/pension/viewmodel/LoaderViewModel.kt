@@ -10,10 +10,10 @@ class LoaderViewModel : ViewModel() {
         get() = _isLoading
 
     fun show() {
-        _isLoading.value = true
+        _isLoading.postValue(true)
     }
 
     fun dismiss() {
-        _isLoading.value = false
+        _isLoading.postValue(false)
     }
 }

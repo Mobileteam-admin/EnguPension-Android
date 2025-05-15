@@ -106,6 +106,20 @@ object CalendarUtils {
         }
     }
 
+    fun setMonthBegin(calendar: Calendar) {
+        setDayBegin(calendar)
+        calendar.apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+    }
+
+    fun setMonthEnd(calendar: Calendar) {
+        setDayEnd(calendar)
+        calendar.apply {
+            set(Calendar.DAY_OF_MONTH, Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH))
+        }
+    }
+
     fun getEnguCalendarRange(dateRange: List<BookingDateRange>, fixDateOrder: Boolean): EnguCalendarRange {
         val ranges = mutableListOf<Pair<Calendar, Calendar>>()
         val holidays = mutableListOf<Calendar>()

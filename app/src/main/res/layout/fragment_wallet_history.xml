@@ -204,7 +204,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginHorizontal="@dimen/view_horizontal_margin"
-        android:text="@string/no_transactions"
+        android:text="@string/no_transaction"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

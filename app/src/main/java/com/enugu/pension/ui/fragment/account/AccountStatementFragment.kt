@@ -64,6 +64,7 @@ class AccountStatementFragment : BaseFragment() {
         initViewModels()
         initViews()
         observeLiveData()
+        initDateSelection()
     }
 
     private fun initViewModels() {
@@ -85,9 +86,6 @@ class AccountStatementFragment : BaseFragment() {
         binding.imgBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.imgBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
         enguCalendarDialog = EnguCalendarDialog()
         binding.tvFrom.setOnClickListener { showCalendar(CALENDAR_ACTION_FROM) }
         binding.tvTo.setOnClickListener { showCalendar(CALENDAR_ACTION_TO) }
@@ -95,7 +93,7 @@ class AccountStatementFragment : BaseFragment() {
 
 
     private fun initRvStatement() {
-        statementAdapter = StatementAdapter()
+        statementAdapter = StatementAdapter(resources)
         binding.rvStatement.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = statementAdapter
@@ -126,6 +124,7 @@ class AccountStatementFragment : BaseFragment() {
         }
         viewModel.statementApiResult.observe(viewLifecycleOwner) { response ->
             if (response.detail?.status == AppConstants.SUCCESS) {
+                dismissLoader()
                 refreshStatementList()
             } else {
                 if (response.detail?.tokenStatus.equals(AppConstants.EXPIRED)) {
@@ -135,9 +134,9 @@ class AccountStatementFragment : BaseFragment() {
                         }
                     }
                 } else {
-                    refreshStatementList()
-                    Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG)
-                        .show() // TODO:
+                    dismissLoader()
+                    statementAdapter.refreshList(emptyList())
+                    showToast(response.detail?.message?:getString(R.string.common_error_msg_2))
                 }
             }
         }
@@ -150,6 +149,7 @@ class AccountStatementFragment : BaseFragment() {
                 items.add(
                     StatementItem(
                         id = it.id,
+                        isPension = false,
                         amount = it.amount,
                         date = it.paymentDate,
                     )
@@ -159,6 +159,7 @@ class AccountStatementFragment : BaseFragment() {
                 items.add(
                     StatementItem(
                         id = it.id,
+                        isPension = true,
                         amount = it.amount,
                         date = it.transactionDate,
                         description = it.description,
@@ -172,13 +173,20 @@ class AccountStatementFragment : BaseFragment() {
 
     private fun populateViews() {
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
-            binding.tvWalletAmount.text = walletText
+            binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
         }
     }
 
     private fun showCalendar(actionId: Int) {
+        val initSelectedDay =
+            if (actionId == CALENDAR_ACTION_FROM) binding.tvFrom.text else binding.tvTo.text
+        if (!initSelectedDay.isNullOrEmpty()) {
+            enguCalendarHandlerViewModel.setInitSelectedDay(
+                initSelectedDay.toString(),
+                CalendarUtils.DATE_FORMAT_3
+            )
+        }
         val startCalendar =
             if (actionId == CALENDAR_ACTION_TO && !binding.tvFrom.text.isNullOrEmpty()) {
                 CalendarUtils.getCalendar(
@@ -199,12 +207,23 @@ class AccountStatementFragment : BaseFragment() {
     }
 
     private fun fetchStatement() {
-        if (!binding.tvFrom.text.isNullOrEmpty() && !binding.tvTo.text.isNullOrEmpty()) {
+        if (!binding.tvFrom.text.isNullOrEmpty() && !binding.tvTo.text.isNullOrEmpty() && confirmInternet()) {
+            showLoader()
             val from = CalendarUtils.getFormattedString(CalendarUtils.DATE_FORMAT_3, CalendarUtils.DATE_TIME_FORMAT_4,binding.tvFrom.text.toString())
             val toCalendar = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, binding.tvTo.text.toString())!!
             CalendarUtils.setDayEnd(toCalendar)
             val to = CalendarUtils.getFormattedString(CalendarUtils.DATE_TIME_FORMAT_4, toCalendar)
             viewModel.fetchStatement(from, to)
         }
+    }
+
+    private fun initDateSelection() {
+        val calendarFrom = Calendar.getInstance()
+        CalendarUtils.setMonthBegin(calendarFrom)
+        val calendarTo = Calendar.getInstance()
+        CalendarUtils.setDayEnd(calendarTo)
+        binding.tvFrom.text = CalendarUtils.getFormattedString(CalendarUtils.DATE_FORMAT_3, calendarFrom)
+        binding.tvTo.text = CalendarUtils.getFormattedString(CalendarUtils.DATE_FORMAT_3, calendarTo)
+        fetchStatement()
     }
 }

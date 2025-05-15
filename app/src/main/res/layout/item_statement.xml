@@ -16,12 +16,22 @@
         android:padding="@dimen/dp_16">
 
         <TextView
+            android:id="@+id/tv_date_label"
+            style="@style/Style_text_title_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pension withdrawn on"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/tv_date"
             style="@style/Style_text_title_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="01/07/2023"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="4dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_date_label"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView

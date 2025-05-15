@@ -248,8 +248,7 @@ class WalletFragment : BaseFragment() {
     }
     private fun populateViews() {
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            val walletText = "${it.walletBalanceCurrency} ${it.walletBalanceAmount.toString()}"
-            binding.tvWalletAmount.text = walletText
+            binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
         }
     }
