@@ -66,7 +66,7 @@ class SignUpFragment : BaseFragment() {
         signUpViewModel.signupStatus.observe(viewLifecycleOwner) { response ->
             if (response!=null) {
                 dismissLoader()
-                Toast.makeText(context, response.detail?.message, Toast.LENGTH_LONG).show()
+                showToast(response.detail?.message?:getString(R.string.common_error_msg))
                 val otpExistsMessage = "OTP is still valid. Please use the previously sent OTP."
                 if (response.detail?.status == AppConstants.SUCCESS ||
                     response.detail?.message == otpExistsMessage // TODO:
