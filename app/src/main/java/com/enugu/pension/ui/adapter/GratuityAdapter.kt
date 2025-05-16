@@ -8,6 +8,7 @@ import com.enugu.pension.databinding.ItemGratuityBinding
 import com.enugu.pension.databinding.ItemProfileBinding
 import com.enugu.pension.model.ui.GratuityItem
 import com.enugu.pension.model.ui.ProfileInfo
+import com.enugu.pension.util.CalendarUtils
 
 class GratuityAdapter(private val items: List<GratuityItem>) :
     RecyclerView.Adapter<GratuityAdapter.ItemViewHolder>() {
@@ -24,8 +25,13 @@ class GratuityAdapter(private val items: List<GratuityItem>) :
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = items[position]
         holder.binding.tvAmount.text = (item.amount?:"").toString()
-        holder.binding.tvDate.text = item.paymentDate
+        holder.binding.tvDate.text = CalendarUtils.getFormattedString(
+            CalendarUtils.DATE_TIME_FORMAT_1,
+            CalendarUtils.DATE_FORMAT_4,
+            item.paymentDate?:""
+        )
         holder.binding.tvDescription.text = item.description
+        holder.binding.tvDescription.isGone = true
         holder.binding.tvTransactionType.text = item.paymentStatus
         holder.binding.tvTransactionId.isGone = true
     }

@@ -229,7 +229,7 @@ class DashboardFragment : BaseFragment() {
             binding.tvPersonName.text = it.fullName
             binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
-            if (it.verificationStatus == true) {
+            if (it.isVerified()) {
                 binding.tvVerificationStatus.text = getString(R.string.verified)
                 binding.tvVerificationStatus.setTextColor(
                     ContextCompat.getColor(

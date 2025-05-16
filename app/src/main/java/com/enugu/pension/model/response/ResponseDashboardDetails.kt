@@ -30,7 +30,7 @@ data class DashboardDetails(
 	private val walletBalanceCurrency: String? = null,
 
 	@field:SerializedName("verification_status")
-	val verificationStatus: Boolean? = null,
+	private val verificationStatus: String? = "",
 
 	@field:SerializedName("wallet_balance_amount")
 	val walletBalanceAmount: Double? = 0.0,
@@ -39,6 +39,11 @@ data class DashboardDetails(
 	val status: String? = null
 ) {
 	fun getWalletBalanceAmount() = "$walletBalanceCurrency ${AppUtils.getFormattedMoney(walletBalanceAmount)}"
+	fun isVerified(): Boolean {
+		return true // TODO:
+		return verificationStatus == "VERIFIED"
+	} // TODO:
+						//verificationStatus == "VERIFIED"
 }
 
 data class DashboardBankDetails(

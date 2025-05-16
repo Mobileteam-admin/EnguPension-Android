@@ -94,10 +94,11 @@ class ProfileFragment : BaseFragment() {
     private fun initViews() {
         initInfoList()
 //        initRvProfile()
+        binding.tvVerificationDate.isGone = true
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
             binding.tvName.text = it.fullName ?: ""
             setProfileImageView(Uri.parse(it.profilePic))
-            if (it.verificationStatus == true) {
+            if (it.isVerified()) {
                 binding.tvVerificationStatus.text = getString(R.string.verified)
                 binding.tvVerificationStatus.setTextColor(
                     ContextCompat.getColor(

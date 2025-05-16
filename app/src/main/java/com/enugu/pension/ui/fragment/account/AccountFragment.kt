@@ -108,7 +108,7 @@ class AccountFragment : BaseFragment() {
 
     private fun populateViews() {
         viewModel.accountDetailsResult.value?.detail?.let {
-            binding.clGratuity.isGone = it.accountData.gratuity.isEmpty()
+//            binding.clGratuity.isGone = it.accountData.gratuity.isEmpty()
             val status = it.accountData.currentMonthStatus ?: ""
             binding.tvStatus.text = status
             binding.tvStatus.setTextColor(

@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class AccountStatementViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
 
-    private val _statementApiResult = MutableLiveData<StatementResponse>() // TODO: change name
+    private val _statementApiResult = MutableLiveData<StatementResponse>()
     val statementApiResult: LiveData<StatementResponse>
         get() = _statementApiResult
 
