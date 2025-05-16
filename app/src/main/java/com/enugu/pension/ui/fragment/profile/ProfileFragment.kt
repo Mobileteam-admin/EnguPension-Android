@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -93,9 +94,29 @@ class ProfileFragment : BaseFragment() {
     private fun initViews() {
         initInfoList()
 //        initRvProfile()
+        binding.tvVerificationDate.isGone = true
         dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
             binding.tvName.text = it.fullName ?: ""
             setProfileImageView(Uri.parse(it.profilePic))
+            if (it.isVerified()) {
+                binding.tvVerificationStatus.text = getString(R.string.verified)
+                binding.tvVerificationStatus.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.green_dark
+                    )
+                )
+                binding.ivVerificationStatus.setImageResource(R.drawable.ic_tick_green)
+            } else {
+                binding.tvVerificationStatus.text = getString(R.string.not_verified)
+                binding.tvVerificationStatus.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.red
+                    )
+                )
+                binding.ivVerificationStatus.setImageResource(R.drawable.ic_not_verified_red)
+            }
         }
 
         binding.imgBack.setOnClickListener {

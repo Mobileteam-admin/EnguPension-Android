@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RetireeBankViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
-    val swiftCodeState = MutableLiveData(VerificationState.VERIFY)
     val bankCodeState = MutableLiveData(VerificationState.VERIFY)
 
     private val _bankListApiResult = MutableLiveData<ResponseBankList>()

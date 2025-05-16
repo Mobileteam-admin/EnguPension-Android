@@ -4,22 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.enugu.pension.constant.AppConstants
 import com.enugu.pension.databinding.DialogSwiftConfirmationBinding
+import com.enugu.pension.util.VerificationState
+import com.enugu.pension.viewmodel.SwiftVerificationViewModel
 
 class SwiftVerificationDialog : BaseDialog() {
     companion object {
-        const val HAS_CONFIRMED = "hasConfirmed"
-        const val DIALOG_RESULT = "swift_code_dialog_result"
-
         const val ARG_BANK_NAME = "arg_bank_name"
         const val ARG_BRANCH = "arg_branch"
         const val ARG_CITY = "arg_city"
     }
 
     private lateinit var binding:DialogSwiftConfirmationBinding
-
+    private val swiftVerificationViewModel by activityViewModels<SwiftVerificationViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -42,10 +42,7 @@ class SwiftVerificationDialog : BaseDialog() {
 
     private fun setListener() {
         binding.llConfirm.setOnClickListener {
-            val result = Bundle().apply {
-                putBoolean(HAS_CONFIRMED, true)
-            }
-            requireActivity().supportFragmentManager.setFragmentResult(DIALOG_RESULT, result)
+            swiftVerificationViewModel.swiftCodeState.value = VerificationState.VERIFIED
             dismiss()
         }
     }
