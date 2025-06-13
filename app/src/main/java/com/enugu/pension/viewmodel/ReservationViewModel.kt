@@ -4,13 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.ApiResult
 import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.VideoCallRequest
 import com.enugu.pension.model.response.*
-import com.enugu.pension.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -29,10 +25,10 @@ class ReservationViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         _reservationApiResult.value = null
     }
 
-    fun fetchVideoCallLink() {
+    fun createVideoCallRoom() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _videoCallApiResult.postValue(networkRepo.fetchVideoCallLink())
+                _videoCallApiResult.postValue(networkRepo.createVideoCallRoom())
             } catch (e: Exception) {
                 e.printStackTrace()
                 _videoCallApiResult.postValue(

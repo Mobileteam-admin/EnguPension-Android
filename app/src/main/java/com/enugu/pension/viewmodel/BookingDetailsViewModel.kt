@@ -26,6 +26,7 @@ class BookingDetailsViewModel(private val networkRepo: NetworkRepo) : ViewModel(
                 is ApiResult.Success -> apiResult.data
                 is ApiResult.Error -> TransferResponse(TransferResponse.Detail(message = apiResult.message))
             }
+            networkRepo.createVideoCallRoom()
             _transferApiResult.postValue(Pair(description, response))
         }
     }

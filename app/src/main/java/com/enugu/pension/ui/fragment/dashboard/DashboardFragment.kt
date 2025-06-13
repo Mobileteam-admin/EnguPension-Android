@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
@@ -185,6 +186,11 @@ class DashboardFragment : BaseFragment() {
                 navigate(R.id.action_dashboard_to_navigation_reservation)
             }
         }
+        binding.llYourBooking.setOnClickListener {
+            if (confirmInternet()) {
+                navigate(R.id.action_dashboard_to_navigation_reservation)
+            }
+        }
         binding.llAccount.setOnClickListener {
             navigate(R.id.action_dashboard_to_account)
         }
@@ -194,7 +200,7 @@ class DashboardFragment : BaseFragment() {
         binding.ivVerificationHistory.setOnClickListener {
             if (confirmInternet()) navigate(R.id.action_dashboard_to_verification_history)
         }
-        binding.llAppoinment.setOnClickListener {
+        binding.llAppointment.setOnClickListener {
             viewModel.dashboardDetailsResult.value?.detail?.walletBalanceAmount?.let {
                 if (it >= MIN_BOOKING_AMOUNT) {
                     if (confirmInternet()) showDialog(appointmentDialog)
@@ -229,47 +235,36 @@ class DashboardFragment : BaseFragment() {
             binding.tvPersonName.text = it.fullName
             binding.tvWalletAmount.text = it.getWalletBalanceAmount()
             binding.ivNaira.isGone = true
-            if (it.isVerified()) {
-                binding.tvVerificationStatus.text = getString(R.string.verified)
-                binding.tvVerificationStatus.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.green_dark
-                    )
-                )
-                binding.ivVerificationStatus.setImageResource(R.drawable.ic_tick_green)
+
+            binding.llAppointment.isGone = true
+            binding.llYourBooking.isGone = true
+            binding.llValidity.isGone = true
+            if (it.isExpired) {
+                setTvVerificationStatus(false, getString(R.string.not_verified))
+                binding.llAppointment.isVisible = true
             } else {
-                binding.tvVerificationStatus.text = getString(R.string.not_verified)
-                binding.tvVerificationStatus.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.red
-                    )
-                )
-                binding.ivVerificationStatus.setImageResource(R.drawable.ic_not_verified_red)
-            }
-            if (true == true) { // TODO: Modify this whenever update the API and the response includes status
-                binding.tvBookAppointment.text = getString(R.string.book_appointment)
-                binding.tvBookAppointment.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.grey_500
-                    )
-                )
-                binding.ivBookAppointment.setImageResource(R.drawable.ic_schedule)
-            } else {
-                binding.tvBookAppointment.text = getString(R.string.valid_till_date, "01/01/2025")
-                binding.tvBookAppointment.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.red
-                    )
-                )
-                binding.ivBookAppointment.setImageResource(R.drawable.ic_not_verified_red)
+                if (it.isVerified()) {
+                    setTvVerificationStatus(true, getString(R.string.verified))
+                    binding.llValidity.isVisible = true
+                    binding.tvValidTill.text = getString(R.string.valid_till_date, it.expiryDate)
+                } else {
+                    setTvVerificationStatus(false, it.verificationStatus ?: getString(R.string.verification_pending))
+                    binding.llYourBooking.isVisible = true
+                }
             }
         }
     }
 
+    private fun setTvVerificationStatus(isVerified: Boolean, text: String) {
+        binding.tvVerificationStatus.text = text
+        binding.tvVerificationStatus.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                if (isVerified) R.color.green_dark else R.color.red
+            )
+        )
+        binding.ivVerificationStatus.setImageResource(if (isVerified) R.drawable.ic_tick_green else R.drawable.ic_not_verified_red)
+    }
     private fun setProfilePicture(url: String) {
         Glide.with(this)
             .load(url)

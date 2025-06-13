@@ -83,7 +83,6 @@ class BookingDetailsDialog private constructor() : BaseDialog() {
             val request = pair.first
             val response = pair.second
             if (response.detail?.status == AppConstants.SUCCESS) {
-//                response.detail?.message?.let { showToast(it) }
                 showAlertDialog(
                     message = response.detail?.message ?: "Payment completed successfully",
                     positiveTextId = R.string.ok,

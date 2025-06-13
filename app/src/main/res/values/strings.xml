@@ -249,6 +249,8 @@
     <string name="list_is_empty">The list is empty!</string>
     <string name="pension_amount">Pension Amount</string>
     <string name="salary_amount">Salary Amount</string>
+    <string name="verification_pending">Verification Pending</string>
+    <string name="your_booking">Your Booking</string>
 
 
 </resources>

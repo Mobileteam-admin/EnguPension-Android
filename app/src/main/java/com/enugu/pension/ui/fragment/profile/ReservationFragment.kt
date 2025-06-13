@@ -116,7 +116,7 @@ class ReservationFragment : BaseFragment() {
         binding.imgWalletBack.setOnClickListener { findNavController().navigateUp() }
         binding.incReservation.llVideoCall.setOnClickListener {
             if (confirmInternet()) {
-                viewModel.fetchVideoCallLink()
+                viewModel.createVideoCallRoom()
                 showLoader()
             }
         }
@@ -160,7 +160,7 @@ class ReservationFragment : BaseFragment() {
                 if (response.detail?.tokenStatus == AppConstants.EXPIRED) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (tokenRefreshViewModel2.fetchRefreshToken()) {
-                            viewModel.fetchVideoCallLink()
+                            viewModel.createVideoCallRoom()
                         }
                     }
                 } else {
