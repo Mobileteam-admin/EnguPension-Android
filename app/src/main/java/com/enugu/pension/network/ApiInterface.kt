@@ -135,7 +135,7 @@ interface ApiInterface {
     suspend fun getActiveProcessingVerify(@Header("Authorization") token: String): ResponseActiveProcessingVerify
 
     @GET("/api/v1/profile/dashboard_details")
-    suspend fun getDashBoardDetails(@Header("Authorization") token: String): ResponseDashboardDetails
+    suspend fun getDashBoardDetails(@Header("Authorization") token: String): DashboardDetailsResponse
 
     @POST("/api/v1/verify_bank_account")
     suspend fun getBankVerify(
@@ -179,7 +179,7 @@ interface ApiInterface {
 
 //    @POST("/api/v1/booking/videocall/")
     @POST("/api/v1/create-room_daily/")
-    suspend fun fetchVideoCallLink(
+    suspend fun createVideoCallRoom(
         @Header("Authorization") token: String,
 //        @Body request: VideoCallRequest
     ): VideoCallResponse
