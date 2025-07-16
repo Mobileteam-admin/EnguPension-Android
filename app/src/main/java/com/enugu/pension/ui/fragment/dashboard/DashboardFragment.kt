@@ -2,7 +2,6 @@ package com.enugu.pension.ui.fragment.dashboard
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +55,7 @@ class DashboardFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -86,7 +85,7 @@ class DashboardFragment : BaseFragment() {
             if (logout != null) callLogout()
         }
         viewModel.profilePictureUrl.observe(viewLifecycleOwner) {
-            it?.let {url -> setProfilePicture(url) }
+            setProfilePicture(it)
         }
         viewModel.logoutResult.observe(viewLifecycleOwner) { response ->
             if (response.logout_detail?.status == AppConstants.SUCCESS) {
@@ -265,11 +264,15 @@ class DashboardFragment : BaseFragment() {
         )
         binding.ivVerificationStatus.setImageResource(if (isVerified) R.drawable.ic_tick_green else R.drawable.ic_not_verified_red)
     }
-    private fun setProfilePicture(url: String) {
-        Glide.with(this)
-            .load(url)
-            .placeholder(R.drawable.baseline_account_circle_white)
-            .into(binding.ivProfile)
+    private fun setProfilePicture(url: String?) {
+        if (url == null) {
+            binding.ivProfile.setImageResource(R.drawable.baseline_account_circle_white)
+        } else {
+            Glide.with(this)
+                .load(url)
+                .placeholder(R.drawable.baseline_account_circle_white)
+                .into(binding.ivProfile)
+        }
     }
 
     private fun onLogoutSuccess(response: ResponseLogout) {
@@ -304,33 +307,5 @@ class DashboardFragment : BaseFragment() {
         }
         binding.noBankMsg.isGone = bankAccounts.isNotEmpty()
         bankAccountAdapter.setItems(bankAccounts)
-    }
-    private fun startJitsiMeet(response: VideoCallResponse) {
-//        dismissLoader()
-//        PeerConnectionFactory.initialize(
-//            PeerConnectionFactory.InitializationOptions.builder(requireContext())
-//                .setEnableInternalTracer(true)
-//                .createInitializationOptions())
-//        val options = JitsiMeetConferenceOptions.Builder()
-//            .setRoom(response.detail?.roomName)
-//            .setFeatureFlag("welcomepage.enabled", false)
-//            .setAudioMuted(true)
-//            .setVideoMuted(true)
-//            .build()
-//        JitsiMeetActivity.launch(requireContext(), options)
-    }
-
-    private fun startJitsiMeetCall(callLink: String) {
-//        try {
-//            val options: JitsiMeetConferenceOptions = JitsiMeetConferenceOptions.Builder()
-//                .setServerURL(URL(callLink))
-//                .setRoom(callLink)
-//                .setAudioOnly(false)
-//                .build()
-//
-//            JitsiMeetActivity.launch(requireContext(), options)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
     }
 }

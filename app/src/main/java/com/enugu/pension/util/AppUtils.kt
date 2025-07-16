@@ -12,7 +12,8 @@ object AppUtils {
         appContext = context.applicationContext
     }
 
-    fun isValidEmailAddress(emailAddress: String): Boolean {
+    fun isValidEmailAddress(emailAddress: String?): Boolean {
+        if (emailAddress == null) return false
         val pattern = Pattern.compile(AppConstants.EMAIL_REGEX)
         return (pattern.matcher(emailAddress).matches())
     }
@@ -35,7 +36,8 @@ object AppUtils {
         return (pattern.matcher(accountNumber).matches())
     }
 
-    fun isValidFullName(fullName: String): Boolean {
+    fun isValidFullName(fullName: String?): Boolean {
+        if (fullName == null) return false
         val pattern = Pattern.compile(AppConstants.FULL_NAME_REGEX)
         return (pattern.matcher(fullName).matches())
     }

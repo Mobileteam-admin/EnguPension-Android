@@ -112,13 +112,13 @@
                 android:layout_height="0dp"
                 android:layout_marginEnd="@dimen/dp_3"
                 android:src="@drawable/ic_naira"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_wallet_amount"
-                app:layout_constraintEnd_toStartOf="@+id/tv_wallet_amount"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_gratuity"
+                app:layout_constraintEnd_toStartOf="@+id/tv_gratuity"
                 app:layout_constraintStart_toEndOf="@+id/barrier"
-                app:layout_constraintTop_toTopOf="@+id/tv_wallet_amount" />
+                app:layout_constraintTop_toTopOf="@+id/tv_gratuity" />
 
             <TextView
-                android:id="@+id/tv_wallet_amount"
+                android:id="@+id/tv_gratuity"
                 style="@style/Style_text_title_Middle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -129,14 +129,14 @@
                 app:layout_constraintTop_toTopOf="@+id/iv_wallet_icon" />
 
             <TextView
-                android:id="@+id/tv_wallet_"
+                android:id="@+id/tv_gratuity_label"
                 style="@style/Style_text_title_2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/wallet_balance"
+                android:text="@string/gratuity"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_wallet_icon"
                 app:layout_constraintStart_toStartOf="@+id/barrier"
-                app:layout_constraintTop_toBottomOf="@+id/tv_wallet_amount" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_gratuity" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

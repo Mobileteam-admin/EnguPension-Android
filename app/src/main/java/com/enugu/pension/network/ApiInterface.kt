@@ -210,7 +210,7 @@ interface ApiInterface {
     @GET
     suspend fun downloadFile(@Url fileUrl: String): ResponseBody
 
-    @POST("/api/v1/update-profile/")
+    @GET("/api/v1/profile/")
     suspend fun fetchProfileDetails(@Header("Authorization") token: String
     ): ProfileResponse
 
@@ -220,7 +220,7 @@ interface ApiInterface {
         @Header("Authorization") token: String,
         @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,
         @Part image: MultipartBody.Part?
-    ): ProfileResponse
+    ): ProfileUpdateResponse
 
     @Multipart
     @POST("/api/v1/update-profile/")
@@ -243,7 +243,11 @@ interface ApiInterface {
     suspend fun fetchNextOfKinDetails(@Header("Authorization") token: String
     ): NextOfKinResponse
 
-    @GET("/api/v1/accountdetails/")
+    @PUT("/api/v1/profile/next_of_kin_details")
+    suspend fun submitNextOfKinDetails(@Header("Authorization") token: String, @Body request: NextOfKinRequest
+    ): NextOfKinUpdateResponse
+
+    @GET("/api/v1/accountdetails")
     suspend fun fetchAccountDetails(@Header("Authorization") token: String
     ): AccountDetailsResponse
 

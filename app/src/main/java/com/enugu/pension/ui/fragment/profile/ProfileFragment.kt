@@ -223,7 +223,10 @@ class ProfileFragment : BaseFragment() {
                 if (response.detail?.status == AppConstants.SUCCESS) {
                     dismissLoader()
                     response.detail?.message?.let { message -> showToast(message) }
-                    dashboardViewModel.profilePictureUrl.postValue(response.detail?.userProfileDetails?.imageUrl)
+                    dashboardViewModel.profilePictureUrl.postValue(
+                        if (response.detail?.updatedFields?.profilePicture == true) response.detail?.fileInfo?.fileUrl
+                        else null
+                    )
                     findNavController().popBackStack()
 //                    populateViews()
                 } else {
@@ -245,7 +248,7 @@ class ProfileFragment : BaseFragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun populateViews() {
-        viewModel.profileFetchApiResult.value?.detail?.userProfileDetails?.let {
+        viewModel.profileFetchApiResult.value?.detail?.data?.let {
 //            profileInfo.setValue(ProfileItemType.EIN, it.ein)
 //            profileInfo.setValue(ProfileItemType.EMP_STATUS, it.employmentStatus)
 //            profileInfo.setValue(ProfileItemType.DESIGNATION, it.designation)
@@ -259,13 +262,13 @@ class ProfileFragment : BaseFragment() {
             infoBindingList[EIN_INDEX].etInfo.setText(it.ein)
             infoBindingList[EMP_STATUS_INDEX].etInfo.setText(it.employmentStatus)
             infoBindingList[DESIGNATION_INDEX].etInfo.setText(it.designation)
-            infoBindingList[DEPARTMENT_INDEX].etInfo.setText(it.department)
-            infoBindingList[DURATION_INDEX].etInfo.setText(it.duration)
-            infoBindingList[STATE_INDEX].etInfo.setText(it.state)
-            infoBindingList[REGION_INDEX].etInfo.setText(it.region)
-            infoBindingList[STATUS_INDEX].etInfo.setText(it.status)
+//            infoBindingList[DEPARTMENT_INDEX].etInfo.setText(it.department)
+//            infoBindingList[DURATION_INDEX].etInfo.setText(it.duration)
+//            infoBindingList[STATE_INDEX].etInfo.setText(it.state)
+//            infoBindingList[REGION_INDEX].etInfo.setText(it.region)
+//            infoBindingList[STATUS_INDEX].etInfo.setText(it.status)
 
-            it.imageUrl?.let {imageUrl -> setProfileImageView(Uri.parse(imageUrl))}
+            it.profilePicture?.fileUrl?.let {imageUrl -> setProfileImageView(Uri.parse(imageUrl))}
         }
     }
 
