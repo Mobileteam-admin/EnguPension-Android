@@ -75,7 +75,7 @@ class DashboardViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val result = networkRepo.fetchProfileDetails()
-                result.detail?.userProfileDetails?.imageUrl?.let { profilePictureUrl.postValue(it) }
+                result.detail?.data?.profilePicture?.fileUrl?.let { profilePictureUrl.postValue(it) }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginHorizontal="@dimen/dp_20"
-            android:layout_marginTop="@dimen/dp_6"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -173,6 +173,7 @@
                 android:layout_marginRight="@dimen/dp_10"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/dp_12"
+                android:visibility="gone"
                 android:tooltipText="@string/your_reservation"
                 android:src="@drawable/ic_dashboard_video"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -185,6 +186,7 @@
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/dp_12"
+                android:layout_marginEnd="@dimen/dp_12"
                 android:src="@drawable/ic_plus"
                 android:tooltipText="@string/top_up_wallet"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -480,6 +482,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:visibility="gone"
                             android:src="@drawable/ic_not_verified_red" />
 
                         <TextView
@@ -489,7 +492,7 @@
                             android:layout_marginStart="@dimen/dp_10"
                             android:fontFamily="@font/nunito_sans_semibold"
                             android:text="Valid till 20/12/2023"
-                            android:textColor="@color/red"
+                            android:textColor="@color/green_dark"
                             android:textSize="@dimen/dp_14" />
 
                     </LinearLayout>

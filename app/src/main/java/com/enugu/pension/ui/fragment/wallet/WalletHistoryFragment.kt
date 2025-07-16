@@ -48,11 +48,9 @@ class WalletHistoryFragment : BaseFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 result.data?.data?.let { uri ->
+                    viewModel.fileLocationUri = uri
                     showLoader()
-                    viewModel.fetchStatementPdfLink(
-                        uri,
-                        requireContext().contentResolver
-                    )
+                    viewModel.fetchStatementPdfLinkN()
                 }
             }
         }
@@ -139,6 +137,25 @@ class WalletHistoryFragment : BaseFragment() {
         dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
             if (response?.detail?.status == AppConstants.SUCCESS) {
                 populateViews()
+            }
+        }
+        viewModel.linkApiResult.observe(viewLifecycleOwner) { response ->
+            if (response != null) {
+                if (response.detail.status == AppConstants.SUCCESS) {
+                    dismissLoader()
+                    viewModel.downloadStatementPdf(response.detail.fileUrl, requireContext().contentResolver)
+                } else {
+                    if (response.detail.tokenStatus == AppConstants.EXPIRED) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (tokenRefreshViewModel2.fetchRefreshToken()) {
+                                viewModel.downloadStatementPdf(response.detail.fileUrl, requireContext().contentResolver)
+                            }
+                        }
+                    } else {
+                        dismissLoader()
+                        response.detail.message?.let { showToast(it) }
+                    }
+                }
             }
         }
         viewModel.statementDownloadApiResult.observe(viewLifecycleOwner) { message ->

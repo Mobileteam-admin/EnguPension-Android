@@ -71,11 +71,6 @@ class GratuityFragment : BaseFragment() {
     }
 
     private fun observeLiveData() {
-        dashboardViewModel.dashboardDetailsResult.observe(viewLifecycleOwner) { response ->
-            if (response?.detail?.status == AppConstants.SUCCESS) {
-                populateViews()
-            }
-        }
         viewModel.accountDetailsResult.observe(viewLifecycleOwner) { response ->
             if (response != null) {
                 if (response.detail?.status == AppConstants.SUCCESS) {
@@ -97,15 +92,9 @@ class GratuityFragment : BaseFragment() {
         }
     }
 
-    private fun populateViews() {
-        dashboardViewModel.dashboardDetailsResult.value?.detail?.let {
-            binding.tvWalletAmount.text = it.getWalletBalanceAmount()
-            binding.ivNaira.isGone = true
-        }
-    }
-
     private fun populateViews2() {
         val gratuityList = mutableListOf<GratuityItem>()
+        binding.ivNaira.isGone = true
         viewModel.accountDetailsResult.value?.detail?.accountData?.gratuity?.forEach {
             gratuityList.add(
                 GratuityItem(
@@ -117,6 +106,7 @@ class GratuityFragment : BaseFragment() {
                 )
             )
         }
+        binding.tvGratuity.text = if (gratuityList.isNotEmpty()) "NGN "+ gratuityList[0].amount.toString() else ""
         binding.rvGratuity.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = GratuityAdapter(gratuityList)

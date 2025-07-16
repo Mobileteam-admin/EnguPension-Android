@@ -12,12 +12,18 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.data.TransactionHistoryPagingSource
+import com.enugu.pension.model.response.StatementPdfLinkResponse
 import com.enugu.pension.model.response.TransactionHistoryResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class WalletHistoryViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
+    lateinit var fileLocationUri: Uri
+    private val _linkApiResult = MutableLiveData<StatementPdfLinkResponse>()
+    val linkApiResult: LiveData<StatementPdfLinkResponse>
+        get() = _linkApiResult
+
     private val _statementDownloadApiResult = MutableLiveData<String>()
     val statementDownloadApiResult: LiveData<String>
         get() = _statementDownloadApiResult
@@ -30,20 +36,29 @@ class WalletHistoryViewModel(private val networkRepo: NetworkRepo) : ViewModel()
         pagingSourceFactory = { TransactionHistoryPagingSource(networkRepo) }
     ).flow.cachedIn(viewModelScope)
 
-    fun fetchStatementPdfLink(uri: Uri, contentResolver: ContentResolver) {
+    fun fetchStatementPdfLinkN() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                _linkApiResult.postValue(networkRepo.fetchStatementPdfLink())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _linkApiResult.postValue(
+                    StatementPdfLinkResponse(StatementPdfLinkResponse.Detail("Something went wrong with downloading Account Statement"))
+                )
+            }
+        }
+    }
+
+    fun downloadStatementPdf(fileUrl: String?, contentResolver: ContentResolver) {
         viewModelScope.launch(Dispatchers.IO) {
             val defaultErrorMessage = "Failed to download Account Statement"
             try {
-                val linkResponse = networkRepo.fetchStatementPdfLink()
-                val fileUrl = linkResponse.detail.fileUrl
-
                 val message = if (fileUrl.isNullOrEmpty()) {
-                    linkResponse.detail.message ?: defaultErrorMessage
+                    defaultErrorMessage
                 } else {
-                    val success = networkRepo.downloadFile(fileUrl, uri, contentResolver)
+                    val success = networkRepo.downloadFile(fileUrl, fileLocationUri, contentResolver)
                     if (success) "Account Statement downloaded successfully" else defaultErrorMessage
                 }
-
                 _statementDownloadApiResult.postValue(message)
             } catch (e: Exception) {
                 _statementDownloadApiResult.postValue(defaultErrorMessage)

@@ -21,11 +21,13 @@ import com.enugu.pension.model.request.InputRetireeBasicDetails
 import com.enugu.pension.model.request.InputSignup
 import com.enugu.pension.model.request.InputSignupVerify
 import com.enugu.pension.model.request.InputSwiftBankCode
+import com.enugu.pension.model.request.NextOfKinRequest
 import com.enugu.pension.model.request.StatementRequest
 import com.enugu.pension.model.request.TopUpRequest
 import com.enugu.pension.model.request.TransferRequest
 import com.enugu.pension.model.request.UpdateProfileForm
 import com.enugu.pension.model.response.ProfileResponse
+import com.enugu.pension.model.response.ProfileUpdateResponse
 import com.enugu.pension.network.ApiInterface
 import com.enugu.pension.util.NetworkUtils
 import com.enugu.pension.util.SharedPref
@@ -172,7 +174,7 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchProfileDetails() =
         apiInterface.fetchProfileDetails(NetworkUtils.getAccessToken())
 
-    suspend fun updateProfileDetails(updateProfileForm: UpdateProfileForm): ProfileResponse {
+    suspend fun updateProfileDetails(updateProfileForm: UpdateProfileForm): ProfileUpdateResponse {
         val stringParts: Map<String, RequestBody> =
             updateProfileForm.items.associate { it.key to createStringPart(it.value) }
         val imagePart = createImagePart(updateProfileForm.profilePicFile, "profile_picture")
@@ -246,4 +248,6 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchStatement(startDate: String,endDate: String) =
         apiInterface.fetchStatement(NetworkUtils.getAccessToken(), StatementRequest(startDate, endDate))
 
+    suspend fun submitNextOfKinDetails(nextOfKinRequest: NextOfKinRequest) =
+        apiInterface.submitNextOfKinDetails(NetworkUtils.getAccessToken(), nextOfKinRequest)
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.enugu.pension.data.NetworkRepo
 import com.enugu.pension.model.request.UpdateProfileForm
 import com.enugu.pension.model.response.ProfileResponse
+import com.enugu.pension.model.response.ProfileUpdateResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -17,8 +18,8 @@ class ProfileViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val profileFetchApiResult: LiveData<ProfileResponse>
         get() = _profileFetchApiResult
 
-    private val _profileUpdateApiResult = MutableLiveData<Pair<UpdateProfileForm,ProfileResponse>?>(null)
-    val profileUpdateApiResult: LiveData<Pair<UpdateProfileForm,ProfileResponse>?>
+    private val _profileUpdateApiResult = MutableLiveData<Pair<UpdateProfileForm,ProfileUpdateResponse>?>(null)
+    val profileUpdateApiResult: LiveData<Pair<UpdateProfileForm, ProfileUpdateResponse>?>
         get() = _profileUpdateApiResult
 
 
@@ -43,7 +44,7 @@ class ProfileViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _profileUpdateApiResult.postValue(Pair(form,networkRepo.updateProfileDetails(form)))
             } catch (e: Exception) {
                 e.printStackTrace()
-                _profileUpdateApiResult.postValue(Pair(form,ProfileResponse(ProfileResponse.Detail("Something went wrong with fetching profile details"))))
+                _profileUpdateApiResult.postValue(Pair(form,ProfileUpdateResponse(ProfileUpdateResponse.Detail("Something went wrong with fetching profile details"))))
             }
         }
     }
