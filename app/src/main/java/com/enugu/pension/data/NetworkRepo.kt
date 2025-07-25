@@ -26,8 +26,10 @@ import com.enugu.pension.model.request.StatementRequest
 import com.enugu.pension.model.request.TopUpRequest
 import com.enugu.pension.model.request.TransferRequest
 import com.enugu.pension.model.request.UpdateProfileForm
+import com.enugu.pension.model.response.BookingSlotResponse
 import com.enugu.pension.model.response.ProfileResponse
 import com.enugu.pension.model.response.ProfileUpdateResponse
+import com.enugu.pension.model.response.SwiftCodeVerificationResponse
 import com.enugu.pension.network.ApiInterface
 import com.enugu.pension.util.NetworkUtils
 import com.enugu.pension.util.SharedPref
@@ -42,6 +44,8 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.Locale
+import java.util.TimeZone
 
 class NetworkRepo(private val apiInterface: ApiInterface) {
     private fun createStringPart(value: String): RequestBody =
@@ -90,8 +94,21 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchRetireeDocuments() =
         apiInterface.getRetireeDocRetrive(NetworkUtils.getAccessToken())
 
-    suspend fun fetchBankDetails(inputSwiftBankCode: InputSwiftBankCode) =
-        apiInterface.fetchBankDetails(NetworkUtils.getAccessToken(), inputSwiftBankCode)
+    suspend fun fetchBankDetails(inputSwiftBankCode: InputSwiftBankCode): SwiftCodeVerificationResponse {
+        /* Temporary solution to overcome the external swift code API error
+        return SwiftCodeVerificationResponse(
+            detail = SwiftCodeVerificationResponse.Detail(
+                status = AppConstants.SUCCESS,
+                tokenStatus = AppConstants.SUCCESS,
+                message = "",
+                swiftCodeResponse = SwiftCodeResponse(
+                    branchName = "Fort Branch",
+                    cityName = "Mumbai, India",
+                    bankName = "Fort Branch",
+                ),)
+        )*/
+        return apiInterface.fetchBankDetails(NetworkUtils.getAccessToken(), inputSwiftBankCode)
+    }
 
     suspend fun submitBankInfo(inputActiveBankInfo: InputActiveBankInfo) =
         apiInterface.submitBankInfo(NetworkUtils.getAccessToken(), inputActiveBankInfo)
@@ -143,8 +160,17 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun getPaymentStatus(sessionId: String) =
         apiInterface.getPaymentStatus(NetworkUtils.getAccessToken(), sessionId)
 
-    suspend fun fetchBookingSlots(selectedDay: String) =
-        apiInterface.fetchBookingSlots(NetworkUtils.getAccessToken(), selectedDay)
+    suspend fun fetchBookingSlots(selectedDay: String): BookingSlotResponse {
+        val country = Locale.getDefault().displayCountry
+
+        val timezone = TimeZone.getDefault().id
+        return apiInterface.fetchBookingSlots(
+            token = NetworkUtils.getAccessToken(),
+            selectedDay = selectedDay,
+            country = country,
+            timezone = timezone
+        )
+    }
 
     fun fetchBookingDateRange() = apiInterface.fetchBookingDateRange()
 
@@ -245,8 +271,11 @@ class NetworkRepo(private val apiInterface: ApiInterface) {
     suspend fun fetchAccountDetails() =
         apiInterface.fetchAccountDetails(NetworkUtils.getAccessToken())
 
-    suspend fun fetchStatement(startDate: String,endDate: String) =
-        apiInterface.fetchStatement(NetworkUtils.getAccessToken(), StatementRequest(startDate, endDate))
+    suspend fun fetchStatement(startDate: String, endDate: String) =
+        apiInterface.fetchStatement(
+            NetworkUtils.getAccessToken(),
+            StatementRequest(startDate, endDate)
+        )
 
     suspend fun submitNextOfKinDetails(nextOfKinRequest: NextOfKinRequest) =
         apiInterface.submitNextOfKinDetails(NetworkUtils.getAccessToken(), nextOfKinRequest)

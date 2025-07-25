@@ -251,6 +251,7 @@
     <string name="salary_amount">Salary Amount</string>
     <string name="verification_pending">Verification Pending</string>
     <string name="your_booking">Your Booking</string>
+    <string name="verified_on">Verified on</string>
 
 
 </resources>
