@@ -16,12 +16,7 @@ data class ProfileResponse(
             @SerializedName("employment_status") var employmentStatus: String? = "",
             @SerializedName("designation") var designation: String? = "",
             @SerializedName("profile_picture") var profilePicture: ProfilePicture? = null,
-//            @SerializedName("state") var state: String? = "",
-//            @SerializedName("region") var region: String? = "",
-//            @SerializedName("department") var department: String? = "",
-//            @SerializedName("status") var status: String? = "",
-//            @SerializedName("duration") var duration: String? = "",
-//            @SerializedName("file_url") var imageUrl: String? = null,
+
         ) {
             data class ProfilePicture(
                 @SerializedName("file_url") val fileUrl: String? = null,

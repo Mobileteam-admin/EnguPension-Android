@@ -163,7 +163,12 @@ interface ApiInterface {
     suspend fun getPaymentStatus(@Header("Authorization") token: String, @Query("session_id") sessionId: String): PaymentStatusResponse
 
     @GET("/api/v1/booking/list-slots/")
-    suspend fun fetchBookingSlots(@Header("Authorization") token: String, @Query("selected_day") selectedDay: String): BookingSlotResponse
+    suspend fun fetchBookingSlots(
+        @Header("Authorization") token: String,
+        @Query("selected_day") selectedDay: String,
+        @Query("country") country: String,
+        @Query("timezone") timezone: String,
+        ): BookingSlotResponse
 
     @GET("/api/v1/booking/booking-date-range/")
     fun fetchBookingDateRange(): Call<BookingDateRangeResponse>
