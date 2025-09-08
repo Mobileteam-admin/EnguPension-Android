@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.enugu.pension.databinding.ItemVerificationHistoryBinding
-import com.enugu.pension.model.ui.VerificationHistoryItem
+import com.enugu.pension.ui.model.VerificationHistoryItem
 
 class VerificationHistoryAdapter :
     RecyclerView.Adapter<VerificationHistoryAdapter.ItemViewHolder>() {

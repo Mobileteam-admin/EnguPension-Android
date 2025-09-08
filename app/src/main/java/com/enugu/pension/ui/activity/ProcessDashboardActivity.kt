@@ -13,15 +13,14 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.ActivityProcessDashboardBinding
-import com.enugu.pension.model.response.ResponseActiveProcessingVerify
-import com.enugu.pension.network.ApiClient
-import com.enugu.pension.util.NetworkUtils
-import com.enugu.pension.util.OnboardingStage
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.data.remote.api.ApiClient
+import com.enugu.pension.common.util.NetworkUtils
+import com.enugu.pension.common.util.OnboardingStage
+import com.enugu.pension.data.local.SharedPref
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.ProcessDashboardViewModel
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
@@ -120,7 +119,7 @@ class ProcessDashboardActivity : BaseActivity() {
 
     private  val SPLASH_TIME: Long= 3000
 
-    private fun onProcessingVerifySuccess(response: ResponseActiveProcessingVerify) {
+    private fun onProcessingVerifySuccess(response: com.enugu.pension.data.remote.dto.response.ResponseActiveProcessingVerify) {
         prefs.onboardingStage = OnboardingStage.DASHBOARD
         Toast.makeText(this, response.detail?.message, Toast.LENGTH_SHORT).show()
         Handler().postDelayed({

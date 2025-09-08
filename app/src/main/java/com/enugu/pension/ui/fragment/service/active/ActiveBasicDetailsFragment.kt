@@ -15,31 +15,30 @@ import androidx.core.view.isEmpty
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.util.AlphabeticTextWatcher
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.common.util.AlphabeticTextWatcher
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentActiveBasicDetailsBinding
-import com.enugu.pension.model.misc.EnguCalendarRange
-import com.enugu.pension.model.request.InputActiveBasicDetails
-import com.enugu.pension.model.response.ActiveRetriveUserProfileDetails
-import com.enugu.pension.model.response.GradeLevelsItem
-import com.enugu.pension.model.response.LgasItem
-import com.enugu.pension.model.response.OccupationsItem
-import com.enugu.pension.model.response.ResponseActiveBasicDetails
-import com.enugu.pension.model.response.ResponseCombinationDetails
-import com.enugu.pension.model.response.SubTreasuryItem
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.ui.model.EnguCalendarRange
+import com.enugu.pension.data.remote.dto.request.InputActiveBasicDetails
+import com.enugu.pension.data.remote.dto.response.ActiveRetriveUserProfileDetails
+import com.enugu.pension.data.remote.dto.response.LgasItem
+import com.enugu.pension.data.remote.dto.response.OccupationsItem
+import com.enugu.pension.data.remote.dto.response.ResponseActiveBasicDetails
+import com.enugu.pension.data.remote.dto.response.ResponseCombinationDetails
+import com.enugu.pension.data.remote.dto.response.SubTreasuryItem
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.adapter.GradeLevelAdapter
 import com.enugu.pension.ui.adapter.LGASpinnerAdapter
 import com.enugu.pension.ui.adapter.OccupationsAdapter
 import com.enugu.pension.ui.adapter.SubTreasuryAdapter
 import com.enugu.pension.ui.dialog.EnguCalendarDialog
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.CalendarUtils
-import com.enugu.pension.util.NetworkUtils
-import com.enugu.pension.util.OnboardingStage
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.common.util.CalendarUtils
+import com.enugu.pension.common.util.NetworkUtils
+import com.enugu.pension.common.util.OnboardingStage
+import com.enugu.pension.data.local.SharedPref
 import com.enugu.pension.viewmodel.ActiveBasicDetailViewModel
 import com.enugu.pension.viewmodel.ActiveServiceViewModel
 import com.enugu.pension.viewmodel.EnguCalendarHandlerViewModel
@@ -109,7 +108,7 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
     val LGAList = ArrayList<LgasItem?>()
     val subtreasuryList = ArrayList<SubTreasuryItem?>()
-    val GradeLevelsList = ArrayList<GradeLevelsItem?>()
+    val GradeLevelsList = ArrayList<com.enugu.pension.data.remote.dto.response.GradeLevelsItem?>()
     val occupationsList = ArrayList<OccupationsItem?>()
 
     lateinit var lgaSpinnerAdapter: LGASpinnerAdapter
@@ -993,13 +992,13 @@ class ActiveBasicDetailsFragment : BaseFragment()
 
         if (response.combinedetails?.combinegradeLevels?.size!! > 0) {
             GradeLevelsList.add(
-                GradeLevelsItem(
+                com.enugu.pension.data.remote.dto.response.GradeLevelsItem(
                     " - Select GradeLevel - ", 0
                 )
             )
             response.combinedetails.combinegradeLevels.forEach {
                 GradeLevelsList.add(
-                    GradeLevelsItem(
+                    com.enugu.pension.data.remote.dto.response.GradeLevelsItem(
                         it?.level, it?.id
                     )
                 )

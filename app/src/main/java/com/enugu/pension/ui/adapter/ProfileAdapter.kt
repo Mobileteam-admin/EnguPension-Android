@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.enugu.pension.databinding.ItemProfileBinding
-import com.enugu.pension.model.ui.ProfileInfo
+import com.enugu.pension.ui.model.ProfileInfo
 
 class ProfileAdapter(private val profileInfo: ProfileInfo) :
     RecyclerView.Adapter<ProfileAdapter.ItemViewHolder>() {

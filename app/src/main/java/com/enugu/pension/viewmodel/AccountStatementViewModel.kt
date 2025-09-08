@@ -1,13 +1,11 @@
 package com.enugu.pension.viewmodel
 
-import android.content.ContentResolver
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.response.StatementResponse
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.response.StatementResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

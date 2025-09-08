@@ -1,0 +1,67 @@
+package com.enugu.pension.common.util
+
+import android.content.Context
+import com.enugu.pension.R
+import com.enugu.pension.common.constant.AppConstants
+import java.util.regex.Pattern
+
+object AppUtils {
+    private lateinit var appContext: Context
+
+    fun init(context: Context) {
+        appContext = context.applicationContext
+    }
+
+    fun isValidEmailAddress(emailAddress: String?): Boolean {
+        if (emailAddress == null) return false
+        val pattern = Pattern.compile(AppConstants.EMAIL_REGEX)
+        return (pattern.matcher(emailAddress).matches())
+    }
+
+    fun isValidPassword(password: String): Boolean {
+        val pattern = Pattern.compile(AppConstants.PASSWORD_REGEX)
+        return (pattern.matcher(password).matches())
+    }
+
+    fun getFullName(firstName: String?, middleName: String?, lastName: String?): String {
+        return listOfNotNull(firstName, middleName, lastName)
+            .filter { it.isNotBlank() }
+            .joinToString(" ")
+    }
+
+    fun isValidBankAccountNumber(accountNumber: String): Boolean {
+        val minLength = appContext.resources.getInteger(R.integer.account_number_min_length)
+        val maxLength = appContext.resources.getInteger(R.integer.account_number_max_length)
+        val pattern = Pattern.compile("\\d{$minLength,$maxLength}")
+        return (pattern.matcher(accountNumber).matches())
+    }
+
+    fun isValidFullName(fullName: String?): Boolean {
+        if (fullName == null) return false
+        val pattern = Pattern.compile(AppConstants.FULL_NAME_REGEX)
+        return (pattern.matcher(fullName).matches())
+    }
+
+    fun generateRandomString(length: Int): String {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        return (1..length)
+            .map { chars.random() }
+            .joinToString("")
+    }
+
+    fun getSwiftCodeLength1() = appContext.resources.getInteger(R.integer.swift_code_length_2)
+    fun getSwiftCodeLength2() = appContext.resources.getInteger(R.integer.swift_code_length_1)
+    fun getSwiftCodeRange() = listOf(getSwiftCodeLength1(), getSwiftCodeLength2())
+
+    fun isValidEIN(ein: String?): Boolean {
+        if (ein == null) return false
+        val einPattern = Regex("^\\d{8}-\\d{4}$")
+        return einPattern.matches(ein)
+    }
+
+    fun getFormattedMoney(amount: Double?): String {
+        if (amount == null) return "0"
+        val format = java.text.DecimalFormat("0.##")
+        return format.format(amount)
+    }
+}

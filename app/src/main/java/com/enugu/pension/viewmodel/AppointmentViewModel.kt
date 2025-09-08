@@ -4,13 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.ApiResult
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.BookAppointmentRequest
-import com.enugu.pension.model.response.BookAppointmentResponse
-import com.enugu.pension.model.response.BookingDateRangeResponse
-import com.enugu.pension.model.response.BookingSlotResponse
-import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.data.remote.ApiResult
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.response.BookAppointmentResponse
+import com.enugu.pension.data.remote.dto.response.BookingDateRangeResponse
+import com.enugu.pension.common.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -22,8 +20,8 @@ class AppointmentViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
 
     var selectedDate: String? = null
     var selectedTimeSlotId: Int? = null
-    private val _slotApiResult = MutableLiveData<Pair<String, BookingSlotResponse>>()
-    val slotApiResult: LiveData<Pair<String, BookingSlotResponse>>
+    private val _slotApiResult = MutableLiveData<Pair<String, com.enugu.pension.data.remote.dto.response.BookingSlotResponse>>()
+    val slotApiResult: LiveData<Pair<String, com.enugu.pension.data.remote.dto.response.BookingSlotResponse>>
         get() = _slotApiResult
 
 
@@ -32,8 +30,8 @@ class AppointmentViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         get() = _dateRangeApiResult
 
     private val _bookAppointmentApiResult =
-        MutableLiveData<Pair<BookAppointmentRequest, BookAppointmentResponse>>()
-    val bookAppointmentApiResult: LiveData<Pair<BookAppointmentRequest, BookAppointmentResponse>>
+        MutableLiveData<Pair<com.enugu.pension.data.remote.dto.request.BookAppointmentRequest, BookAppointmentResponse>>()
+    val bookAppointmentApiResult: LiveData<Pair<com.enugu.pension.data.remote.dto.request.BookAppointmentRequest, BookAppointmentResponse>>
         get() = _bookAppointmentApiResult
 
     fun fetchBookingSlots(selectedDay: String) {
@@ -46,8 +44,10 @@ class AppointmentViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                 _slotApiResult.postValue(
                     Pair(
                         selectedDay,
-                        BookingSlotResponse(
-                            BookingSlotResponse.Detail(message = "Something went wrong with fetching slots")
+                        com.enugu.pension.data.remote.dto.response.BookingSlotResponse(
+                            com.enugu.pension.data.remote.dto.response.BookingSlotResponse.Detail(
+                                message = "Something went wrong with fetching slots"
+                            )
                         )
                     )
                 )
@@ -70,7 +70,7 @@ class AppointmentViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         }
     }
 
-    fun bookAppointment(request: BookAppointmentRequest) {
+    fun bookAppointment(request: com.enugu.pension.data.remote.dto.request.BookAppointmentRequest) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _bookAppointmentApiResult.postValue(Pair(request, networkRepo.bookAppointment(request)))
@@ -86,7 +86,7 @@ class AppointmentViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
             }
         }
     }
-    fun bookAppointmentCall(request: BookAppointmentRequest) {
+    fun bookAppointmentCall(request: com.enugu.pension.data.remote.dto.request.BookAppointmentRequest) {
         viewModelScope.launch(Dispatchers.IO) {
             val call = networkRepo.bookAppointmentCall(request)
             call.enqueue(object : Callback<BookAppointmentResponse> {

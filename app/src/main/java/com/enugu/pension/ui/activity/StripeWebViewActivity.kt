@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.isInvisible
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.databinding.ActivityStripeWebViewBinding
 
 class StripeWebViewActivity : BaseActivity() {

@@ -17,7 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import com.enugu.pension.R
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.databinding.ActivityVideoCallBinding
 
 class VideoCallActivity : BaseActivity() {

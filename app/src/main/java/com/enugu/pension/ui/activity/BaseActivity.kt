@@ -6,12 +6,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.enugu.pension.R
 import com.enugu.pension.ui.dialog.LoaderDialog
-import com.enugu.pension.util.BaseUtils
+import com.enugu.pension.common.util.BaseUtils
 import com.enugu.pension.viewmodel.LoaderViewModel
 
 
 open class BaseActivity : AppCompatActivity(), BaseUtils {
-    private val loaderViewModel by viewModels<LoaderViewModel>()
+    private val loaderViewModel by viewModels<com.enugu.pension.viewmodel.LoaderViewModel>()
     private val loaderDialog by lazy { LoaderDialog() }
 
     override fun onCreate(savedInstanceState: Bundle?) {

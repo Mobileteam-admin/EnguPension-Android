@@ -11,17 +11,16 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentOTPBinding
-import com.enugu.pension.model.request.InputForgotVerify
-import com.enugu.pension.model.request.InputSignupVerify
-import com.enugu.pension.model.response.VerifyResponse
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.data.remote.dto.request.InputForgotVerify
+import com.enugu.pension.data.remote.dto.request.InputSignupVerify
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.NetworkUtils
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.common.util.NetworkUtils
+import com.enugu.pension.data.local.SharedPref
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.OTPViewModel
 
@@ -165,13 +164,13 @@ class OTPFragment : BaseFragment() {
 
                 if (screen.equals("Signup")) {
                     otpViewModel.doResendOtp(
-                        com.enugu.pension.model.request.InputResendotp(
+                        com.enugu.pension.data.remote.dto.request.InputResendotp(
                             email = email
                         )
                     )
                 }else{
                     otpViewModel.doResendOtp(
-                        com.enugu.pension.model.request.InputResendotp(
+                        com.enugu.pension.data.remote.dto.request.InputResendotp(
                             email = email_Phn
                         )
                     )
@@ -256,7 +255,7 @@ class OTPFragment : BaseFragment() {
         return true
     }
 
-    fun onOtpVerifySuccess(response: VerifyResponse) {
+    fun onOtpVerifySuccess(response: com.enugu.pension.data.remote.dto.response.VerifyResponse) {
         prefs.isLogin = true
         prefs.user_id = response.detail?.userdetails?.id
         prefs.user_name = response.detail?.userdetails?.username

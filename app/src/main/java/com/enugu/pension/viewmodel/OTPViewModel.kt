@@ -4,25 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.InputForgotVerify
-import com.enugu.pension.model.request.InputResendotp
-import com.enugu.pension.model.request.InputSignupVerify
-import com.enugu.pension.model.response.ResendDetail
-import com.enugu.pension.model.response.ResendotpResponse
-import com.enugu.pension.model.response.VerifyResponse
-import com.enugu.pension.model.response.verifyDetail
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.InputForgotVerify
+import com.enugu.pension.data.remote.dto.request.InputResendotp
+import com.enugu.pension.data.remote.dto.request.InputSignupVerify
+import com.enugu.pension.data.remote.dto.response.ResendDetail
+import com.enugu.pension.data.remote.dto.response.ResendotpResponse
+import com.enugu.pension.data.remote.dto.response.VerifyResponse
+import com.enugu.pension.data.remote.dto.response.verifyDetail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class OTPViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
 
-    private val _otpVerifyResponse = MutableLiveData<VerifyResponse>()
-    val otpVerifyResponse: LiveData<VerifyResponse>
+    private val _otpVerifyResponse = MutableLiveData<com.enugu.pension.data.remote.dto.response.VerifyResponse>()
+    val otpVerifyResponse: LiveData<com.enugu.pension.data.remote.dto.response.VerifyResponse>
         get() = _otpVerifyResponse
 
-    private val _verifyForgotPassResponse = MutableLiveData<VerifyResponse>()
-    val verifyForgotPassResponse: LiveData<VerifyResponse>
+    private val _verifyForgotPassResponse = MutableLiveData<com.enugu.pension.data.remote.dto.response.VerifyResponse>()
+    val verifyForgotPassResponse: LiveData<com.enugu.pension.data.remote.dto.response.VerifyResponse>
         get() = _verifyForgotPassResponse
 
     private val _resendOTPResponse = MutableLiveData<ResendotpResponse>()
@@ -34,7 +34,11 @@ class OTPViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
             try {
                 _otpVerifyResponse.postValue(networkRepo.verifyOTP(inputSignupVerify))
             } catch (e: Exception) {
-                _otpVerifyResponse.postValue(VerifyResponse(verifyDetail(message = "Something went wrong")))
+                _otpVerifyResponse.postValue(
+                    com.enugu.pension.data.remote.dto.response.VerifyResponse(
+                        com.enugu.pension.data.remote.dto.response.verifyDetail(message = "Something went wrong")
+                    )
+                )
             }
         }
     }
@@ -48,7 +52,11 @@ class OTPViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
                     )
                 )
             } catch (e: Exception) {
-                _verifyForgotPassResponse.postValue(VerifyResponse(verifyDetail(message = "Something went wrong")))
+                _verifyForgotPassResponse.postValue(
+                    com.enugu.pension.data.remote.dto.response.VerifyResponse(
+                        com.enugu.pension.data.remote.dto.response.verifyDetail(message = "Something went wrong")
+                    )
+                )
             }
         }
     }

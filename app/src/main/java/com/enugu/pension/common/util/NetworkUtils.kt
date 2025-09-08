@@ -1,0 +1,55 @@
+package com.enugu.pension.common.util
+
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
+import com.enugu.pension.common.constant.AppConstants
+import com.enugu.pension.data.local.SharedPref
+import com.enugu.pension.data.remote.ApiResult
+import org.json.JSONObject
+import retrofit2.Call
+
+object NetworkUtils {
+    fun getAccessToken() =
+        "${AppConstants.BEARER} ${SharedPref.access_token ?: ""}"
+
+    fun isConnectedToNetwork(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            ?: false
+    }
+
+    fun <T> handleResponse(
+        call: Call<T>,
+        unknownErrorMsg: String? = null,
+        detailKey: String = "detail",
+        messageKey: String = "message"
+    ): ApiResult<T & Any> {
+        var errorMessage = unknownErrorMsg ?: "Something went wrong"
+        try {
+            val response = call.execute()
+            if (response.isSuccessful && response.body() != null) {
+                return ApiResult.Success(response.body()!!)
+            } else {
+                val errorBody = response.errorBody()?.source()?.peek()?.readUtf8()
+                Log.i("NetworkUtils", "Error body : $errorBody")
+                if (!errorBody.isNullOrEmpty()) {
+                    try {
+                        val jsonObject = JSONObject(errorBody)
+                        errorMessage = jsonObject.getJSONObject(detailKey).getString(messageKey)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                return ApiResult.Error(errorMessage)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ApiResult.Error(errorMessage)
+        }
+    }
+}

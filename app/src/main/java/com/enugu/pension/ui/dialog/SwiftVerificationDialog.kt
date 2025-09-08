@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.databinding.DialogSwiftConfirmationBinding
-import com.enugu.pension.util.VerificationState
+import com.enugu.pension.common.util.VerificationState
 import com.enugu.pension.viewmodel.SwiftVerificationViewModel
 
 class SwiftVerificationDialog : BaseDialog() {

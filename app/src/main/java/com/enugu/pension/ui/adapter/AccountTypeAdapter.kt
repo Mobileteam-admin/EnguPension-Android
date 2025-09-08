@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.enugu.pension.R
-import com.enugu.pension.model.response.AccountTypeItem
+import com.enugu.pension.data.remote.dto.response.AccountTypeItem
 
 import java.util.ArrayList
 

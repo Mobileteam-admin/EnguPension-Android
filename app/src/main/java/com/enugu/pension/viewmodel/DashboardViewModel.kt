@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.response.*
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.response.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

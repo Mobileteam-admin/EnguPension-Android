@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.network.ApiClient
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.api.ApiClient
+import com.enugu.pension.data.local.SharedPref
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 

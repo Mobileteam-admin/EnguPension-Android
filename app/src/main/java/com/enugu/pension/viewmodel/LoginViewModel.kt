@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.constant.AppConstants
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.InputLogin
-import com.enugu.pension.model.response.LoginDetail
-import com.enugu.pension.model.response.ResponseLogin
-import com.enugu.pension.util.OnboardingStage
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.common.constant.AppConstants
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.InputLogin
+import com.enugu.pension.data.remote.dto.response.LoginDetail
+import com.enugu.pension.data.remote.dto.response.ResponseLogin
+import com.enugu.pension.common.util.OnboardingStage
+import com.enugu.pension.data.local.SharedPref
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

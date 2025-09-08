@@ -12,11 +12,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.enugu.pension.R
-import com.enugu.pension.util.BaseUtils
+import com.enugu.pension.common.util.BaseUtils
 import com.enugu.pension.viewmodel.LoaderViewModel
 
 open class BaseFragment : Fragment(), BaseUtils {
-    private val loaderViewModel by activityViewModels<LoaderViewModel>()
+    private val loaderViewModel by activityViewModels<com.enugu.pension.viewmodel.LoaderViewModel>()
     override fun provideContext() = requireContext()
     override fun provideActivity() = requireActivity()
     override fun provideFragmentManager() = parentFragmentManager

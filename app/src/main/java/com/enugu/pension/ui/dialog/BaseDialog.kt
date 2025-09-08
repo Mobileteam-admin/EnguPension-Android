@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.enugu.pension.R
-import com.enugu.pension.util.BaseUtils
+import com.enugu.pension.common.util.BaseUtils
 import com.enugu.pension.viewmodel.LoaderViewModel
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -19,7 +19,7 @@ open class BaseDialog : DialogFragment(), BaseUtils {
     companion object {
         const val BACK_PRESS_THRESHOLD = 2000
     }
-    private val loaderViewModel by activityViewModels<LoaderViewModel>()
+    private val loaderViewModel by activityViewModels<com.enugu.pension.viewmodel.LoaderViewModel>()
     override fun provideContext() = requireContext()
     override fun provideActivity() = requireActivity()
     override fun provideFragmentManager() = parentFragmentManager

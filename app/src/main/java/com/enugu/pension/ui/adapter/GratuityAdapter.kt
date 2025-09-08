@@ -5,10 +5,8 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.enugu.pension.databinding.ItemGratuityBinding
-import com.enugu.pension.databinding.ItemProfileBinding
-import com.enugu.pension.model.ui.GratuityItem
-import com.enugu.pension.model.ui.ProfileInfo
-import com.enugu.pension.util.CalendarUtils
+import com.enugu.pension.ui.model.GratuityItem
+import com.enugu.pension.common.util.CalendarUtils
 
 class GratuityAdapter(private val items: List<GratuityItem>) :
     RecyclerView.Adapter<GratuityAdapter.ItemViewHolder>() {

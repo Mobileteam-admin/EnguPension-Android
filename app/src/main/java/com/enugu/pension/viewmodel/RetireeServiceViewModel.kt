@@ -3,8 +3,8 @@ package com.enugu.pension.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.enugu.pension.util.OnboardingStage
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.common.util.OnboardingStage
+import com.enugu.pension.data.local.SharedPref
 
 class RetireeServiceViewModel : ViewModel() {
     private val _onMoveToNextTab = MutableLiveData<Unit>()

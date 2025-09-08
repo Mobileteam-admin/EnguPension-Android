@@ -8,15 +8,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentForgotPasswordBinding
-import com.enugu.pension.model.response.ResponseForgotPassword
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.data.remote.dto.response.ResponseForgotPassword
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.AppUtils
-import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.common.util.AppUtils
+import com.enugu.pension.common.util.NetworkUtils
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.ForgotPasswordViewModel
 
@@ -69,7 +69,7 @@ class ForgotPasswordFragment : BaseFragment() {
                 showLoader()
                 if (NetworkUtils.isConnectedToNetwork(requireContext())) {
                     forgotPasswordViewModel.doForgotPass(
-                        com.enugu.pension.model.request.InputForgotPassword(
+                        com.enugu.pension.data.remote.dto.request.InputForgotPassword(
                             email_Phn
                         )
                     )

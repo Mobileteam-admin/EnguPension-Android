@@ -4,10 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.UpdateProfileForm
-import com.enugu.pension.model.response.ProfileResponse
-import com.enugu.pension.model.response.ProfileUpdateResponse
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.response.ProfileResponse
+import com.enugu.pension.data.remote.dto.response.ProfileUpdateResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -18,8 +17,8 @@ class ProfileViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
     val profileFetchApiResult: LiveData<ProfileResponse>
         get() = _profileFetchApiResult
 
-    private val _profileUpdateApiResult = MutableLiveData<Pair<UpdateProfileForm,ProfileUpdateResponse>?>(null)
-    val profileUpdateApiResult: LiveData<Pair<UpdateProfileForm, ProfileUpdateResponse>?>
+    private val _profileUpdateApiResult = MutableLiveData<Pair<com.enugu.pension.data.remote.dto.request.UpdateProfileForm,ProfileUpdateResponse>?>(null)
+    val profileUpdateApiResult: LiveData<Pair<com.enugu.pension.data.remote.dto.request.UpdateProfileForm, ProfileUpdateResponse>?>
         get() = _profileUpdateApiResult
 
 
@@ -38,7 +37,7 @@ class ProfileViewModel(private val networkRepo: NetworkRepo) : ViewModel() {
         }
     }
 
-    fun updateProfileDetails(form: UpdateProfileForm) {
+    fun updateProfileDetails(form: com.enugu.pension.data.remote.dto.request.UpdateProfileForm) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _profileUpdateApiResult.postValue(Pair(form,networkRepo.updateProfileDetails(form)))

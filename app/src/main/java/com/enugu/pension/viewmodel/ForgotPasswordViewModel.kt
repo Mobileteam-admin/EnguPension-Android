@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.InputForgotPassword
-import com.enugu.pension.model.response.ForgotPasswordDetail
-import com.enugu.pension.model.response.ResponseForgotPassword
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.InputForgotPassword
+import com.enugu.pension.data.remote.dto.response.ForgotPasswordDetail
+import com.enugu.pension.data.remote.dto.response.ResponseForgotPassword
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 class ForgotPasswordViewModel(private val networkRepo: NetworkRepo) : ViewModel() {

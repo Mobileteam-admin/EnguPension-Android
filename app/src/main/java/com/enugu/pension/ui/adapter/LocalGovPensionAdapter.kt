@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.enugu.pension.R
-import com.enugu.pension.model.response.CombineLocalGovenmentPensionBoardsItem
+import com.enugu.pension.data.remote.dto.response.CombineLocalGovenmentPensionBoardsItem
 import java.util.ArrayList
 
 class LocalGovPensionAdapter(
