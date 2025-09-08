@@ -7,18 +7,18 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.enugu.pension.R
-import com.enugu.pension.model.response.GradeLevelsItem
+import com.enugu.pension.data.remote.dto.response.GradeLevelsItem
 import java.util.ArrayList
 
-class GradeLevelAdapter(var context: Context?,list: ArrayList<GradeLevelsItem?>) :
+class GradeLevelAdapter(var context: Context?,list: ArrayList<com.enugu.pension.data.remote.dto.response.GradeLevelsItem?>) :
     BaseAdapter() {
-    private val GradeLevelsList = ArrayList<GradeLevelsItem?>()
+    private val GradeLevelsList = ArrayList<com.enugu.pension.data.remote.dto.response.GradeLevelsItem?>()
     init {
         this.GradeLevelsList.addAll(list)
     }
     val mInflater: LayoutInflater = LayoutInflater.from(context)
 
-    fun changeList(list: ArrayList<GradeLevelsItem?>) {
+    fun changeList(list: ArrayList<com.enugu.pension.data.remote.dto.response.GradeLevelsItem?>) {
         this.GradeLevelsList.clear()
         this.GradeLevelsList.addAll(list)
         notifyDataSetChanged()

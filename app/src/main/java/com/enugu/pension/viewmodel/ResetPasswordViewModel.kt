@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.InputResetPassword
-import com.enugu.pension.model.response.ResetDetail
-import com.enugu.pension.model.response.ResponseResetPassword
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.InputResetPassword
+import com.enugu.pension.data.remote.dto.response.ResetDetail
+import com.enugu.pension.data.remote.dto.response.ResponseResetPassword
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -16,7 +16,7 @@ class ResetPasswordViewModel(private val networkRepo: NetworkRepo) : ViewModel()
     val resetPassResponse: LiveData<ResponseResetPassword>
         get() = _resetPassResponse
 
-    fun doReset(inputResetPassword: InputResetPassword) {
+    fun doReset(inputResetPassword: com.enugu.pension.data.remote.dto.request.InputResetPassword) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _resetPassResponse.postValue(networkRepo.resetPassword(inputResetPassword))

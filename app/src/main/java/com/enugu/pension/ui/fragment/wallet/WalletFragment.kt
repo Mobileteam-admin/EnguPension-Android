@@ -17,23 +17,22 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentWalletBinding
-import com.enugu.pension.model.request.TopUpRequest
-import com.enugu.pension.model.response.ListBanksItem
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.data.remote.dto.request.TopUpRequest
+import com.enugu.pension.data.remote.dto.response.ListBanksItem
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.activity.StripeWebViewActivity
 import com.enugu.pension.ui.adapter.BankAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.NetworkUtils
-import com.enugu.pension.util.SharedPref
-import com.enugu.pension.util.isValidNumber
+import com.enugu.pension.common.util.NetworkUtils
+import com.enugu.pension.data.local.SharedPref
+import com.enugu.pension.common.util.isValidNumber
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
-import com.enugu.pension.viewmodel.WalletViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -45,7 +44,7 @@ class WalletFragment : BaseFragment() {
     }
     private lateinit var binding:FragmentWalletBinding
     private lateinit var dashboardViewModel: DashboardViewModel
-    private lateinit var viewModel: WalletViewModel
+    private lateinit var viewModel: com.enugu.pension.viewmodel.WalletViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
     private lateinit var stripeActivityResultLauncher: ActivityResultLauncher<Intent>
 
@@ -109,7 +108,7 @@ class WalletFragment : BaseFragment() {
         ).get(DashboardViewModel::class.java)
         viewModel = ViewModelProviders.of(
             this, EnguViewModelFactory(networkRepo)
-        ).get(WalletViewModel::class.java)
+        ).get(com.enugu.pension.viewmodel.WalletViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)

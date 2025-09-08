@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.response.ResponseRetireeDocRetrive
-import com.enugu.pension.model.response.ResponseRetireeDocUpload
-import com.enugu.pension.model.response.RetireeDocDetail
-import com.enugu.pension.model.response.RetireeDocRetriveResponse
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.response.ResponseRetireeDocRetrive
+import com.enugu.pension.data.remote.dto.response.ResponseRetireeDocUpload
+import com.enugu.pension.data.remote.dto.response.RetireeDocDetail
+import com.enugu.pension.data.remote.dto.response.RetireeDocRetriveResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody

@@ -17,14 +17,14 @@ import androidx.core.view.isGone
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentRetireeBasicDetailsBinding
-import com.enugu.pension.model.misc.EnguCalendarRange
-import com.enugu.pension.model.request.InputRetireeBasicDetails
-import com.enugu.pension.model.response.*
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.ui.model.EnguCalendarRange
+import com.enugu.pension.data.remote.dto.request.InputRetireeBasicDetails
+import com.enugu.pension.data.remote.dto.response.*
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.fragment.service.active.isValidOptionalEmail
 import com.enugu.pension.ui.adapter.GradeLevelAdapter
 import com.enugu.pension.ui.adapter.LastPositionAdapter
@@ -33,11 +33,11 @@ import com.enugu.pension.ui.adapter.LocalGovPensionAdapter
 import com.enugu.pension.ui.adapter.SubTreasuryAdapter
 import com.enugu.pension.ui.dialog.EnguCalendarDialog
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.AlphabeticTextWatcher
-import com.enugu.pension.util.CalendarUtils
-import com.enugu.pension.util.NetworkUtils
-import com.enugu.pension.util.OnboardingStage
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.common.util.AlphabeticTextWatcher
+import com.enugu.pension.common.util.CalendarUtils
+import com.enugu.pension.common.util.NetworkUtils
+import com.enugu.pension.common.util.OnboardingStage
+import com.enugu.pension.data.local.SharedPref
 import com.enugu.pension.viewmodel.EnguCalendarHandlerViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.RetireeBasicDetailsViewModel
@@ -94,7 +94,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
     val LGAList = ArrayList<LgasItem?>()
     val subtreasuryList = ArrayList<SubTreasuryItem?>()
-    val GradeLevelsList = ArrayList<GradeLevelsItem?>()
+    val GradeLevelsList = ArrayList<com.enugu.pension.data.remote.dto.response.GradeLevelsItem?>()
     val lastPositionList = ArrayList<CombineLastPositions?>()
     val localGovPensionList = ArrayList<CombineLocalGovenmentPensionBoardsItem?>()
 
@@ -880,13 +880,13 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
         if (combinationdetailsdata.combinedetails?.combinesubTreasuries?.size!! > 0) {
             subtreasuryList.add(
-                com.enugu.pension.model.response.SubTreasuryItem(
+                SubTreasuryItem(
                     "", " - Select SubTreasury - ", 0, ""
                 )
             )
             combinationdetailsdata.combinedetails.combinesubTreasuries.forEach {
                 subtreasuryList.add(
-                    com.enugu.pension.model.response.SubTreasuryItem(
+                    SubTreasuryItem(
                         it?.country, it?.name, it?.id, it?.state
                     )
                 )
@@ -896,13 +896,13 @@ class RetireeBasicDetailsFragment : BaseFragment() {
 
         if (combinationdetailsdata.combinedetails?.combinegradeLevels?.size!! > 0) {
             GradeLevelsList.add(
-                com.enugu.pension.model.response.GradeLevelsItem(
+                com.enugu.pension.data.remote.dto.response.GradeLevelsItem(
                     " - Select GradeLevel - ", 0
                 )
             )
             combinationdetailsdata.combinedetails.combinegradeLevels.forEach {
                 GradeLevelsList.add(
-                    com.enugu.pension.model.response.GradeLevelsItem(
+                    com.enugu.pension.data.remote.dto.response.GradeLevelsItem(
                         it?.level, it?.id
                     )
                 )
@@ -949,7 +949,7 @@ class RetireeBasicDetailsFragment : BaseFragment() {
         LocalGovspinnerfun()
     }
 
-    private fun onRetireeBasicDetailSuccess(response: ResponseRetireeBasicDetails) {
+    private fun onRetireeBasicDetailSuccess(response: com.enugu.pension.data.remote.dto.response.ResponseRetireeBasicDetails) {
         Toast.makeText(context, response.detail!!.message, Toast.LENGTH_SHORT).show()
         if (prefs.onboardingStage == OnboardingStage.RETIREE_BASIC_DETAILS)
             prefs.onboardingStage = OnboardingStage.RETIREE_DOCUMENTS

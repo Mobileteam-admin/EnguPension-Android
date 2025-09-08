@@ -1,6 +1,5 @@
 package com.enugu.pension.ui.fragment.service.retiree
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
@@ -26,24 +25,24 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentRetireeBankBinding
-import com.enugu.pension.model.request.InputActiveBankInfo
-import com.enugu.pension.model.request.InputBankVerification
-import com.enugu.pension.model.response.*
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.data.remote.dto.request.InputActiveBankInfo
+import com.enugu.pension.data.remote.dto.request.InputBankVerification
+import com.enugu.pension.data.remote.dto.response.*
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.activity.ProcessDashboardActivity
 import com.enugu.pension.ui.adapter.AccountTypeAdapter
 import com.enugu.pension.ui.adapter.BankAdapter
 import com.enugu.pension.ui.dialog.SwiftVerificationDialog
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.AppUtils
-import com.enugu.pension.util.NetworkUtils
-import com.enugu.pension.util.OnboardingStage
-import com.enugu.pension.util.SharedPref
-import com.enugu.pension.util.VerificationState
+import com.enugu.pension.common.util.AppUtils
+import com.enugu.pension.common.util.NetworkUtils
+import com.enugu.pension.common.util.OnboardingStage
+import com.enugu.pension.data.local.SharedPref
+import com.enugu.pension.common.util.VerificationState
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.RetireeBankViewModel
 import com.enugu.pension.viewmodel.RetireeServiceViewModel
@@ -115,7 +114,8 @@ class RetireeBankFragment : BaseFragment() {
 
 //        et_activebank_swiftcode.text = Editable.Factory.getInstance().newEditable("MOOGNGL1")
 
-        binding.etHolderName.setText(AppUtils.getFullName(
+        binding.etHolderName.setText(
+            AppUtils.getFullName(
             prefs.Rfirst_name,
             prefs.Rmiddle_name,
             prefs.Rlast_name))

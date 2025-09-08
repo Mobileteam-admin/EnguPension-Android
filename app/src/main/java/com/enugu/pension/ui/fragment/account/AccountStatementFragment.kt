@@ -1,40 +1,31 @@
 package com.enugu.pension.ui.fragment.account
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentAccountStatementBinding
-import com.enugu.pension.model.misc.EnguCalendarRange
-import com.enugu.pension.model.ui.StatementItem
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.ui.model.EnguCalendarRange
+import com.enugu.pension.ui.model.StatementItem
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.adapter.StatementAdapter
 import com.enugu.pension.ui.dialog.EnguCalendarDialog
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.CalendarUtils
-import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.common.util.CalendarUtils
 import com.enugu.pension.viewmodel.AccountStatementViewModel
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguCalendarHandlerViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class AccountStatementFragment : BaseFragment() {

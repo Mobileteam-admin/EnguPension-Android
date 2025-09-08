@@ -4,11 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.NextOfKinRequest
-import com.enugu.pension.model.response.NextOfKinResponse
-import com.enugu.pension.model.response.NextOfKinUpdateResponse
-import com.google.gson.annotations.SerializedName
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.NextOfKinRequest
+import com.enugu.pension.data.remote.dto.response.NextOfKinResponse
+import com.enugu.pension.data.remote.dto.response.NextOfKinUpdateResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

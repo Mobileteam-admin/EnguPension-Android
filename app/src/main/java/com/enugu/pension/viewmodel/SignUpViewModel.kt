@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.InputSignup
-import com.enugu.pension.model.response.Detail
-import com.enugu.pension.model.response.SignupResponse
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.InputSignup
+import com.enugu.pension.data.remote.dto.response.Detail
+import com.enugu.pension.data.remote.dto.response.SignupResponse
 import kotlinx.coroutines.*
 
 class SignUpViewModel(private val networkRepo: NetworkRepo) : ViewModel() {

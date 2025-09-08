@@ -3,10 +3,8 @@ package com.enugu.pension.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.enugu.pension.databinding.ItemKinProfileBinding
 import com.enugu.pension.databinding.ItemProfileBinding
-import com.enugu.pension.model.misc.KeyValue
-import com.enugu.pension.model.ui.ProfileInfo
+import com.enugu.pension.ui.model.KeyValue
 
 class KinProfileAdapter(private val items: List<KeyValue>) :
     RecyclerView.Adapter<KinProfileAdapter.ItemViewHolder>() {

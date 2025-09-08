@@ -5,35 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.StringRes
-import androidx.core.view.isEmpty
-import androidx.core.view.isGone
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.enugu.pension.R
-import com.enugu.pension.constant.AppConstants
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.common.constant.AppConstants
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentKinProfileBinding
-import com.enugu.pension.databinding.ItemProfileBinding
-import com.enugu.pension.model.misc.KeyValue
-import com.enugu.pension.model.request.NextOfKinRequest
-import com.enugu.pension.model.request.UpdateProfileForm
-import com.enugu.pension.model.response.NextOfKinResponse
-import com.enugu.pension.network.ApiClient
-import com.enugu.pension.ui.adapter.KinProfileAdapter
+import com.enugu.pension.data.remote.dto.request.NextOfKinRequest
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.ui.fragment.service.active.isValidOptionalEmail
-import com.enugu.pension.util.AppUtils
+import com.enugu.pension.common.util.AppUtils
 import com.enugu.pension.viewmodel.EnguViewModelFactory
-import com.enugu.pension.viewmodel.NextOfKinProfileViewModel
 import com.enugu.pension.viewmodel.TokenRefreshViewModel2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class KinProfileFragment : BaseFragment() {
     private lateinit var binding:FragmentKinProfileBinding
-    private lateinit var viewModel: NextOfKinProfileViewModel
+    private lateinit var viewModel: com.enugu.pension.viewmodel.NextOfKinProfileViewModel
     private lateinit var tokenRefreshViewModel2: TokenRefreshViewModel2
 
     override fun onCreateView(
@@ -56,7 +46,7 @@ class KinProfileFragment : BaseFragment() {
         val networkRepo = NetworkRepo(ApiClient.getApiInterface())
         viewModel = ViewModelProviders.of(
             this, EnguViewModelFactory(networkRepo)
-        ).get(NextOfKinProfileViewModel::class.java)
+        ).get(com.enugu.pension.viewmodel.NextOfKinProfileViewModel::class.java)
         tokenRefreshViewModel2 = ViewModelProviders.of(
             requireActivity(), EnguViewModelFactory(networkRepo)
         ).get(TokenRefreshViewModel2::class.java)

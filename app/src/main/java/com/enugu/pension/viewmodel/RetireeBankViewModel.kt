@@ -4,14 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.ApiResult
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.InputActiveBankInfo
-import com.enugu.pension.model.request.InputBankVerification
-import com.enugu.pension.model.request.InputSwiftBankCode
-import com.enugu.pension.model.response.*
-import com.enugu.pension.util.NetworkUtils
-import com.enugu.pension.util.VerificationState
+import com.enugu.pension.data.remote.ApiResult
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.InputActiveBankInfo
+import com.enugu.pension.data.remote.dto.request.InputBankVerification
+import com.enugu.pension.data.remote.dto.request.InputSwiftBankCode
+import com.enugu.pension.data.remote.dto.response.*
+import com.enugu.pension.common.util.NetworkUtils
+import com.enugu.pension.common.util.VerificationState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

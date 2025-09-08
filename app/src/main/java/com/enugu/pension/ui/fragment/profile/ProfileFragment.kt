@@ -15,15 +15,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.enugu.pension.R
-import com.enugu.pension.constant.AppConstants
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.common.constant.AppConstants
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentProfileBinding
 import com.enugu.pension.databinding.ItemProfileBinding
-import com.enugu.pension.model.request.UpdateProfileForm
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.AppUtils
-import com.enugu.pension.util.FileUtils
+import com.enugu.pension.common.util.AppUtils
+import com.enugu.pension.common.util.FileUtils
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
 import com.enugu.pension.viewmodel.ProfileViewModel
@@ -132,7 +131,7 @@ class ProfileFragment : BaseFragment() {
             if (isValidInput()) {
                 showLoader()
                 viewModel.updateProfileDetails(
-                    UpdateProfileForm(
+                    com.enugu.pension.data.remote.dto.request.UpdateProfileForm(
                         infoBindingList[EIN_INDEX].etInfo.text?.toString() ?: "",
                         infoBindingList[EMP_STATUS_INDEX].etInfo.text?.toString() ?: "",
                         infoBindingList[DESIGNATION_INDEX].etInfo.text?.toString() ?: "",

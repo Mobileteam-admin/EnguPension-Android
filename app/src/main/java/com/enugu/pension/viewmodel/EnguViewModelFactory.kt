@@ -2,7 +2,7 @@ package com.enugu.pension.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 
 @Suppress("UNCHECKED_CAST")
 class EnguViewModelFactory(private val networkRepo: NetworkRepo) : ViewModelProvider.Factory {

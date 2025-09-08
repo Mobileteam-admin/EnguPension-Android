@@ -3,9 +3,9 @@ package com.enugu.pension.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.enugu.pension.constant.AppConstants
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.common.constant.AppConstants
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.local.SharedPref
 
 class TokenRefreshViewModel2(private val networkRepo: NetworkRepo) : ViewModel() {
 

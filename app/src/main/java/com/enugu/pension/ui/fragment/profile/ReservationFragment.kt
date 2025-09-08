@@ -12,9 +12,9 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.enugu.pension.constant.AppConstants
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.common.constant.AppConstants
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.fragment.base.BaseFragment
 import com.enugu.pension.viewmodel.DashboardViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.enugu.pension.databinding.FragmentReservationBinding
 import com.enugu.pension.ui.activity.VideoCallActivity
-import com.enugu.pension.util.CalendarUtils
+import com.enugu.pension.common.util.CalendarUtils
 import com.enugu.pension.viewmodel.ReservationViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

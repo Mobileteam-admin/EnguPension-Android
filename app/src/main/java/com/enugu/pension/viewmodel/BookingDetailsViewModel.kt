@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.ApiResult
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.TransferRequest
-import com.enugu.pension.model.response.TransferResponse
-import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.data.remote.ApiResult
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.TransferRequest
+import com.enugu.pension.data.remote.dto.response.TransferResponse
+import com.enugu.pension.common.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

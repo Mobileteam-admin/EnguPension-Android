@@ -1,11 +1,11 @@
 package com.enugu.pension.ui.fragment.tokenrefresh
 
-import com.enugu.pension.model.response.ResponseRefreshToken
+import com.enugu.pension.data.remote.dto.response.ResponseRefreshToken
 
 interface TokenRefreshCallBack {
 
-    fun onTokenRefreshSuccess(response: ResponseRefreshToken)
+    fun onTokenRefreshSuccess(response: com.enugu.pension.data.remote.dto.response.ResponseRefreshToken)
 
-    fun onTokenRefreshFailure(response: ResponseRefreshToken)
+    fun onTokenRefreshFailure(response: com.enugu.pension.data.remote.dto.response.ResponseRefreshToken)
 
 }

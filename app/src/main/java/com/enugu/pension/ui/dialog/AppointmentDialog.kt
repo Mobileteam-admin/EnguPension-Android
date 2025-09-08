@@ -9,13 +9,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
-import com.enugu.pension.constant.AppConstants
+import com.enugu.pension.common.constant.AppConstants
 import com.enugu.pension.R
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.DialogAppointmentBinding
-import com.enugu.pension.model.request.BookAppointmentRequest
-import com.enugu.pension.network.ApiClient
-import com.enugu.pension.util.CalendarUtils
+import com.enugu.pension.data.remote.api.ApiClient
+import com.enugu.pension.common.util.CalendarUtils
 import com.enugu.pension.viewmodel.AppointmentViewModel
 import com.enugu.pension.viewmodel.EnguCalendarHandlerViewModel
 import com.enugu.pension.viewmodel.EnguViewModelFactory
@@ -166,7 +165,8 @@ class AppointmentDialog : BaseDialog() {
                 enguCalendarHandlerViewModel.openRangeLastMonth = false
             } else {
                 val date = binding.tvDate.text.toString()
-                enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(CalendarUtils.DATE_FORMAT_3, date)
+                enguCalendarHandlerViewModel.initSelectedDay = CalendarUtils.getCalendar(
+                    CalendarUtils.DATE_FORMAT_3, date)
             }
             showDialog(enguCalendarDialog)
         }
@@ -184,7 +184,7 @@ class AppointmentDialog : BaseDialog() {
         } else {
             showLoader()
             viewModel.bookAppointment(
-                BookAppointmentRequest(
+                com.enugu.pension.data.remote.dto.request.BookAppointmentRequest(
                     viewModel.selectedDate!!,
                     viewModel.selectedTimeSlotId!!
                 )

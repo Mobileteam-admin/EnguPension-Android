@@ -8,8 +8,8 @@ import androidx.fragment.app.activityViewModels
 import com.enugu.pension.R
 import com.enugu.pension.databinding.FragmentChooseServiceBinding
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.OnboardingStage
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.common.util.OnboardingStage
+import com.enugu.pension.data.local.SharedPref
 import com.enugu.pension.viewmodel.ActiveServiceViewModel
 import com.enugu.pension.viewmodel.ChooseServiceViewModel
 import com.enugu.pension.viewmodel.RetireeServiceViewModel

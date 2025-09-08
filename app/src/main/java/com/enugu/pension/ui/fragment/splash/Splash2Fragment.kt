@@ -11,8 +11,8 @@ import com.enugu.pension.ui.activity.ProcessDashboardActivity
 import com.enugu.pension.ui.activity.ServiceActivity
 import com.enugu.pension.ui.activity.SignUpActivity
 import com.enugu.pension.ui.fragment.base.BaseFragment
-import com.enugu.pension.util.OnboardingStage
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.common.util.OnboardingStage
+import com.enugu.pension.data.local.SharedPref
 
 
 class Splash2Fragment : BaseFragment() {

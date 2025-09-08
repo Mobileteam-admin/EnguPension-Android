@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.enugu.pension.R
-import com.enugu.pension.model.response.SubTreasuryItem
+import com.enugu.pension.data.remote.dto.response.SubTreasuryItem
 import java.util.ArrayList
 
 class SubTreasuryAdapter(var context: Context?,list: ArrayList<SubTreasuryItem?>) :

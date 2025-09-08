@@ -11,11 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.enugu.pension.R
-import com.enugu.pension.constant.AppConstants
-import com.enugu.pension.data.NetworkRepo
+import com.enugu.pension.common.constant.AppConstants
+import com.enugu.pension.data.repository.NetworkRepo
 import com.enugu.pension.databinding.FragmentVerificationHistoryBinding
-import com.enugu.pension.model.ui.VerificationHistoryItem
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.ui.model.VerificationHistoryItem
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.adapter.VerificationHistoryAdapter
 import com.enugu.pension.ui.fragment.base.BaseFragment
 import com.enugu.pension.viewmodel.DashboardViewModel

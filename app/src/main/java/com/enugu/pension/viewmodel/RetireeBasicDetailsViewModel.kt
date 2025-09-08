@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.enugu.pension.data.ApiResult
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.model.request.InputLGAList
-import com.enugu.pension.model.request.InputRetireeBasicDetails
-import com.enugu.pension.model.response.*
-import com.enugu.pension.util.NetworkUtils
+import com.enugu.pension.data.remote.ApiResult
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.dto.request.InputLGAList
+import com.enugu.pension.data.remote.dto.request.InputRetireeBasicDetails
+import com.enugu.pension.data.remote.dto.response.*
+import com.enugu.pension.common.util.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -23,8 +23,8 @@ class RetireeBasicDetailsViewModel(private val networkRepo: NetworkRepo) :ViewMo
         get() = _basicDetailsApiResult
 
     private val _basicDetailsSubmissionResult =
-        MutableLiveData<Pair<InputRetireeBasicDetails, ResponseRetireeBasicDetails>?>(null)
-    val basicDetailsSubmissionResult: LiveData<Pair<InputRetireeBasicDetails, ResponseRetireeBasicDetails>?>
+        MutableLiveData<Pair<InputRetireeBasicDetails, com.enugu.pension.data.remote.dto.response.ResponseRetireeBasicDetails>?>(null)
+    val basicDetailsSubmissionResult: LiveData<Pair<InputRetireeBasicDetails, com.enugu.pension.data.remote.dto.response.ResponseRetireeBasicDetails>?>
         get() = _basicDetailsSubmissionResult
 
     suspend fun fetchCombinedDetails(country: String): Boolean {
@@ -62,8 +62,8 @@ class RetireeBasicDetailsViewModel(private val networkRepo: NetworkRepo) :ViewMo
             val response = when (val apiResult = NetworkUtils.handleResponse(call,unknownErrorMsg)) {
                 is ApiResult.Success -> apiResult.data
                 is ApiResult.Error ->
-                    ResponseRetireeBasicDetails(
-                        RetireeBasicDetail(message = apiResult.message)
+                    com.enugu.pension.data.remote.dto.response.ResponseRetireeBasicDetails(
+                        com.enugu.pension.data.remote.dto.response.RetireeBasicDetail(message = apiResult.message)
                     )
             }
             _basicDetailsSubmissionResult.postValue(

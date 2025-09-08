@@ -2,12 +2,10 @@ package com.enugu.pension.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.enugu.pension.model.request.InputRefreshToken
-import com.enugu.pension.model.response.ResponseRefreshToken
-import com.enugu.pension.model.response.TokenDetail
-import com.enugu.pension.network.ApiClient
+import com.enugu.pension.data.remote.dto.request.InputRefreshToken
+import com.enugu.pension.data.remote.api.ApiClient
 import com.enugu.pension.ui.fragment.tokenrefresh.TokenRefreshCallBack
-import com.enugu.pension.util.SharedPref
+import com.enugu.pension.data.local.SharedPref
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -16,8 +14,8 @@ class TokenRefreshViewModel(var tokenRefreshCallBack: TokenRefreshCallBack) {
 //(application: Application) : AndroidViewModel(application)
     private val prefs = SharedPref
 
-    private val _tokenrefreshStatus = MutableLiveData<ResponseRefreshToken>()
-    val TokenrefreshStatus: LiveData<ResponseRefreshToken>
+    private val _tokenrefreshStatus = MutableLiveData<com.enugu.pension.data.remote.dto.response.ResponseRefreshToken>()
+    val TokenrefreshStatus: LiveData<com.enugu.pension.data.remote.dto.response.ResponseRefreshToken>
         get() = _tokenrefreshStatus
 
     /*init {
@@ -51,7 +49,12 @@ class TokenRefreshViewModel(var tokenRefreshCallBack: TokenRefreshCallBack) {
                             message = "Something went wrong"
                         )
                     )*/
-                tokenRefreshCallBack.onTokenRefreshFailure(ResponseRefreshToken(TokenDetail(message = "Something went wrong"))
+                tokenRefreshCallBack.onTokenRefreshFailure(
+                    com.enugu.pension.data.remote.dto.response.ResponseRefreshToken(
+                        com.enugu.pension.data.remote.dto.response.TokenDetail(
+                            message = "Something went wrong"
+                        )
+                    )
                 )
             }
         }

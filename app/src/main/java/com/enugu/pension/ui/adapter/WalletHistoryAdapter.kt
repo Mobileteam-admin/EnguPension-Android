@@ -6,9 +6,9 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.enugu.pension.databinding.ItemWalletHistoryBinding
-import com.enugu.pension.model.response.TransactionHistoryResponse
-import com.enugu.pension.util.CalendarUtils
-import com.enugu.pension.util.capitalizeFirstLetter
+import com.enugu.pension.data.remote.dto.response.TransactionHistoryResponse
+import com.enugu.pension.common.util.CalendarUtils
+import com.enugu.pension.common.util.capitalizeFirstLetter
 
 
 class WalletHistoryAdapter :

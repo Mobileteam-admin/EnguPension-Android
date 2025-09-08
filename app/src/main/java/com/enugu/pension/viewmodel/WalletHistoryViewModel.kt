@@ -10,10 +10,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.enugu.pension.data.NetworkRepo
-import com.enugu.pension.data.TransactionHistoryPagingSource
-import com.enugu.pension.model.response.StatementPdfLinkResponse
-import com.enugu.pension.model.response.TransactionHistoryResponse
+import com.enugu.pension.data.repository.NetworkRepo
+import com.enugu.pension.data.remote.paging.TransactionHistoryPagingSource
+import com.enugu.pension.data.remote.dto.response.StatementPdfLinkResponse
+import com.enugu.pension.data.remote.dto.response.TransactionHistoryResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch

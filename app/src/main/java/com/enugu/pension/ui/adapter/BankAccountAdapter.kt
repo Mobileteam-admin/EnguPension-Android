@@ -7,7 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.enugu.pension.databinding.ItemBankAccountBinding
-import com.enugu.pension.network.BankAccountItem
+import com.enugu.pension.ui.model.BankAccountItem
 
 
 class BankAccountAdapter(private val onItemClick: ((BankAccountItem) -> Unit)? = null) :
